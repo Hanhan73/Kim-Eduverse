@@ -437,7 +437,7 @@
                     <div class="logo-icon">
                         <i class="fas fa-briefcase"></i>
                     </div>
-                    <span class="logo-text">PT KIM</span>
+                    <span class="logo-text">KIM Eduverse</span>
                 </a>
 
                 <button class="menu-toggle" id="menuToggle">
@@ -514,10 +514,9 @@
             <div class="footer-content">
                 <div class="footer-brand">
                     <div class="social-links">
-                        <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
                         <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
                     </div>
                 </div>
 
@@ -545,7 +544,7 @@
                     <ul class="footer-links">
                         <li class="footer-link"><i class="fas fa-envelope"></i> info@kim.co.id</li>
                         <li class="footer-link"><i class="fas fa-phone"></i> +62 812-3456-7890</li>
-                        <li class="footer-link"><i class="fas fa-map-marker-alt"></i> Yogyakarta, Indonesia</li>
+                        <li class="footer-link"><i class="fas fa-map-marker-alt"></i> Bandung, Indonesia</li>
                     </ul>
                 </div>
             </div>
