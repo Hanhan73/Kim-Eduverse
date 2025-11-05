@@ -310,7 +310,7 @@
 
     /* Utility Classes */
     .gradient-text {
-        background: linear-gradient(135deg, #667eea, #764ba2);
+        background: linear-gradient(100deg,rgb(235, 167, 19),rgb(255, 255, 255));
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;

@@ -34,12 +34,21 @@ class BlogController extends Controller
             ->distinct()
             ->pluck('category');
 
+        // Hitung jumlah artikel per kategori (hanya yang published)
+        $categoryCounts = Article::published()
+            ->select('category', \DB::raw('count(*) as count'))
+            ->groupBy('category')
+            ->pluck('count', 'category');
+
+        // Hitung total semua artikel published (untuk "Semua")
+        $totalArticles = Article::published()->count();
+
         $popularArticles = Article::published()
             ->orderBy('views', 'desc')
             ->take(5)
             ->get();
 
-        return view('blog.index', compact('articles', 'categories', 'popularArticles'));
+        return view('blog.index', compact('articles', 'categories', 'popularArticles', 'categoryCounts', 'totalArticles'));
     }
 
     // Show single article

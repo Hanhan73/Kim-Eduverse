@@ -24,7 +24,8 @@ Route::prefix('produk')->group(function () {
     
     // KIM Developer
     Route::get('/developer', [DeveloperController::class, 'index'])->name('developer.index');
-    
+    Route::get('/developer/{category}', [DeveloperController::class, 'show'])->name('developer.show');   
+     
     // KIM Edutech
     Route::get('/edutech', [EdutechController::class, 'index'])->name('edutech.index');
 });
@@ -48,7 +49,54 @@ Route::get('/mitra', [PartnerController::class, 'index'])->name('partner.index')
 Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
 Route::post('/contact', [ContactController::class, 'submit'])->name('contact.submit');
 
-// Admin Auth Routes (Public - no middleware)
+// ========================================
+// EDUTECH SYSTEM
+// ========================================
+
+use App\Http\Controllers\Edutech\AuthController as EdutechAuthController;
+use App\Http\Controllers\Edutech\LandingController as EdutechLandingController;
+use App\Http\Controllers\Edutech\Student\DashboardController as StudentDashboardController;
+use App\Http\Controllers\Edutech\Instructor\DashboardController as InstructorDashboardController;
+use App\Http\Controllers\Edutech\Admin\DashboardController as EdutechAdminController;
+
+// Edutech Landing (Public)
+Route::prefix('edutech')->name('edutech.')->group(function () {
+    Route::get('/', [EdutechLandingController::class, 'index'])->name('landing');
+    Route::get('/courses', [EdutechLandingController::class, 'courses'])->name('courses');
+    Route::get('/courses/{slug}', [EdutechLandingController::class, 'courseDetail'])->name('course.detail');
+});
+
+// Edutech Auth (Public - no middleware)
+Route::prefix('edutech')->name('edutech.')->group(function () {
+    Route::get('/login', [EdutechAuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [EdutechAuthController::class, 'login'])->name('login.post');
+    Route::get('/register', [EdutechAuthController::class, 'showRegister'])->name('register');
+    Route::post('/register', [EdutechAuthController::class, 'register'])->name('register.post');
+    Route::post('/logout', [EdutechAuthController::class, 'logout'])->name('logout');
+});
+
+// Edutech Student Dashboard (Protected)
+Route::prefix('edutech/student')->name('edutech.student.')->middleware('edutech.student')->group(function () {
+    Route::get('/dashboard', [StudentDashboardController::class, 'index'])->name('dashboard');
+    // More routes will be added later
+});
+
+// Edutech Instructor Dashboard (Protected)
+Route::prefix('edutech/instructor')->name('edutech.instructor.')->middleware('edutech.instructor')->group(function () {
+    Route::get('/dashboard', [InstructorDashboardController::class, 'index'])->name('dashboard');
+    // More routes will be added later
+});
+
+// Edutech Admin Dashboard (Protected)
+Route::prefix('edutech/admin')->name('edutech.admin.')->middleware('edutech.admin')->group(function () {
+    Route::get('/dashboard', [EdutechAdminController::class, 'index'])->name('dashboard');
+    // More routes will be added later
+});
+
+// ========================================
+// BLOG ADMIN SYSTEM (Existing - Tetap Separate)
+// ========================================
+
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/login', [AdminAuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AdminAuthController::class, 'login'])->name('login.post');

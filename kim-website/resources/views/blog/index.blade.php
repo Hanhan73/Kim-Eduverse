@@ -125,12 +125,13 @@
                     <div class="categories-list">
                         <a href="{{ route('blog.index') }}" class="category-item {{ !request('category') ? 'active' : '' }}">
                             <span>Semua</span>
-                            <span class="category-count">{{ $articles->total() }}</span>
+                            <span class="category-count">{{ $totalArticles }}</span>
                         </a>
                         @foreach($categories as $cat)
                         <a href="{{ route('blog.index', ['category' => $cat]) }}" 
-                           class="category-item {{ request('category') == $cat ? 'active' : '' }}">
+                        class="category-item {{ request('category') == $cat ? 'active' : '' }}">
                             <span>{{ $cat }}</span>
+                            <span class="category-count">{{ $categoryCounts[$cat] ?? 0 }}</span>
                         </a>
                         @endforeach
                     </div>
