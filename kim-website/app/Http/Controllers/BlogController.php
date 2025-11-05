@@ -2,47 +2,64 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Article;
 use Illuminate\Http\Request;
 
 class BlogController extends Controller
 {
-    public function index()
+    // Public blog index
+    public function index(Request $request)
     {
-        // Dummy data untuk demo
-        $articles = [
-            [
-                'slug' => 'transformasi-digital-umkm',
-                'title' => 'Transformasi Digital untuk UMKM',
-                'excerpt' => 'Bagaimana UMKM dapat memanfaatkan teknologi digital untuk meningkatkan bisnis',
-                'image' => 'https://via.placeholder.com/800x400',
-                'date' => '2024-01-15',
-                'category' => 'Digital'
-            ],
-            [
-                'slug' => 'tips-manajemen-efektif',
-                'title' => 'Tips Manajemen Bisnis yang Efektif',
-                'excerpt' => 'Strategi manajemen untuk meningkatkan produktivitas tim',
-                'image' => 'https://via.placeholder.com/800x400',
-                'date' => '2024-01-10',
-                'category' => 'Manajemen'
-            ]
-        ];
+        $query = Article::published()->latest();
 
-        return view('blog.index', compact('articles'));
+        // Filter by category
+        if ($request->has('category') && $request->category != '') {
+            $query->where('category', $request->category);
+        }
+
+        // Search
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('excerpt', 'like', "%{$search}%")
+                  ->orWhere('content', 'like', "%{$search}%");
+            });
+        }
+
+        $articles = $query->paginate(9);
+        
+        $categories = Article::published()
+            ->select('category')
+            ->distinct()
+            ->pluck('category');
+
+        $popularArticles = Article::published()
+            ->orderBy('views', 'desc')
+            ->take(5)
+            ->get();
+
+        return view('blog.index', compact('articles', 'categories', 'popularArticles'));
     }
 
+    // Show single article
     public function show($slug)
     {
-        // Dummy single article
-        $article = [
-            'slug' => $slug,
-            'title' => 'Judul Artikel',
-            'content' => 'Konten artikel lengkap...',
-            'image' => 'https://via.placeholder.com/1200x600',
-            'date' => '2024-01-15',
-            'category' => 'Digital'
-        ];
+        $article = Article::where('slug', $slug)
+            ->published()
+            ->firstOrFail();
 
-        return view('blog.show', compact('article'));
+        // Increment views
+        $article->incrementViews();
+
+        // Related articles (same category)
+        $relatedArticles = Article::where('category', $article->category)
+            ->where('id', '!=', $article->id)
+            ->published()
+            ->latest()
+            ->take(3)
+            ->get();
+
+        return view('blog.show', compact('article', 'relatedArticles'));
     }
 }

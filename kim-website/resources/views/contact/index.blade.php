@@ -296,7 +296,7 @@
 
             <div class="faq-item">
                 <button class="faq-question">
-                    <span>Apakah PT KIM melayani klien di luar Yogyakarta?</span>
+                    <span>Apakah PT KIM melayani klien di luar Bandung?</span>
                     <i class="fas fa-chevron-down"></i>
                 </button>
                 <div class="faq-answer">
