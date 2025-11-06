@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Certificate extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'user_id',
         'course_id',
@@ -18,6 +21,7 @@ class Certificate extends Model
         'issued_at' => 'datetime',
     ];
 
+    // Relationships
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -28,20 +32,13 @@ class Certificate extends Model
         return $this->belongsTo(Course::class);
     }
 
-    public function getFileUrlAttribute()
+    // Generate certificate number
+    public static function generateCertificateNumber()
     {
-        return asset($this->file_path);
-    }
-
-    // Auto-generate certificate number
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::creating(function ($certificate) {
-            if (empty($certificate->certificate_number)) {
-                $certificate->certificate_number = 'CERT-' . strtoupper(uniqid());
-            }
-        });
+        $prefix = 'CERT';
+        $year = date('Y');
+        $random = strtoupper(substr(md5(uniqid(rand(), true)), 0, 8));
+        
+        return $prefix . '-' . $year . '-' . $random;
     }
 }

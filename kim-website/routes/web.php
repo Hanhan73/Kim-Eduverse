@@ -57,12 +57,22 @@ use App\Http\Controllers\Edutech\LandingController as EdutechLandingController;
 use App\Http\Controllers\Edutech\Student\DashboardController as StudentDashboardController;
 use App\Http\Controllers\Edutech\Instructor\DashboardController as InstructorDashboardController;
 use App\Http\Controllers\Edutech\Admin\DashboardController as EdutechAdminController;
+use App\Http\Controllers\Edutech\Student\MyCourseController as StudentMyCourseController;
+use App\Http\Controllers\Edutech\Student\CertificateController as StudentCertificateController;
 
 // Edutech Landing (Public)
 Route::prefix('edutech')->name('edutech.')->group(function () {
     Route::get('/', [EdutechLandingController::class, 'index'])->name('landing');
     Route::get('/courses', [EdutechLandingController::class, 'courses'])->name('courses.index');
     Route::get('/courses/{slug}', [EdutechLandingController::class, 'courseDetail'])->name('courses.detail');
+
+        // Learning (Protected - must be enrolled)
+    Route::get('/course/{slug}/learn', [EdutechCourseController::class, 'learn'])->name('course.learn');
+    
+    // Enrollment (Protected - must be logged in)
+    Route::post('/course/{id}/enroll', [EdutechCourseController::class, 'enroll'])
+        ->middleware('edutech.auth')
+        ->name('course.enroll');
 });
 
 // Edutech Auth (Public - no middleware)
@@ -100,9 +110,13 @@ Route::prefix('edutech/instructor')->name('edutech.instructor.')->middleware('ed
 // Student Routes  
 Route::prefix('edutech/student')->name('edutech.student.')->middleware('edutech.student')->group(function () {
     Route::get('/dashboard', [StudentDashboardController::class, 'index'])->name('dashboard');
-    Route::get('/my-courses', [StudentDashboardController::class, 'myCourses'])->name('my-courses');
-    Route::post('/course/{course}/enroll', [StudentDashboardController::class, 'enrollCourse'])->name('enroll');
-    Route::get('/certificates', [StudentDashboardController::class, 'certificates'])->name('certificates');
+    
+    // My Courses
+    Route::get('/my-courses', [StudentMyCourseController::class, 'index'])->name('my-courses');
+    
+    // Certificates
+    Route::get('/certificates', [StudentCertificateController::class, 'index'])->name('certificates');
+    Route::get('/certificate/{id}/download', [StudentCertificateController::class, 'download'])->name('certificate.download');
 });
 
 // ========================================

@@ -127,7 +127,7 @@ class LandingController extends Controller
         // Check if user already enrolled
         $isEnrolled = false;
         if (session()->has('edutech_user_id')) {
-            $isEnrolled = Enrollment::where('user_id', session('edutech_user_id'))
+            $isEnrolled = Enrollment::where('student_id', session('edutech_user_id'))
                 ->where('course_id', $course->id)
                 ->exists();
         }

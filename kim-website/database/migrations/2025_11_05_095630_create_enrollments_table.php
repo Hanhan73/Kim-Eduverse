@@ -10,17 +10,16 @@ return new class extends Migration
     {
         Schema::create('enrollments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('student_id')->constrained('users')->onDelete('cascade'); // ← GANTI dari user_id
             $table->foreignId('course_id')->constrained()->onDelete('cascade');
-            $table->enum('status', ['pending', 'active', 'completed', 'expired'])->default('pending');
-            $table->decimal('paid_amount', 10, 2)->default(0);
+            $table->enum('status', ['active', 'completed', 'cancelled'])->default('active');
             $table->integer('progress_percentage')->default(0);
-            $table->timestamp('enrolled_at')->nullable();
+            $table->timestamp('enrolled_at')->useCurrent();
             $table->timestamp('completed_at')->nullable();
+            $table->timestamp('certificate_issued_at')->nullable();
+            $table->enum('payment_status', ['pending', 'paid', 'failed'])->default('pending');
+            $table->decimal('payment_amount', 10, 2)->default(0);
             $table->timestamps();
-            
-            // Unique: satu user hanya bisa enroll 1x per course
-            $table->unique(['user_id', 'course_id']);
         });
     }
 

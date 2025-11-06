@@ -5,6 +5,8 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\User;
 use App\Models\Course;
+use App\Models\Enrollment;  // ← TAMBAHKAN INI
+use App\Models\Certificate; // ← DAN INI
 use Illuminate\Support\Facades\Hash;
 
 class EdutechSeeder extends Seeder
@@ -382,5 +384,46 @@ class EdutechSeeder extends Seeder
         echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
         echo "✨ Total: 16 courses created!\n";
         echo "💰 Including 2 FREE courses\n";
+
+
+        // ========================================
+// 3. CREATE ENROLLMENTS (Sample)
+// ========================================
+
+$students = User::where('role', 'student')->get();
+$courses = Course::where('is_published', true)->get();
+
+// Enroll beberapa student ke courses
+foreach ($students->take(5) as $index => $student) {
+    // Setiap student enroll ke 2-3 courses
+    $enrolledCourses = $courses->random(rand(2, 3));
+    
+    foreach ($enrolledCourses as $course) {
+        $enrollment = Enrollment::create([
+            'student_id' => $student->id,
+            'course_id' => $course->id,
+            'status' => rand(0, 1) ? 'active' : 'completed',
+            'progress_percentage' => rand(30, 100),
+            'enrolled_at' => now()->subDays(rand(1, 30)),
+            'completed_at' => rand(0, 1) ? now()->subDays(rand(1, 10)) : null,
+            'payment_status' => 'paid',
+            'payment_amount' => $course->price,
+        ]); 
+
+        // Issue certificate for completed courses
+        if ($enrollment->status === 'completed') {
+            $enrollment->update([
+                'progress_percentage' => 100,
+            ]);
+            
+            $enrollment->issueCertificate();
+        }
     }
+}
+
+echo "✅ Created enrollments and certificates!\n";
+    }
+
+
+    
 }

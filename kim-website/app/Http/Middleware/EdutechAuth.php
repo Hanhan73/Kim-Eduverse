@@ -4,13 +4,11 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 class EdutechAuth
 {
-    public function handle(Request $request, Closure $next): Response
+    public function handle(Request $request, Closure $next)
     {
-        // Check if edutech user is logged in
         if (!session()->has('edutech_user_id')) {
             return redirect()
                 ->route('edutech.login')

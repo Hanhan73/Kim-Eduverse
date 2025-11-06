@@ -258,21 +258,7 @@
                             @endforeach
                         </div>
 
-                        @if($course->quizzes->count() > 0)
-                        <div class="quizzes-section">
-                            <h3>Quiz & Evaluasi</h3>
-                            @foreach($course->quizzes as $quiz)
-                            <div class="quiz-item">
-                                <i class="fas fa-clipboard-check"></i>
-                                <div class="quiz-info">
-                                    <h4>{{ $quiz->title }}</h4>
-                                    <p>{{ $quiz->questions->count() }} soal • {{ $quiz->duration_minutes }} menit •
-                                        Passing score: {{ $quiz->passing_score }}%</p>
-                                </div>
-                            </div>
-                            @endforeach
-                        </div>
-                        @endif
+
                     </div>
 
                     <!-- Instructor Tab -->

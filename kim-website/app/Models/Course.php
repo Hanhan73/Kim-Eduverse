@@ -2,20 +2,22 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 
 class Course extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'instructor_id',
         'title',
         'slug',
         'description',
-        'thumbnail',
         'category',
         'level',
         'price',
+        'thumbnail',
         'duration_hours',
         'max_students',
         'is_published',
@@ -29,64 +31,42 @@ class Course extends Model
         'is_featured' => 'boolean',
     ];
 
-    // Auto-generate slug
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::creating(function ($course) {
-            if (empty($course->slug)) {
-                $course->slug = Str::slug($course->title);
-            }
-        });
-    }
-
     // Relationships
     public function instructor()
     {
         return $this->belongsTo(User::class, 'instructor_id');
     }
 
-    public function materials()
+    public function modules()
     {
-        return $this->hasMany(CourseMaterial::class)->orderBy('order');
+        return $this->hasMany(Module::class)->orderBy('order');
     }
 
     public function enrollments()
     {
-        return $this->hasMany(Enrollment::class);
+        return $this->hasMany(Enrollment::class); // ← Ini otomatis pakai student_id dari table enrollments
     }
 
     public function students()
     {
-        return $this->belongsToMany(User::class, 'enrollments')
-            ->withPivot('status', 'progress_percentage')
+        return $this->belongsToMany(User::class, 'enrollments', 'course_id', 'student_id') // ← Pastikan ini student_id
+            ->withPivot('status', 'progress_percentage', 'enrolled_at', 'completed_at')
             ->withTimestamps();
-    }
-
-    public function quizzes()
-    {
-        return $this->hasMany(Quiz::class);
-    }
-
-    public function preTest()
-    {
-        return $this->hasOne(Quiz::class)->where('type', 'pre_test');
-    }
-
-    public function postTest()
-    {
-        return $this->hasOne(Quiz::class)->where('type', 'post_test');
-    }
-
-    public function liveSessions()
-    {
-        return $this->hasMany(LiveSession::class);
     }
 
     public function certificates()
     {
         return $this->hasMany(Certificate::class);
+    }
+
+    public function materials()
+    {
+        return $this->hasMany(CourseMaterial::class);
+    }
+
+    public function liveSessions()
+    {
+        return $this->hasMany(LiveSession::class);
     }
 
     // Scopes
@@ -106,14 +86,10 @@ class Course extends Model
         return 'Rp ' . number_format($this->price, 0, ',', '.');
     }
 
-    public function getStudentCountAttribute()
+    public function isEnrolledBy($studentId)
     {
-        return $this->enrollments()->where('status', 'active')->count();
-    }
-
-    public function isFull()
-    {
-        if (!$this->max_students) return false;
-        return $this->student_count >= $this->max_students;
+        return $this->enrollments()
+            ->where('student_id', $studentId) // ← Pastikan ini student_id
+            ->exists();
     }
 }
