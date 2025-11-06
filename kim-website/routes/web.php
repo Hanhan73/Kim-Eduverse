@@ -61,7 +61,7 @@ use App\Http\Controllers\Edutech\Admin\DashboardController as EdutechAdminContro
 // Edutech Landing (Public)
 Route::prefix('edutech')->name('edutech.')->group(function () {
     Route::get('/', [EdutechLandingController::class, 'index'])->name('landing');
-    Route::get('/courses', [EdutechLandingController::class, 'courses'])->name('courses');
+    Route::get('/courses', [EdutechLandingController::class, 'courses'])->name('courses.index');
     Route::get('/courses/{slug}', [EdutechLandingController::class, 'courseDetail'])->name('course.detail');
 });
 
@@ -74,22 +74,35 @@ Route::prefix('edutech')->name('edutech.')->group(function () {
     Route::post('/logout', [EdutechAuthController::class, 'logout'])->name('logout');
 });
 
-// Edutech Student Dashboard (Protected)
-Route::prefix('edutech/student')->name('edutech.student.')->middleware('edutech.student')->group(function () {
-    Route::get('/dashboard', [StudentDashboardController::class, 'index'])->name('dashboard');
-    // More routes will be added later
-});
-
-// Edutech Instructor Dashboard (Protected)
-Route::prefix('edutech/instructor')->name('edutech.instructor.')->middleware('edutech.instructor')->group(function () {
-    Route::get('/dashboard', [InstructorDashboardController::class, 'index'])->name('dashboard');
-    // More routes will be added later
-});
-
-// Edutech Admin Dashboard (Protected)
+// Admin Routes
 Route::prefix('edutech/admin')->name('edutech.admin.')->middleware('edutech.admin')->group(function () {
     Route::get('/dashboard', [EdutechAdminController::class, 'index'])->name('dashboard');
-    // More routes will be added later
+    Route::get('/courses', [EdutechAdminController::class, 'courses'])->name('courses');
+    Route::get('/courses/create', [EdutechAdminController::class, 'createCourse'])->name('courses.create');
+    Route::post('/courses', [EdutechAdminController::class, 'storeCourse'])->name('courses.store');
+    Route::get('/instructors', [EdutechAdminController::class, 'instructors'])->name('instructors');
+    Route::post('/instructors', [EdutechAdminController::class, 'storeInstructor'])->name('instructors.store');
+    Route::get('/students', [EdutechAdminController::class, 'students'])->name('students');
+    Route::get('/enrollments', [EdutechAdminController::class, 'enrollments'])->name('enrollments');
+    Route::post('/enrollments/{id}/approve', [EdutechAdminController::class, 'approveEnrollment'])->name('enrollments.approve');
+});
+
+// Instructor Routes
+Route::prefix('edutech/instructor')->name('edutech.instructor.')->middleware('edutech.instructor')->group(function () {
+    Route::get('/dashboard', [InstructorDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/courses', [InstructorDashboardController::class, 'myCourses'])->name('courses');
+    Route::get('/courses/create', [InstructorDashboardController::class, 'createCourse'])->name('courses.create');
+    Route::post('/courses', [InstructorDashboardController::class, 'storeCourse'])->name('courses.store');
+    Route::post('/courses/{id}/publish', [InstructorDashboardController::class, 'publishCourse'])->name('courses.publish');
+    Route::get('/students', [InstructorDashboardController::class, 'myStudents'])->name('students');
+});
+
+// Student Routes  
+Route::prefix('edutech/student')->name('edutech.student.')->middleware('edutech.student')->group(function () {
+    Route::get('/dashboard', [StudentDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/my-courses', [StudentDashboardController::class, 'myCourses'])->name('my-courses');
+    Route::post('/course/{course}/enroll', [StudentDashboardController::class, 'enrollCourse'])->name('enroll');
+    Route::get('/certificates', [StudentDashboardController::class, 'certificates'])->name('certificates');
 });
 
 // ========================================
@@ -117,3 +130,6 @@ Route::prefix('admin')->name('admin.')->middleware('admin.auth')->group(function
     Route::delete('/articles/{article}', [AdminArticleController::class, 'destroy'])->name('articles.destroy');
     Route::post('/articles/{article}/toggle-publish', [AdminArticleController::class, 'togglePublish'])->name('articles.toggle-publish');
 });
+
+
+

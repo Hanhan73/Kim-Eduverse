@@ -1,131 +1,115 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Edutech;
 
+use App\Http\Controllers\Controller;
 use App\Models\Course;
 use App\Models\User;
+use App\Models\Enrollment;
 use Illuminate\Http\Request;
 
 class LandingController extends Controller
 {
-    /**
-     * Landing page platform edutech
-     */
-    public function landing()
+    // Landing page utama edutech
+    public function index()
     {
-        $featuredCourses = Course::published()
-            ->featured()
+        $featuredCourses = Course::where('is_published', true)
+            ->where('is_featured', true)
             ->with('instructor')
             ->withCount('enrollments')
             ->latest()
-            ->take(3)
+            ->take(6)
             ->get();
 
         $stats = [
-            'students' => User::where('role', 'student')->count(),
-            'courses' => Course::published()->count(),
-            'instructors' => User::where('role', 'instructor')->count(),
-            'certificates' => \App\Models\Certificate::count(),
+            'total_courses' => Course::where('is_published', true)->count(),
+            'total_students' => User::where('role', 'student')->count(),
+            'total_instructors' => User::where('role', 'instructor')->where('is_active', true)->count(),
         ];
 
-        $categories = Course::published()
-            ->select('category')
-            ->distinct()
-            ->pluck('category');
-
-        return view('edutech.landing', compact('featuredCourses', 'stats', 'categories'));
+        return view('edutech.landing.index', compact('featuredCourses', 'stats'));
     }
 
-    /**
-     * About page
-     */
-    public function about()
+    // Halaman daftar courses dengan filter
+    public function courses(Request $request)
     {
-        $instructors = User::where('role', 'instructor')
-            ->where('is_active', true)
-            ->withCount('coursesAsInstructor')
-            ->take(8)
+        $query = Course::where('is_published', true)->with('instructor');
+
+        // Filter by category
+        if ($request->has('category') && $request->category != 'all') {
+            $query->where('category', $request->category);
+        }
+
+        // Filter by level
+        if ($request->has('level') && $request->level != 'all') {
+            $query->where('level', $request->level);
+        }
+
+        // Search
+        if ($request->has('search') && !empty($request->search)) {
+            $query->where(function($q) use ($request) {
+                $q->where('title', 'like', '%' . $request->search . '%')
+                  ->orWhere('description', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        // Sort
+        $sort = $request->get('sort', 'latest');
+        switch ($sort) {
+            case 'popular':
+                $query->withCount('enrollments')->orderBy('enrollments_count', 'desc');
+                break;
+            case 'price_low':
+                $query->orderBy('price', 'asc');
+                break;
+            case 'price_high':
+                $query->orderBy('price', 'desc');
+                break;
+            default:
+                $query->latest();
+        }
+
+        $courses = $query->paginate(12);
+        $categories = $this->getCategories();
+
+        return view('edutech.landing.courses', compact('courses', 'categories'));
+    }
+
+    // Detail course
+    public function courseDetail($slug)
+    {
+        $course = Course::where('slug', $slug)
+            ->where('is_published', true)
+            ->with(['instructor', 'materials', 'liveSessions'])
+            ->firstOrFail();
+
+        // Check if user already enrolled
+        $isEnrolled = false;
+        if (session()->has('edutech_user_id')) {
+            $isEnrolled = Enrollment::where('user_id', session('edutech_user_id'))
+                ->where('course_id', $course->id)
+                ->exists();
+        }
+
+        // Related courses
+        $relatedCourses = Course::where('is_published', true)
+            ->where('category', $course->category)
+            ->where('id', '!=', $course->id)
+            ->take(3)
             ->get();
 
-        return view('edutech.about', compact('instructors'));
+        return view('edutech.landing.course-detail', compact('course', 'isEnrolled', 'relatedCourses'));
     }
 
-    /**
-     * FAQ page
-     */
-    public function faq()
+    // Helper: Get categories
+    private function getCategories()
     {
-        $faqs = [
-            [
-                'category' => 'Umum',
-                'items' => [
-                    [
-                        'question' => 'Apa itu KIM Edutech?',
-                        'answer' => 'KIM Edutech adalah platform Learning Management System (LMS) yang menyediakan kursus online berkualitas untuk pengembangan skill profesional. Anda dapat belajar kapan saja, di mana saja dengan materi yang terstruktur.'
-                    ],
-                    [
-                        'question' => 'Bagaimana cara mendaftar?',
-                        'answer' => 'Klik tombol "Daftar Gratis" di halaman utama, isi form registrasi dengan email aktif Anda, verifikasi email, dan akun Anda siap digunakan.'
-                    ],
-                    [
-                        'question' => 'Apakah gratis?',
-                        'answer' => 'Pendaftaran akun gratis. Namun untuk mengakses kursus tertentu, Anda perlu melakukan pembayaran sesuai harga kursus yang dipilih.'
-                    ],
-                ]
-            ],
-            [
-                'category' => 'Kursus',
-                'items' => [
-                    [
-                        'question' => 'Berapa lama akses kursus?',
-                        'answer' => 'Setelah membeli kursus, Anda mendapatkan akses selamanya (lifetime access) untuk semua materi kursus tersebut.'
-                    ],
-                    [
-                        'question' => 'Apakah ada sertifikat?',
-                        'answer' => 'Ya! Setelah menyelesaikan semua materi dan lulus post-test dengan nilai minimal yang ditentukan, Anda akan mendapatkan sertifikat digital yang dapat didownload.'
-                    ],
-                    [
-                        'question' => 'Bagaimana sistem penilaian?',
-                        'answer' => 'Setiap kursus memiliki pre-test dan post-test. Anda harus menyelesaikan semua materi dan lulus post-test dengan nilai minimal untuk mendapatkan sertifikat.'
-                    ],
-                ]
-            ],
-            [
-                'category' => 'Pembayaran',
-                'items' => [
-                    [
-                        'question' => 'Metode pembayaran apa yang tersedia?',
-                        'answer' => 'Kami menerima berbagai metode pembayaran: Transfer Bank (BCA, Mandiri, BNI, BRI), E-Wallet (GoPay, OVO, Dana), dan Virtual Account.'
-                    ],
-                    [
-                        'question' => 'Apakah ada refund?',
-                        'answer' => 'Refund dapat dilakukan dalam 7 hari setelah pembelian jika belum mengakses lebih dari 20% materi kursus. Hubungi customer support untuk proses refund.'
-                    ],
-                    [
-                        'question' => 'Apakah bisa cicilan?',
-                        'answer' => 'Saat ini belum tersedia sistem cicilan. Namun kami sering memberikan diskon dan promo khusus untuk berbagai kursus.'
-                    ],
-                ]
-            ],
-            [
-                'category' => 'Teknis',
-                'items' => [
-                    [
-                        'question' => 'Perangkat apa yang didukung?',
-                        'answer' => 'Platform kami dapat diakses melalui desktop, laptop, tablet, dan smartphone. Kami merekomendasikan menggunakan browser Chrome, Firefox, atau Safari versi terbaru.'
-                    ],
-                    [
-                        'question' => 'Apakah materi bisa didownload?',
-                        'answer' => 'Materi PDF dapat didownload. Namun video hanya bisa ditonton secara streaming untuk melindungi hak cipta konten.'
-                    ],
-                    [
-                        'question' => 'Bagaimana jika lupa password?',
-                        'answer' => 'Klik "Lupa Password" di halaman login, masukkan email terdaftar, dan kami akan mengirimkan link reset password ke email Anda.'
-                    ],
-                ]
-            ],
+        return [
+            'Education' => ['CBTS', 'Teknik Alba', 'Media Pembelajaran', 'AI untuk Pendidikan'],
+            'Language' => ['Bahasa Inggris', 'Bahasa Arab'],
+            'Teknologi Informasi' => ['Office Computer', 'Coding'],
+            'Desain' => ['Desain Interior', 'DKV'],
+            'Manajemen dan Teknik Industri' => ['ISO 9001:2015', '7 Tools', 'New 7 Tools', 'Quality Management']
         ];
-
-        return view('edutech.faq', compact('faqs'));
     }
 }

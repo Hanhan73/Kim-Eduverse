@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Http\Controllers\Edutech\Admin;
+namespace App\Http\Controllers\Edutech;
 
 use App\Http\Controllers\Controller;
 use App\Models\Course;
 use App\Models\User;
 use App\Models\Enrollment;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 
-class DashboardController extends Controller
+class AdminController extends Controller
 {
     public function index()
     {
+        // Statistics
         $stats = [
             'total_courses' => Course::count(),
             'published_courses' => Course::where('is_published', true)->count(),
@@ -22,15 +22,31 @@ class DashboardController extends Controller
             'pending_enrollments' => Enrollment::where('status', 'pending')->count(),
         ];
 
-        $recentCourses = Course::with('instructor')->latest()->take(5)->get();
-        $recentEnrollments = Enrollment::with(['user', 'course'])->latest()->take(10)->get();
+        // Recent courses
+        $recentCourses = Course::with('instructor')
+            ->latest()
+            ->take(5)
+            ->get();
+
+        // Recent enrollments
+        $recentEnrollments = Enrollment::with(['user', 'course'])
+            ->latest()
+            ->take(10)
+            ->get();
+
+        // Top instructors
         $topInstructors = User::where('role', 'instructor')
             ->withCount('coursesAsInstructor')
             ->orderBy('courses_as_instructor_count', 'desc')
             ->take(5)
             ->get();
 
-        return view('edutech.admin.dashboard', compact('stats', 'recentCourses', 'recentEnrollments', 'topInstructors'));
+        return view('edutech.admin.dashboard', compact(
+            'stats',
+            'recentCourses',
+            'recentEnrollments',
+            'topInstructors'
+        ));
     }
 
     // === COURSES MANAGEMENT ===
@@ -46,8 +62,12 @@ class DashboardController extends Controller
 
     public function createCourse()
     {
-        $instructors = User::where('role', 'instructor')->where('is_active', true)->get();
+        $instructors = User::where('role', 'instructor')
+            ->where('is_active', true)
+            ->get();
+
         $categories = $this->getCategories();
+
         return view('edutech.admin.courses.create', compact('instructors', 'categories'));
     }
 
@@ -77,6 +97,57 @@ class DashboardController extends Controller
             ->with('success', 'Course berhasil dibuat!');
     }
 
+    public function editCourse($id)
+    {
+        $course = Course::findOrFail($id);
+        $instructors = User::where('role', 'instructor')
+            ->where('is_active', true)
+            ->get();
+        $categories = $this->getCategories();
+
+        return view('edutech.admin.courses.edit', compact('course', 'instructors', 'categories'));
+    }
+
+    public function updateCourse(Request $request, $id)
+    {
+        $course = Course::findOrFail($id);
+
+        $validated = $request->validate([
+            'instructor_id' => 'required|exists:users,id',
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'category' => 'required|string',
+            'level' => 'required|in:beginner,intermediate,advanced',
+            'price' => 'required|numeric|min:0',
+            'duration_hours' => 'required|integer|min:1',
+            'max_students' => 'nullable|integer|min:1',
+            'passing_score' => 'required|integer|min:0|max:100',
+            'thumbnail' => 'nullable|image|mimes:jpeg,jpg,png|max:2048',
+            'is_published' => 'boolean',
+            'is_featured' => 'boolean',
+        ]);
+
+        if ($request->hasFile('thumbnail')) {
+            $validated['thumbnail'] = $request->file('thumbnail')->store('courses/thumbnails', 'public');
+        }
+
+        $course->update($validated);
+
+        return redirect()
+            ->route('edutech.admin.courses')
+            ->with('success', 'Course berhasil diupdate!');
+    }
+
+    public function deleteCourse($id)
+    {
+        $course = Course::findOrFail($id);
+        $course->delete();
+
+        return redirect()
+            ->route('edutech.admin.courses')
+            ->with('success', 'Course berhasil dihapus!');
+    }
+
     // === INSTRUCTORS MANAGEMENT ===
     public function instructors()
     {
@@ -86,6 +157,11 @@ class DashboardController extends Controller
             ->paginate(15);
 
         return view('edutech.admin.instructors.index', compact('instructors'));
+    }
+
+    public function createInstructor()
+    {
+        return view('edutech.admin.instructors.create');
     }
 
     public function storeInstructor(Request $request)
@@ -98,7 +174,7 @@ class DashboardController extends Controller
             'bio' => 'nullable|string',
         ]);
 
-        $validated['password'] = Hash::make($validated['password']);
+        $validated['password'] = bcrypt($validated['password']);
         $validated['role'] = 'instructor';
         $validated['is_active'] = true;
 
@@ -141,14 +217,34 @@ class DashboardController extends Controller
         return back()->with('success', 'Enrollment berhasil disetujui!');
     }
 
+    // Helper: Get categories
     private function getCategories()
     {
         return [
-            'Education' => ['CBTS', 'Teknik Alba', 'Media Pembelajaran', 'AI untuk Pendidikan'],
-            'Language' => ['Bahasa Inggris', 'Bahasa Arab'],
-            'Teknologi Informasi' => ['Office Computer', 'Coding'],
-            'Desain' => ['Desain Interior', 'DKV'],
-            'Manajemen dan Teknik Industri' => ['ISO 9001:2015', '7 Tools', 'New 7 Tools', 'Quality Management']
+            'Education' => [
+                'CBTS',
+                'Teknik Alba',
+                'Media Pembelajaran',
+                'AI untuk Pendidikan'
+            ],
+            'Language' => [
+                'Bahasa Inggris',
+                'Bahasa Arab'
+            ],
+            'Teknologi Informasi' => [
+                'Office Computer',
+                'Coding'
+            ],
+            'Desain' => [
+                'Desain Interior',
+                'DKV'
+            ],
+            'Manajemen dan Teknik Industri' => [
+                'ISO 9001:2015',
+                '7 Tools',
+                'New 7 Tools',
+                'Quality Management'
+            ]
         ];
     }
 }
