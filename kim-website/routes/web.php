@@ -24,9 +24,8 @@ Route::prefix('produk')->group(function () {
     
     // KIM Developer
     Route::get('/developer', [DeveloperController::class, 'index'])->name('developer.index');
-    Route::get('/developer/{category}', [DeveloperController::class, 'show'])->name('developer.show');   
-     
-    // KIM Edutech
+    
+    // KIM Edutech - OVERVIEW PAGE (Marketing/Info)
     Route::get('/edutech', [EdutechController::class, 'index'])->name('edutech.index');
 });
 
