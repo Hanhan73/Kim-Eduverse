@@ -21,10 +21,10 @@ Route::prefix('produk')->group(function () {
     Route::get('/consultant', [ConsultantController::class, 'index'])->name('consultant.index');
     Route::get('/consultant/{category}', [ConsultantController::class, 'show'])->name('consultant.show');
     Route::post('/consultant/inquiry', [ConsultantController::class, 'submitInquiry'])->name('consultant.inquiry');
-    
+
     // KIM Developer
     Route::get('/developer', [DeveloperController::class, 'index'])->name('developer.index');
-    
+
     // KIM Edutech - OVERVIEW PAGE (Marketing/Info)
     Route::get('/edutech', [EdutechController::class, 'index'])->name('edutech.index');
 });
@@ -62,7 +62,7 @@ use App\Http\Controllers\Edutech\Admin\DashboardController as EdutechAdminContro
 Route::prefix('edutech')->name('edutech.')->group(function () {
     Route::get('/', [EdutechLandingController::class, 'index'])->name('landing');
     Route::get('/courses', [EdutechLandingController::class, 'courses'])->name('courses.index');
-    Route::get('/courses/{slug}', [EdutechLandingController::class, 'courseDetail'])->name('course.detail');
+    Route::get('/courses/{slug}', [EdutechLandingController::class, 'courseDetail'])->name('courses.detail');
 });
 
 // Edutech Auth (Public - no middleware)
@@ -113,7 +113,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/login', [AdminAuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AdminAuthController::class, 'login'])->name('login.post');
     Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout');
-    
+
     // Register (optional - only accessible when logged in)
     Route::get('/register', [AdminAuthController::class, 'showRegister'])->name('register');
     Route::post('/register', [AdminAuthController::class, 'register'])->name('register.post');
@@ -130,6 +130,3 @@ Route::prefix('admin')->name('admin.')->middleware('admin.auth')->group(function
     Route::delete('/articles/{article}', [AdminArticleController::class, 'destroy'])->name('articles.destroy');
     Route::post('/articles/{article}/toggle-publish', [AdminArticleController::class, 'togglePublish'])->name('articles.toggle-publish');
 });
-
-
-

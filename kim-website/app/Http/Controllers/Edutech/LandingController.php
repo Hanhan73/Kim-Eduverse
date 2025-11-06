@@ -45,11 +45,29 @@ class LandingController extends Controller
             $query->where('level', $request->level);
         }
 
+        // Filter by price
+        if ($request->has('price') && $request->price != 'all') {
+            switch ($request->price) {
+                case 'free':
+                    $query->where('price', 0);
+                    break;
+                case 'under_500k':
+                    $query->where('price', '>', 0)->where('price', '<', 500000);
+                    break;
+                case 'under_1m':
+                    $query->where('price', '>', 0)->where('price', '<', 1000000);
+                    break;
+                case 'above_1m':
+                    $query->where('price', '>=', 1000000);
+                    break;
+            }
+        }
+
         // Search
         if ($request->has('search') && !empty($request->search)) {
-            $query->where(function($q) use ($request) {
+            $query->where(function ($q) use ($request) {
                 $q->where('title', 'like', '%' . $request->search . '%')
-                  ->orWhere('description', 'like', '%' . $request->search . '%');
+                    ->orWhere('description', 'like', '%' . $request->search . '%');
             });
         }
 
@@ -70,9 +88,32 @@ class LandingController extends Controller
         }
 
         $courses = $query->paginate(12);
-        $categories = $this->getCategories();
 
-        return view('edutech.landing.courses', compact('courses', 'categories'));
+        // Kategori utama (bukan sub-kategori)
+        $categories = [
+            'Education',
+            'Language',
+            'Teknologi Informasi',
+            'Desain',
+            'Manajemen dan Teknik Industri'
+        ];
+
+        return view('edutech.courses.index', compact('courses', 'categories'));
+    }
+
+    // Helper method baru
+    private function getAllCategoriesFlat()
+    {
+        $categoriesNested = $this->getCategories();
+
+        $flat = [];
+        foreach ($categoriesNested as $parent => $children) {
+            foreach ($children as $child) {
+                $flat[] = $child;
+            }
+        }
+
+        return $flat;
     }
 
     // Detail course
@@ -98,7 +139,7 @@ class LandingController extends Controller
             ->take(3)
             ->get();
 
-        return view('edutech.landing.course-detail', compact('course', 'isEnrolled', 'relatedCourses'));
+        return view('edutech.courses.show', compact('course', 'isEnrolled', 'relatedCourses'));
     }
 
     // Helper: Get categories
