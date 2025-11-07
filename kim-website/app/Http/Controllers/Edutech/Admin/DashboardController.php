@@ -16,7 +16,7 @@ class DashboardController extends Controller
             'total_users' => User::count(),
             'total_courses' => Course::count(),
             'total_enrollments' => Enrollment::count(),
-            'total_revenue' => Enrollment::sum('paid_amount'),
+            'total_revenue' => Enrollment::sum('payment_amount'),
         ];
 
         $roleStats = [

@@ -523,7 +523,7 @@
                         </div>
                         <p class="progress-text">Progress: {{ $enrollment->progress_percentage }}%</p>
                         
-                        <a href="{{ route('edutech.courses.detail', $enrollment->course->slug) }}" class="btn-continue">
+                        <a href="{{ route('edutech.courses.learn', $enrollment->course->slug) }}" class="btn-continue">
                             Continue Learning
                         </a>
                     </div>

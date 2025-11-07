@@ -296,7 +296,7 @@
                         {{ $course->is_published ? 'Unpublish' : 'Publish' }}
                     </button>
                 </form>
-                <a href="{{ route('edutech.instructor.courses.index') }}" class="btn btn-secondary">
+                <a href="{{ route('edutech.instructor.courses') }}" class="btn btn-secondary">
                     <i class="fas fa-arrow-left"></i> Kembali
                 </a>
             </div>

@@ -110,21 +110,26 @@ Route::prefix('edutech/student')->name('edutech.student.')->middleware('edutech.
 // INSTRUCTOR DASHBOARD ROUTES
 // ========================================
 Route::prefix('edutech/instructor')->name('edutech.instructor.')->middleware('edutech.instructor')->group(function () {
+    
+    // Dashboard
     Route::get('/dashboard', [InstructorDashboardController::class, 'index'])->name('dashboard');
-    Route::get('/courses', [InstructorDashboardController::class, 'myCourses'])->name('courses');
-    Route::get('/courses/create', [InstructorDashboardController::class, 'createCourse'])->name('courses.create');
-    Route::post('/courses', [InstructorDashboardController::class, 'storeCourse'])->name('courses.store');
-    Route::post('/courses/{id}/publish', [InstructorDashboardController::class, 'publishCourse'])->name('courses.publish');
-    Route::get('/students', [InstructorDashboardController::class, 'myStudents'])->name('students');
-
-     // Course CRUD
-    Route::get('/courses', [CourseManagementController::class, 'index'])->name('courses.index');
+    
+    // My Courses - List View
+    Route::get('/courses', [CourseManagementController::class, 'index'])->name('courses');
+    
+    // Create Course
     Route::get('/courses/create', [CourseManagementController::class, 'create'])->name('courses.create');
     Route::post('/courses', [CourseManagementController::class, 'store'])->name('courses.store');
+    
+    // Edit Course
     Route::get('/courses/{id}/edit', [CourseManagementController::class, 'edit'])->name('courses.edit');
     Route::put('/courses/{id}', [CourseManagementController::class, 'update'])->name('courses.update');
-    Route::post('/courses/{id}/publish', [CourseManagementController::class, 'togglePublish'])->name('courses.publish');
+    
+    // Delete Course
     Route::delete('/courses/{id}', [CourseManagementController::class, 'destroy'])->name('courses.destroy');
+    
+    // Toggle Publish Course
+    Route::post('/courses/{id}/publish', [CourseManagementController::class, 'togglePublish'])->name('courses.publish');
     
     // Module Management
     Route::post('/courses/{course}/modules', [CourseManagementController::class, 'storeModule'])->name('modules.store');
@@ -135,6 +140,9 @@ Route::prefix('edutech/instructor')->name('edutech.instructor.')->middleware('ed
     Route::post('/courses/{course}/modules/{module}/lessons', [CourseManagementController::class, 'storeLesson'])->name('lessons.store');
     Route::put('/courses/{course}/modules/{module}/lessons/{lesson}', [CourseManagementController::class, 'updateLesson'])->name('lessons.update');
     Route::delete('/courses/{course}/modules/{module}/lessons/{lesson}', [CourseManagementController::class, 'destroyLesson'])->name('lessons.destroy');
+    
+    // My Students - New Route (needs controller)
+    Route::get('/students', [InstructorDashboardController::class, 'students'])->name('students');
 });
 
 // ========================================
