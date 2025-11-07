@@ -56,6 +56,7 @@ use App\Http\Controllers\Edutech\Admin\DashboardController as EdutechAdminContro
 use App\Http\Controllers\Edutech\Student\MyCourseController as StudentMyCourseController;
 use App\Http\Controllers\Edutech\Student\CertificateController as StudentCertificateController;
 use App\Http\Controllers\Edutech\Student\LearningController;
+use App\Http\Controllers\Edutech\Instructor\CourseManagementController;
 
 // ========================================
 // EDUTECH AUTH ROUTES (Public - No Auth Required)
@@ -115,6 +116,25 @@ Route::prefix('edutech/instructor')->name('edutech.instructor.')->middleware('ed
     Route::post('/courses', [InstructorDashboardController::class, 'storeCourse'])->name('courses.store');
     Route::post('/courses/{id}/publish', [InstructorDashboardController::class, 'publishCourse'])->name('courses.publish');
     Route::get('/students', [InstructorDashboardController::class, 'myStudents'])->name('students');
+
+     // Course CRUD
+    Route::get('/courses', [CourseManagementController::class, 'index'])->name('courses.index');
+    Route::get('/courses/create', [CourseManagementController::class, 'create'])->name('courses.create');
+    Route::post('/courses', [CourseManagementController::class, 'store'])->name('courses.store');
+    Route::get('/courses/{id}/edit', [CourseManagementController::class, 'edit'])->name('courses.edit');
+    Route::put('/courses/{id}', [CourseManagementController::class, 'update'])->name('courses.update');
+    Route::post('/courses/{id}/publish', [CourseManagementController::class, 'togglePublish'])->name('courses.publish');
+    Route::delete('/courses/{id}', [CourseManagementController::class, 'destroy'])->name('courses.destroy');
+    
+    // Module Management
+    Route::post('/courses/{course}/modules', [CourseManagementController::class, 'storeModule'])->name('modules.store');
+    Route::put('/courses/{course}/modules/{module}', [CourseManagementController::class, 'updateModule'])->name('modules.update');
+    Route::delete('/courses/{course}/modules/{module}', [CourseManagementController::class, 'destroyModule'])->name('modules.destroy');
+    
+    // Lesson Management
+    Route::post('/courses/{course}/modules/{module}/lessons', [CourseManagementController::class, 'storeLesson'])->name('lessons.store');
+    Route::put('/courses/{course}/modules/{module}/lessons/{lesson}', [CourseManagementController::class, 'updateLesson'])->name('lessons.update');
+    Route::delete('/courses/{course}/modules/{module}/lessons/{lesson}', [CourseManagementController::class, 'destroyLesson'])->name('lessons.destroy');
 });
 
 // ========================================
