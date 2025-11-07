@@ -397,7 +397,7 @@
             
             <div class="menu-divider"></div>
             
-            <a href="{{ route('edutech.courses') }}" class="menu-item">
+            <a href="{{ route('edutech.courses.index') }}" class="menu-item">
                 <i class="fas fa-globe"></i>
                 Browse Courses
             </a>

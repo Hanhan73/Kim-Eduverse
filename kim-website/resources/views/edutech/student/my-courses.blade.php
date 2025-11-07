@@ -538,7 +538,7 @@
                                 </div>
                             </div>
 
-                            <a href="{{ route('edutech.course.learn', $enrollment->course->slug) }}" class="btn-continue">
+                            <a href="{{ route('edutech.courses.learn', $enrollment->course->slug) }}" class="btn-continue">
                                 <i class="fas fa-play"></i> Continue Learning
                             </a>
                         </div>
@@ -608,7 +608,7 @@
                                 <i class="fas fa-download"></i> Download Certificate
                             </a>
                             @else
-                            <a href="{{ route('edutech.course.learn', $enrollment->course->slug) }}" class="btn-continue btn-completed">
+                            <a href="{{ route('edutech.courses.learn', $enrollment->course->slug) }}" class="btn-continue btn-completed">
                                 <i class="fas fa-eye"></i> Review Course
                             </a>
                             @endif

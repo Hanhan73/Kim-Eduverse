@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class QuizAttempt extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'user_id',
         'quiz_id',
@@ -19,12 +22,12 @@ class QuizAttempt extends Model
 
     protected $casts = [
         'answers' => 'array',
-        'score' => 'decimal:2',
         'is_passed' => 'boolean',
         'started_at' => 'datetime',
         'submitted_at' => 'datetime',
     ];
 
+    // Relationships
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -33,5 +36,25 @@ class QuizAttempt extends Model
     public function quiz()
     {
         return $this->belongsTo(Quiz::class);
+    }
+
+    // Helpers
+    public function getDurationAttribute()
+    {
+        if (!$this->started_at || !$this->submitted_at) {
+            return 0;
+        }
+
+        return $this->started_at->diffInMinutes($this->submitted_at);
+    }
+
+    public function getFormattedScoreAttribute()
+    {
+        return number_format($this->score, 2);
+    }
+
+    public function isPassed()
+    {
+        return $this->score >= $this->quiz->passing_score;
     }
 }

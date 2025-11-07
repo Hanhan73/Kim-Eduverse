@@ -503,7 +503,7 @@
             </a>
             <ul class="nav-links">
                 <li><a href="{{ route('edutech.landing') }}">Beranda</a></li>
-                <li><a href="{{ route('edutech.courses') }}">Courses</a></li>
+                <li><a href="{{ route('edutech.courses.index') }}">Courses</a></li>
                 @if(session()->has('edutech_user_id'))
                     @if(session('edutech_user_role') === 'admin')
                         <li><a href="{{ route('edutech.admin.dashboard') }}">Dashboard</a></li>
@@ -582,14 +582,14 @@
                     </div>
 
                     @if($isEnrolled)
-                        <a href="{{ route('edutech.course.learn', $course->slug) }}" class="btn-enroll btn-continue">
+                        <a href="{{ route('edutech.courses.learn', $course->slug) }}" class="btn-enroll btn-continue">
                             <i class="fas fa-play-circle"></i> Lanjutkan Belajar
                         </a>
                         <p style="text-align: center; margin-top: 15px; color: var(--success); font-weight: 600;">
                             <i class="fas fa-check-circle"></i> Anda sudah terdaftar
                         </p>
                     @else
-                        <form action="{{ route('edutech.course.enroll', $course->id) }}" method="POST">
+                        <form action="{{ route('edutech.courses.enroll', $course->slug) }}" method="POST">
                             @csrf
                             <button type="submit" class="btn-enroll">
                                 <i class="fas fa-shopping-cart"></i> Daftar Sekarang
@@ -735,7 +735,7 @@
                         <h3 class="section-title" style="font-size: 1.3rem;">🔥 Course Terkait</h3>
                         <div class="related-courses">
                             @foreach($relatedCourses as $related)
-                            <a href="{{ route('edutech.course.detail', $related->slug) }}" class="related-card">
+                            <a href="{{ route('edutech.courses.detail', $related->slug) }}" class="related-card">
                                 @if($related->thumbnail)
                                     <img src="{{ asset('storage/' . $related->thumbnail) }}" alt="{{ $related->title }}" class="related-thumbnail">
                                 @else
