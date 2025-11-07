@@ -40,7 +40,13 @@ class CourseController extends Controller
             ->take(3)
             ->get();
 
-        return view('edutech.courses.detail', compact('course', 'isEnrolled', 'enrollment', 'relatedCourses'));
+
+            $isInstructor = false;
+            if (session()->has('edutech_user_id')) {
+                $userId = session('edutech_user_id');
+                $isInstructor = ($course->instructor_id == $userId);
+            }
+        return view('edutech.courses.detail', compact('course', 'isEnrolled', 'enrollment', 'relatedCourses', 'isInstructor'));
     }
 
     /**

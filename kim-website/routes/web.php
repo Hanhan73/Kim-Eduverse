@@ -92,8 +92,8 @@ Route::prefix('edutech')->name('edutech.')->middleware('edutech.auth')->group(fu
     Route::get('/courses/{slug}/learn', [LearningController::class, 'show'])->name('courses.learn');
 
     Route::post('/learning/lesson/{lesson}/complete', [LearningController::class, 'completeLesson'])->name('learning.complete');
-Route::post('/learning/lesson/{lesson}/progress', [LearningController::class, 'updateProgress'])->name('learning.progress');
-Route::get('/learning/lesson/{lesson}/next', [LearningController::class, 'nextLesson'])->name('learning.next');
+    Route::post('/learning/lesson/{lesson}/progress', [LearningController::class, 'updateProgress'])->name('learning.progress');
+    Route::get('/learning/lesson/{lesson}/next', [LearningController::class, 'nextLesson'])->name('learning.next');
 });
 
 // ========================================
@@ -143,6 +143,20 @@ Route::prefix('edutech/instructor')->name('edutech.instructor.')->middleware('ed
     
     // My Students - New Route (needs controller)
     Route::get('/students', [InstructorDashboardController::class, 'students'])->name('students');
+
+    // Quiz Management
+    Route::get('/quiz', [QuizManagementController::class, 'index'])->name('quiz.index');
+    Route::get('/quiz/create', [QuizManagementController::class, 'create'])->name('quiz.create');
+    Route::post('/quiz', [QuizManagementController::class, 'store'])->name('quiz.store');
+    Route::get('/quiz/{id}/edit', [QuizManagementController::class, 'edit'])->name('quiz.edit');
+    Route::put('/quiz/{id}', [QuizManagementController::class, 'update'])->name('quiz.update');
+    Route::delete('/quiz/{id}', [QuizManagementController::class, 'destroy'])->name('quiz.destroy');
+    Route::post('/quiz/{id}/toggle', [QuizManagementController::class, 'toggleActive'])->name('quiz.toggle');
+    
+    // Question Management
+    Route::post('/quiz/{quiz}/questions', [QuizManagementController::class, 'storeQuestion'])->name('quiz.questions.store');
+    Route::put('/quiz/{quiz}/questions/{question}', [QuizManagementController::class, 'updateQuestion'])->name('quiz.questions.update');
+    Route::delete('/quiz/{quiz}/questions/{question}', [QuizManagementController::class, 'destroyQuestion'])->name('quiz.questions.destroy');
 });
 
 // ========================================

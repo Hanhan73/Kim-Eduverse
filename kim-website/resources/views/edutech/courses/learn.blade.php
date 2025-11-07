@@ -563,7 +563,11 @@
             </button>
         </div>
     </div>
-
+    @if(isset($isInstructor) && $isInstructor)
+    <div style="background: linear-gradient(135deg, #ed8936, #dd6b20); padding: 15px 30px; text-align: center; color: white; font-weight: 600;">
+        <i class="fas fa-eye"></i> PREVIEW MODE - You are viewing this course as the instructor
+    </div>
+    @endif
     <!-- Learning Layout -->
     <div class="learning-layout">
         <!-- Video & Content Section -->

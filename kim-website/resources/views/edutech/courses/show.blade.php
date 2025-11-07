@@ -83,11 +83,22 @@
                         </div>
 
                         @auth
-                        @if($isEnrolled)
-                        <a href="{{ route('student.courses.learn', $course->slug) }}" class="btn-enroll-large enrolled">
-                            <i class="fas fa-book-reader"></i>
-                            Lanjutkan Belajar
-                        </a>
+                        @if(isset($isInstructor) && $isInstructor)
+                            <a href="{{ route('edutech.courses.learn', $course->slug) }}" class="btn-enroll">
+                                <i class="fas fa-eye"></i> Preview Course (Instructor Mode)
+                            </a>
+                        @elseif($isEnrolled)
+                            <a href="{{ route('edutech.courses.learn', $course->slug) }}" class="btn-enroll">
+                                <i class="fas fa-play"></i> Continue Learning
+                            </a>
+                        @else
+                            <form action="{{ route('edutech.courses.enroll', $course->slug) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="btn-enroll">
+                                    {{ $course->price > 0 ? 'Enroll - Rp ' . number_format($course->price, 0, ',', '.') : 'Enroll Free' }}
+                                </button>
+                            </form>
+                        @endif
                         @if($enrollment)
                         <div class="progress-info">
                             <div class="progress-bar-wrapper">
@@ -96,15 +107,6 @@
                             </div>
                             <span>Progress: {{ $enrollment->progress_percentage }}%</span>
                         </div>
-                        @endif
-                        @else
-                        <form action="{{ route('edutech.courses.enroll', $course) }}" method="POST">
-                            @csrf
-                            <button type="submit" class="btn-enroll-large">
-                                <i class="fas fa-shopping-cart"></i>
-                                @if($course->price == 0) Daftar Gratis @else Beli Kursus @endif
-                            </button>
-                        </form>
                         @endif
                         @else
                         <a href="{{ route('edutech.login') }}" class="btn-enroll-large">

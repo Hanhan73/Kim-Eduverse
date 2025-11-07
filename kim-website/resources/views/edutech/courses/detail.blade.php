@@ -581,18 +581,19 @@
                         @endif
                     </div>
 
-                    @if($isEnrolled)
-                        <a href="{{ route('edutech.courses.learn', $course->slug) }}" class="btn-enroll btn-continue">
-                            <i class="fas fa-play-circle"></i> Lanjutkan Belajar
+                    @if(isset($isInstructor) && $isInstructor)
+                        <a href="{{ route('edutech.courses.learn', $course->slug) }}" class="btn-enroll">
+                            <i class="fas fa-eye"></i> Preview Course (Instructor Mode)
                         </a>
-                        <p style="text-align: center; margin-top: 15px; color: var(--success); font-weight: 600;">
-                            <i class="fas fa-check-circle"></i> Anda sudah terdaftar
-                        </p>
+                    @elseif($isEnrolled)
+                        <a href="{{ route('edutech.courses.learn', $course->slug) }}" class="btn-enroll">
+                            <i class="fas fa-play"></i> Continue Learning
+                        </a>
                     @else
                         <form action="{{ route('edutech.courses.enroll', $course->slug) }}" method="POST">
                             @csrf
                             <button type="submit" class="btn-enroll">
-                                <i class="fas fa-shopping-cart"></i> Daftar Sekarang
+                                {{ $course->price > 0 ? 'Enroll - Rp ' . number_format($course->price, 0, ',', '.') : 'Enroll Free' }}
                             </button>
                         </form>
                     @endif

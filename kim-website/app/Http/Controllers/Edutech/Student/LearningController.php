@@ -7,12 +7,15 @@ use App\Models\Course;
 use App\Models\Enrollment;
 use App\Models\Lesson;
 use App\Models\LessonCompletion;
+use App\Models\Quiz;
+use App\Models\QuizAttempt;
+use App\Models\LiveSession;
 use Illuminate\Http\Request;
 
 class LearningController extends Controller
 {
     /**
-     * Show learning page
+     * Show learning page with tabs: Lessons, Quizzes, Live Sessions
      */
     public function show($slug, Request $request)
     {
@@ -31,15 +34,36 @@ class LearningController extends Controller
             ->with(['instructor', 'modules.lessons'])
             ->firstOrFail();
 
-        // Check if enrolled
-        $enrollment = Enrollment::where('student_id', $studentId)
-            ->where('course_id', $course->id)
-            ->first();
+        $userId = session('edutech_user_id');
+        $isInstructor = ($course->instructor_id == $userId);
 
-        if (!$enrollment) {
-            return redirect()
-                ->route('edutech.courses.detail', $slug)
-                ->with('error', 'Anda harus mendaftar terlebih dahulu');
+        if (!$isInstructor) {
+            // Regular student - check enrollment & payment
+            $enrollment = Enrollment::where('student_id', $userId)
+                ->where('course_id', $course->id)
+                ->first();
+
+            if (!$enrollment) {
+                return redirect()
+                    ->route('edutech.courses.detail', $slug)
+                    ->with('error', 'Anda harus mendaftar terlebih dahulu');
+            }
+
+            if ($course->price > 0 && $enrollment->payment_status !== 'paid') {
+                return redirect()
+                    ->route('edutech.payment.show', $enrollment->id)
+                    ->with('error', 'Silakan selesaikan pembayaran terlebih dahulu');
+            }
+        }  else {
+            // INSTRUCTOR PREVIEW MODE
+            $enrollment = new \stdClass();
+            $enrollment->id = 0;
+            $enrollment->student_id = $studentId;
+            $enrollment->course_id = $course->id;
+            $enrollment->progress_percentage = 0;
+            $enrollment->status = 'preview';
+            $enrollment->payment_status = 'paid';  // ← FIX!
+            $enrollment->enrolled_at = now();
         }
 
         // Check payment status for paid courses
@@ -49,14 +73,13 @@ class LearningController extends Controller
                 ->with('error', 'Silakan selesaikan pembayaran terlebih dahulu');
         }
 
-        // Get specific lesson or first lesson
+        // Get current lesson
         $currentLesson = null;
-        
         if ($request->has('lesson')) {
             $currentLesson = Lesson::find($request->lesson);
         }
         
-        // If no lesson specified, get first lesson from first module
+        // If no lesson, get first lesson
         if (!$currentLesson && $course->modules->count() > 0) {
             $firstModule = $course->modules->first();
             if ($firstModule && $firstModule->lessons->count() > 0) {
@@ -64,62 +87,81 @@ class LearningController extends Controller
             }
         }
 
-        // Get lesson completion status
+        // Get completed lessons
         $completedLessons = LessonCompletion::where('user_id', $studentId)
-            ->whereIn('lesson_id', $course->modules->pluck('lessons')->flatten()->pluck('id'))
+            ->whereHas('lesson.module', function($query) use ($course) {
+                $query->where('course_id', $course->id);
+            })
             ->where('is_completed', true)
             ->pluck('lesson_id')
             ->toArray();
 
-        return view('edutech.student.learn', compact('course', 'enrollment', 'currentLesson', 'completedLessons'));
+        // Get course quizzes (Pre-test & Post-test)
+        $preTest = Quiz::where('course_id', $course->id)
+            ->where('type', 'pre_test')
+            ->where('is_active', true)
+            ->with('questions')
+            ->first();
+
+        $postTest = Quiz::where('course_id', $course->id)
+            ->where('type', 'post_test')
+            ->where('is_active', true)
+            ->with('questions')
+            ->first();
+
+        // Check if user has attempted tests
+        $preTestAttempt = null;
+        $postTestAttempt = null;
+
+        if ($preTest) {
+            $preTestAttempt = QuizAttempt::where('user_id', $studentId)
+                ->where('quiz_id', $preTest->id)
+                ->orderBy('created_at', 'desc')
+                ->first();
+        }
+
+        if ($postTest) {
+            $postTestAttempt = QuizAttempt::where('user_id', $studentId)
+                ->where('quiz_id', $postTest->id)
+                ->orderBy('created_at', 'desc')
+                ->first();
+        }
+
+        // Get live sessions
+        $liveSessions = LiveSession::where('course_id', $course->id)
+            ->where('scheduled_at', '>=', now())
+            ->orderBy('scheduled_at', 'asc')
+            ->get();
+
+        $pastSessions = LiveSession::where('course_id', $course->id)
+            ->where('scheduled_at', '<', now())
+            ->orderBy('scheduled_at', 'desc')
+            ->take(5)
+            ->get();
+
+        return view('edutech.student.learn', compact(
+            'course',
+            'enrollment',
+            'currentLesson',
+            'completedLessons',
+            'preTest',
+            'postTest',
+            'preTestAttempt',
+            'postTestAttempt',
+            'liveSessions',
+            'pastSessions',
+            'isInstructor'
+        ));
     }
 
     /**
      * Mark lesson as complete
      */
-    public function completeLesson(Request $request, $lessonId)
+    public function completeLesson($lessonId)
     {
         $studentId = session('edutech_user_id');
-        $lesson = Lesson::with('module.course')->findOrFail($lessonId);
 
-        // Check if enrolled
-        $enrollment = Enrollment::where('student_id', $studentId)
-            ->where('course_id', $lesson->module->course_id)
-            ->first();
-
-        if (!$enrollment) {
-            return response()->json(['error' => 'Not enrolled'], 403);
-        }
-
-        // Mark lesson as completed
-        $completion = LessonCompletion::updateOrCreate(
-            [
-                'user_id' => $studentId,
-                'lesson_id' => $lessonId,
-            ],
-            [
-                'is_completed' => true,
-                'completed_at' => now(),
-                'watch_duration' => $request->watch_duration ?? 0,
-            ]
-        );
-
-        // Update enrollment progress
-        $this->updateEnrollmentProgress($enrollment);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Lesson marked as complete',
-            'progress' => $enrollment->fresh()->progress_percentage,
-        ]);
-    }
-
-    /**
-     * Update video progress
-     */
-    public function updateProgress(Request $request, $lessonId)
-    {
-        $studentId = session('edutech_user_id');
+        $lesson = Lesson::findOrFail($lessonId);
 
         LessonCompletion::updateOrCreate(
             [
@@ -127,11 +169,18 @@ class LearningController extends Controller
                 'lesson_id' => $lessonId,
             ],
             [
-                'watch_duration' => $request->watch_duration ?? 0,
+                'is_completed' => true,
+                'completed_at' => now(),
             ]
         );
 
-        return response()->json(['success' => true]);
+        // Update enrollment progress
+        $this->updateEnrollmentProgress($studentId, $lesson->module->course_id);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Lesson marked as complete!',
+        ]);
     }
 
     /**
@@ -139,71 +188,72 @@ class LearningController extends Controller
      */
     public function nextLesson($lessonId)
     {
-        $lesson = Lesson::with('module.lessons')->findOrFail($lessonId);
-        $lessons = $lesson->module->lessons;
+        $lesson = Lesson::findOrFail($lessonId);
+        $module = $lesson->module;
+        $course = $module->course;
 
-        // Find current lesson index
-        $currentIndex = $lessons->search(function ($item) use ($lessonId) {
-            return $item->id == $lessonId;
-        });
+        // Try to get next lesson in same module
+        $nextLesson = Lesson::where('module_id', $module->id)
+            ->where('order', '>', $lesson->order)
+            ->orderBy('order', 'asc')
+            ->first();
 
-        // Get next lesson
-        if ($currentIndex !== false && isset($lessons[$currentIndex + 1])) {
-            $nextLesson = $lessons[$currentIndex + 1];
-            return response()->json([
-                'success' => true,
-                'next_lesson' => [
-                    'id' => $nextLesson->id,
-                    'title' => $nextLesson->title,
-                    'url' => route('edutech.courses.learn', [
-                        'slug' => $lesson->module->course->slug,
-                        'lesson' => $nextLesson->id
-                    ]),
-                ],
+        // If no next lesson in module, try first lesson of next module
+        if (!$nextLesson) {
+            $nextModule = $course->modules()
+                ->where('order', '>', $module->order)
+                ->orderBy('order', 'asc')
+                ->first();
+
+            if ($nextModule) {
+                $nextLesson = $nextModule->lessons()
+                    ->orderBy('order', 'asc')
+                    ->first();
+            }
+        }
+
+        if ($nextLesson) {
+            return redirect()->route('edutech.courses.learn', [
+                'slug' => $course->slug,
+                'lesson' => $nextLesson->id,
             ]);
         }
 
-        // No more lessons in this module
-        return response()->json([
-            'success' => false,
-            'message' => 'Ini lesson terakhir di modul ini',
-        ]);
+        return redirect()->route('edutech.courses.learn', $course->slug)
+            ->with('success', 'Selamat! Anda telah menyelesaikan semua lesson!');
     }
 
     /**
-     * Calculate and update enrollment progress
+     * Update enrollment progress percentage
      */
-    private function updateEnrollmentProgress($enrollment)
+    private function updateEnrollmentProgress($studentId, $courseId)
     {
-        $course = $enrollment->course()->with('modules.lessons')->first();
-        
-        // Count total lessons
-        $totalLessons = 0;
-        foreach ($course->modules as $module) {
-            $totalLessons += $module->lessons->count();
-        }
+        $course = Course::with('modules.lessons')->find($courseId);
+        $totalLessons = $course->modules->sum(function($module) {
+            return $module->lessons->count();
+        });
 
-        if ($totalLessons === 0) {
-            return;
-        }
+        if ($totalLessons == 0) return;
 
-        // Count completed lessons
-        $completedLessons = LessonCompletion::where('user_id', $enrollment->student_id)
-            ->whereIn('lesson_id', $course->modules->pluck('lessons')->flatten()->pluck('id'))
+        $completedLessons = LessonCompletion::where('user_id', $studentId)
+            ->whereHas('lesson.module', function($query) use ($courseId) {
+                $query->where('course_id', $courseId);
+            })
             ->where('is_completed', true)
             ->count();
 
-        // Calculate percentage
-        $percentage = round(($completedLessons / $totalLessons) * 100);
+        $progressPercentage = ($completedLessons / $totalLessons) * 100;
 
-        // Update enrollment
-        $enrollment->update([
-            'progress_percentage' => $percentage,
-        ]);
+        $enrollment = Enrollment::where('student_id', $studentId)
+            ->where('course_id', $courseId)
+            ->first();
 
-        // Auto complete course if 100%
-        if ($percentage >= 100 && $enrollment->status !== 'completed') {
-            $enrollment->markAsCompleted();
+        if ($enrollment) {
+            $enrollment->update([
+                'progress_percentage' => round($progressPercentage, 2),
+                'status' => $progressPercentage >= 100 ? 'completed' : 'active',
+                'completed_at' => $progressPercentage >= 100 ? now() : null,
+            ]);
         }
     }
 }

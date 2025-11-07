@@ -1,10 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Courses - Instructor</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+@extends('layouts.instructor')
+
+@section('title', 'My Courses- PT KIM')
+
     <style>
         * {
             margin: 0;
@@ -290,48 +287,8 @@
             }
         }
     </style>
-</head>
-<body>
-    <!-- Sidebar -->
-    <aside class="sidebar">
-        <div class="sidebar-header">
-            <h2>
-                <i class="fas fa-chalkboard-teacher"></i>
-                Instructor Panel
-            </h2>
-        </div>
 
-        <nav class="sidebar-menu">
-            <a href="{{ route('edutech.instructor.dashboard') }}" class="menu-item">
-                <i class="fas fa-home"></i>
-                Dashboard
-            </a>
-            <a href="{{ route('edutech.instructor.courses') }}" class="menu-item active">
-                <i class="fas fa-book"></i>
-                My Courses
-            </a>
-            <a href="{{ route('edutech.instructor.courses.create') }}" class="menu-item">
-                <i class="fas fa-plus-circle"></i>
-                Create Course
-            </a>
-            <a href="{{ route('edutech.instructor.students') }}" class="menu-item">
-                <i class="fas fa-users"></i>
-                Students
-            </a>
-            
-            <div class="menu-divider"></div>
-            
-            <a href="{{ route('edutech.courses.index') }}" class="menu-item">
-                <i class="fas fa-globe"></i>
-                Browse Courses
-            </a>
-            <a href="{{ route('edutech.landing') }}" class="menu-item">
-                <i class="fas fa-home"></i>
-                Home
-            </a>
-        </nav>
-    </aside>
-
+@section('content')
     <!-- Main Content -->
     <main class="main-content">
         <div class="top-bar">
@@ -401,5 +358,4 @@
         </div>
         @endif
     </main>
-</body>
-</html>
+@endsection

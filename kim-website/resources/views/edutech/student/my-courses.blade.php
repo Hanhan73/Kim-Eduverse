@@ -607,7 +607,8 @@
                             <a href="{{ route('edutech.courses.learn', $enrollment->course->slug) }}" class="btn-continue btn-completed">
                                 <i class="fas fa-eye"></i> Review Course
                             </a>
-                            <a href="{{ route('edutech.student.certificates') }}" class="btn-continue btn-completed">
+
+                            <a href="{{ route('edutech.student.certificates') }}" class="btn-continue btn-completed" style="margin-top: 10px;">
                                 <i class="fas fa-download"></i> Download Certificate
                             </a>
                             @else
