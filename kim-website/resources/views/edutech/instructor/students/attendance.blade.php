@@ -274,7 +274,7 @@
                     </div>
                     <div class="form-group">
                         <label><i class="fas fa-info-circle"></i> Keterangan</label>
-                        <input type="text" class="form-control" placeholder="Contoh: Pertemuan 1" readonly>
+                        <input type="text" class="form-control" placeholder="Contoh: Pertemuan 1" >
                     </div>
                     <div class="form-group">
                         <label><i class="fas fa-users"></i> Total Siswa</label>
@@ -329,7 +329,7 @@
                                     <input type="hidden" name="students[{{ $index }}][student_id]" value="{{ $student->id }}">
                                 </td>
                                 <td>
-                                    <span id="type-display-{{ $index }}">Tatap Muka</span>
+                                    <span id="type-display-{{ $index }}" class="type-display">Tatap Muka</span>
                                 </td>
                                 <td>
                                     <select name="students[{{ $index }}][status]" class="status-select status-present" 
@@ -367,15 +367,29 @@
     </div>
 </div>
 
-@push('scripts')
 <script>
-    // Update type display when type select changes
-    document.getElementById('type-select').addEventListener('change', function() {
-        const typeText = this.options[this.selectedIndex].text;
-        document.querySelectorAll('[id^="type-display-"]').forEach(el => {
-            el.textContent = typeText;
+document.addEventListener('DOMContentLoaded', function() {
+    // Get the type select element
+    const typeSelect = document.getElementById('type-select');
+    
+    if (typeSelect) {
+        // Update all type displays when select changes
+        typeSelect.addEventListener('change', function() {
+            const selectedText = this.options[this.selectedIndex].text;
+            
+            // Update all spans with class 'type-display'
+            const typeDisplays = document.querySelectorAll('.type-display');
+            typeDisplays.forEach(function(display) {
+                display.textContent = selectedText;
+            });
+            
+            console.log('Type changed to:', selectedText);
         });
-    });
+        
+        console.log('✅ Attendance type selector loaded');
+    } else {
+        console.error('❌ Type select not found!');
+    }
+});
 </script>
-@endpush
 @endsection

@@ -283,6 +283,17 @@
                                 <i class="fas fa-clipboard-check"></i>
                                 Presensi
                             </a>
+                            @if(!empty($course->latest_batch_id))
+                                <a href="{{ route('edutech.instructor.students.attendance.report', [$course->id, $course->latest_batch_id]) }}" class="btn-action btn-tertiary">
+                                    <i class="fas fa-chart-bar"></i>
+                                    Laporan
+                                </a>
+                            @else
+                                <button type="button" class="btn-action btn-tertiary" disabled title="Belum ada batch untuk course ini">
+                                    <i class="fas fa-chart-bar"></i>
+                                    Laporan
+                                </button>
+                            @endif
                         </div>
                     </div>
                 </div>

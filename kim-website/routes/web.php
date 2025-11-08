@@ -163,7 +163,7 @@ Route::prefix('edutech/instructor')->name('edutech.instructor.')->middleware('ed
     // Attendance Management
     Route::get('/students/course/{course}/attendance/{batch?}', [StudentManagementController::class, 'attendance'])->name('students.attendance');
     Route::post('/students/course/{course}/attendance/{batch}', [StudentManagementController::class, 'storeAttendance'])->name('students.attendance.store');
-    Route::get('/students/course/{course}/attendance/{batch?}/report', [StudentManagementController::class, 'attendanceReport'])->name('students.attendance.report');
+    Route::get('/students/course/{course}/attendance/{batch}/report', [StudentManagementController::class, 'attendanceReport'])->name('students.attendance.report');
 
     // Batch Management
     Route::get('/courses/{course}/batches', [BatchManagementController::class, 'index'])->name('batches.index');

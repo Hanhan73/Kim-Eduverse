@@ -30,6 +30,14 @@
         align-items: end;
     }
 
+    .form-select {
+        padding: 10px 15px;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        font-size: 0.95rem;
+        width: 100%;
+    }
+
     .btn-assign {
         padding: 12px 24px;
         background: linear-gradient(135deg, #48bb78, #38a169);
@@ -38,11 +46,13 @@
         border-radius: 10px;
         font-weight: 600;
         cursor: pointer;
+        white-space: nowrap;
     }
 
     .btn-assign:disabled {
         background: #cbd5e0;
         cursor: not-allowed;
+        opacity: 0.6;
     }
 
     .student-item {
@@ -52,7 +62,7 @@
         padding: 20px;
         margin-bottom: 15px;
         cursor: pointer;
-        position: relative;
+        transition: all 0.3s;
     }
 
     .student-item.selected {
@@ -61,11 +71,10 @@
     }
 
     .student-checkbox {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        width: 24px;
-        height: 24px;
+        margin-right: 15px;
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
     }
 
     .batch-badge {
@@ -75,7 +84,7 @@
         color: white;
         border-radius: 15px;
         font-size: 0.8rem;
-        margin-top: 10px;
+        margin-top: 8px;
     }
 
     .no-batch-badge {
@@ -93,7 +102,7 @@
                 <h2><i class="fas fa-users-cog"></i> Kelola Siswa</h2>
                 <p style="margin: 0; opacity: 0.9;">{{ $course->title }}</p>
             </div>
-            <a href="{{ route('edutech.instructor.batches.index', $course->id) }}" class="btn btn-light">
+            <a href="{{ route('edutech.instructor.batches.index', $course->id) }}" style="background: rgba(255,255,255,0.2); color: white; padding: 10px 20px; border-radius: 10px; text-decoration: none;">
                 <i class="fas fa-arrow-left"></i> Kembali
             </a>
         </div>
@@ -126,11 +135,11 @@
 
                     <div style="flex: 1;">
                         <label style="display: block; margin-bottom: 5px; font-weight: 600;">Batch Tujuan:</label>
-                        <select name="batch_id" class="form-select" required>
+                        <select name="batch_id" class="form-select" id="batchSelect" required>
                             <option value="">-- Pilih Batch --</option>
                             @foreach($batches as $batch)
                                 <option value="{{ $batch->id }}">
-                                    {{ $batch->batch_name }} ({{ $batch->getAvailableSeats() }} kursi)
+                                    {{ $batch->batch_name }} ({{ $batch->max_students - $batch->enrollments_count }} kursi)
                                 </option>
                             @endforeach
                         </select>
@@ -149,7 +158,7 @@
             <div class="student-item">
                 <input type="checkbox" class="student-checkbox" name="enrollment_ids[]" value="{{ $enrollment->id }}">
                 
-                <div style="padding-right: 40px;">
+                <div style="display: inline-block; width: calc(100% - 40px);">
                     <strong style="font-size: 1.1rem;">{{ $enrollment->student->name }}</strong>
                     <div style="color: #718096;">{{ $enrollment->student->email }}</div>
                     
@@ -158,11 +167,11 @@
                             $currentBatch = \App\Models\CourseBatch::find($enrollment->batch_id);
                         @endphp
                         <span class="batch-badge">
-                            <i class="fas fa-layer-group"></i> {{ $currentBatch->batch_name ?? 'Batch' }}
+                            <i class="fas fa-layer-group"></i> {{ $currentBatch->batch_name ?? 'Unknown' }}
                         </span>
                     @else
                         <span class="batch-badge no-batch-badge">
-                            <i class="fas fa-exclamation-triangle"></i> Belum Ada Batch
+                            <i class="fas fa-exclamation-circle"></i> Belum di-assign
                         </span>
                     @endif
                 </div>
@@ -172,26 +181,51 @@
     </div>
 </div>
 
-@push('scripts')
 <script>
-    document.querySelectorAll('.student-checkbox').forEach(cb => {
+document.addEventListener('DOMContentLoaded', function() {
+    const checkboxes = document.querySelectorAll('.student-checkbox');
+    const assignBtn = document.getElementById('assignBtn');
+    const countSpan = document.getElementById('count');
+    const batchSelect = document.getElementById('batchSelect');
+    
+    function updateButton() {
+        const checked = document.querySelectorAll('.student-checkbox:checked').length;
+        const batchSelected = batchSelect.value !== '';
+        
+        countSpan.textContent = checked;
+        
+        if (checked > 0 && batchSelected) {
+            assignBtn.disabled = false;
+            assignBtn.style.opacity = '1';
+        } else {
+            assignBtn.disabled = true;
+            assignBtn.style.opacity = '0.6';
+        }
+    }
+    
+    checkboxes.forEach(cb => {
         cb.addEventListener('change', function() {
             this.closest('.student-item').classList.toggle('selected', this.checked);
-            const count = document.querySelectorAll('.student-checkbox:checked').length;
-            document.getElementById('count').textContent = count;
-            document.getElementById('assignBtn').disabled = count === 0;
+            updateButton();
         });
     });
-
+    
+    if (batchSelect) {
+        batchSelect.addEventListener('change', updateButton);
+    }
+    
     document.querySelectorAll('.student-item').forEach(item => {
         item.addEventListener('click', function(e) {
-            if (e.target.type !== 'checkbox') {
-                const cb = this.querySelector('.student-checkbox');
+            if (e.target.classList.contains('student-checkbox')) return;
+            const cb = this.querySelector('.student-checkbox');
+            if (cb) {
                 cb.checked = !cb.checked;
                 cb.dispatchEvent(new Event('change'));
             }
         });
     });
+    
+    updateButton();
+});
 </script>
-@endpush
 @endsection

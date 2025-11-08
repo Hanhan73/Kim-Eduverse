@@ -17,23 +17,37 @@ class StudentManagementController extends Controller
     {
         $instructorId = session('edutech_user_id');
         
-        // Get all courses by instructor
+        // Ambil semua course milik instructor
         $courses = Course::where('instructor_id', $instructorId)
             ->withCount('enrollments')
             ->get();
 
-        // Get all unique students from instructor's courses
-        $studentIds = Enrollment::whereIn('course_id', $courses->pluck('id'))
+        // Hitung siswa unik dan statistik
+        $courseIds = $courses->pluck('id')->toArray();
+
+        $studentIds = Enrollment::whereIn('course_id', $courseIds)
             ->pluck('student_id')
             ->unique();
 
         $totalStudents = $studentIds->count();
-        $activeEnrollments = Enrollment::whereIn('course_id', $courses->pluck('id'))
+        $activeEnrollments = Enrollment::whereIn('course_id', $courseIds)
             ->where('status', 'active')
             ->count();
-        $completedEnrollments = Enrollment::whereIn('course_id', $courses->pluck('id'))
+        $completedEnrollments = Enrollment::whereIn('course_id', $courseIds)
             ->where('status', 'completed')
             ->count();
+
+        // Ambil semua batch untuk course-course ini (satu query), urutkan terbaru dulu
+        $batches = CourseBatch::whereIn('course_id', $courseIds)
+            ->orderBy('start_date', 'desc')
+            ->get()
+            ->groupBy('course_id'); // collection keyed by course_id
+
+        // Pasang latest_batch_id (atau null) ke tiap course — aman walau tidak ada batch
+        foreach ($courses as $course) {
+            $batchGroup = $batches->get($course->id); // returns Collection|null
+            $course->latest_batch_id = optional($batchGroup?->first())->id; // null jika tidak ada
+        }
 
         return view('edutech.instructor.students.index', compact(
             'courses',
@@ -42,6 +56,7 @@ class StudentManagementController extends Controller
             'completedEnrollments'
         ));
     }
+
 
     public function courseStudents($courseId)
     {
@@ -188,7 +203,7 @@ class StudentManagementController extends Controller
             ->with('success', 'Presensi berhasil disimpan!');
     }
 
-    public function attendanceReport($courseId, $batchId = null)
+    public function attendanceReport($courseId, $batchId)
     {
         $instructorId = session('edutech_user_id');
         
