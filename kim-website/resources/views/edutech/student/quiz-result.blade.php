@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $course->title }} - Quiz</title>
+    <title>{{ $enrollment->course->title }} - Quiz</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -276,14 +276,269 @@
 
         .nav-question.answered { background: var(--success); color: white; border-color: var(--success); }
         .nav-question.current { background: var(--primary); color: white; border-color: var(--primary); animation: pulse 2s infinite; }
+
+         body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+    }
+
+    .result-container {
+        max-width: 900px;
+        margin: 50px auto;
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    .result-header {
+        padding: 40px;
+        text-align: center;
+        position: relative;
+    }
+
+    .result-header.passed {
+        background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+        color: white;
+    }
+
+    .result-header.failed {
+        background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+        color: white;
+    }
+
+    .result-icon {
+        font-size: 4rem;
+        margin-bottom: 20px;
+    }
+
+    .result-title {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+
+    .result-message {
+        font-size: 1.1rem;
+        opacity: 0.95;
+    }
+
+    .score-display {
+        margin: 30px 0;
+    }
+
+    .score-circle {
+        width: 150px;
+        height: 150px;
+        margin: 0 auto;
+        border-radius: 50%;
+        background: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .score-number {
+        font-size: 3rem;
+        font-weight: 800;
+        color: #333;
+    }
+
+    .score-label {
+        font-size: 0.9rem;
+        margin-top: 15px;
+        opacity: 0.9;
+    }
+
+    .result-body {
+        padding: 40px;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 40px;
+    }
+
+    .stat-card {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 15px;
+        text-align: center;
+        border: 2px solid #e0e0e0;
+    }
+
+    .stat-icon {
+        font-size: 2rem;
+        color: #667eea;
+        margin-bottom: 10px;
+    }
+
+    .stat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 5px;
+    }
+
+    .stat-label {
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+
+    .answers-review {
+        margin-top: 40px;
+    }
+
+    .review-header {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+        color: #2c3e50;
+    }
+
+    .question-review {
+        background: #f8f9fa;
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 20px;
+        border: 2px solid #e0e0e0;
+    }
+
+    .question-review.correct {
+        border-color: #48bb78;
+        background: #f0fff4;
+    }
+
+    .question-review.incorrect {
+        border-color: #f56565;
+        background: #fff5f5;
+    }
+
+    .review-question {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 15px;
+    }
+
+    .review-status {
+        display: inline-block;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-left: 10px;
+    }
+
+    .review-status.correct {
+        background: #48bb78;
+        color: white;
+    }
+
+    .review-status.incorrect {
+        background: #f56565;
+        color: white;
+    }
+
+    .review-answer {
+        margin-top: 10px;
+        padding: 10px 15px;
+        border-radius: 8px;
+        background: white;
+    }
+
+    .answer-label {
+        font-weight: 600;
+        color: #6c757d;
+        margin-bottom: 5px;
+    }
+
+    .answer-text {
+        color: #2c3e50;
+    }
+
+    .correct-answer {
+        margin-top: 10px;
+        padding: 10px 15px;
+        background: #d4edda;
+        border-radius: 8px;
+        color: #155724;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        margin-top: 40px;
+    }
+
+    .btn {
+        padding: 15px 30px;
+        border-radius: 10px;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1rem;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn-secondary {
+        background: #e0e0e0;
+        color: #333;
+    }
+
+    .btn-secondary:hover {
+        background: #d0d0d0;
+    }
+
+    .btn-success {
+        background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+        color: white;
+    }
+
+    .btn-success:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(72, 187, 120, 0.3);
+    }
+
+    .certificate-notice {
+        background: linear-gradient(135deg, #ffd700 0%, #ffb347 100%);
+        color: #333;
+        padding: 20px;
+        border-radius: 15px;
+        text-align: center;
+        margin: 30px 0;
+    }
+
+    .certificate-notice i {
+        font-size: 2rem;
+        margin-bottom: 10px;
+    }
     </style>
 </head>
 <body>
     <div class="learning-layout">
         <div class="top-bar">
             <div class="course-info">
-                <h2>{{ $course->title }}</h2>
-                <p>{{ $course->instructor->name }}</p>
+                <h2>{{ $enrollment->course->title }}</h2>
+                <p>{{ $enrollment->course->instructor->name }}</p>
             </div>
             <div class="top-actions">
                 <div class="progress-info">
@@ -299,119 +554,124 @@
         </div>
 
         <!-- QUIZ SECTION -->
-<div class="result-container">
-    <!-- Result Header -->
-    <div class="result-header {{ $attempt->is_passed ? 'passed' : 'failed' }}">
-        <div class="result-icon">
-            @if($attempt->is_passed)
-                <i class="fas fa-trophy"></i>
-            @else
-                <i class="fas fa-times-circle"></i>
-            @endif
-        </div>
-        
-        <h1 class="result-title">
-            @if($attempt->is_passed)
-                Congratulations! You Passed!
-            @else
-                Keep Trying! You Can Do Better!
-            @endif
-        </h1>
-        
-        <p class="result-message">
-            {{ $quiz->title }}
-        </p>
-
-        <div class="score-display">
-            <div class="score-circle">
-                <div>
-                    <div class="score-number">{{ number_format($attempt->score, 0) }}%</div>
-                </div>
-            </div>
-            <div class="score-label">
+    <div class="result-container">
+        <!-- Result Header -->
+        <div class="result-header {{ $attempt->is_passed ? 'passed' : 'failed' }}">
+            <div class="result-icon">
                 @if($attempt->is_passed)
-                    You scored above the passing score of {{ $quiz->passing_score }}%
+                    <i class="fas fa-trophy"></i>
                 @else
-                    You need {{ $quiz->passing_score }}% to pass
+                    <i class="fas fa-times-circle"></i>
                 @endif
             </div>
-        </div>
-    </div>
+            
+            <h1 class="result-title">
+                @if($attempt->is_passed)
+                    Congratulations! You Passed!
+                @else
+                    Keep Trying! You Can Do Better!
+                @endif
+            </h1>
+            
+            <p class="result-message">
+                {{ $quiz->title }}
+            </p>
 
-    <!-- Result Body -->
-    <div class="result-body">
-        <!-- Statistics -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <i class="fas fa-check-circle stat-icon"></i>
-                <div class="stat-value">
-                    {{ collect($attempt->answers)->where('is_correct', true)->count() }}
+            <div class="score-display">
+                <div class="score-circle">
+                    <div>
+                        <div class="score-number">{{ number_format($attempt->score, 0) }}%</div>
+                    </div>
                 </div>
-                <div class="stat-label">Correct Answers</div>
-            </div>
-
-            <div class="stat-card">
-                <i class="fas fa-times-circle stat-icon" style="color: #f56565;"></i>
-                <div class="stat-value">
-                    {{ collect($attempt->answers)->where('is_correct', false)->count() }}
+                <div class="score-label">
+                    @if($attempt->is_passed)
+                        You scored above the passing score of {{ $quiz->passing_score }}%
+                    @else
+                        You need {{ $quiz->passing_score }}% to pass
+                    @endif
                 </div>
-                <div class="stat-label">Incorrect Answers</div>
-            </div>
-
-            <div class="stat-card">
-                <i class="fas fa-clock stat-icon"></i>
-                <div class="stat-value">
-                    {{ $attempt->duration ?? 0 }} min
-                </div>
-                <div class="stat-label">Time Taken</div>
-            </div>
-
-            <div class="stat-card">
-                <i class="fas fa-redo stat-icon"></i>
-                <div class="stat-value">
-                    {{ $attempt->attempt_number }}/{{ $quiz->max_attempts }}
-                </div>
-                <div class="stat-label">Attempt</div>
             </div>
         </div>
 
-        <!-- Certificate Notice (if passed post-test with 100% progress) -->
-        @if($attempt->is_passed && $quiz->type == 'post_test' && $enrollment->progress_percentage >= 100)
-        <div class="certificate-notice">
-            <i class="fas fa-certificate"></i>
-            <h3>Certificate Earned!</h3>
-            <p>Congratulations! You've completed the course and passed the final test. Your certificate is now available.</p>
-            <a href="{{ route('edutech.student.courses') }}" class="btn btn-success" style="margin-top: 15px;">
-                <i class="fas fa-download"></i> View Certificate
-            </a>
-        </div>
-        @endif
+        <!-- Result Body -->
+        <div class="result-body">
+            <!-- Statistics -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <i class="fas fa-check-circle stat-icon"></i>
+                    <div class="stat-value">
+                        {{ collect($attempt->answers)->where('is_correct', true)->count() }}
+                    </div>
+                    <div class="stat-label">Correct Answers</div>
+                </div>
 
-        <!-- Answers Review -->
+                <div class="stat-card">
+                    <i class="fas fa-times-circle stat-icon" style="color: #f56565;"></i>
+                    <div class="stat-value">
+                        {{ collect($attempt->answers)->where('is_correct', false)->count() }}
+                    </div>
+                    <div class="stat-label">Incorrect Answers</div>
+                </div>
+
+                <div class="stat-card">
+                    <i class="fas fa-clock stat-icon"></i>
+                    <div class="stat-value">
+                        {{ $attempt->duration ?? 0 }} min
+                    </div>
+                    <div class="stat-label">Time Taken</div>
+                </div>
+
+                <div class="stat-card">
+                    <i class="fas fa-redo stat-icon"></i>
+                    <div class="stat-value">
+                        {{ $attempt->attempt_number }}/{{ $quiz->max_attempts }}
+                    </div>
+                    <div class="stat-label">Attempt</div>
+                </div>
+            </div>
+
+            <!-- Certificate Notice (if passed post-test with 100% progress) -->
+            @if($attempt->is_passed && $quiz->type == 'post_test' && $enrollment->progress_percentage >= 100)
+            <div class="certificate-notice">
+                <i class="fas fa-certificate"></i>
+                <h3>Certificate Earned!</h3>
+                <p>Congratulations! You've completed the course and passed the final test. Your certificate is now available.</p>
+                <a href="{{ route('edutech.student.courses') }}" class="btn btn-success" style="margin-top: 15px;">
+                    <i class="fas fa-download"></i> View Certificate
+                </a>
+            </div>
+            @endif
+
+<!-- Answers Review -->
         <div class="answers-review">
             <h2 class="review-header">Review Your Answers</h2>
             
-            @foreach($quiz->questions as $index => $question)
-                @php
-                    $userAnswer = $attempt->answers[$question->id] ?? null;
-                    $isCorrect = $userAnswer && isset($userAnswer['is_correct']) && $userAnswer['is_correct'];
-                @endphp
-                
+                @foreach($quiz->questions as $index => $question)
+                    @php
+                        $userAnswerData = null;
+                        
+                        if (is_array($attempt->answers) && isset($attempt->answers[$question->id])) {
+                            $userAnswerData = $attempt->answers[$question->id];
+                        }
+                        
+                        $isCorrect = $userAnswerData && isset($userAnswerData['is_correct']) ? $userAnswerData['is_correct'] : false;
+                        $userAnswer = $userAnswerData['answer'] ?? 'No answer';
+                        $pointsEarned = $userAnswerData['points_earned'] ?? 0;
+                    @endphp
+                                
                 <div class="question-review {{ $isCorrect ? 'correct' : 'incorrect' }}">
                     <div class="review-question">
                         Question {{ $index + 1 }}: {{ $question->question }}
                         <span class="review-status {{ $isCorrect ? 'correct' : 'incorrect' }}">
                             {{ $isCorrect ? 'Correct' : 'Incorrect' }}
-                            ({{ $userAnswer['points_earned'] ?? 0 }}/{{ $question->points }} points)
+                            ({{ $pointsEarned }}/{{ $question->points }} points)
                         </span>
                     </div>
                     
-                    @if($userAnswer)
                     <div class="review-answer">
                         <div class="answer-label">Your Answer:</div>
-                        <div class="answer-text">{{ $userAnswer['answer'] ?? 'No answer' }}</div>
+                        <div class="answer-text">{{ $userAnswer }}</div>
                     </div>
-                    @endif
                     
                     @if(!$isCorrect && $question->type != 'essay')
                     <div class="correct-answer">
@@ -427,27 +687,25 @@
                 </div>
             @endforeach
         </div>
-
-        <!-- Action Buttons -->
-        <div class="action-buttons">
-            <a href="{{ route('edutech.student.learn', $enrollment->id) }}" class="btn btn-secondary">
-                <i class="fas fa-arrow-left"></i> Back to Course
-            </a>
-            
-            @if(!$attempt->is_passed && $quiz->canUserAttempt(session('edutech_user_id')))
-            <a href="{{ route('edutech.student.quiz.start', $quiz->id) }}" class="btn btn-primary">
-                <i class="fas fa-redo"></i> Try Again
-            </a>
-            @endif
-            
-            <a href="{{ route('edutech.student.dashboard') }}" class="btn btn-primary">
-                <i class="fas fa-home"></i> Go to Dashboard
-            </a>
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                 <a href="{{ route('edutech.courses.learn', $enrollment->course->slug) }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Back to Course
+                </a>
+                
+                @if(!$attempt->is_passed && $quiz->canUserAttempt(session('edutech_user_id')))
+                <a href="{{ route('edutech.student.quiz.start', $quiz->id) }}" class="btn btn-primary">
+                    <i class="fas fa-redo"></i> Try Again
+                </a>
+                @endif
+                
+                <a href="{{ route('edutech.student.dashboard') }}" class="btn btn-primary">
+                    <i class="fas fa-home"></i> Go to Dashboard
+                </a>
+            </div>
         </div>
     </div>
 </div>
-    </div>
-    </div>
 
 
 <script>

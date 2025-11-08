@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $course->title }} - Quiz</title>
+    <title>{{ $enrollment->course->title }} - Quiz</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -195,12 +195,33 @@
             margin-bottom: 12px;
             cursor: pointer;
             transition: all 0.3s ease;
-            position: relative;
+            position: relative;  /* Ditambahkan */
+            pointer-events: all;
         }
+
 
         .answer-option:hover { border-color: var(--primary); background: #f0f4ff; }
 
-        .answer-option input[type="radio"] { position: absolute; opacity: 0; }
+        .answer-option input[type="radio"] { 
+            position: absolute; 
+            opacity: 0; 
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+            left: 0;
+            top: 0;
+            z-index: 1;
+        }
+
+        .option-label {
+            position: relative;
+            z-index: 0;
+            display: block;
+            width: 100%;
+            padding: 10px 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
 
         .answer-option input[type="radio"]:checked + .option-label {
             background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
@@ -276,14 +297,15 @@
 
         .nav-question.answered { background: var(--success); color: white; border-color: var(--success); }
         .nav-question.current { background: var(--primary); color: white; border-color: var(--primary); animation: pulse 2s infinite; }
+
     </style>
 </head>
 <body>
     <div class="learning-layout">
         <div class="top-bar">
             <div class="course-info">
-                <h2>{{ $course->title }}</h2>
-                <p>{{ $course->instructor->name }}</p>
+                <h2>{{ $enrollment->course->title }}</h2>
+                <p>{{ $enrollment->course->instructor->name }}</p>
             </div>
             <div class="top-actions">
                 <div class="progress-info">
@@ -292,7 +314,7 @@
                         <div class="progress-fill-top" style="width: {{ $enrollment->progress_percentage }}%"></div>
                     </div>
                 </div>
-                <a href="{{ route('edutech.student.dashboard') }}" class="btn-back">
+                <a href="{{ route('edutech.courses.learn', $enrollment->course->slug) }}" class="btn-back">
                     <i class="fas fa-arrow-left"></i> Back to Course
                 </a>
             </div>
@@ -341,10 +363,10 @@
 
                                 <div class="answer-options">
                                     @if($question->type == 'multiple_choice')
-                                        @foreach($question->options as $option)
-                                            <label class="answer-option">
-                                                <input type="radio" name="answers[{{ $question->id }}]" value="{{ $option }}" onchange="markAnswered({{ $question->id }})">
-                                                <span class="option-label">{{ $option }}</span>
+                                        @foreach($question->options as $index => $option)
+                                            <label class="answer-option" style="cursor: pointer;">
+                                                <input type="radio" name="answers[{{ $question->id }}]" value="{{ $option }}" onchange="markAnswered({{ $question->id }})" style="cursor: pointer;">
+                                                <span class="option-label" style="cursor: pointer;">{{ $option }}</span>
                                             </label>
                                         @endforeach
                                     @elseif($question->type == 'true_false')

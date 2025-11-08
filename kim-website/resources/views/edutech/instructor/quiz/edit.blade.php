@@ -268,31 +268,23 @@
                 </div>
 
                 <!-- Multiple Choice Options -->
-                <div id="mcOptions" class="option-group">
-                    <label>Options</label>
-                    <div id="optionsList">
-                        <div class="option-input">
-                            <input type="radio" name="correct_answer" value="Option 1" required>
-                            <input type="text" name="options[]" class="form-control" placeholder="Option 1" required>
-                        </div>
-                        <div class="option-input">
-                            <input type="radio" name="correct_answer" value="Option 2">
-                            <input type="text" name="options[]" class="form-control" placeholder="Option 2" required>
-                        </div>
-                        <div class="option-input">
-                            <input type="radio" name="correct_answer" value="Option 3">
-                            <input type="text" name="options[]" class="form-control" placeholder="Option 3">
-                        </div>
-                        <div class="option-input">
-                            <input type="radio" name="correct_answer" value="Option 4">
-                            <input type="text" name="options[]" class="form-control" placeholder="Option 4">
-                        </div>
+                <div id="mcOptions">
+                    <div class="option-input">
+                        <input type="radio" name="correct_answer" value="" required>
+                        <input type="text" name="options[]" class="form-control" placeholder="Option 1" required oninput="updateRadioValue(this)">
+                        <button type="button" class="btn btn-danger btn-sm btn-remove-option" onclick="removeOption(this)">✖</button>
                     </div>
-                    <button type="button" class="btn-add-option" onclick="addOption()">
-                        <i class="fas fa-plus"></i> Add Option
-                    </button>
+                    <div class="option-input">
+                        <input type="radio" name="correct_answer" value="">
+                        <input type="text" name="options[]" class="form-control" placeholder="Option 2" required oninput="updateRadioValue(this)">
+                        <button type="button" class="btn btn-danger btn-sm btn-remove-option" onclick="removeOption(this)">✖</button>
+                    </div>
+                    
+                    <div class="mt-3">
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="addOption()">➕ Add Option</button>
+                    </div>
                 </div>
-
+                    
                 <!-- True/False Options -->
                 <div id="tfOptions" class="form-group" style="display: none;">
                     <label>Correct Answer</label>
@@ -325,6 +317,8 @@
     </div>
 
     <script>
+
+
         function openModal() {
             document.getElementById('questionModal').classList.add('active');
             toggleQuestionFields();
@@ -334,43 +328,59 @@
             document.getElementById('questionModal').classList.remove('active');
         }
 
-        function toggleQuestionFields() {
-            const type = document.getElementById('questionType').value;
-            const mcOptions = document.getElementById('mcOptions');
-            const tfOptions = document.getElementById('tfOptions');
-            const essayNote = document.getElementById('essayNote');
-            
-            mcOptions.style.display = type === 'multiple_choice' ? 'block' : 'none';
-            tfOptions.style.display = type === 'true_false' ? 'block' : 'none';
-            essayNote.style.display = type === 'essay' ? 'block' : 'none';
-
-            // Update name attributes
-            if (type === 'true_false') {
-                document.querySelector('[name="correct_answer_tf"]').setAttribute('name', 'correct_answer');
-            } else if (type === 'essay') {
-                // Add hidden field for essay
-                if (!document.querySelector('[name="correct_answer"][type="hidden"]')) {
-                    const hidden = document.createElement('input');
-                    hidden.type = 'hidden';
-                    hidden.name = 'correct_answer';
-                    hidden.value = 'N/A';
-                    document.querySelector('form').appendChild(hidden);
-                }
-            }
+        function updateRadioValue(input) {
+            const radio = input.parentElement.querySelector('input[type="radio"]');
+            radio.value = input.value;
         }
 
-        let optionCount = 4;
-        function addOption() {
-            optionCount++;
-            const optionsList = document.getElementById('optionsList');
-            const newOption = document.createElement('div');
-            newOption.className = 'option-input';
-            newOption.innerHTML = `
-                <input type="radio" name="correct_answer" value="Option ${optionCount}">
-                <input type="text" name="options[]" class="form-control" placeholder="Option ${optionCount}">
-            `;
-            optionsList.appendChild(newOption);
+        function toggleQuestionFields(prefix = '') {
+        const type = document.getElementById(`${prefix}questionType`)?.value;
+        const mcOptions = document.getElementById(`${prefix}mcOptions`);
+        const tfOptions = document.getElementById(`${prefix}tfOptions`);
+        const essayNote = document.getElementById(`${prefix}essayNote`);
+
+        if (!mcOptions || !tfOptions || !essayNote) return;
+
+        // --- tampilkan sesuai tipe
+        mcOptions.style.display = type === 'multiple_choice' ? 'block' : 'none';
+        tfOptions.style.display = type === 'true_false' ? 'block' : 'none';
+        essayNote.style.display = type === 'essay' ? 'block' : 'none';
+
+        // --- nonaktifkan required input sesuai kondisi
+        mcOptions.querySelectorAll('input, textarea, select').forEach(el => {
+            el.required = (type === 'multiple_choice');
+        });
+
+        tfOptions.querySelectorAll('input, textarea, select').forEach(el => {
+            el.required = (type === 'true_false');
+        });
+
+        // --- handle name attribute untuk true/false dan essay
+        const tfSelect = tfOptions.querySelector('[name="correct_answer_tf"]');
+        if (type === 'true_false' && tfSelect) {
+            tfSelect.setAttribute('name', 'correct_answer');
+        } else if (tfSelect) {
+            tfSelect.setAttribute('name', 'correct_answer_tf');
         }
+
+        if (type === 'essay') {
+            // hapus hidden lama kalau ada
+            const oldHidden = document.querySelector('[name="correct_answer"][type="hidden"]');
+            if (oldHidden) oldHidden.remove();
+
+            // tambahkan hidden answer
+            const hidden = document.createElement('input');
+            hidden.type = 'hidden';
+            hidden.name = 'correct_answer';
+            hidden.value = 'N/A';
+            document.querySelector('form').appendChild(hidden);
+        } else {
+            // hapus hidden kalau bukan essay
+            const hidden = document.querySelector('[name="correct_answer"][type="hidden"]');
+            if (hidden) hidden.remove();
+        }
+    }
+        
 
         function editQuestion(id) {
             alert('Edit functionality - Would open edit modal with question data');
@@ -381,6 +391,53 @@
             if (event.target === modal) {
                 closeModal();
             }
+        }
+
+    </script>
+
+    <script>
+        
+            let optionCount = 2; // Karena awalnya udah ada 2
+
+        function updateRadioValue(input) {
+            const radio = input.parentElement.querySelector('input[type="radio"]');
+            radio.value = input.value;
+            if (!input.value.trim()) radio.checked = false;
+        }
+
+        function addOption() {
+            optionCount++;
+            const mcOptions = document.getElementById('mcOptions');
+            const newOption = document.createElement('div');
+            newOption.className = 'option-input';
+            newOption.innerHTML = `
+                <input type="radio" name="correct_answer" value="">
+                <input type="text" name="options[]" class="form-control" placeholder="Option ${optionCount}" oninput="updateRadioValue(this)">
+                <button type="button" class="btn btn-danger btn-sm btn-remove-option" onclick="removeOption(this)">✖</button>
+            `;
+            mcOptions.appendChild(newOption);
+        }
+
+        function removeOption(button) {
+            const mcOptions = document.getElementById('mcOptions');
+            const optionDiv = button.parentElement;
+
+            // Minimal 2 opsi agar valid
+            if (mcOptions.children.length <= 2) {
+                alert("A question must have at least 2 options!");
+                return;
+            }
+
+            mcOptions.removeChild(optionDiv);
+            updateOptionPlaceholders();
+        }
+
+        function updateOptionPlaceholders() {
+            const optionInputs = document.querySelectorAll('#mcOptions .option-input');
+            optionInputs.forEach((opt, i) => {
+                const textInput = opt.querySelector('input[type="text"]');
+                textInput.placeholder = `Option ${i + 1}`;
+            });
         }
     </script>
 </body>

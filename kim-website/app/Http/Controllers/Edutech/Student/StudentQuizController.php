@@ -15,16 +15,18 @@ class StudentQuizController extends Controller
     /**
      * Start a quiz attempt
      */
-    public function start($quizId)
+    public function start($quiz) // ✅ UBAH dari $quizId ke $quiz (sesuai route binding)
     {
         $studentId = session('edutech_user_id');
         
-        // Get quiz with course
+        // ✅ UBAH query karena $quiz sudah berupa ID dari route parameter
+        // Jika route binding otomatis, Laravel akan inject model Quiz
+        // Jika tidak, kita perlu findOrFail manual
         $quiz = Quiz::with(['course', 'questions' => function($query) {
             $query->orderBy('order');
         }])
         ->where('is_active', true)
-        ->findOrFail($quizId);
+        ->findOrFail($quiz); // ✅ $quiz di sini adalah ID dari route
 
         // Check if student is enrolled in the course
         $enrollment = Enrollment::where('student_id', $studentId)
@@ -49,6 +51,7 @@ class StudentQuizController extends Controller
                 ->back()
                 ->with('error', 'You have reached the maximum attempts for this quiz.');
         }
+        
         // Create new attempt
         $attempt = QuizAttempt::create([
             'user_id' => $studentId,
@@ -57,8 +60,11 @@ class StudentQuizController extends Controller
             'started_at' => Carbon::now(),
             'score' => 0,
             'is_passed' => false,
+            'answers' => json_encode([]),
         ]);
-        dd($quiz, $attempt,$enrollment);
+        
+        // ✅ HAPUS dd() - ini yang bikin halaman stuck!
+        // dd($quiz, $attempt, $enrollment);
 
         return view('edutech.student.quiz-take', compact('quiz', 'attempt', 'enrollment'));
     }
@@ -66,122 +72,123 @@ class StudentQuizController extends Controller
     /**
      * Submit quiz answers
      */
-    public function submit(Request $request, $quizId)
-    {
-        $studentId = session('edutech_user_id');
+public function submit(Request $request, $quiz)
+{
+    $studentId = session('edutech_user_id');
 
-        // Get the active attempt
-        $attempt = QuizAttempt::where('user_id', $studentId)
-            ->where('quiz_id', $quizId)
-            ->whereNull('submitted_at')
-            ->latest()
-            ->firstOrFail();
+    // Get the active attempt
+    $attempt = QuizAttempt::where('user_id', $studentId)
+        ->where('quiz_id', $quiz)
+        ->whereNull('submitted_at')
+        ->latest()
+        ->firstOrFail();
 
-        // Get quiz with questions
-        $quiz = Quiz::with('questions')->findOrFail($quizId);
+    // Get quiz with questions
+    $quiz = Quiz::with('questions')->findOrFail($quiz);
 
-        // Validate answers
-        $request->validate([
-            'answers' => 'required|array',
-            'answers.*' => 'required|string',
-        ]);
+    // Validate answers
+    $request->validate([
+        'answers' => 'required|array',
+    ]);
 
-        // Calculate score
-        $totalPoints = 0;
-        $earnedPoints = 0;
-        $detailedAnswers = [];
+    // Calculate score
+    $totalPoints = 0;
+    $earnedPoints = 0;
+    $detailedAnswers = []; // ✅ Ini akan jadi array, bukan objek
 
-        foreach ($quiz->questions as $question) {
-            $totalPoints += $question->points;
-            $userAnswer = $request->answers[$question->id] ?? null;
+    foreach ($quiz->questions as $question) {
+        $totalPoints += $question->points;
+        $userAnswer = $request->answers[$question->id] ?? null;
+        
+        $isCorrect = false;
+        $pointsEarned = 0;
+        
+        if ($userAnswer) {
+            // ✅ Cek tipe pertanyaan dengan benar
+            if ($question->type === 'multiple_choice' || $question->type === 'true_false') {
+                $isCorrect = trim($userAnswer) === trim($question->correct_answer);
+            } elseif ($question->type === 'essay') {
+                // Essay questions need manual grading
+                $isCorrect = false;
+            }
             
-            $isCorrect = false;
-            if ($userAnswer) {
-                // For essay questions, give full points (instructor will grade later)
-                if ($question->type == 'essay') {
-                    $earnedPoints += $question->points;
-                    $isCorrect = true;
-                } else {
-                    // Check if answer is correct
-                    if (strtolower(trim($userAnswer)) == strtolower(trim($question->correct_answer))) {
-                        $earnedPoints += $question->points;
-                        $isCorrect = true;
-                    }
-                }
-            }
-
-            $detailedAnswers[$question->id] = [
-                'answer' => $userAnswer,
-                'is_correct' => $isCorrect,
-                'points_earned' => $isCorrect ? $question->points : 0,
-            ];
-        }
-
-        // Calculate percentage score
-        $score = $totalPoints > 0 ? ($earnedPoints / $totalPoints) * 100 : 0;
-        $isPassed = $score >= $quiz->passing_score;
-
-        // Update attempt
-        $attempt->update([
-            'answers' => $detailedAnswers,
-            'score' => $score,
-            'is_passed' => $isPassed,
-            'submitted_at' => Carbon::now(),
-        ]);
-
-        // Update enrollment if post-test is passed
-        if ($quiz->type == 'post_test' && $isPassed) {
-            $enrollment = Enrollment::where('student_id', $studentId)
-                ->where('course_id', $quiz->course_id)
-                ->first();
-
-            if ($enrollment && $enrollment->progress_percentage >= 100) {
-                $enrollment->update([
-                    'status' => 'completed',
-                    'completed_at' => Carbon::now(),
-                    'certificate_issued_at' => Carbon::now(),
-                ]);
+            if ($isCorrect) {
+                $pointsEarned = $question->points;
+                $earnedPoints += $question->points;
             }
         }
-
-        return redirect()
-            ->route('edutech.student.quiz.result', ['quiz' => $quiz->id, 'attempt' => $attempt->id])
-            ->with('success', 'Quiz submitted successfully!');
+        
+        // ✅ PENTING: Gunakan question->id sebagai KEY
+        $detailedAnswers[$question->id] = [
+            'question_id' => $question->id,
+            'answer' => $userAnswer ?? 'No answer',
+            'is_correct' => $isCorrect,
+            'points_earned' => $pointsEarned,
+        ];
     }
+
+    // Calculate percentage
+    $score = $totalPoints > 0 ? ($earnedPoints / $totalPoints) * 100 : 0;
+    $isPassed = $score >= $quiz->passing_score;
+
+    // Calculate duration
+    $duration = Carbon::now()->diffInMinutes($attempt->started_at);
+
+    // Update attempt
+    $attempt->update([
+        'submitted_at' => Carbon::now(),
+        'score' => $score,
+        'is_passed' => $isPassed,
+        'answers' => $detailedAnswers, // ✅ Laravel akan auto-convert ke JSON
+        'duration' => $duration,
+    ]);
+
+    // Redirect to result page
+    return redirect()
+        ->route('edutech.student.quiz.result', ['quiz' => $quiz->id, 'attempt' => $attempt->id])
+        ->with('success', 'Quiz submitted successfully!');
+}
 
     /**
      * Show quiz result
      */
-    public function result($quizId, $attemptId)
+    public function result($quiz, $attempt) // ✅ UBAH parameter
     {
         $studentId = session('edutech_user_id');
-
+        
+        // ✅ Fetch models
+        $quiz = Quiz::with(['course', 'questions'])->findOrFail($quiz);
         $attempt = QuizAttempt::where('user_id', $studentId)
-            ->where('quiz_id', $quizId)
-            ->where('id', $attemptId)
+            ->where('id', $attempt)
+            ->where('quiz_id', $quiz->id)
             ->firstOrFail();
-
-        $quiz = Quiz::with('questions')->findOrFail($quizId);
 
         $enrollment = Enrollment::where('student_id', $studentId)
             ->where('course_id', $quiz->course_id)
-            ->first();
+            ->where('status', 'active')
+            ->firstOrFail();
 
+    // dd([
+    //     'attempt_answers' => $attempt->answers,
+    //     'is_array' => is_array($attempt->answers),
+    //     'first_question_id' => $quiz->questions->first()->id ?? null,
+    //     'answer_for_first' => $attempt->answers[$quiz->questions->first()->id] ?? 'not found'
+    // ]);
         return view('edutech.student.quiz-result', compact('quiz', 'attempt', 'enrollment'));
     }
 
     /**
-     * View all quiz attempts history
+     * Show quiz history for student
      */
     public function history()
     {
         $studentId = session('edutech_user_id');
-
+        
         $attempts = QuizAttempt::with(['quiz.course'])
             ->where('user_id', $studentId)
             ->whereNotNull('submitted_at')
-            ->latest('submitted_at')
-            ->paginate(20);
+            ->orderBy('submitted_at', 'desc')
+            ->paginate(10);
 
         return view('edutech.student.quiz-history', compact('attempts'));
     }

@@ -185,7 +185,7 @@ class QuizManagementController extends Controller
             'question' => 'required|string',
             'type' => 'required|in:multiple_choice,true_false,essay',
             'options' => 'required_if:type,multiple_choice|array|min:2',
-            'correct_answer' => 'required|string',
+            'correct_answer' => 'required_if:question_type,multiple_choice|required_if:question_type,true_false|nullable',
             'points' => 'required|integer|min:1',
         ]);
 
@@ -225,7 +225,7 @@ class QuizManagementController extends Controller
             'question' => 'required|string',
             'type' => 'required|in:multiple_choice,true_false,essay',
             'options' => 'required_if:type,multiple_choice|array|min:2',
-            'correct_answer' => 'required|string',
+            'correct_answer' => 'required_if:question_type,multiple_choice|required_if:question_type,true_false|nullable',
             'points' => 'required|integer|min:1',
         ]);
 
