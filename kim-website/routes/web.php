@@ -57,6 +57,8 @@ use App\Http\Controllers\Edutech\Student\MyCourseController as StudentMyCourseCo
 use App\Http\Controllers\Edutech\Student\CertificateController as StudentCertificateController;
 use App\Http\Controllers\Edutech\Student\LearningController;
 use App\Http\Controllers\Edutech\Instructor\CourseManagementController;
+use App\Http\Controllers\Edutech\Instructor\QuizManagementController;
+use App\Http\Controllers\Edutech\Student\StudentQuizController;
 
 // ========================================
 // EDUTECH AUTH ROUTES (Public - No Auth Required)
@@ -104,6 +106,12 @@ Route::prefix('edutech/student')->name('edutech.student.')->middleware('edutech.
     Route::get('/my-courses', [StudentMyCourseController::class, 'index'])->name('my-courses');
     Route::get('/certificates', [StudentCertificateController::class, 'index'])->name('certificates');
     Route::get('/certificate/{id}/download', [StudentCertificateController::class, 'download'])->name('certificate.download');
+
+    // Quiz Routes
+    Route::get('/quiz/{quiz}/start', [StudentQuizController::class, 'start'])->name('quiz.start');
+    Route::post('/quiz/{quiz}/submit', [StudentQuizController::class, 'submit'])->name('quiz.submit');
+    Route::get('/quiz/{quiz}/result/{attempt}', [StudentQuizController::class, 'result'])->name('quiz.result');
+    Route::get('/quiz/history', [StudentQuizController::class, 'history'])->name('quiz.history');
 });
 
 // ========================================

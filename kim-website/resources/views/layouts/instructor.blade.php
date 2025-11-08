@@ -508,6 +508,11 @@
                 <i class="fas fa-book"></i>
                 My Courses
             </a>
+            <a href="{{ route('edutech.instructor.quiz.index') }}"
+            class="menu-item {{ request()->routeIs('edutech.instructor.quiz.index') ? 'active' : '' }}">
+                <i class="fas fa-paper"></i>
+                Quiz
+            </a>
 
             <a href="{{ route('edutech.instructor.students') }}"
             class="menu-item {{ request()->routeIs('edutech.instructor.students') ? 'active' : '' }}">

@@ -746,21 +746,22 @@
                                                 Submitted: {{ $preTestAttempt->submitted_at ? $preTestAttempt->submitted_at->diffForHumans() : 'N/A' }}
                                             </small>
                                         </div>
-                                        @if(!$preTestAttempt->is_passed && $preTest->canUserAttempt(session('edutech_user_id')))
-                                        <button class="btn-start-quiz">
-                                            <i class="fas fa-redo"></i> Retake Quiz
-                                        </button>
-                                        @endif
+                                            @if(!$preTestAttempt->is_passed && $preTest->canUserAttempt(session('edutech_user_id')))
+                                            <a href="{{ route('edutech.student.quiz.start', $preTest->id) }}" class="btn-start-quiz">
+                                                <i class="fas fa-redo"></i> Retake Quiz
+                                            </a>
+                                            @endif
                                     </div>
                                 </div>
-                            @else
-                                <!-- Start Quiz Button -->
-                                <div style="text-align: center; padding: 20px;">
-                                    <button class="btn-start-quiz">
-                                        <i class="fas fa-play-circle"></i> Start Pre-Test
-                                    </button>
-                                </div>
-                            @endif
+                                
+                                    @else
+                                        <!-- Start Quiz Button -->
+                                        <div style="text-align: center; padding: 20px;">
+                                            <a href="{{ route('edutech.student.quiz.start', $preTest->id) }}" class="btn-start-quiz">
+                                                <i class="fas fa-play-circle"></i> Start Pre-Test
+                                            </a>
+                                        </div>
+                                    @endif
                         </div>
                         @else
                         <div class="quiz-section">
@@ -820,21 +821,21 @@
                                             </small>
                                         </div>
                                         @if(!$postTestAttempt->is_passed && $postTest->canUserAttempt(session('edutech_user_id')))
-                                        <button class="btn-start-quiz">
+                                        <a href="{{ route('edutech.student.quiz.start', $postTest->id) }}" class="btn-start-quiz">
                                             <i class="fas fa-redo"></i> Retake Quiz
-                                        </button>
+                                        </a>
                                         @endif
                                     </div>
                                 </div>
                             @else
                                 <!-- Check Progress Requirement -->
-                                @if($enrollment->progress_percentage >= 80)
-                                <div style="text-align: center; padding: 20px;">
-                                    <button class="btn-start-quiz">
-                                        <i class="fas fa-play-circle"></i> Start Post-Test
-                                    </button>
-                                </div>
-                                @else
+                                    @if($enrollment->progress_percentage >= 80)
+                                    <div style="text-align: center; padding: 20px;">
+                                        <a href="{{ route('edutech.student.quiz.start', $postTest->id) }}" class="btn-start-quiz">
+                                            <i class="fas fa-play-circle"></i> Start Post-Test
+                                        </a>
+                                    </div>
+                                    @else
                                 <div style="background: rgba(237, 137, 54, 0.1); border: 2px solid var(--warning); padding: 20px; border-radius: 12px; text-align: center;">
                                     <i class="fas fa-lock" style="font-size: 2rem; color: var(--warning); margin-bottom: 15px;"></i>
                                     <h3>Post-Test Locked</h3>
