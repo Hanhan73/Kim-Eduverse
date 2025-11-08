@@ -44,12 +44,12 @@ class Course extends Model
 
     public function enrollments()
     {
-        return $this->hasMany(Enrollment::class); // ← Ini otomatis pakai student_id dari table enrollments
+        return $this->hasMany(Enrollment::class);
     }
 
     public function students()
     {
-        return $this->belongsToMany(User::class, 'enrollments', 'course_id', 'student_id') // ← Pastikan ini student_id
+        return $this->belongsToMany(User::class, 'enrollments', 'course_id', 'student_id')
             ->withPivot('status', 'progress_percentage', 'enrolled_at', 'completed_at')
             ->withTimestamps();
     }
@@ -67,6 +67,12 @@ class Course extends Model
     public function liveSessions()
     {
         return $this->hasMany(LiveSession::class);
+    }
+
+    // ✅ FIX: Tambah relationship yang hilang
+    public function quizzes()
+    {
+        return $this->hasMany(Quiz::class);
     }
 
     // Scopes
@@ -89,7 +95,7 @@ class Course extends Model
     public function isEnrolledBy($studentId)
     {
         return $this->enrollments()
-            ->where('student_id', $studentId) // ← Pastikan ini student_id
+            ->where('student_id', $studentId)
             ->exists();
     }
 }

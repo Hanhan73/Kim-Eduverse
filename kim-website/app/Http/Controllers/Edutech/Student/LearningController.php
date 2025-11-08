@@ -15,55 +15,31 @@ use Illuminate\Http\Request;
 class LearningController extends Controller
 {
     /**
-     * Show learning page with tabs: Lessons, Quizzes, Live Sessions
+     * Show learning page with NEW QUIZ SYSTEM
      */
-    public function show($slug, Request $request)
+    public function show(Request $request, $slug)
     {
-        // Check if user logged in
-        if (!session()->has('edutech_user_id')) {
-            return redirect()
-                ->route('edutech.login')
-                ->with('error', 'Silakan login terlebih dahulu');
-        }
-
         $studentId = session('edutech_user_id');
-
-        // Load course with all relationships
+        
+        // Get course with all relations
         $course = Course::where('slug', $slug)
-            ->where('is_published', true)
-            ->with(['instructor', 'modules.lessons'])
+            ->with(['modules.lessons', 'instructor', 'quizzes' => function($query) {
+                $query->where('is_active', true)->with('questions');
+            }])
             ->firstOrFail();
 
-        $userId = session('edutech_user_id');
-        $isInstructor = ($course->instructor_id == $userId);
+        // Get enrollment
+        $enrollment = Enrollment::where('student_id', $studentId)
+            ->where('course_id', $course->id)
+            ->firstOrFail();
 
-        if (!$isInstructor) {
-            // Regular student - check enrollment & payment
-            $enrollment = Enrollment::where('student_id', $userId)
-                ->where('course_id', $course->id)
-                ->first();
+        // Check if instructor
+        $isInstructor = $course->instructor_id == $studentId;
 
-            if (!$enrollment) {
-                return redirect()
-                    ->route('edutech.courses.detail', $slug)
-                    ->with('error', 'Anda harus mendaftar terlebih dahulu');
-            }
-
-            if ($course->price > 0 && $enrollment->payment_status !== 'paid') {
-                return redirect()
-                    ->route('edutech.payment.show', $enrollment->id)
-                    ->with('error', 'Silakan selesaikan pembayaran terlebih dahulu');
-            }
-        }  else {
-            // INSTRUCTOR PREVIEW MODE
-            $enrollment = new \stdClass();
-            $enrollment->id = 0;
-            $enrollment->student_id = $studentId;
-            $enrollment->course_id = $course->id;
-            $enrollment->progress_percentage = 0;
-            $enrollment->status = 'preview';
-            $enrollment->payment_status = 'paid';  // ← FIX!
+        // Set enrolled_at if null
+        if (!$enrollment->enrolled_at) {
             $enrollment->enrolled_at = now();
+            $enrollment->save();
         }
 
         // Check payment status for paid courses
@@ -73,17 +49,50 @@ class LearningController extends Controller
                 ->with('error', 'Silakan selesaikan pembayaran terlebih dahulu');
         }
 
-        // Get current lesson
-        $currentLesson = null;
-        if ($request->has('lesson')) {
-            $currentLesson = Lesson::find($request->lesson);
+        // ===== NEW QUIZ SYSTEM =====
+        
+        // Get Pre-test & Post-test
+        $preTest = $course->quizzes->where('type', 'pre_test')->first();
+        $postTest = $course->quizzes->where('type', 'post_test')->first();
+        
+        // Get quiz attempts
+        $preTestAttempt = null;
+        $postTestAttempt = null;
+        
+        if ($preTest) {
+            $preTestAttempt = QuizAttempt::where('user_id', $studentId)
+                ->where('quiz_id', $preTest->id)
+                ->where('is_passed', true) // Only get passed attempt
+                ->orderBy('created_at', 'desc')
+                ->first();
         }
         
-        // If no lesson, get first lesson
-        if (!$currentLesson && $course->modules->count() > 0) {
-            $firstModule = $course->modules->first();
-            if ($firstModule && $firstModule->lessons->count() > 0) {
-                $currentLesson = $firstModule->lessons->first();
+        if ($postTest) {
+            $postTestAttempt = QuizAttempt::where('user_id', $studentId)
+                ->where('quiz_id', $postTest->id)
+                ->orderBy('created_at', 'desc')
+                ->first();
+        }
+        
+        // Check if user can access materials (must pass pre-test first)
+        $canAccessMaterials = $enrollment->canAccessMaterials();
+        
+        // Check if user can access post-test (must complete all modules)
+        $canAccessPostTest = $enrollment->canAccessPostTest();
+        
+        // Get current lesson (only if can access materials)
+        $currentLesson = null;
+        if ($canAccessMaterials) {
+            if ($request->has('lesson')) {
+                $currentLesson = Lesson::find($request->lesson);
+            }
+            
+            // If no lesson, get first lesson
+            if (!$currentLesson && $course->modules->count() > 0) {
+                $firstModule = $course->modules->first();
+                if ($firstModule && $firstModule->lessons->count() > 0) {
+                    $currentLesson = $firstModule->lessons->first();
+                }
             }
         }
 
@@ -95,37 +104,6 @@ class LearningController extends Controller
             ->where('is_completed', true)
             ->pluck('lesson_id')
             ->toArray();
-
-        // Get course quizzes (Pre-test & Post-test)
-        $preTest = Quiz::where('course_id', $course->id)
-            ->where('type', 'pre_test')
-            ->where('is_active', true)
-            ->with('questions')
-            ->first();
-
-        $postTest = Quiz::where('course_id', $course->id)
-            ->where('type', 'post_test')
-            ->where('is_active', true)
-            ->with('questions')
-            ->first();
-
-        // Check if user has attempted tests
-        $preTestAttempt = null;
-        $postTestAttempt = null;
-
-        if ($preTest) {
-            $preTestAttempt = QuizAttempt::where('user_id', $studentId)
-                ->where('quiz_id', $preTest->id)
-                ->orderBy('created_at', 'desc')
-                ->first();
-        }
-
-        if ($postTest) {
-            $postTestAttempt = QuizAttempt::where('user_id', $studentId)
-                ->where('quiz_id', $postTest->id)
-                ->orderBy('created_at', 'desc')
-                ->first();
-        }
 
         // Get live sessions
         $liveSessions = LiveSession::where('course_id', $course->id)
@@ -148,6 +126,8 @@ class LearningController extends Controller
             'postTest',
             'preTestAttempt',
             'postTestAttempt',
+            'canAccessMaterials',
+            'canAccessPostTest',
             'liveSessions',
             'pastSessions',
             'isInstructor'
@@ -155,14 +135,28 @@ class LearningController extends Controller
     }
 
     /**
-     * Mark lesson as complete
+     * Mark lesson as complete and UPDATE PROGRESS with NEW SYSTEM
      */
     public function completeLesson($lessonId)
     {
         $studentId = session('edutech_user_id');
 
         $lesson = Lesson::findOrFail($lessonId);
+        $courseId = $lesson->module->course_id;
 
+        // Check if user can access materials (pre-test gate)
+        $enrollment = Enrollment::where('student_id', $studentId)
+            ->where('course_id', $courseId)
+            ->first();
+
+        if (!$enrollment->canAccessMaterials()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You must pass the pre-test first to access course materials!',
+            ], 403);
+        }
+
+        // Mark lesson as complete
         LessonCompletion::updateOrCreate(
             [
                 'user_id' => $studentId,
@@ -174,12 +168,13 @@ class LearningController extends Controller
             ]
         );
 
-        // Update enrollment progress
-        $this->updateEnrollmentProgress($studentId, $lesson->module->course_id);
+        // Update enrollment progress using NEW CALCULATION
+        $newProgress = $enrollment->updateProgress();
 
         return response()->json([
             'success' => true,
             'message' => 'Lesson marked as complete!',
+            'progress' => $newProgress,
         ]);
     }
 
@@ -188,9 +183,22 @@ class LearningController extends Controller
      */
     public function nextLesson($lessonId)
     {
+        $studentId = session('edutech_user_id');
+        
         $lesson = Lesson::findOrFail($lessonId);
         $module = $lesson->module;
         $course = $module->course;
+
+        // Check if user can access materials
+        $enrollment = Enrollment::where('student_id', $studentId)
+            ->where('course_id', $course->id)
+            ->first();
+
+        if (!$enrollment->canAccessMaterials()) {
+            return redirect()
+                ->route('edutech.courses.learn', $course->slug)
+                ->with('error', 'You must pass the pre-test first to access course materials!');
+        }
 
         // Try to get next lesson in same module
         $nextLesson = Lesson::where('module_id', $module->id)
@@ -221,39 +229,5 @@ class LearningController extends Controller
 
         return redirect()->route('edutech.courses.learn', $course->slug)
             ->with('success', 'Selamat! Anda telah menyelesaikan semua lesson!');
-    }
-
-    /**
-     * Update enrollment progress percentage
-     */
-    private function updateEnrollmentProgress($studentId, $courseId)
-    {
-        $course = Course::with('modules.lessons')->find($courseId);
-        $totalLessons = $course->modules->sum(function($module) {
-            return $module->lessons->count();
-        });
-
-        if ($totalLessons == 0) return;
-
-        $completedLessons = LessonCompletion::where('user_id', $studentId)
-            ->whereHas('lesson.module', function($query) use ($courseId) {
-                $query->where('course_id', $courseId);
-            })
-            ->where('is_completed', true)
-            ->count();
-
-        $progressPercentage = ($completedLessons / $totalLessons) * 100;
-
-        $enrollment = Enrollment::where('student_id', $studentId)
-            ->where('course_id', $courseId)
-            ->first();
-
-        if ($enrollment) {
-            $enrollment->update([
-                'progress_percentage' => round($progressPercentage, 2),
-                'status' => $progressPercentage >= 100 ? 'completed' : 'active',
-                'completed_at' => $progressPercentage >= 100 ? now() : null,
-            ]);
-        }
     }
 }

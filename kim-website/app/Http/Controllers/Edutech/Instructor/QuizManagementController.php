@@ -54,7 +54,6 @@ class QuizManagementController extends Controller
         $request->validate([
             'course_id' => 'required|exists:courses,id',
             'title' => 'required|string|max:255',
-            'type' => 'required|in:pre_test,post_test',
             'description' => 'nullable|string',
             'passing_score' => 'required|integer|min:0|max:100',
             'duration_minutes' => 'required|integer|min:1',
@@ -76,19 +75,29 @@ class QuizManagementController extends Controller
                 ->with('error', 'This course already has a ' . str_replace('_', '-', $request->type));
         }
 
-        $quiz = Quiz::create([
-            'course_id' => $course->id,
+        $existingPre = Quiz::where('course_id', $request->course_id)->where('type', 'pre_test')->first();
+        $existingPost = Quiz::where('course_id', $request->course_id)->where('type', 'post_test')->first();
+
+        if ($existingPre || $existingPost) {
+            return back()->with('error', 'This course already has both Pre-Test and Post-Test quizzes.');
+        }
+
+        // Buat dua quiz sekaligus
+        $quizData = [
+            'course_id' => $request->course_id,
             'title' => $request->title,
-            'type' => $request->type,
             'description' => $request->description,
             'passing_score' => $request->passing_score,
             'duration_minutes' => $request->duration_minutes,
             'max_attempts' => $request->max_attempts,
             'is_active' => true,
-        ]);
+        ];
+
+        $preTest = Quiz::create(array_merge($quizData, ['type' => 'pre_test']));
+        $postTest = Quiz::create(array_merge($quizData, ['type' => 'post_test']));
 
         return redirect()
-            ->route('edutech.instructor.quiz.edit', $quiz->id)
+            ->route('edutech.instructor.quiz.edit', $quizData->id)
             ->with('success', 'Quiz created! Now add questions.');
     }
 
@@ -260,4 +269,42 @@ class QuizManagementController extends Controller
 
         return redirect()->back()->with('success', 'Question deleted!');
     }
+
+    public function syncQuestions(Request $request, Quiz $quiz, $target)
+    {
+        // pastikan target valid
+        if (!in_array($target, ['pre_test', 'post_test'])) {
+            return back()->with('error', 'Invalid target type.');
+        }
+
+        // cari quiz pasangan di course yang sama
+        $pairQuiz = Quiz::where('course_id', $quiz->course_id)
+            ->where('type', $target)
+            ->first();
+
+        if (!$pairQuiz) {
+            return back()->with('error', ucfirst(str_replace('_', ' ', $target)) . ' not found for this course.');
+        }
+
+        // tentukan arah salinan
+        $source = $quiz->type === 'pre_test' ? $quiz : $pairQuiz;
+        $destination = $quiz->type === 'pre_test' ? $pairQuiz : $quiz;
+
+        // hapus pertanyaan lama di tujuan
+        $destination->questions()->delete();
+
+        // salin pertanyaan dari sumber
+        foreach ($source->questions as $question) {
+            $newQuestion = $destination->questions()->create([
+                'question' => $question->question,
+                'type' => $question->type,
+                'points' => $question->points,
+                'correct_answer' => $question->correct_answer,
+                'options' => $question->options,
+            ]);
+        }
+
+        return back()->with('success', 'Questions synced successfully between Pre-Test and Post-Test!');
+    }
 }
+

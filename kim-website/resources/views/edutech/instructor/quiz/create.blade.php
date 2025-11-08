@@ -252,21 +252,6 @@
                     @endif
                 </div>
 
-                <!-- Quiz Type -->
-                <div class="form-group">
-                    <label>Quiz Type <span>*</span></label>
-                    <select name="type" class="form-control" required>
-                        <option value="">Select type...</option>
-                        <option value="pre_test" {{ old('type') === 'pre_test' ? 'selected' : '' }}>
-                            Pre-Test (Before Course)
-                        </option>
-                        <option value="post_test" {{ old('type') === 'post_test' ? 'selected' : '' }}>
-                            Post-Test (After Course)
-                        </option>
-                    </select>
-                    <div class="form-hint">Each course can have one of each type</div>
-                </div>
-
                 <!-- Title -->
                 <div class="form-group">
                     <label>Quiz Title <span>*</span></label>

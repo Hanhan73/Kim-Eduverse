@@ -171,15 +171,35 @@
             </div>
         </div>
 
+
+
         <!-- Questions Section -->
         <div class="card">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                 <h2 style="margin: 0; border: none; padding: 0;">Questions ({{ $quiz->questions->count() }})</h2>
-                <button onclick="openModal()" class="btn btn-primary">
-                    <i class="fas fa-plus"></i> Add Question
-                </button>
-            </div>
+                
+                <div style="display: flex; gap: 10px;">
+                    @if($quiz->type === 'pre_test')
+                        <form action="{{ route('edutech.instructor.quiz.sync', [$quiz->id, 'post_test']) }}" method="POST" onsubmit="return confirm('Samakan post-test dengan pre-test?')">
+                            @csrf
+                            <button type="submit" class="btn btn-secondary">
+                                <i class="fas fa-sync"></i> Samakan dengan Post-Test
+                            </button>
+                        </form>
+                    @else
+                        <form action="{{ route('edutech.instructor.quiz.sync', [$quiz->id, 'pre_test']) }}" method="POST" onsubmit="return confirm('Samakan pre-test dengan post-test?')">
+                            @csrf
+                            <button type="submit" class="btn btn-secondary">
+                                <i class="fas fa-sync"></i> Samakan dengan Pre-Test
+                            </button>
+                        </form>
+                    @endif
 
+                    <button onclick="openModal()" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Add Question
+                    </button>
+                </div>
+            </div>
             @if($quiz->questions->count() > 0)
             <div class="question-list">
                 @foreach($quiz->questions as $index => $question)
@@ -279,10 +299,10 @@
                         <input type="text" name="options[]" class="form-control" placeholder="Option 2" required oninput="updateRadioValue(this)">
                         <button type="button" class="btn btn-danger btn-sm btn-remove-option" onclick="removeOption(this)">✖</button>
                     </div>
-                    
-                    <div class="mt-3">
-                        <button type="button" class="btn btn-secondary btn-sm" onclick="addOption()">➕ Add Option</button>
-                    </div>
+                </div>
+                
+                <div class="mt-3">
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="addOption()">➕ Add Option</button>
                 </div>
                     
                 <!-- True/False Options -->
