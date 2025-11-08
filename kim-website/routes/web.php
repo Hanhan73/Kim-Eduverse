@@ -50,14 +50,20 @@ Route::post('/contact', [ContactController::class, 'submit'])->name('contact.sub
 use App\Http\Controllers\Edutech\AuthController as EdutechAuthController;
 use App\Http\Controllers\Edutech\LandingController as EdutechLandingController;
 use App\Http\Controllers\Edutech\CourseController as EdutechCourseController;
-use App\Http\Controllers\Edutech\Student\DashboardController as StudentDashboardController;
-use App\Http\Controllers\Edutech\Instructor\DashboardController as InstructorDashboardController;
+
 use App\Http\Controllers\Edutech\Admin\DashboardController as EdutechAdminController;
+
+use App\Http\Controllers\Edutech\Instructor\DashboardController as InstructorDashboardController;
+use App\Http\Controllers\Edutech\Instructor\CourseManagementController;
+use App\Http\Controllers\Edutech\Instructor\QuizManagementController;
+use App\Http\Controllers\Edutech\Instructor\LiveMeetingController;
+use App\Http\Controllers\Edutech\Instructor\StudentManagementController;
+use App\Http\Controllers\Edutech\Instructor\BatchManagementController;
+
+use App\Http\Controllers\Edutech\Student\DashboardController as StudentDashboardController;
 use App\Http\Controllers\Edutech\Student\MyCourseController as StudentMyCourseController;
 use App\Http\Controllers\Edutech\Student\CertificateController as StudentCertificateController;
 use App\Http\Controllers\Edutech\Student\LearningController;
-use App\Http\Controllers\Edutech\Instructor\CourseManagementController;
-use App\Http\Controllers\Edutech\Instructor\QuizManagementController;
 use App\Http\Controllers\Edutech\Student\StudentQuizController;
 
 // ========================================
@@ -149,8 +155,26 @@ Route::prefix('edutech/instructor')->name('edutech.instructor.')->middleware('ed
     Route::put('/courses/{course}/modules/{module}/lessons/{lesson}', [CourseManagementController::class, 'updateLesson'])->name('lessons.update');
     Route::delete('/courses/{course}/modules/{module}/lessons/{lesson}', [CourseManagementController::class, 'destroyLesson'])->name('lessons.destroy');
     
-    // My Students - New Route (needs controller)
-    Route::get('/students', [InstructorDashboardController::class, 'students'])->name('students');
+    // Student Management
+    Route::get('/students', [StudentManagementController::class, 'index'])->name('students');
+    Route::get('/students/course/{course}', [StudentManagementController::class, 'courseStudents'])->name('students.course');
+    Route::get('/students/detail/{student}', [StudentManagementController::class, 'studentDetail'])->name('students.detail');
+
+    // Attendance Management
+    Route::get('/students/course/{course}/attendance/{batch?}', [StudentManagementController::class, 'attendance'])->name('students.attendance');
+    Route::post('/students/course/{course}/attendance/{batch}', [StudentManagementController::class, 'storeAttendance'])->name('students.attendance.store');
+    Route::get('/students/course/{course}/attendance/{batch?}/report', [StudentManagementController::class, 'attendanceReport'])->name('students.attendance.report');
+
+    // Batch Management
+    Route::get('/courses/{course}/batches', [BatchManagementController::class, 'index'])->name('batches.index');
+    Route::get('/courses/{course}/batches/create', [BatchManagementController::class, 'create'])->name('batches.create');
+    Route::post('/courses/{course}/batches', [BatchManagementController::class, 'store'])->name('batches.store');
+    Route::get('/courses/{course}/batches/{batch}/edit', [BatchManagementController::class, 'edit'])->name('batches.edit');
+    Route::put('/courses/{course}/batches/{batch}', [BatchManagementController::class, 'update'])->name('batches.update');
+    Route::delete('/courses/{course}/batches/{batch}', [BatchManagementController::class, 'destroy'])->name('batches.destroy');
+
+    Route::post('/students/course/{course}/assign-batch', [StudentManagementController::class, 'assignBatch'])->name('students.assign-batch');
+
 
     // Quiz Management
     Route::get('/quiz', [QuizManagementController::class, 'index'])->name('quiz.index');
@@ -166,6 +190,17 @@ Route::prefix('edutech/instructor')->name('edutech.instructor.')->middleware('ed
     Route::post('/quiz/{quiz}/questions', [QuizManagementController::class, 'storeQuestion'])->name('quiz.questions.store');
     Route::put('/quiz/{quiz}/questions/{question}', [QuizManagementController::class, 'updateQuestion'])->name('quiz.questions.update');
     Route::delete('/quiz/{quiz}/questions/{question}', [QuizManagementController::class, 'destroyQuestion'])->name('quiz.questions.destroy');
+    
+    // Live Meeting
+    Route::get('/live-meetings', [LiveMeetingController::class, 'index'])->name('live-meetings.index');
+    Route::get('/live-meetings/create', [LiveMeetingController::class, 'create'])->name('live-meetings.create');
+    Route::post('/live-meetings', [LiveMeetingController::class, 'store'])->name('live-meetings.store');
+    Route::get('/live-meetings/{session}/edit', [LiveMeetingController::class, 'edit'])->name('live-meetings.edit');
+    Route::put('/live-meetings/{session}', [LiveMeetingController::class, 'update'])->name('live-meetings.update');
+    Route::delete('/live-meetings/{session}', [LiveMeetingController::class, 'destroy'])->name('live-meetings.destroy');
+
+
+
 });
 
 // ========================================
