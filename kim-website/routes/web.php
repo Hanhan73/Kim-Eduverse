@@ -203,20 +203,60 @@ Route::prefix('edutech/instructor')->name('edutech.instructor.')->middleware('ed
 
 });
 
+use App\Http\Controllers\Edutech\Admin\UsersController;
+use App\Http\Controllers\Edutech\Admin\CoursesController;
+use App\Http\Controllers\Edutech\Admin\EnrollmentsController;
+use App\Http\Controllers\Edutech\Admin\CertificatesController;
+use App\Http\Controllers\Edutech\Admin\SettingsController;
+
 // ========================================
 // ADMIN DASHBOARD ROUTES
 // ========================================
 Route::prefix('edutech/admin')->name('edutech.admin.')->middleware('edutech.admin')->group(function () {
+    
+    // ===== DASHBOARD =====
     Route::get('/dashboard', [EdutechAdminController::class, 'index'])->name('dashboard');
-    Route::get('/courses', [EdutechAdminController::class, 'courses'])->name('courses');
-    Route::get('/courses/create', [EdutechAdminController::class, 'createCourse'])->name('courses.create');
-    Route::post('/courses', [EdutechAdminController::class, 'storeCourse'])->name('courses.store');
-    Route::get('/instructors', [EdutechAdminController::class, 'instructors'])->name('instructors');
-    Route::post('/instructors', [EdutechAdminController::class, 'storeInstructor'])->name('instructors.store');
-    Route::get('/students', [EdutechAdminController::class, 'students'])->name('students');
-    Route::get('/enrollments', [EdutechAdminController::class, 'enrollments'])->name('enrollments');
-    Route::post('/enrollments/{id}/approve', [EdutechAdminController::class, 'approveEnrollment'])->name('enrollments.approve');
+    
+    // ===== USERS MANAGEMENT =====
+    Route::get('/users', [UsersController::class, 'index'])->name('users');
+    Route::get('/users/{id}', [UsersController::class, 'show'])->name('users.show');
+    Route::get('/users/{id}/edit', [UsersController::class, 'edit'])->name('users.edit');
+    Route::put('/users/{id}', [UsersController::class, 'update'])->name('users.update');
+    Route::post('/users/{id}/promote', [UsersController::class, 'promote'])->name('users.promote');
+    Route::post('/users/{id}/toggle', [UsersController::class, 'toggleStatus'])->name('users.toggle');
+    Route::delete('/users/{id}', [UsersController::class, 'destroy'])->name('users.destroy');
+    
+    // ===== COURSES MANAGEMENT =====
+    Route::get('/courses', [CoursesController::class, 'index'])->name('courses');
+    Route::get('/courses/{id}', [CoursesController::class, 'show'])->name('courses.show');
+    Route::get('/courses/{id}/edit', [CoursesController::class, 'edit'])->name('courses.edit');
+    Route::put('/courses/{id}', [CoursesController::class, 'update'])->name('courses.update');
+    Route::post('/courses/{id}/toggle', [CoursesController::class, 'togglePublish'])->name('courses.toggle');
+    Route::delete('/courses/{id}', [CoursesController::class, 'destroy'])->name('courses.destroy');
+    
+    // ===== ENROLLMENTS MANAGEMENT =====
+    Route::get('/enrollments', [EnrollmentsController::class, 'index'])->name('enrollments');
+    Route::get('/enrollments/{id}', [EnrollmentsController::class, 'show'])->name('enrollments.show');
+    Route::post('/enrollments/{id}/approve', [EnrollmentsController::class, 'approve'])->name('enrollments.approve');
+    Route::post('/enrollments/{id}/reject', [EnrollmentsController::class, 'reject'])->name('enrollments.reject');
+    Route::delete('/enrollments/{id}', [EnrollmentsController::class, 'destroy'])->name('enrollments.destroy');
+    
+    // ===== CERTIFICATES MANAGEMENT =====
+    Route::get('/certificates', [CertificatesController::class, 'index'])->name('certificates');
+    Route::get('/certificates/{id}', [CertificatesController::class, 'show'])->name('certificates.show');
+    Route::post('/certificates/issue/{enrollmentId}', [CertificatesController::class, 'issue'])->name('certificates.issue');
+    Route::post('/certificates/{id}/revoke', [CertificatesController::class, 'revoke'])->name('certificates.revoke');
+    Route::get('/certificates/{id}/download', [CertificatesController::class, 'download'])->name('certificates.download');
+    Route::get('/certificates/verify', [CertificatesController::class, 'verify'])->name('certificates.verify');
+    
+    // ===== SETTINGS =====
+    Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
+    Route::put('/settings', [SettingsController::class, 'update'])->name('settings.update');
+    Route::post('/settings/clear-cache', [SettingsController::class, 'clearCache'])->name('settings.clear-cache');
+    Route::post('/settings/maintenance', [SettingsController::class, 'maintenance'])->name('settings.maintenance');
 });
+
+
 
 // ========================================
 // BLOG ADMIN SYSTEM
