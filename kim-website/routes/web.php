@@ -50,6 +50,7 @@ Route::post('/contact', [ContactController::class, 'submit'])->name('contact.sub
 use App\Http\Controllers\Edutech\AuthController as EdutechAuthController;
 use App\Http\Controllers\Edutech\LandingController as EdutechLandingController;
 use App\Http\Controllers\Edutech\CourseController as EdutechCourseController;
+use App\Http\Controllers\Edutech\ProfileController;
 
 use App\Http\Controllers\Edutech\Admin\DashboardController as EdutechAdminController;
 
@@ -80,6 +81,18 @@ Route::prefix('edutech')->name('edutech.')->group(function () {
     Route::get('/verification/notice', [EdutechAuthController::class, 'verificationNotice'])->name('verification.notice');
     Route::get('/verify/{token}', [EdutechAuthController::class, 'verify'])->name('verify');
     Route::post('/verification/resend', [EdutechAuthController::class, 'resendVerification'])->name('verification.resend');
+
+    Route::get('/profile', [App\Http\Controllers\Edutech\ProfileController::class, 'index'])
+        ->name('profile.index');
+
+    Route::put('/profile', [App\Http\Controllers\Edutech\ProfileController::class, 'update'])
+        ->name('profile.update');
+
+    Route::put('/profile/password', [App\Http\Controllers\Edutech\ProfileController::class, 'updatePassword'])
+        ->name('profile.password');
+
+    Route::delete('/profile/avatar', [App\Http\Controllers\Edutech\ProfileController::class, 'deleteAvatar'])
+        ->name('profile.avatar.delete');
 });
 
 // ========================================
