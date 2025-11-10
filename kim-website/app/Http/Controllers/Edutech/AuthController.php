@@ -6,14 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
-    // Show login form
     public function showLogin()
     {
-        // Redirect if already logged in
         if (session()->has('edutech_user_id')) {
             return $this->redirectBasedOnRole();
         }
@@ -21,7 +20,6 @@ class AuthController extends Controller
         return view('edutech.auth.login');
     }
 
-    // Process login
     public function login(Request $request)
     {
         $request->validate([
@@ -29,14 +27,18 @@ class AuthController extends Controller
             'password' => 'required|min:6',
         ]);
 
-        // Find user by email
         $user = User::where('email', $request->email)
             ->where('is_active', true)
             ->first();
 
-        // Check if user exists and password is correct
         if ($user && Hash::check($request->password, $user->password)) {
-            // Store user info in session
+            // Cek apakah email sudah diverifikasi
+            if (is_null($user->email_verified_at)) {
+                return back()
+                    ->withErrors(['email' => 'Email belum diverifikasi. Silakan cek email Anda.'])
+                    ->withInput($request->only('email'));
+            }
+
             session([
                 'edutech_user_id' => $user->id,
                 'edutech_user_name' => $user->name,
@@ -44,12 +46,10 @@ class AuthController extends Controller
                 'edutech_user_role' => $user->role,
             ]);
 
-            // Remember me functionality
             if ($request->has('remember')) {
-                cookie()->queue('edutech_email', $request->email, 43200); // 30 days
+                cookie()->queue('edutech_email', $request->email, 43200);
             }
 
-            // Redirect based on role
             return $this->redirectBasedOnRole();
         }
 
@@ -58,10 +58,8 @@ class AuthController extends Controller
             ->withInput($request->only('email'));
     }
 
-    // Show register form
     public function showRegister()
     {
-        // Redirect if already logged in
         if (session()->has('edutech_user_id')) {
             return $this->redirectBasedOnRole();
         }
@@ -69,7 +67,6 @@ class AuthController extends Controller
         return view('edutech.auth.register');
     }
 
-    // Process registration (for students)
     public function register(Request $request)
     {
         $request->validate([
@@ -79,30 +76,77 @@ class AuthController extends Controller
             'phone' => 'nullable|string|max:20',
         ]);
 
-        // Create new student user
+        $verificationToken = Str::random(64);
+
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'phone' => $request->phone,
-            'role' => 'student', // Default role
+            'role' => 'student',
             'is_active' => true,
+            'verification_token' => $verificationToken,
+            'email_verified_at' => null,
         ]);
 
-        // Auto login after register
-        session([
-            'edutech_user_id' => $user->id,
-            'edutech_user_name' => $user->name,
-            'edutech_user_email' => $user->email,
-            'edutech_user_role' => $user->role,
-        ]);
+        // Kirim email verifikasi
+        $this->sendVerificationEmail($user);
 
         return redirect()
-            ->route('edutech.student.dashboard')
-            ->with('success', 'Selamat datang di KIM Edutech, ' . $user->name . '!');
+            ->route('edutech.verification.notice')
+            ->with('success', 'Akun berhasil dibuat! Silakan cek email Anda untuk verifikasi.');
     }
 
-    // Logout
+    public function verificationNotice()
+    {
+        return view('edutech.auth.verify-notice');
+    }
+
+    public function verify($token)
+    {
+        $user = User::where('verification_token', $token)->first();
+
+        if (!$user) {
+            return redirect()
+                ->route('edutech.login')
+                ->with('error', 'Token verifikasi tidak valid.');
+        }
+
+        if ($user->email_verified_at) {
+            return redirect()
+                ->route('edutech.login')
+                ->with('info', 'Email sudah diverifikasi sebelumnya.');
+        }
+
+        $user->email_verified_at = now();
+        $user->verification_token = null;
+        $user->save();
+
+        return redirect()
+            ->route('edutech.login')
+            ->with('success', 'Email berhasil diverifikasi! Silakan login.');
+    }
+
+    public function resendVerification(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|exists:users,email',
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        if ($user->email_verified_at) {
+            return back()->with('info', 'Email sudah diverifikasi.');
+        }
+
+        $user->verification_token = Str::random(64);
+        $user->save();
+
+        $this->sendVerificationEmail($user);
+
+        return back()->with('success', 'Email verifikasi telah dikirim ulang!');
+    }
+
     public function logout()
     {
         session()->forget(['edutech_user_id', 'edutech_user_name', 'edutech_user_email', 'edutech_user_role']);
@@ -113,61 +157,31 @@ class AuthController extends Controller
             ->with('success', 'Anda telah berhasil logout');
     }
 
-    // Helper: Redirect based on role
     private function redirectBasedOnRole()
     {
         $role = session('edutech_user_role');
 
         switch ($role) {
             case 'admin':
-                return redirect()
-                    ->route('edutech.admin.dashboard')
-                    ->with('success', 'Selamat datang, Admin!');
-            
+                return redirect()->route('edutech.admin.dashboard');
             case 'instructor':
-                return redirect()
-                    ->route('edutech.instructor.dashboard')
-                    ->with('success', 'Selamat datang, Pengajar!');
-            
+                return redirect()->route('edutech.instructor.dashboard');
             case 'student':
             default:
-                return redirect()
-                    ->route('edutech.student.dashboard')
-                    ->with('success', 'Selamat datang kembali!');
+                return redirect()->route('edutech.student.dashboard');
         }
     }
 
-    // Get current logged in user
-    public static function user()
+    private function sendVerificationEmail($user)
     {
-        $userId = session('edutech_user_id');
-        
-        if ($userId) {
-            return User::find($userId);
-        }
+        $verificationUrl = route('edutech.verify', ['token' => $user->verification_token]);
 
-        return null;
-    }
-
-    // Check if user is logged in
-    public static function check()
-    {
-        return session()->has('edutech_user_id');
-    }
-
-    // Check role
-    public static function isAdmin()
-    {
-        return session('edutech_user_role') === 'admin';
-    }
-
-    public static function isInstructor()
-    {
-        return session('edutech_user_role') === 'instructor';
-    }
-
-    public static function isStudent()
-    {
-        return session('edutech_user_role') === 'student';
+        Mail::send('edutech.emails.verify', [
+            'user' => $user,
+            'verificationUrl' => $verificationUrl
+        ], function ($message) use ($user) {
+            $message->to($user->email, $user->name)
+                ->subject('Verifikasi Email - KIM Edutech');
+        });
     }
 }

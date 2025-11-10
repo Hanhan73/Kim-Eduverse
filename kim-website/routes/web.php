@@ -75,6 +75,11 @@ Route::prefix('edutech')->name('edutech.')->group(function () {
     Route::get('/register', [EdutechAuthController::class, 'showRegister'])->name('register');
     Route::post('/register', [EdutechAuthController::class, 'register'])->name('register.post');
     Route::post('/logout', [EdutechAuthController::class, 'logout'])->name('logout');
+
+    // Verifikasi Email Routes
+    Route::get('/verification/notice', [EdutechAuthController::class, 'verificationNotice'])->name('verification.notice');
+    Route::get('/verify/{token}', [EdutechAuthController::class, 'verify'])->name('verify');
+    Route::post('/verification/resend', [EdutechAuthController::class, 'resendVerification'])->name('verification.resend');
 });
 
 // ========================================
@@ -84,7 +89,7 @@ Route::prefix('edutech')->name('edutech.')->group(function () {
     // Landing & Browse
     Route::get('/', [EdutechLandingController::class, 'index'])->name('landing');
     Route::get('/courses', [EdutechLandingController::class, 'courses'])->name('courses.index');
-    
+
     // Course Detail - PENTING: Pakai CourseController bukan LandingController
     Route::get('/courses/{slug}', [EdutechCourseController::class, 'show'])->name('courses.detail');
 });
@@ -95,7 +100,7 @@ Route::prefix('edutech')->name('edutech.')->group(function () {
 Route::prefix('edutech')->name('edutech.')->middleware('edutech.auth')->group(function () {
     // Enrollment - POST method, pakai slug
     Route::post('/courses/{slug}/enroll', [EdutechCourseController::class, 'enroll'])->name('courses.enroll');
-    
+
     // Learning Page - GET method, pakai slug
     Route::get('/courses/{slug}/learn', [LearningController::class, 'show'])->name('courses.learn');
 
@@ -124,37 +129,37 @@ Route::prefix('edutech/student')->name('edutech.student.')->middleware('edutech.
 // INSTRUCTOR DASHBOARD ROUTES
 // ========================================
 Route::prefix('edutech/instructor')->name('edutech.instructor.')->middleware('edutech.instructor')->group(function () {
-    
+
     // Dashboard
     Route::get('/dashboard', [InstructorDashboardController::class, 'index'])->name('dashboard');
-    
+
     // My Courses - List View
     Route::get('/courses', [CourseManagementController::class, 'index'])->name('courses');
-    
+
     // Create Course
     Route::get('/courses/create', [CourseManagementController::class, 'create'])->name('courses.create');
     Route::post('/courses', [CourseManagementController::class, 'store'])->name('courses.store');
-    
+
     // Edit Course
     Route::get('/courses/{id}/edit', [CourseManagementController::class, 'edit'])->name('courses.edit');
     Route::put('/courses/{id}', [CourseManagementController::class, 'update'])->name('courses.update');
-    
+
     // Delete Course
     Route::delete('/courses/{id}', [CourseManagementController::class, 'destroy'])->name('courses.destroy');
-    
+
     // Toggle Publish Course
     Route::post('/courses/{id}/publish', [CourseManagementController::class, 'togglePublish'])->name('courses.publish');
-    
+
     // Module Management
     Route::post('/courses/{course}/modules', [CourseManagementController::class, 'storeModule'])->name('modules.store');
     Route::put('/courses/{course}/modules/{module}', [CourseManagementController::class, 'updateModule'])->name('modules.update');
     Route::delete('/courses/{course}/modules/{module}', [CourseManagementController::class, 'destroyModule'])->name('modules.destroy');
-    
+
     // Lesson Management
     Route::post('/courses/{course}/modules/{module}/lessons', [CourseManagementController::class, 'storeLesson'])->name('lessons.store');
     Route::put('/courses/{course}/modules/{module}/lessons/{lesson}', [CourseManagementController::class, 'updateLesson'])->name('lessons.update');
     Route::delete('/courses/{course}/modules/{module}/lessons/{lesson}', [CourseManagementController::class, 'destroyLesson'])->name('lessons.destroy');
-    
+
     // Student Management
     Route::get('/students', [StudentManagementController::class, 'index'])->name('students');
     Route::get('/students/course/{course}', [StudentManagementController::class, 'courseStudents'])->name('students.course');
@@ -190,7 +195,7 @@ Route::prefix('edutech/instructor')->name('edutech.instructor.')->middleware('ed
     Route::post('/quiz/{quiz}/questions', [QuizManagementController::class, 'storeQuestion'])->name('quiz.questions.store');
     Route::put('/quiz/{quiz}/questions/{question}', [QuizManagementController::class, 'updateQuestion'])->name('quiz.questions.update');
     Route::delete('/quiz/{quiz}/questions/{question}', [QuizManagementController::class, 'destroyQuestion'])->name('quiz.questions.destroy');
-    
+
     // Live Meeting
     Route::get('/live-meetings', [LiveMeetingController::class, 'index'])->name('live-meetings.index');
     Route::get('/live-meetings/create', [LiveMeetingController::class, 'create'])->name('live-meetings.create');
@@ -198,9 +203,6 @@ Route::prefix('edutech/instructor')->name('edutech.instructor.')->middleware('ed
     Route::get('/live-meetings/{session}/edit', [LiveMeetingController::class, 'edit'])->name('live-meetings.edit');
     Route::put('/live-meetings/{session}', [LiveMeetingController::class, 'update'])->name('live-meetings.update');
     Route::delete('/live-meetings/{session}', [LiveMeetingController::class, 'destroy'])->name('live-meetings.destroy');
-
-
-
 });
 
 use App\Http\Controllers\Edutech\Admin\UsersController;
@@ -213,10 +215,10 @@ use App\Http\Controllers\Edutech\Admin\SettingsController;
 // ADMIN DASHBOARD ROUTES
 // ========================================
 Route::prefix('edutech/admin')->name('edutech.admin.')->middleware('edutech.admin')->group(function () {
-    
+
     // ===== DASHBOARD =====
     Route::get('/dashboard', [EdutechAdminController::class, 'index'])->name('dashboard');
-    
+
     // ===== USERS MANAGEMENT =====
     Route::get('/users', [UsersController::class, 'index'])->name('users');
     Route::get('/users/{id}', [UsersController::class, 'show'])->name('users.show');
@@ -225,7 +227,7 @@ Route::prefix('edutech/admin')->name('edutech.admin.')->middleware('edutech.admi
     Route::post('/users/{id}/promote', [UsersController::class, 'promote'])->name('users.promote');
     Route::post('/users/{id}/toggle', [UsersController::class, 'toggleStatus'])->name('users.toggle');
     Route::delete('/users/{id}', [UsersController::class, 'destroy'])->name('users.destroy');
-    
+
     // ===== COURSES MANAGEMENT =====
     Route::get('/courses', [CoursesController::class, 'index'])->name('courses');
     Route::get('/courses/{id}', [CoursesController::class, 'show'])->name('courses.show');
@@ -233,14 +235,14 @@ Route::prefix('edutech/admin')->name('edutech.admin.')->middleware('edutech.admi
     Route::put('/courses/{id}', [CoursesController::class, 'update'])->name('courses.update');
     Route::post('/courses/{id}/toggle', [CoursesController::class, 'togglePublish'])->name('courses.toggle');
     Route::delete('/courses/{id}', [CoursesController::class, 'destroy'])->name('courses.destroy');
-    
+
     // ===== ENROLLMENTS MANAGEMENT =====
     Route::get('/enrollments', [EnrollmentsController::class, 'index'])->name('enrollments');
     Route::get('/enrollments/{id}', [EnrollmentsController::class, 'show'])->name('enrollments.show');
     Route::post('/enrollments/{id}/approve', [EnrollmentsController::class, 'approve'])->name('enrollments.approve');
     Route::post('/enrollments/{id}/reject', [EnrollmentsController::class, 'reject'])->name('enrollments.reject');
     Route::delete('/enrollments/{id}', [EnrollmentsController::class, 'destroy'])->name('enrollments.destroy');
-    
+
     // ===== CERTIFICATES MANAGEMENT =====
     Route::get('/certificates', [CertificatesController::class, 'index'])->name('certificates');
     Route::get('/certificates/{id}', [CertificatesController::class, 'show'])->name('certificates.show');
@@ -248,7 +250,7 @@ Route::prefix('edutech/admin')->name('edutech.admin.')->middleware('edutech.admi
     Route::post('/certificates/{id}/revoke', [CertificatesController::class, 'revoke'])->name('certificates.revoke');
     Route::get('/certificates/{id}/download', [CertificatesController::class, 'download'])->name('certificates.download');
     Route::get('/certificates/verify', [CertificatesController::class, 'verify'])->name('certificates.verify');
-    
+
     // ===== SETTINGS =====
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
     Route::put('/settings', [SettingsController::class, 'update'])->name('settings.update');

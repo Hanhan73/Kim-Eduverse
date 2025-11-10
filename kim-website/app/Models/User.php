@@ -18,6 +18,8 @@ class User extends Authenticatable
         'bio',
         'avatar',
         'is_active',
+        'verification_token',
+        'email_verified_at',
     ];
 
     protected $hidden = [
