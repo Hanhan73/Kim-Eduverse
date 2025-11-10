@@ -16,6 +16,7 @@
             background: #f8fafc;
         }
 
+        /* Navbar hover animation */
         nav a {
             position: relative;
             transition: color 0.2s ease;
@@ -53,7 +54,7 @@
             transition: transform 0.2s ease;
         }
 
-        /* Card hover */
+        /* Card effect */
         .card-smooth {
             transition: all 0.3s ease;
         }
@@ -63,7 +64,7 @@
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.07);
         }
 
-        /* Buttons */
+        /* Gradient button */
         .btn-gradient {
             background: linear-gradient(135deg, #6366f1, #3b82f6);
             color: white;
@@ -90,16 +91,13 @@
             box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3);
         }
 
-        /* Sidebar Base */
-        .sidebar {
+        @if(session('edutech_user_role')==='admin') .sidebar {
             width: 260px;
+            background: linear-gradient(180deg, #2d3748 0%, #1a202c 100%);
             padding: 0;
             position: fixed;
             height: 100vh;
             overflow-y: auto;
-            color: white;
-            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
         }
 
         .sidebar-header {
@@ -108,6 +106,7 @@
         }
 
         .sidebar-header h2 {
+            color: white;
             font-size: 1.5rem;
             display: flex;
             align-items: center;
@@ -121,19 +120,130 @@
         .menu-item {
             display: flex;
             align-items: center;
-            padding: 14px 25px;
-            color: rgba(255, 255, 255, 0.85);
+            padding: 15px 25px;
+            color: rgba(255, 255, 255, 0.7);
             text-decoration: none;
             transition: all 0.3s ease;
-            border-left: 4px solid transparent;
             font-weight: 500;
         }
 
         .menu-item:hover {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
             color: white;
         }
 
+        .menu-item.active {
+            background: rgba(255, 255, 255, 0.1);
+            border-left: 4px solid white;
+            color: white;
+        }
+
+        .menu-item i {
+            width: 25px;
+            margin-right: 12px;
+        }
+
+        .menu-divider {
+            margin: 20px 25px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        @elseif(session('edutech_user_role')==='instructor') .sidebar {
+            width: 260px;
+            background: linear-gradient(180deg, #2d3748 0%, #1a202c 100%);
+            padding: 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 30px 25px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-header h2 {
+            color: white;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sidebar-menu {
+            padding: 20px 0;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 25px;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .menu-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+        }
+
+        .menu-item.active {
+            background: rgba(255, 255, 255, 0.1);
+            border-left: 4px solid white;
+            color: white;
+        }
+
+        .menu-item i {
+            width: 25px;
+            margin-right: 12px;
+        }
+
+        .menu-divider {
+            margin: 20px 25px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        @else .sidebar {
+            width: 260px;
+            background: linear-gradient(180deg, var(--primary), var(--secondary));
+            color: white;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            padding: 30px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-header h2 {
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .sidebar-menu {
+            padding: 20px 0;
+        }
+
+        .menu-item {
+            display: block;
+            padding: 15px 25px;
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .menu-item:hover,
         .menu-item.active {
             background: rgba(255, 255, 255, 0.1);
             border-left-color: white;
@@ -150,22 +260,8 @@
             border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        /* Warna sidebar berdasarkan role */
-        @if(session('edutech_user_role')==='admin') .sidebar {
-            background: linear-gradient(180deg, #7f1d1d 0%, #991b1b 100%);
-        }
-
-        @elseif(session('edutech_user_role')==='instructor') .sidebar {
-            background: linear-gradient(180deg, #5b21b6 0%, #6d28d9 100%);
-        }
-
-        @else .sidebar {
-            background: linear-gradient(180deg, #1e3a8a 0%, #2563eb 100%);
-        }
-
         @endif
     </style>
-
 </head>
 
 <body class="min-h-screen flex flex-col">
@@ -175,7 +271,7 @@
     {{-- Admin Sidebar --}}
     <aside class="sidebar fixed left-0 top-0 h-full w-64 bg-white shadow-lg border-r border-gray-200 p-5">
         <div class="sidebar-header mb-6">
-            <h2 class="text-xl font-bold text-white-800 flex items-center gap-2">
+            <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
                 <i class="fas fa-shield-alt text-red-600"></i>
                 Admin Panel
             </h2>
@@ -183,30 +279,30 @@
 
         <nav class="sidebar-menu flex flex-col space-y-2">
             <a href="{{ route('edutech.admin.dashboard') }}"
-                class="menu-item {{ request()->routeIs('edutech.admin.dashboard') ? 'text-blue-600 font-semibold' : 'text-white-700 hover:text-blue-600' }}">
+                class="menu-item {{ request()->routeIs('edutech.admin.dashboard') ? 'text-blue-600 font-semibold' : 'text-gray-700 hover:text-blue-600' }}">
                 <i class="fas fa-home mr-2"></i> Dashboard
             </a>
             <a href="{{ route('edutech.profile.index') }}"
-                class="menu-item {{ request()->routeIs('edutech.profile.index') ? 'text-blue-600 font-semibold' : 'text-white-700 hover:text-blue-600' }}">
+                class="menu-item {{ request()->routeIs('edutech.profile.index') ? 'text-blue-600 font-semibold' : 'text-gray-700 hover:text-blue-600' }}">
                 <i class="fas fa-user mr-2"></i> Profile Saya
             </a>
             <a href="{{ route('edutech.admin.users') }}"
-                class="menu-item {{ request()->routeIs('edutech.admin.users*') ? 'text-blue-600 font-semibold' : 'text-white-700 hover:text-blue-600' }}">
+                class="menu-item {{ request()->routeIs('edutech.admin.users*') ? 'text-blue-600 font-semibold' : 'text-gray-700 hover:text-blue-600' }}">
                 <i class="fas fa-users mr-2"></i> Users Management
             </a>
             <a href="{{ route('edutech.admin.courses') }}"
-                class="menu-item {{ request()->routeIs('edutech.admin.courses*') ? 'text-blue-600 font-semibold' : 'text-white-700 hover:text-blue-600' }}">
+                class="menu-item {{ request()->routeIs('edutech.admin.courses*') ? 'text-blue-600 font-semibold' : 'text-gray-700 hover:text-blue-600' }}">
                 <i class="fas fa-book mr-2"></i> Courses Management
             </a>
             <a href="{{ route('edutech.admin.certificates') }}"
-                class="menu-item {{ request()->routeIs('edutech.admin.certificates*') ? 'text-blue-600 font-semibold' : 'text-white-700 hover:text-blue-600' }}">
+                class="menu-item {{ request()->routeIs('edutech.admin.certificates*') ? 'text-blue-600 font-semibold' : 'text-gray-700 hover:text-blue-600' }}">
                 <i class="fas fa-certificate mr-2"></i> Certificates
             </a>
             <div class="border-t border-gray-200 my-3"></div>
-            <a href="{{ route('edutech.admin.settings') }}" class="menu-item text-white-700 hover:text-blue-600">
+            <a href="{{ route('edutech.admin.settings') }}" class="menu-item text-gray-700 hover:text-blue-600">
                 <i class="fas fa-cog mr-2"></i> Settings
             </a>
-            <a href="{{ route('edutech.landing') }}" class="menu-item text-white-700 hover:text-blue-600">
+            <a href="{{ route('edutech.landing') }}" class="menu-item text-gray-700 hover:text-blue-600">
                 <i class="fas fa-globe mr-2"></i> View Website
             </a>
         </nav>
@@ -216,7 +312,7 @@
     {{-- Instructor Sidebar --}}
     <aside class="sidebar fixed left-0 top-0 h-full w-64 bg-white shadow-lg border-r border-gray-200 p-5">
         <div class="sidebar-header mb-6">
-            <h2 class="text-xl font-bold text-white-800 flex items-center gap-2">
+            <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
                 <i class="fas fa-chalkboard-teacher text-purple-600"></i>
                 Instructor Panel
             </h2>
@@ -224,27 +320,27 @@
 
         <nav class="sidebar-menu flex flex-col space-y-2">
             <a href="{{ route('edutech.instructor.dashboard') }}"
-                class="menu-item {{ request()->routeIs('edutech.instructor.dashboard') ? 'text-blue-600 font-semibold' : 'text-white-700 hover:text-blue-600' }}">
+                class="menu-item {{ request()->routeIs('edutech.instructor.dashboard') ? 'text-blue-600 font-semibold' : 'text-gray-700 hover:text-blue-600' }}">
                 <i class="fas fa-home mr-2"></i> Dashboard
             </a>
             <a href="{{ route('edutech.profile.index') }}"
-                class="menu-item {{ request()->routeIs('edutech.profile.index') ? 'text-blue-600 font-semibold' : 'text-white-700 hover:text-blue-600' }}">
+                class="menu-item {{ request()->routeIs('edutech.profile.index') ? 'text-blue-600 font-semibold' : 'text-gray-700 hover:text-blue-600' }}">
                 <i class="fas fa-user mr-2"></i> Profile Saya
             </a>
             <a href="{{ route('edutech.instructor.courses') }}"
-                class="menu-item {{ request()->routeIs('edutech.instructor.courses') ? 'text-blue-600 font-semibold' : 'text-white-700 hover:text-blue-600' }}">
+                class="menu-item {{ request()->routeIs('edutech.instructor.courses') ? 'text-blue-600 font-semibold' : 'text-gray-700 hover:text-blue-600' }}">
                 <i class="fas fa-book mr-2"></i> My Courses
             </a>
             <a href="{{ route('edutech.instructor.quiz.index') }}"
-                class="menu-item {{ request()->routeIs('edutech.instructor.quiz.index') ? 'text-blue-600 font-semibold' : 'text-white-700 hover:text-blue-600' }}">
+                class="menu-item {{ request()->routeIs('edutech.instructor.quiz.index') ? 'text-blue-600 font-semibold' : 'text-gray-700 hover:text-blue-600' }}">
                 <i class="fas fa-clipboard-list mr-2"></i> Quiz Management
             </a>
             <a href="{{ route('edutech.instructor.live-meetings.index') }}"
-                class="menu-item {{ request()->routeIs('edutech.instructor.live-meetings.index') ? 'text-blue-600 font-semibold' : 'text-white-700 hover:text-blue-600' }}">
+                class="menu-item {{ request()->routeIs('edutech.instructor.live-meetings.index') ? 'text-blue-600 font-semibold' : 'text-gray-700 hover:text-blue-600' }}">
                 <i class="fas fa-video mr-2"></i> Live Meeting
             </a>
             <a href="{{ route('edutech.instructor.students') }}"
-                class="menu-item {{ request()->routeIs('edutech.instructor.students') ? 'text-blue-600 font-semibold' : 'text-white-700 hover:text-blue-600' }}">
+                class="menu-item {{ request()->routeIs('edutech.instructor.students') ? 'text-blue-600 font-semibold' : 'text-gray-700 hover:text-blue-600' }}">
                 <i class="fas fa-users mr-2"></i> Students
             </a>
         </nav>
@@ -254,7 +350,7 @@
     {{-- Student Sidebar --}}
     <aside class="sidebar fixed left-0 top-0 h-full w-64 bg-white shadow-lg border-r border-gray-200 p-5">
         <div class="sidebar-header mb-6">
-            <h2 class="text-xl font-bold text-white-800 flex items-center gap-2">
+            <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
                 <i class="fas fa-user-graduate text-blue-600"></i>
                 Student Panel
             </h2>
@@ -262,26 +358,26 @@
 
         <nav class="sidebar-menu flex flex-col space-y-2">
             <a href="{{ route('edutech.student.dashboard') }}"
-                class="menu-item {{ request()->routeIs('edutech.student.dashboard') ? 'text-blue-600 font-semibold' : 'text-white-700 hover:text-blue-600' }}">
+                class="menu-item {{ request()->routeIs('edutech.student.dashboard') ? 'text-blue-600 font-semibold' : 'text-gray-700 hover:text-blue-600' }}">
                 <i class="fas fa-home mr-2"></i> Dashboard
             </a>
             <a href="{{ route('edutech.profile.index') }}"
-                class="menu-item {{ request()->routeIs('edutech.profile.index') ? 'text-blue-600 font-semibold' : 'text-white-700 hover:text-blue-600' }}">
+                class="menu-item {{ request()->routeIs('edutech.profile.index') ? 'text-blue-600 font-semibold' : 'text-gray-700 hover:text-blue-600' }}">
                 <i class="fas fa-user mr-2"></i> Profile Saya
             </a>
             <a href="{{ route('edutech.student.my-courses') }}"
-                class="menu-item {{ request()->routeIs('edutech.student.my-courses') ? 'text-blue-600 font-semibold' : 'text-white-700 hover:text-blue-600' }}">
+                class="menu-item {{ request()->routeIs('edutech.student.my-courses') ? 'text-blue-600 font-semibold' : 'text-gray-700 hover:text-blue-600' }}">
                 <i class="fas fa-book mr-2"></i> My Courses
             </a>
             <a href="{{ route('edutech.student.certificates') }}"
-                class="menu-item {{ request()->routeIs('edutech.student.certificates') ? 'text-blue-600 font-semibold' : 'text-white-700 hover:text-blue-600' }}">
+                class="menu-item {{ request()->routeIs('edutech.student.certificates') ? 'text-blue-600 font-semibold' : 'text-gray-700 hover:text-blue-600' }}">
                 <i class="fas fa-certificate mr-2"></i> Certificates
             </a>
             <div class="border-t border-gray-200 my-3"></div>
-            <a href="{{ route('edutech.courses.index') }}" class="menu-item text-white-700 hover:text-blue-600">
+            <a href="{{ route('edutech.courses.index') }}" class="menu-item text-gray-700 hover:text-blue-600">
                 <i class="fas fa-search mr-2"></i> Browse Courses
             </a>
-            <a href="{{ route('edutech.landing') }}" class="menu-item text-white-700 hover:text-blue-600">
+            <a href="{{ route('edutech.landing') }}" class="menu-item text-gray-700 hover:text-blue-600">
                 <i class="fas fa-globe mr-2"></i> Home
             </a>
         </nav>
@@ -320,8 +416,8 @@
                     @endif
 
                     <div>
-                        <h1 class="text-2xl font-bold text-white-900">{{ $user->name }}</h1>
-                        <p class="text-white-500 text-sm">{{ $user->email }}</p>
+                        <h1 class="text-2xl font-bold text-gray-900">{{ $user->name }}</h1>
+                        <p class="text-gray-500 text-sm">{{ $user->email }}</p>
                         <div class="mt-2 flex items-center gap-3">
                             <span
                                 class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold 
@@ -350,7 +446,7 @@
                         <i class="fas fa-user mr-2"></i> Informasi Profil
                     </button>
                     <button onclick="switchTab('password')" id="tab-password"
-                        class="tab-button w-1/2 py-4 font-semibold text-white-500 border-b-2 border-transparent hover:text-white-700 hover:bg-gray-100">
+                        class="tab-button w-1/2 py-4 font-semibold text-gray-500 border-b-2 border-transparent hover:text-gray-700 hover:bg-gray-100">
                         <i class="fas fa-lock mr-2"></i> Ganti Password
                     </button>
                 </nav>
@@ -364,7 +460,7 @@
                         <div class="space-y-5">
                             {{-- Avatar --}}
                             <div>
-                                <label class="block text-sm font-medium text-white-700 mb-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
                                     <i class="fas fa-camera mr-1"></i> Foto Profil
                                 </label>
                                 <div class="flex items-center gap-4">
@@ -394,14 +490,14 @@
                                             <i class="fas fa-trash mr-1"></i> Hapus
                                         </button>
                                         @endif
-                                        <p class="text-xs text-white-500 mt-2">JPG, PNG atau GIF (Max. 2MB)</p>
+                                        <p class="text-xs text-gray-500 mt-2">JPG, PNG atau GIF (Max. 2MB)</p>
                                     </div>
                                 </div>
                             </div>
 
                             {{-- Nama --}}
                             <div>
-                                <label class="block text-sm font-medium text-white-700 mb-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
                                     <i class="fas fa-user mr-1"></i> Nama Lengkap *
                                 </label>
                                 <input type="text" name="name" value="{{ old('name', $user->name) }}" required
@@ -410,7 +506,7 @@
 
                             {{-- Email --}}
                             <div>
-                                <label class="block text-sm font-medium text-white-700 mb-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
                                     <i class="fas fa-envelope mr-1"></i> Email *
                                 </label>
                                 <input type="email" name="email" value="{{ old('email', $user->email) }}" required
@@ -419,7 +515,7 @@
 
                             {{-- Telepon --}}
                             <div>
-                                <label class="block text-sm font-medium text-white-700 mb-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
                                     <i class="fas fa-phone mr-1"></i> No. Telepon
                                 </label>
                                 <input type="text" name="phone" value="{{ old('phone', $user->phone) }}"
@@ -429,7 +525,7 @@
 
                             {{-- Bio --}}
                             <div>
-                                <label class="block text-sm font-medium text-white-700 mb-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
                                     <i class="fas fa-align-left mr-1"></i> Bio / Tentang Saya
                                 </label>
                                 <textarea name="bio" rows="4"
@@ -459,7 +555,7 @@
 
                         <div class="space-y-4">
                             <div>
-                                <label class="block text-sm font-medium text-white-700 mb-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
                                     <i class="fas fa-lock mr-1"></i> Password Lama *
                                 </label>
                                 <input type="password" name="current_password" required
@@ -467,16 +563,16 @@
                             </div>
 
                             <div>
-                                <label class="block text-sm font-medium text-white-700 mb-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
                                     <i class="fas fa-key mr-1"></i> Password Baru *
                                 </label>
                                 <input type="password" name="new_password" required
                                     class="w-full rounded-lg border-gray-300 focus:ring-2 focus:ring-indigo-500 px-4 py-2">
-                                <p class="text-xs text-white-500 mt-1">Minimal 8 karakter</p>
+                                <p class="text-xs text-gray-500 mt-1">Minimal 8 karakter</p>
                             </div>
 
                             <div>
-                                <label class="block text-sm font-medium text-white-700 mb-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
                                     <i class="fas fa-key mr-1"></i> Konfirmasi Password Baru *
                                 </label>
                                 <input type="password" name="new_password_confirmation" required
