@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -161,7 +162,8 @@
         /* === VIDEO PLAYER === */
         .video-container {
             position: relative;
-            padding-bottom: 56.25%; /* 16:9 */
+            padding-bottom: 56.25%;
+            /* 16:9 */
             height: 0;
             background: #000;
             border-radius: 12px;
@@ -568,6 +570,7 @@
             .learning-layout {
                 flex-direction: column;
             }
+
             .sidebar {
                 width: 100%;
                 max-height: 40vh;
@@ -575,6 +578,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="learning-layout">
         <!-- Main Area -->
@@ -617,80 +621,80 @@
                     <!-- LESSONS TAB -->
                     <div id="lessons-tab" class="tab-content active">
                         @if($currentLesson)
-                            <div class="lesson-header">
-                                <h1>{{ $currentLesson->title }}</h1>
-                                <div class="lesson-meta">
-                                    <span><i class="fas fa-clock"></i> {{ $currentLesson->duration_minutes }} minutes</span>
-                                    <span><i class="fas fa-{{ $currentLesson->type == 'video' ? 'play' : 'file' }}-circle"></i> {{ ucfirst($currentLesson->type) }}</span>
-                                </div>
+                        <div class="lesson-header">
+                            <h1>{{ $currentLesson->title }}</h1>
+                            <div class="lesson-meta">
+                                <span><i class="fas fa-clock"></i> {{ $currentLesson->duration_minutes }} minutes</span>
+                                <span><i
+                                        class="fas fa-{{ $currentLesson->type == 'video' ? 'play' : 'file' }}-circle"></i>
+                                    {{ ucfirst($currentLesson->type) }}</span>
                             </div>
+                        </div>
 
-                            @if($currentLesson->type === 'video' && $currentLesson->video_id)
-                                <!-- YouTube Video -->
-                                <div class="video-container">
-                                    <iframe 
-                                        src="https://www.youtube.com/embed/{{ $currentLesson->video_id }}" 
-                                        frameborder="0" 
-                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                                        allowfullscreen>
-                                    </iframe>
-                                </div>
-                            @elseif($currentLesson->type === 'pdf' && $currentLesson->file_path)
-                                <!-- PDF Viewer -->
-                                <div class="pdf-viewer">
-                                    @php
-                                        // Extract Google Drive file ID from URL
-                                        preg_match('/\/d\/(.*?)\//', $currentLesson->file_path, $matches);
-                                        $fileId = $matches[1] ?? null;
-                                    @endphp
-                                    @if($fileId)
-                                        <iframe src="https://drive.google.com/file/d/{{ $fileId }}/preview"></iframe>
-                                    @else
-                                        <div class="empty-state">
-                                            <i class="fas fa-file-pdf"></i>
-                                            <h3>PDF tidak dapat ditampilkan</h3>
-                                            <p>Pastikan link Google Drive sudah benar</p>
-                                            <a href="{{ $currentLesson->file_path }}" target="_blank" class="btn btn-next">
-                                                <i class="fas fa-external-link-alt"></i> Buka di Tab Baru
-                                            </a>
-                                        </div>
-                                    @endif
-                                </div>
-                            @elseif($currentLesson->type === 'text')
-                                <!-- Text Content -->
-                                <div class="lesson-description">
-                                    {!! nl2br(e($currentLesson->content)) !!}
-                                </div>
-                            @endif
-
-                            @if($currentLesson->description)
-                            <div class="lesson-description">
-                                <strong>Description:</strong><br>
-                                {!! nl2br(e($currentLesson->description)) !!}
-                            </div>
-                            @endif
-
-                            <!-- Lesson Actions -->
-                            <div class="lesson-actions">
-                                <button 
-                                    class="btn btn-complete {{ in_array($currentLesson->id, $completedLessons) ? 'completed' : '' }}"
-                                    onclick="markAsComplete({{ $currentLesson->id }})"
-                                    {{ in_array($currentLesson->id, $completedLessons) ? 'disabled' : '' }}>
-                                    <i class="fas fa-check-circle"></i>
-                                    <span>{{ in_array($currentLesson->id, $completedLessons) ? 'Completed' : 'Mark as Complete' }}</span>
-                                </button>
-
-                                <a href="{{ route('edutech.learning.next', $currentLesson->id) }}" class="btn btn-next">
-                                    <span>Next Lesson</span>
-                                    <i class="fas fa-arrow-right"></i>
+                        @if($currentLesson->type === 'video' && $currentLesson->video_id)
+                        <!-- YouTube Video -->
+                        <div class="video-container">
+                            <iframe src="https://www.youtube.com/embed/{{ $currentLesson->video_id }}" frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen>
+                            </iframe>
+                        </div>
+                        @elseif($currentLesson->type === 'pdf' && $currentLesson->file_path)
+                        <!-- PDF Viewer -->
+                        <div class="pdf-viewer">
+                            @php
+                            // Extract Google Drive file ID from URL
+                            preg_match('/\/d\/(.*?)\//', $currentLesson->file_path, $matches);
+                            $fileId = $matches[1] ?? null;
+                            @endphp
+                            @if($fileId)
+                            <iframe src="https://drive.google.com/file/d/{{ $fileId }}/preview"></iframe>
+                            @else
+                            <div class="empty-state">
+                                <i class="fas fa-file-pdf"></i>
+                                <h3>PDF tidak dapat ditampilkan</h3>
+                                <p>Pastikan link Google Drive sudah benar</p>
+                                <a href="{{ $currentLesson->file_path }}" target="_blank" class="btn btn-next">
+                                    <i class="fas fa-external-link-alt"></i> Buka di Tab Baru
                                 </a>
                             </div>
+                            @endif
+                        </div>
+                        @elseif($currentLesson->type === 'text')
+                        <!-- Text Content -->
+                        <div class="lesson-description">
+                            {!! nl2br(e($currentLesson->content)) !!}
+                        </div>
+                        @endif
+
+                        @if($currentLesson->description)
+                        <div class="lesson-description">
+                            <strong>Description:</strong><br>
+                            {!! nl2br(e($currentLesson->description)) !!}
+                        </div>
+                        @endif
+
+                        <!-- Lesson Actions -->
+                        <div class="lesson-actions">
+                            <button
+                                class="btn btn-complete {{ in_array($currentLesson->id, $completedLessons) ? 'completed' : '' }}"
+                                onclick="markAsComplete({{ $currentLesson->id }})"
+                                {{ in_array($currentLesson->id, $completedLessons) ? 'disabled' : '' }}>
+                                <i class="fas fa-check-circle"></i>
+                                <span>{{ in_array($currentLesson->id, $completedLessons) ? 'Completed' : 'Mark as Complete' }}</span>
+                            </button>
+
+                            <a href="{{ route('edutech.learning.next', $currentLesson->id) }}" class="btn btn-next">
+                                <span>Next Lesson</span>
+                                <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
                         @else
-                            <div class="empty-state">
-                                <i class="fas fa-book-open"></i>
-                                <h3>Select a Lesson</h3>
-                                <p>Choose a lesson from the sidebar to start learning</p>
-                            </div>
+                        <div class="empty-state">
+                            <i class="fas fa-book-open"></i>
+                            <h3>Select a Lesson</h3>
+                            <p>Choose a lesson from the sidebar to start learning</p>
+                        </div>
                         @endif
                     </div>
 
@@ -730,38 +734,43 @@
                             </div>
 
                             @if($preTestAttempt)
-                                <!-- Show Attempt Result -->
-                                <div class="quiz-attempt-result {{ $preTestAttempt->is_passed ? '' : 'failed' }}">
-                                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                                        <div>
-                                            <h3>{{ $preTestAttempt->is_passed ? '🎉 Congratulations!' : '😔 Try Again' }}</h3>
-                                            <p>Your Score:</p>
-                                            <div class="attempt-score {{ $preTestAttempt->is_passed ? '' : 'failed' }}">
-                                                {{ number_format($preTestAttempt->score, 0) }}%
-                                            </div>
-                                            <p style="margin-top: 10px; color: rgba(255, 255, 255, 0.7);">
-                                                {{ $preTestAttempt->is_passed ? 'You passed the pre-test!' : 'You need ' . $preTest->passing_score . '% to pass.' }}
-                                            </p>
-                                            <small style="color: rgba(255, 255, 255, 0.5);">
-                                                Submitted: {{ $preTestAttempt->submitted_at ? $preTestAttempt->submitted_at->diffForHumans() : 'N/A' }}
-                                            </small>
+                            <!-- Show Attempt Result -->
+                            <div class="quiz-attempt-result {{ $preTestAttempt->is_passed ? '' : 'failed' }}">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div>
+                                        <h3>{{ $preTestAttempt->is_passed ? '🎉 Congratulations!' : '😔 Try Again' }}
+                                        </h3>
+                                        <p>Your Score:</p>
+                                        <div class="attempt-score {{ $preTestAttempt->is_passed ? '' : 'failed' }}">
+                                            {{ number_format($preTestAttempt->score, 0) }}%
                                         </div>
-                                            @if(!$preTestAttempt->is_passed && $preTest->canUserAttempt(session('edutech_user_id')))
-                                            <a href="{{ route('edutech.student.quiz.start', $preTest->id) }}" class="btn-start-quiz">
-                                                <i class="fas fa-redo"></i> Retake Quiz
-                                            </a>
-                                            @endif
+                                        <p style="margin-top: 10px; color: rgba(255, 255, 255, 0.7);">
+                                            {{ $preTestAttempt->is_passed ? 'You passed the pre-test!' : 'You need ' . $preTest->passing_score . '% to pass.' }}
+                                        </p>
+                                        <small style="color: rgba(255, 255, 255, 0.5);">
+                                            Submitted:
+                                            {{ $preTestAttempt->submitted_at ? $preTestAttempt->submitted_at->diffForHumans() : 'N/A' }}
+                                        </small>
                                     </div>
-                                </div>
-                                
-                                    @else
-                                        <!-- Start Quiz Button -->
-                                        <div style="text-align: center; padding: 20px;">
-                                            <a href="{{ route('edutech.student.quiz.start', $preTest->id) }}" class="btn-start-quiz">
-                                                <i class="fas fa-play-circle"></i> Start Pre-Test
-                                            </a>
-                                        </div>
+                                    @if(!$preTestAttempt->is_passed &&
+                                    $preTest->canUserAttempt(session('edutech_user_id')))
+                                    <a href="{{ route('edutech.student.quiz.start', $preTest->id) }}"
+                                        class="btn-start-quiz">
+                                        <i class="fas fa-redo"></i> Retake Quiz
+                                    </a>
                                     @endif
+                                </div>
+                            </div>
+
+                            @else
+                            <!-- Start Quiz Button -->
+                            <div style="text-align: center; padding: 20px;">
+                                <a href="{{ route('edutech.student.quiz.start', $preTest->id) }}"
+                                    class="btn-start-quiz">
+                                    <i class="fas fa-play-circle"></i> Start Pre-Test
+                                </a>
+                            </div>
+                            @endif
                         </div>
                         @else
                         <div class="quiz-section">
@@ -804,47 +813,55 @@
                             </div>
 
                             @if($postTestAttempt)
-                                <!-- Show Attempt Result -->
-                                <div class="quiz-attempt-result {{ $postTestAttempt->is_passed ? '' : 'failed' }}">
-                                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                                        <div>
-                                            <h3>{{ $postTestAttempt->is_passed ? '🎉 Congratulations!' : '😔 Try Again' }}</h3>
-                                            <p>Your Score:</p>
-                                            <div class="attempt-score {{ $postTestAttempt->is_passed ? '' : 'failed' }}">
-                                                {{ number_format($postTestAttempt->score, 0) }}%
-                                            </div>
-                                            <p style="margin-top: 10px; color: rgba(255, 255, 255, 0.7);">
-                                                {{ $postTestAttempt->is_passed ? 'You passed the post-test!' : 'You need ' . $postTest->passing_score . '% to pass.' }}
-                                            </p>
-                                            <small style="color: rgba(255, 255, 255, 0.5);">
-                                                Submitted: {{ $postTestAttempt->submitted_at ? $postTestAttempt->submitted_at->diffForHumans() : 'N/A' }}
-                                            </small>
+                            <!-- Show Attempt Result -->
+                            <div class="quiz-attempt-result {{ $postTestAttempt->is_passed ? '' : 'failed' }}">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div>
+                                        <h3>{{ $postTestAttempt->is_passed ? '🎉 Congratulations!' : '😔 Try Again' }}
+                                        </h3>
+                                        <p>Your Score:</p>
+                                        <div class="attempt-score {{ $postTestAttempt->is_passed ? '' : 'failed' }}">
+                                            {{ number_format($postTestAttempt->score, 0) }}%
                                         </div>
-                                        @if(!$postTestAttempt->is_passed && $postTest->canUserAttempt(session('edutech_user_id')))
-                                        <a href="{{ route('edutech.student.quiz.start', $postTest->id) }}" class="btn-start-quiz">
-                                            <i class="fas fa-redo"></i> Retake Quiz
-                                        </a>
-                                        @endif
+                                        <p style="margin-top: 10px; color: rgba(255, 255, 255, 0.7);">
+                                            {{ $postTestAttempt->is_passed ? 'You passed the post-test!' : 'You need ' . $postTest->passing_score . '% to pass.' }}
+                                        </p>
+                                        <small style="color: rgba(255, 255, 255, 0.5);">
+                                            Submitted:
+                                            {{ $postTestAttempt->submitted_at ? $postTestAttempt->submitted_at->diffForHumans() : 'N/A' }}
+                                        </small>
                                     </div>
+                                    @if(!$postTestAttempt->is_passed &&
+                                    $postTest->canUserAttempt(session('edutech_user_id')))
+                                    <a href="{{ route('edutech.student.quiz.start', $postTest->id) }}"
+                                        class="btn-start-quiz">
+                                        <i class="fas fa-redo"></i> Retake Quiz
+                                    </a>
+                                    @endif
                                 </div>
+                            </div>
                             @else
-                                <!-- Check Progress Requirement -->
-                                    @if($enrollment->progress_percentage >= 80)
-                                    <div style="text-align: center; padding: 20px;">
-                                        <a href="{{ route('edutech.student.quiz.start', $postTest->id) }}" class="btn-start-quiz">
-                                            <i class="fas fa-play-circle"></i> Start Post-Test
-                                        </a>
-                                    </div>
-                                    @else
-                                <div style="background: rgba(237, 137, 54, 0.1); border: 2px solid var(--warning); padding: 20px; border-radius: 12px; text-align: center;">
-                                    <i class="fas fa-lock" style="font-size: 2rem; color: var(--warning); margin-bottom: 15px;"></i>
-                                    <h3>Post-Test Locked</h3>
-                                    <p style="color: rgba(255, 255, 255, 0.7);">Complete at least 80% of the course to unlock the post-test.</p>
-                                    <p style="color: var(--warning); font-weight: 600; margin-top: 10px;">
-                                        Current Progress: {{ $enrollment->progress_percentage }}%
-                                    </p>
-                                </div>
-                                @endif
+                            <!-- Check Progress Requirement -->
+                            @if($enrollment->progress_percentage >= 80)
+                            <div style="text-align: center; padding: 20px;">
+                                <a href="{{ route('edutech.student.quiz.start', $postTest->id) }}"
+                                    class="btn-start-quiz">
+                                    <i class="fas fa-play-circle"></i> Start Post-Test
+                                </a>
+                            </div>
+                            @else
+                            <div
+                                style="background: rgba(237, 137, 54, 0.1); border: 2px solid var(--warning); padding: 20px; border-radius: 12px; text-align: center;">
+                                <i class="fas fa-lock"
+                                    style="font-size: 2rem; color: var(--warning); margin-bottom: 15px;"></i>
+                                <h3>Post-Test Locked</h3>
+                                <p style="color: rgba(255, 255, 255, 0.7);">Complete at least 80% of the course to
+                                    unlock the post-test.</p>
+                                <p style="color: var(--warning); font-weight: 600; margin-top: 10px;">
+                                    Current Progress: {{ $enrollment->progress_percentage }}%
+                                </p>
+                            </div>
+                            @endif
                             @endif
                         </div>
                         @else
@@ -863,29 +880,30 @@
                         <h2 style="margin-bottom: 30px;">📹 Live Sessions with Instructor</h2>
 
                         @if($liveSessions->count() > 0)
-                            <h3 style="color: var(--success); margin-bottom: 20px;">Upcoming Sessions</h3>
-                            @foreach($liveSessions as $session)
-                            <div class="session-card upcoming">
-                                <div class="session-time">
-                                    <i class="fas fa-calendar"></i>
-                                    <span>{{ $session->scheduled_at->format('l, d F Y') }}</span>
-                                    <span>•</span>
-                                    <i class="fas fa-clock"></i>
-                                    <span>{{ $session->scheduled_at->format('H:i') }} WIB</span>
-                                    <span>•</span>
-                                    <i class="fas fa-hourglass-half"></i>
-                                    <span>{{ $session->duration_minutes }} minutes</span>
-                                </div>
-                                
-                                <div class="session-title">{{ $session->title }}</div>
-                                
-                                @if($session->description)
-                                <div class="session-description">{{ $session->description }}</div>
-                                @endif
+                        <h3 style="color: var(--success); margin-bottom: 20px;">Upcoming Sessions</h3>
+                        @foreach($liveSessions as $session)
+                        <div class="session-card upcoming">
+                            <div class="session-time">
+                                <i class="fas fa-calendar"></i>
+                                <span>{{ $session->scheduled_at->format('l, d F Y') }}</span>
+                                <span>•</span>
+                                <i class="fas fa-clock"></i>
+                                <span>{{ $session->scheduled_at->format('H:i') }} WIB</span>
+                                <span>•</span>
+                                <i class="fas fa-hourglass-half"></i>
+                                <span>{{ $session->duration_minutes }} minutes</span>
+                            </div>
 
-                                <!-- Check if session is starting soon (within 15 minutes) -->
-                                @php
-                                    $isStartingSoon = $session->scheduled_at->diffInMinutes(now(), false) <= 15 && $session->scheduled_at->diffInMinutes(now(), false) >= -15;
+                            <div class="session-title">{{ $session->title }}</div>
+
+                            @if($session->description)
+                            <div class="session-description">{{ $session->description }}</div>
+                            @endif
+
+                            <!-- Check if session is starting soon (within 15 minutes) -->
+                            @php
+                            $isStartingSoon = $session->scheduled_at->diffInMinutes(now(), false) <= 15 && $session->
+                                scheduled_at->diffInMinutes(now(), false) >= -15;
                                 @endphp
 
                                 @if($isStartingSoon)
@@ -894,43 +912,44 @@
                                 </a>
                                 @else
                                 <div style="color: rgba(255, 255, 255, 0.6); font-size: 0.9rem; margin-top: 10px;">
-                                    <i class="fas fa-info-circle"></i> 
+                                    <i class="fas fa-info-circle"></i>
                                     Join button will be available 15 minutes before session starts
                                 </div>
                                 @endif
-                            </div>
-                            @endforeach
+                        </div>
+                        @endforeach
                         @else
-                            <div class="empty-state" style="margin-bottom: 40px;">
-                                <i class="fas fa-calendar-times"></i>
-                                <h3>No Upcoming Sessions</h3>
-                                <p>There are no scheduled live sessions at the moment.</p>
-                            </div>
+                        <div class="empty-state" style="margin-bottom: 40px;">
+                            <i class="fas fa-calendar-times"></i>
+                            <h3>No Upcoming Sessions</h3>
+                            <p>There are no scheduled live sessions at the moment.</p>
+                        </div>
                         @endif
 
                         @if($pastSessions->count() > 0)
-                            <h3 style="color: rgba(255, 255, 255, 0.6); margin-top: 40px; margin-bottom: 20px;">Past Sessions</h3>
-                            @foreach($pastSessions as $session)
-                            <div class="session-card">
-                                <div class="session-time">
-                                    <i class="fas fa-calendar"></i>
-                                    <span>{{ $session->scheduled_at->format('d F Y') }}</span>
-                                    <span>•</span>
-                                    <i class="fas fa-clock"></i>
-                                    <span>{{ $session->scheduled_at->format('H:i') }} WIB</span>
-                                </div>
-                                
-                                <div class="session-title">{{ $session->title }}</div>
-                                
-                                @if($session->description)
-                                <div class="session-description">{{ $session->description }}</div>
-                                @endif
-
-                                <div style="color: rgba(255, 255, 255, 0.5); font-size: 0.85rem; margin-top: 10px;">
-                                    <i class="fas fa-check-circle"></i> Session Completed
-                                </div>
+                        <h3 style="color: rgba(255, 255, 255, 0.6); margin-top: 40px; margin-bottom: 20px;">Past
+                            Sessions</h3>
+                        @foreach($pastSessions as $session)
+                        <div class="session-card">
+                            <div class="session-time">
+                                <i class="fas fa-calendar"></i>
+                                <span>{{ $session->scheduled_at->format('d F Y') }}</span>
+                                <span>•</span>
+                                <i class="fas fa-clock"></i>
+                                <span>{{ $session->scheduled_at->format('H:i') }} WIB</span>
                             </div>
-                            @endforeach
+
+                            <div class="session-title">{{ $session->title }}</div>
+
+                            @if($session->description)
+                            <div class="session-description">{{ $session->description }}</div>
+                            @endif
+
+                            <div style="color: rgba(255, 255, 255, 0.5); font-size: 0.85rem; margin-top: 10px;">
+                                <i class="fas fa-check-circle"></i> Session Completed
+                            </div>
+                        </div>
+                        @endforeach
                         @endif
                     </div>
                 </div>
@@ -941,9 +960,6 @@
                         <button class="sidebar-tab active" onclick="showSidebar('lessons-sidebar')">
                             <i class="fas fa-list"></i> Lessons
                         </button>
-                        <button class="sidebar-tab" onclick="showSidebar('notes-sidebar')">
-                            <i class="fas fa-sticky-note"></i> Notes
-                        </button>
                     </div>
 
                     <div class="sidebar-content">
@@ -952,10 +968,14 @@
                             <div style="margin-bottom: 20px;">
                                 <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
                                     <span style="font-weight: 600;">Course Progress</span>
-                                    <span style="font-weight: 700; color: var(--success);">{{ $enrollment->progress_percentage }}%</span>
+                                    <span
+                                        style="font-weight: 700; color: var(--success);">{{ $enrollment->progress_percentage }}%</span>
                                 </div>
-                                <div style="width: 100%; height: 8px; background: rgba(255, 255, 255, 0.2); border-radius: 10px; overflow: hidden;">
-                                    <div style="width: {{ $enrollment->progress_percentage }}%; height: 100%; background: linear-gradient(90deg, var(--success), #38a169);"></div>
+                                <div
+                                    style="width: 100%; height: 8px; background: rgba(255, 255, 255, 0.2); border-radius: 10px; overflow: hidden;">
+                                    <div
+                                        style="width: {{ $enrollment->progress_percentage }}%; height: 100%; background: linear-gradient(90deg, var(--success), #38a169);">
+                                    </div>
                                 </div>
                             </div>
 
@@ -964,7 +984,8 @@
                                 <div class="module-header" onclick="toggleModule(this)">
                                     <div>
                                         <div class="module-title">{{ $module->title }}</div>
-                                        <div style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.6); margin-top: 5px;">
+                                        <div
+                                            style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.6); margin-top: 5px;">
                                             <i class="fas fa-play-circle"></i> {{ $module->lessons->count() }} lessons
                                         </div>
                                     </div>
@@ -973,9 +994,10 @@
 
                                 <div class="lesson-list">
                                     @foreach($module->lessons as $lesson)
-                                    <a href="{{ route('edutech.courses.learn', ['slug' => $course->slug, 'lesson' => $lesson->id]) }}" 
-                                       class="lesson-item {{ $currentLesson && $currentLesson->id === $lesson->id ? 'active' : '' }}">
-                                        <i class="fas fa-{{ $lesson->type == 'video' ? 'play' : ($lesson->type == 'pdf' ? 'file-pdf' : 'file-alt') }}-circle"></i>
+                                    <a href="{{ route('edutech.courses.learn', ['slug' => $course->slug, 'lesson' => $lesson->id]) }}"
+                                        class="lesson-item {{ $currentLesson && $currentLesson->id === $lesson->id ? 'active' : '' }}">
+                                        <i
+                                            class="fas fa-{{ $lesson->type == 'video' ? 'play' : ($lesson->type == 'pdf' ? 'file-pdf' : 'file-alt') }}-circle"></i>
                                         <div class="lesson-info">
                                             <div class="lesson-name">{{ $lesson->title }}</div>
                                             <div class="lesson-duration">{{ $lesson->duration_minutes }} min</div>
@@ -997,15 +1019,6 @@
                             @endif
                         </div>
 
-                        <!-- Notes Sidebar -->
-                        <div id="notes-sidebar" class="sidebar-pane">
-                            <div style="background: rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 10px; margin-bottom: 20px; text-align: center;">
-                                <i class="fas fa-sticky-note" style="font-size: 2rem; color: var(--warning); margin-bottom: 10px;"></i>
-                                <p style="color: rgba(255, 255, 255, 0.7); font-size: 0.9rem;">
-                                    Notes feature coming soon! Stay tuned for updates.
-                                </p>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -1019,12 +1032,12 @@
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
             });
-            
+
             // Remove active from all buttons
             document.querySelectorAll('.tab-button').forEach(btn => {
                 btn.classList.remove('active');
             });
-            
+
             // Show selected tab
             document.getElementById(tabName + '-tab').classList.add('active');
             event.target.classList.add('active');
@@ -1035,11 +1048,11 @@
             document.querySelectorAll('.sidebar-pane').forEach(pane => {
                 pane.classList.remove('active');
             });
-            
+
             document.querySelectorAll('.sidebar-tab').forEach(btn => {
                 btn.classList.remove('active');
             });
-            
+
             document.getElementById(sidebarName).classList.add('active');
             event.target.classList.add('active');
         }
@@ -1053,20 +1066,20 @@
         // Mark lesson as complete
         function markAsComplete(lessonId) {
             fetch(`/edutech/learning/lesson/${lessonId}/complete`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Reload page to update UI
-                    location.reload();
-                }
-            })
-            .catch(error => console.error('Error:', error));
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Reload page to update UI
+                        location.reload();
+                    }
+                })
+                .catch(error => console.error('Error:', error));
         }
 
         // Initialize first module as open
@@ -1078,4 +1091,5 @@
         });
     </script>
 </body>
+
 </html>

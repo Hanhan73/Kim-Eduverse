@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -486,6 +487,7 @@
 
     @stack('styles')
 </head>
+
 <body>
     <!-- Sidebar -->
     <aside class="sidebar">
@@ -498,29 +500,33 @@
 
         <nav class="sidebar-menu">
             <a href="{{ route('edutech.instructor.dashboard') }}"
-            class="menu-item {{ request()->routeIs('edutech.instructor.dashboard') ? 'active' : '' }}">
+                class="menu-item {{ request()->routeIs('edutech.instructor.dashboard') ? 'active' : '' }}">
                 <i class="fas fa-home"></i>
                 Dashboard
             </a>
-
+            <a href="{{ route('edutech.profile.index') }}"
+                class="menu-item {{request()->routeIs('edutech.profile.index') ? 'active' : '' }}">
+                <i class="fas fa-user"></i>
+                Profile Saya
+            </a>
             <a href="{{ route('edutech.instructor.courses') }}"
-            class="menu-item {{ request()->routeIs('edutech.instructor.courses') ? 'active' : '' }}">
+                class="menu-item {{ request()->routeIs('edutech.instructor.courses') ? 'active' : '' }}">
                 <i class="fas fa-book"></i>
                 My Courses
             </a>
             <a href="{{ route('edutech.instructor.quiz.index') }}"
-             class="menu-item {{ request()->routeIs('edutech.instructor.quiz.index') ? 'active' : '' }}">
+                class="menu-item {{ request()->routeIs('edutech.instructor.quiz.index') ? 'active' : '' }}">
                 <i class="fas fa-clipboard-list"></i>
                 Quiz Management
             </a>
             <a href="{{ route('edutech.instructor.live-meetings.index') }}"
-            class="menu-item {{ request()->routeIs('edutech.instructor.live-meetings.index') ? 'active' : '' }}">
+                class="menu-item {{ request()->routeIs('edutech.instructor.live-meetings.index') ? 'active' : '' }}">
                 <i class="fas fa-video"></i>
                 Live Meeting
             </a>
 
             <a href="{{ route('edutech.instructor.students') }}"
-            class="menu-item {{ request()->routeIs('edutech.instructor.students') ? 'active' : '' }}">
+                class="menu-item {{ request()->routeIs('edutech.instructor.students') ? 'active' : '' }}">
                 <i class="fas fa-users"></i>
                 Students
             </a>
@@ -528,7 +534,6 @@
 
     </aside>
 
-<main>
-    @yield('content')
-</main>
-
+    <main>
+        @yield('content')
+    </main>

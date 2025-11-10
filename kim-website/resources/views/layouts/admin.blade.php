@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -357,98 +358,109 @@
         @yield('styles')
     </style>
 </head>
+
 <body>
-    <div class="admin-container">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <h2>
-                    <i class="fas fa-shield-alt"></i>
-                    Admin Panel
-                </h2>
-            </div>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h2>
+                <i class="fas fa-shield-alt"></i>
+                Admin Panel
+            </h2>
+        </div>
+        <a href="{{ route('edutech.profile.index') }}"
+            class="menu-item {{request()->routeIs('edutech.profile.index') ? 'active' : '' }}">
+            <i class="fas fa-user"></i>
+            Profile Saya
+        </a>
 
-            <nav class="sidebar-menu">
-                <a href="{{ route('edutech.admin.dashboard') }}" class="menu-item {{ request()->routeIs('edutech.admin.dashboard') ? 'active' : '' }}">
-                    <i class="fas fa-home"></i>
-                    Dashboard
-                </a>
-                <a href="{{ route('edutech.admin.users') }}" class="menu-item {{ request()->routeIs('edutech.admin.users*') ? 'active' : '' }}">
-                    <i class="fas fa-users"></i>
-                    Users Management
-                </a>
-                <a href="{{ route('edutech.admin.courses') }}" class="menu-item {{ request()->routeIs('edutech.admin.courses*') ? 'active' : '' }}">
-                    <i class="fas fa-book"></i>
-                    Courses Management
-                </a>
-                <a href="{{ route('edutech.admin.enrollments') }}" class="menu-item {{ request()->routeIs('edutech.admin.enrollments*') ? 'active' : '' }}">
-                    <i class="fas fa-user-graduate"></i>
-                    Enrollments
-                </a>
-                <a href="{{ route('edutech.admin.certificates') }}" class="menu-item {{ request()->routeIs('edutech.admin.certificates*') ? 'active' : '' }}">
-                    <i class="fas fa-certificate"></i>
-                    Certificates
-                </a>
-                
-                <div class="menu-divider"></div>
-                
-                <a href="{{ route('edutech.admin.settings') }}" class="menu-item {{ request()->routeIs('edutech.admin.settings*') ? 'active' : '' }}">
-                    <i class="fas fa-cog"></i>
-                    Settings
-                </a>
-                <a href="{{ route('edutech.landing') }}" class="menu-item">
-                    <i class="fas fa-globe"></i>
-                    View Website
-                </a>
-            </nav>
-        </aside>
+        <nav class="sidebar-menu">
+            <a href="{{ route('edutech.admin.dashboard') }}"
+                class="menu-item {{ request()->routeIs('edutech.admin.dashboard') ? 'active' : '' }}">
+                <i class="fas fa-home"></i>
+                Dashboard
+            </a>
+            <a href="{{ route('edutech.admin.users') }}"
+                class="menu-item {{ request()->routeIs('edutech.admin.users*') ? 'active' : '' }}">
+                <i class="fas fa-users"></i>
+                Users Management
+            </a>
+            <a href="{{ route('edutech.admin.courses') }}"
+                class="menu-item {{ request()->routeIs('edutech.admin.courses*') ? 'active' : '' }}">
+                <i class="fas fa-book"></i>
+                Courses Management
+            </a>
+            <a href="{{ route('edutech.admin.enrollments') }}"
+                class="menu-item {{ request()->routeIs('edutech.admin.enrollments*') ? 'active' : '' }}">
+                <i class="fas fa-user-graduate"></i>
+                Enrollments
+            </a>
+            <a href="{{ route('edutech.admin.certificates') }}"
+                class="menu-item {{ request()->routeIs('edutech.admin.certificates*') ? 'active' : '' }}">
+                <i class="fas fa-certificate"></i>
+                Certificates
+            </a>
 
-        <!-- Main Content -->
-        <main class="main-content">
-            <!-- Top Bar -->
-            <div class="top-bar">
-                <h1>@yield('page-title', 'Admin Dashboard')</h1>
-                <div class="user-info">
-                    <div class="user-avatar">
-                        {{ strtoupper(substr(session('edutech_user_name', 'A'), 0, 1)) }}
-                    </div>
-                    <span style="font-weight: 600; color: var(--dark);">{{ session('edutech_user_name', 'Admin') }}</span>
-                    <form action="{{ route('edutech.logout') }}" method="POST" style="display: inline;">
-                        @csrf
-                        <button type="submit" class="btn-logout">
-                            <i class="fas fa-sign-out-alt"></i> Logout
-                        </button>
-                    </form>
+            <div class="menu-divider"></div>
+
+            <a href="{{ route('edutech.admin.settings') }}"
+                class="menu-item {{ request()->routeIs('edutech.admin.settings*') ? 'active' : '' }}">
+                <i class="fas fa-cog"></i>
+                Settings
+            </a>
+            <a href="{{ route('edutech.landing') }}" class="menu-item">
+                <i class="fas fa-globe"></i>
+                View Website
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <h1>@yield('page-title', 'Admin Dashboard')</h1>
+            <div class="user-info">
+                <div class="user-avatar">
+                    {{ strtoupper(substr(session('edutech_user_name', 'A'), 0, 1)) }}
                 </div>
+                <span style="font-weight: 600; color: var(--dark);">{{ session('edutech_user_name', 'Admin') }}</span>
+                <form action="{{ route('edutech.logout') }}" method="POST" style="display: inline;">
+                    @csrf
+                    <button type="submit" class="btn-logout">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </form>
             </div>
+        </div>
 
-            <!-- Alerts -->
-            @if(session('success'))
-            <div class="alert alert-success">
-                <i class="fas fa-check-circle"></i>
-                <span>{{ session('success') }}</span>
-            </div>
-            @endif
+        <!-- Alerts -->
+        @if(session('success'))
+        <div class="alert alert-success">
+            <i class="fas fa-check-circle"></i>
+            <span>{{ session('success') }}</span>
+        </div>
+        @endif
 
-            @if(session('error'))
-            <div class="alert alert-error">
-                <i class="fas fa-exclamation-circle"></i>
-                <span>{{ session('error') }}</span>
-            </div>
-            @endif
+        @if(session('error'))
+        <div class="alert alert-error">
+            <i class="fas fa-exclamation-circle"></i>
+            <span>{{ session('error') }}</span>
+        </div>
+        @endif
 
-            @if(session('info'))
-            <div class="alert alert-info">
-                <i class="fas fa-info-circle"></i>
-                <span>{{ session('info') }}</span>
-            </div>
-            @endif
+        @if(session('info'))
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle"></i>
+            <span>{{ session('info') }}</span>
+        </div>
+        @endif
 
-            <!-- Content -->
-            @yield('content')
-        </main>
-    </div>
+        <!-- Content -->
+        @yield('content')
+    </main>
 
     @yield('scripts')
 </body>
+
 </html>
