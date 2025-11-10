@@ -33,26 +33,28 @@
 
         /* === LAYOUT === */
         .sidebar {
+            width: 260px;
+            background: linear-gradient(180deg, #2d3748 0%, #1a202c 100%);
             position: fixed;
             left: 0;
             top: 0;
-            width: 280px;
             height: 100vh;
-            background: linear-gradient(180deg, var(--primary), var(--secondary));
-            padding: 25px 0;
-            color: white;
-            z-index: 1000;
             overflow-y: auto;
+            z-index: 1000;
         }
 
         .sidebar-header {
-            padding: 0 25px 30px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 30px 25px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .sidebar-header h2 {
+            color: white;
             font-size: 1.5rem;
-            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 0;
         }
 
         .sidebar-menu {
@@ -62,35 +64,33 @@
         .menu-item {
             display: flex;
             align-items: center;
-            gap: 15px;
             padding: 15px 25px;
-            color: rgba(255, 255, 255, 0.8);
+            color: rgba(255, 255, 255, 0.7);
             text-decoration: none;
             transition: all 0.3s ease;
+            font-weight: 500;
             border-left: 4px solid transparent;
         }
 
         .menu-item:hover {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
             color: white;
         }
 
         .menu-item.active {
-            background: rgba(255, 255, 255, 0.15);
-            color: white;
+            background: rgba(255, 255, 255, 0.1);
             border-left-color: white;
+            color: white;
+        }
+
+        .menu-item i {
+            width: 25px;
+            margin-right: 12px;
         }
 
         .menu-divider {
-            height: 1px;
-            background: rgba(255, 255, 255, 0.2);
             margin: 20px 25px;
-        }
-
-        .main-content {
-            margin-left: 280px;
-            padding: 30px;
-            min-height: 100vh;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         /* === TOP BAR === */
@@ -229,7 +229,12 @@
             color: var(--gray);
             margin-top: 3px;
         }
-
+        .main-content {
+            margin-left: 260px;
+            padding: 30px 40px;
+            min-height: 100vh;
+            width: calc(100% - 260px);
+        }
         /* === CONTENT SECTIONS === */
         .content-section {
             background: white;
@@ -237,6 +242,7 @@
             border-radius: 12px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
             margin-bottom: 25px;
+
         }
 
         .section-header {
