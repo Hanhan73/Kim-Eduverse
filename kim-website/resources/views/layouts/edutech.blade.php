@@ -84,20 +84,23 @@
             background: rgba(255, 255, 255, 0.1);
         }
 
-        .btn-login {
-            background: white;
-            color: var(--primary);
-            padding: 10px 24px;
-            border-radius: 10px;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
+.btn-login {
+    background: linear-gradient(135deg, #ffffff33, #ffffff22);
+    color: #fff;
+    padding: 10px 24px;
+    border-radius: 10px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
 
-        .btn-login:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(255, 255, 255, 0.3);
-        }
+.btn-login:hover {
+    background: #fff;
+    color: #4b2bbf;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(255, 255, 255, 0.3);
+}
 
         /* Page Header */
         .page-header-courses {
@@ -618,7 +621,7 @@
             </a>
             <ul class="nav-links">
                 <li><a href="{{ route('edutech.landing') }}">Beranda</a></li>
-                <li><a href="{{ route('edutech.courses.index') }}">Courses</a></li>
+                <li><a href="{{ route('edutech.courses.index') }}">Kursus</a></li>
                 @if(session()->has('edutech_user_id'))
                 @if(session('edutech_user_role') === 'admin')
                 <li><a href="{{ route('edutech.admin.dashboard') }}">Dashboard</a></li>

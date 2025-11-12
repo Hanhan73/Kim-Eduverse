@@ -191,9 +191,9 @@
             <div style="color: var(--gray);">
                 Showing {{ $users->firstItem() ?? 0 }} to {{ $users->lastItem() ?? 0 }} of {{ $users->total() }} users
             </div>
-            <div>
-                {{ $users->links() }}
-            </div>
+                <div class="pagination-wrapper">
+                    {{ $users->links('vendor.pagination.default') }}
+                </div>
         </div>
     </div>
 </div>

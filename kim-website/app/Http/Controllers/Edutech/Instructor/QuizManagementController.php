@@ -97,7 +97,7 @@ class QuizManagementController extends Controller
         $postTest = Quiz::create(array_merge($quizData, ['type' => 'post_test']));
 
         return redirect()
-            ->route('edutech.instructor.quiz.edit', $quizData->id)
+            ->route('edutech.instructor.quiz.edit', $preTest->id)
             ->with('success', 'Quiz created! Now add questions.');
     }
 
@@ -210,7 +210,7 @@ class QuizManagementController extends Controller
         QuizQuestion::create([
             'quiz_id' => $quiz->id,
             'question' => $request->question,
-            'type' => $request->type,
+            'type' => "multiple_choice",
             'options' => $options,
             'correct_answer' => $request->correct_answer,
             'points' => $request->points,
@@ -247,7 +247,7 @@ class QuizManagementController extends Controller
 
         $question->update([
             'question' => $request->question,
-            'type' => $request->type,
+            'type' => 'multiple_choice',
             'options' => $options,
             'correct_answer' => $request->correct_answer,
             'points' => $request->points,
@@ -297,7 +297,7 @@ class QuizManagementController extends Controller
         foreach ($source->questions as $question) {
             $newQuestion = $destination->questions()->create([
                 'question' => $question->question,
-                'type' => $question->type,
+                'type' => 'multiple_choice',
                 'points' => $question->points,
                 'correct_answer' => $question->correct_answer,
                 'options' => $question->options,

@@ -88,7 +88,7 @@
     </div>
 </div>
 
-@if($user->role === 'instructor' && $user->instructorCourses->count() > 0)
+@if($user->role === 'instructor' && $user->coursesAsInstructor->count() > 0)
 <div class="content-card">
     <div class="card-header">
         <h3>Courses as Instructor</h3>
@@ -105,7 +105,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach($user->instructorCourses as $course)
+                @foreach($user->coursesAsInstructor as $course)
                 <tr>
                     <td style="font-weight: 600; color: var(--dark);">{{ $course->title }}</td>
                     <td>{{ $course->category }}</td>

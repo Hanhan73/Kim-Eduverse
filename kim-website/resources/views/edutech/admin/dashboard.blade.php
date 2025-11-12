@@ -4,12 +4,25 @@
 
 @section('content')
 <div class="content-wrapper">
-    <!-- Page Header -->
-    <div style="margin-bottom: 30px;">
-        <h1 style="font-size: 2rem; font-weight: 700; color: var(--dark); margin-bottom: 5px;">
-            <i class="fas fa-home" style="color: var(--primary);"></i> Dashboard
-        </h1>
-        <p style="color: var(--gray);">Halo Admin</p>
+    <!-- Top Bar with Logout -->
+    <div style="background: white; padding: 20px 30px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <h1 style="font-size: 2rem; font-weight: 700; color: var(--dark); margin-bottom: 5px;">
+                <i class="fas fa-home" style="color: var(--primary);"></i> Dashboard
+            </h1>
+            <p style="color: var(--gray); margin: 0;">Welcome back, {{ session('edutech_user_name') }}! Here's what's happening today.</p>
+        </div>
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <div style="width: 45px; height: 45px; border-radius: 50%; background: linear-gradient(135deg, #e53e3e, #c53030); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 1.2rem;">
+                {{ strtoupper(substr(session('edutech_user_name'), 0, 1)) }}
+            </div>
+            <form action="{{ route('edutech.logout') }}" method="POST" style="display: inline;">
+                @csrf
+                <button type="submit" style="background: var(--danger); color: white; padding: 10px 20px; border-radius: 8px; font-weight: 500; border: none; cursor: pointer; transition: all 0.3s ease;">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </form>
+        </div>
     </div>
 
     @if(session('success'))

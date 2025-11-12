@@ -301,6 +301,71 @@
     transform: scale(1.02);
 }
 
+    .pagination-wrapper {
+        display: flex;
+        justify-content: center;
+        margin-top: 25px;
+    }
+
+    .pagination i {
+        font-size: 16px;
+        color: #5b21b6;
+        transition: color 0.2s ease;
+    }
+
+    .pagination a:hover i {
+        color: white;
+    }
+
+    .pagination {
+        display: flex;
+        align-items: center;
+        list-style: none;
+        gap: 6px;
+        padding: 0;
+    }
+
+    .pagination li {
+        display: inline-flex;
+    }
+
+    .pagination a,
+    .pagination span {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        /* Kurangi dari 12px ke 6px untuk sangat kecil */
+        height: 32px;
+        border-radius: 50%;
+        background: #f5f3ff;
+        color: #5b21b6;
+        font-size: 1.0rem;
+        /* Kurangi font-size teks juga */
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .pagination a:hover {
+        background: #6d28d9;
+        color: white;
+    }
+
+    .pagination .active span {
+        background: #6d28d9;
+        color: white;
+        font-weight: 600;
+    }
+
+    .pagination .disabled span {
+        background: #ede9fe;
+        color: #9ca3af;
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+
         @yield('styles')
     </style>
 </head>

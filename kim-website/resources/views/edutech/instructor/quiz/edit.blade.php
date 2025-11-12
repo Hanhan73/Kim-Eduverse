@@ -273,7 +273,7 @@
             <form action="{{ route('edutech.instructor.quiz.questions.store', $quiz->id) }}" method="POST">
                 @csrf
                 
-                <div class="form-group">
+                <div class="form-group" hidden>
                     <label>Question Type</label>
                     <select name="type" id="questionType" class="form-control" onchange="toggleQuestionFields()" required>
                         <option value="multiple_choice">Multiple Choice</option>

@@ -6,23 +6,19 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::table('enrollments', function (Blueprint $table) {
-            //
+            if (!Schema::hasColumn('enrollments', 'certificate_issued_at')) {
+                $table->timestamp('certificate_issued_at')->nullable()->after('completed_at');
+            }
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::table('enrollments', function (Blueprint $table) {
-            //
+            $table->dropColumn('certificate_issued_at');
         });
     }
 };

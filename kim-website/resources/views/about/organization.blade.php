@@ -363,48 +363,6 @@
     </div>
 </section>
 
-<!-- Join Team CTA -->
-<section class="join-team-cta">
-    <div class="container">
-        <div class="cta-box">
-            <div class="cta-icon">
-                <i class="fas fa-users"></i>
-            </div>
-            <h2>Bergabung dengan Tim Kami</h2>
-            <p>
-                Kami selalu mencari talenta terbaik untuk bergabung dengan keluarga besar PT KIM.
-                Kirimkan CV Anda dan jadilah bagian dari perubahan.
-            </p>
-            <div class="cta-buttons">
-                <a href="{{ route('contact.index') }}" class="btn btn-primary-light">
-                    <i class="fas fa-paper-plane"></i> Kirim Lamaran
-                </a>
-                <a href="#" class="btn btn-outline-light">
-                    <i class="fas fa-briefcase"></i> Lihat Lowongan
-                </a>
-            </div>
-
-            <div class="cta-benefits">
-                <div class="benefit-item">
-                    <i class="fas fa-check-circle"></i>
-                    <span>Gaji Kompetitif</span>
-                </div>
-                <div class="benefit-item">
-                    <i class="fas fa-check-circle"></i>
-                    <span>BPJS & Asuransi</span>
-                </div>
-                <div class="benefit-item">
-                    <i class="fas fa-check-circle"></i>
-                    <span>Training Gratis</span>
-                </div>
-                <div class="benefit-item">
-                    <i class="fas fa-check-circle"></i>
-                    <span>Career Growth</span>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
 @endsection
 
 @push('styles')

@@ -30,7 +30,7 @@
             color: var(--dark);
         }
 
-        /* NAVBAR EDUTECH (BERBEDA DARI MAIN SITE!) */
+        /* NAVBAR */
         .navbar-edutech {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             box-shadow: 0 4px 20px rgba(102, 126, 234, 0.2);
@@ -83,70 +83,208 @@
             background: rgba(255, 255, 255, 0.1);
         }
 
-        .btn-login {
-            background: white;
-            color: var(--primary);
-            padding: 10px 24px;
-            border-radius: 10px;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
+.btn-login {
+    background: linear-gradient(135deg, #ffffff33, #ffffff22);
+    color: #fff;
+    padding: 10px 24px;
+    border-radius: 10px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
 
-        .btn-login:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(255, 255, 255, 0.3);
-        }
+.btn-login:hover {
+    background: #fff;
+    color: #4b2bbf;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(255, 255, 255, 0.3);
+}
 
-        /* HERO SECTION */
+        /* HERO */
         .hero {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             padding: 100px 20px;
             text-align: center;
             color: white;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,112C672,96,768,96,864,112C960,128,1056,160,1152,160C1248,160,1344,128,1392,112L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
-            background-size: cover;
-            opacity: 0.1;
-        }
-
-        .hero .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            position: relative;
-            z-index: 1;
         }
 
         .hero h1 {
             font-size: 3.5rem;
             font-weight: 800;
             margin-bottom: 20px;
-            text-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
 
         .hero p {
             font-size: 1.3rem;
             margin-bottom: 40px;
-            opacity: 0.95;
         }
 
-        .cta-buttons {
+        /* RECOMMENDATION SECTION */
+        .recommendation-section {
+            background: white;
+            padding: 80px 20px;
+            margin-top: -50px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .recommendation-section .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            padding: 50px;
+        }
+
+        .recommendation-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .recommendation-header h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--dark);
+            margin-bottom: 15px;
+        }
+
+        /* Quiz Form - FIXED: Show one question at a time */
+        .quiz-form {
+            display: none;
+        }
+
+        .quiz-form.active {
+            display: block;
+        }
+
+        .quiz-step {
+            display: none;
+        }
+
+        .quiz-step.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .quiz-question label {
+            display: block;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 20px;
+        }
+
+        .quiz-options {
+            display: grid;
+            gap: 15px;
+        }
+
+        .quiz-option {
+            position: relative;
+        }
+
+        .quiz-option input[type="radio"],
+        .quiz-option input[type="checkbox"] {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .quiz-option label {
+            display: flex;
+            align-items: center;
+            padding: 20px 25px;
+            background: var(--light);
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .quiz-option input:checked + label {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .quiz-option label:hover {
+            border-color: var(--primary);
+            transform: translateX(5px);
+        }
+
+        .quiz-option label i {
+            margin-right: 15px;
+            font-size: 1.5rem;
+        }
+
+        /* Start Screen */
+        .start-screen {
+            text-align: center;
+        }
+
+        .start-screen i {
+            font-size: 5rem;
+            color: var(--primary);
+            margin-bottom: 30px;
+        }
+
+        /* Results Screen */
+        .results-screen {
+            display: none;
+        }
+
+        .results-screen.active {
+            display: block;
+        }
+
+        .recommended-course {
             display: flex;
             gap: 20px;
-            justify-content: center;
-            flex-wrap: wrap;
+            padding: 25px;
+            background: var(--light);
+            border-radius: 12px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
         }
 
+        .recommended-course:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.2);
+        }
+
+        .recommended-course-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .match-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            background: var(--success);
+            color: white;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        /* Buttons */
         .btn {
             padding: 15px 35px;
             border-radius: 12px;
@@ -155,45 +293,73 @@
             text-decoration: none;
             transition: all 0.3s ease;
             display: inline-block;
+            border: none;
+            cursor: pointer;
         }
 
         .btn-primary {
-            background: white;
-            color: var(--primary);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
         }
 
         .btn-primary:hover {
             transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.4);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
         }
 
         .btn-outline {
             background: transparent;
-            color: white;
-            border: 2px solid white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
         }
 
         .btn-outline:hover {
-            background: white;
-            color: var(--primary);
+            background: var(--primary);
+            color: white;
         }
 
-        /* STATS SECTION */
+        .quiz-navigation {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        /* Progress Bar */
+        .quiz-progress {
+            margin-bottom: 30px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            text-align: center;
+            margin-top: 10px;
+            color: var(--gray);
+            font-weight: 600;
+        }
+
+        /* Stats */
         .stats {
             background: white;
             padding: 60px 20px;
-            margin-top: -50px;
-            position: relative;
-            z-index: 10;
         }
 
         .stats .container {
             max-width: 1200px;
             margin: 0 auto;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-            padding: 40px;
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 40px;
@@ -213,46 +379,20 @@
             font-size: 2.5rem;
             font-weight: 800;
             color: var(--dark);
-            margin-bottom: 5px;
         }
 
-        .stat-item p {
-            color: var(--gray);
-            font-size: 1.1rem;
-        }
-
-        /* FEATURED COURSES */
+        /* Featured Courses */
         .featured-courses {
             padding: 80px 20px;
             background: var(--light);
-        }
-
-        .featured-courses .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .section-title {
-            text-align: center;
-            margin-bottom: 50px;
-        }
-
-        .section-title h2 {
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: var(--dark);
-            margin-bottom: 15px;
-        }
-
-        .section-title p {
-            font-size: 1.2rem;
-            color: var(--gray);
         }
 
         .courses-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
         .course-card {
@@ -263,7 +403,6 @@
             transition: all 0.3s ease;
             text-decoration: none;
             color: inherit;
-            display: block;
         }
 
         .course-card:hover {
@@ -278,186 +417,16 @@
             background: linear-gradient(135deg, #667eea, #764ba2);
         }
 
-        .course-content {
-            padding: 25px;
-        }
-
-        .course-category {
-            display: inline-block;
-            padding: 6px 14px;
-            background: #e6f2ff;
-            color: #4299e1;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-bottom: 12px;
-        }
-
-        .course-title {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: var(--dark);
-            margin-bottom: 12px;
-            line-height: 1.4;
-        }
-
-        .course-instructor {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 15px;
-            color: var(--gray);
-            font-size: 0.95rem;
-        }
-
-        .course-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: 15px;
-            border-top: 1px solid #e2e8f0;
-        }
-
-        .course-price {
-            font-size: 1.5rem;
-            font-weight: 800;
-            color: var(--primary);
-        }
-
-        .course-price.free {
-            color: var(--success);
-        }
-
-        .course-students {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            color: var(--gray);
-            font-size: 0.9rem;
-        }
-
-        /* CATEGORIES */
-        .categories {
-            padding: 80px 20px;
-            background: white;
-        }
-
-        .categories .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .categories-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 25px;
-        }
-
-        .category-card {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            padding: 40px 30px;
-            border-radius: 16px;
-            text-align: center;
-            color: white;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: block;
-        }
-
-        .category-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.3);
-        }
-
-        .category-card i {
-            font-size: 3rem;
-            margin-bottom: 15px;
-        }
-
-        .category-card h3 {
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-        }
-
-        .category-card p {
-            opacity: 0.9;
-        }
-
-        /* FOOTER */
-        .footer {
-            background: var(--dark);
-            color: white;
-            padding: 60px 20px 30px;
-        }
-
-        .footer .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 40px;
-            margin-bottom: 40px;
-        }
-
-        .footer-section h3 {
-            font-size: 1.3rem;
-            margin-bottom: 20px;
-        }
-
-        .footer-section ul {
-            list-style: none;
-        }
-
-        .footer-section ul li {
-            margin-bottom: 12px;
-        }
-
-        .footer-section a {
-            color: rgba(255, 255, 255, 0.8);
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-
-        .footer-section a:hover {
-            color: white;
-            padding-left: 5px;
-        }
-
-        .footer-bottom {
-            text-align: center;
-            padding-top: 30px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            color: rgba(255, 255, 255, 0.7);
-        }
-
         @media (max-width: 768px) {
-            .navbar-edutech .nav-links {
-                display: none;
-            }
-
-            .hero h1 {
-                font-size: 2.5rem;
-            }
-
-            .hero p {
-                font-size: 1.1rem;
-            }
-
-            .stats .container {
-                grid-template-columns: 1fr;
-                gap: 30px;
-            }
+            .hero h1 { font-size: 2.5rem; }
+            .recommendation-section .container { padding: 30px 20px; }
+            .navbar-edutech .nav-links { display: none; }
         }
     </style>
 </head>
 
 <body>
-    <!-- Navbar Edutech (BERBEDA!) -->
+    <!-- Navbar -->
     <nav class="navbar-edutech">
         <div class="container">
             <a href="{{ route('edutech.landing') }}" class="logo">
@@ -466,41 +435,270 @@
             </a>
             <ul class="nav-links">
                 <li><a href="{{ route('edutech.landing') }}">Beranda</a></li>
-                <li><a href="{{ route('edutech.courses.index') }}">Courses</a></li>
+                <li><a href="{{ route('edutech.courses.index') }}">Kursus</a></li>
                 @if(session()->has('edutech_user_id'))
-                @if(session('edutech_user_role') === 'admin')
-                <li><a href="{{ route('edutech.admin.dashboard') }}">Dashboard</a></li>
-                @elseif(session('edutech_user_role') === 'instructor')
-                <li><a href="{{ route('edutech.instructor.dashboard') }}">Dashboard</a></li>
+                    @if(session('edutech_user_role') === 'admin')
+                        <li><a href="{{ route('edutech.admin.dashboard') }}">Dashboard</a></li>
+                    @elseif(session('edutech_user_role') === 'instructor')
+                        <li><a href="{{ route('edutech.instructor.dashboard') }}">Dashboard</a></li>
+                    @else
+                        <li><a href="{{ route('edutech.student.dashboard') }}">Dashboard</a></li>
+                    @endif
                 @else
-                <li><a href="{{ route('edutech.student.dashboard') }}">Dashboard</a></li>
-                @endif
-                @else
-                <li><a href="{{ route('edutech.login') }}" class="btn-login">Masuk</a></li>
+                    <li><a href="{{ route('edutech.login') }}" class="btn-login">Masuk</a></li>
                 @endif
             </ul>
         </div>
     </nav>
 
-    <!-- Hero Section -->
+    <!-- Hero -->
     <section class="hero">
+        <h1>🎓 Belajar Tanpa Batas</h1>
+        <p>Temukan course yang sempurna untuk Anda dengan rekomendasi personal kami</p>
+    </section>
+
+    <!-- RECOMMENDATION SYSTEM -->
+    <section class="recommendation-section">
         <div class="container">
-            <h1>🎓 Belajar Tanpa Batas</h1>
-            <p>Platform pembelajaran online terbaik dengan instruktur profesional dan materi berkualitas</p>
-            <div class="cta-buttons">
-                <a href="{{ route('edutech.courses.index') }}" class="btn btn-primary">Jelajahi Courses</a>
-                <a href="{{ route('edutech.register') }}" class="btn btn-outline">Daftar Gratis</a>
+            <div class="recommendation-header">
+                <h2>🎯 Temukan Course yang Tepat</h2>
+                <p>Jawab beberapa pertanyaan untuk mendapatkan rekomendasi course yang sesuai</p>
+            </div>
+
+            <!-- Start Screen -->
+            <div id="startScreen" class="start-screen">
+                <i class="fas fa-compass"></i>
+                <h3>Siap Memulai Perjalanan Belajar?</h3>
+                <p>
+                    Kami akan membantu Anda menemukan course yang paling cocok berdasarkan:<br>
+                </p>
+                <button onclick="startQuiz()" class="btn btn-primary">
+                    <i class="fas fa-play"></i> Mulai Rekomendasi
+                </button>
+            </div>
+
+            <!-- Quiz Form -->
+            <div id="quizForm" class="quiz-form">
+                <div class="quiz-progress">
+                    <div class="progress-bar">
+                        <div id="progressFill" class="progress-fill" style="width: 0%"></div>
+                    </div>
+                    <div class="progress-text">
+                        Pertanyaan <span id="currentQuestion">1</span> dari 5
+                    </div>
+                </div>
+
+                <!-- Question 1 -->
+                <div class="quiz-step active" data-step="1">
+                    <div class="quiz-question">
+                        <label>1. Apa tujuan utama Anda dalam belajar?</label>
+                        <div class="quiz-options">
+                            <div class="quiz-option">
+                                <input type="radio" name="goal" id="goal1" value="career">
+                                <label for="goal1">
+                                    <i class="fas fa-briefcase"></i>
+                                    Mengembangkan karir profesional
+                                </label>
+                            </div>
+                            <div class="quiz-option">
+                                <input type="radio" name="goal" id="goal2" value="skill">
+                                <label for="goal2">
+                                    <i class="fas fa-tools"></i>
+                                    Menguasai skill baru
+                                </label>
+                            </div>
+                            <div class="quiz-option">
+                                <input type="radio" name="goal" id="goal3" value="hobby">
+                                <label for="goal3">
+                                    <i class="fas fa-heart"></i>
+                                    Hobi dan pengembangan diri
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question 2 -->
+                <div class="quiz-step" data-step="2">
+                    <div class="quiz-question">
+                        <label>2. Bidang apa yang paling menarik bagi Anda? (Pilih semua yang sesuai)</label>
+                        <div class="quiz-options">
+                            <div class="quiz-option">
+                                <input type="checkbox" name="interest" id="int1" value="Education">
+                                <label for="int1">
+                                    <i class="fas fa-book"></i>
+                                    Pendidikan & Pengajaran
+                                </label>
+                            </div>
+                            <div class="quiz-option">
+                                <input type="checkbox" name="interest" id="int2" value="Language">
+                                <label for="int2">
+                                    <i class="fas fa-language"></i>
+                                    Bahasa Asing
+                                </label>
+                            </div>
+                            <div class="quiz-option">
+                                <input type="checkbox" name="interest" id="int3" value="Teknologi Informasi">
+                                <label for="int3">
+                                    <i class="fas fa-laptop-code"></i>
+                                    Teknologi & Programming
+                                </label>
+                            </div>
+                            <div class="quiz-option">
+                                <input type="checkbox" name="interest" id="int4" value="Desain">
+                                <label for="int4">
+                                    <i class="fas fa-palette"></i>
+                                    Desain & Kreativitas
+                                </label>
+                            </div>
+                            <div class="quiz-option">
+                                <input type="checkbox" name="interest" id="int5" value="Manajemen dan Teknik Industri">
+                                <label for="int5">
+                                    <i class="fas fa-chart-line"></i>
+                                    Manajemen & Bisnis
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question 3 -->
+                <div class="quiz-step" data-step="3">
+                    <div class="quiz-question">
+                        <label>3. Bagaimana level pengalaman Anda?</label>
+                        <div class="quiz-options">
+                            <div class="quiz-option">
+                                <input type="radio" name="experience" id="exp1" value="beginner">
+                                <label for="exp1">
+                                    <i class="fas fa-seedling"></i>
+                                    Pemula - Baru mulai belajar
+                                </label>
+                            </div>
+                            <div class="quiz-option">
+                                <input type="radio" name="experience" id="exp2" value="intermediate">
+                                <label for="exp2">
+                                    <i class="fas fa-layer-group"></i>
+                                    Menengah - Sudah punya dasar
+                                </label>
+                            </div>
+                            <div class="quiz-option">
+                                <input type="radio" name="experience" id="exp3" value="advanced">
+                                <label for="exp3">
+                                    <i class="fas fa-trophy"></i>
+                                    Mahir - Ingin level lanjutan
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question 4 -->
+                <div class="quiz-step" data-step="4">
+                    <div class="quiz-question">
+                        <label>4. Berapa waktu yang bisa Anda dedikasikan per minggu?</label>
+                        <div class="quiz-options">
+                            <div class="quiz-option">
+                                <input type="radio" name="time" id="time1" value="minimal">
+                                <label for="time1">
+                                    <i class="fas fa-clock"></i>
+                                    1-3 jam/minggu (Santai)
+                                </label>
+                            </div>
+                            <div class="quiz-option">
+                                <input type="radio" name="time" id="time2" value="moderate">
+                                <label for="time2">
+                                    <i class="fas fa-business-time"></i>
+                                    4-7 jam/minggu (Moderat)
+                                </label>
+                            </div>
+                            <div class="quiz-option">
+                                <input type="radio" name="time" id="time3" value="intensive">
+                                <label for="time3">
+                                    <i class="fas fa-fire"></i>
+                                    8+ jam/minggu (Intensif)
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question 5 -->
+                <div class="quiz-step" data-step="5">
+                    <div class="quiz-question">
+                        <label>5. Gaya belajar yang Anda sukai?</label>
+                        <div class="quiz-options">
+                            <div class="quiz-option">
+                                <input type="radio" name="learning_style" id="style1" value="visual">
+                                <label for="style1">
+                                    <i class="fas fa-eye"></i>
+                                    Visual - Video & infografis
+                                </label>
+                            </div>
+                            <div class="quiz-option">
+                                <input type="radio" name="learning_style" id="style2" value="practical">
+                                <label for="style2">
+                                    <i class="fas fa-hands"></i>
+                                    Praktis - Langsung praktek
+                                </label>
+                            </div>
+                            <div class="quiz-option">
+                                <input type="radio" name="learning_style" id="style3" value="interactive">
+                                <label for="style3">
+                                    <i class="fas fa-comments"></i>
+                                    Interaktif - Diskusi & kolaborasi
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation -->
+                <div class="quiz-navigation">
+                    <button id="prevBtn" onclick="previousStep()" class="btn btn-outline" style="display: none;">
+                        <i class="fas fa-arrow-left"></i> Sebelumnya
+                    </button>
+                    <button id="nextBtn" onclick="nextStep()" class="btn btn-primary">
+                        Selanjutnya <i class="fas fa-arrow-right"></i>
+                    </button>
+                    <button id="submitBtn" onclick="getRecommendations()" class="btn btn-primary" style="display: none;">
+                        <i class="fas fa-magic"></i> Lihat Rekomendasi
+                    </button>
+                </div>
+            </div>
+
+            <!-- Results Screen -->
+            <div id="resultsScreen" class="results-screen">
+                <div style="text-align: center; margin-bottom: 40px;">
+                    <i class="fas fa-check-circle" style="font-size: 4rem; color: var(--success);"></i>
+                    <h3 style="font-size: 2rem; font-weight: 700; margin: 20px 0 15px;">
+                        Kami Menemukan Kursus yang Cocok!
+                    </h3>
+                    <p style="font-size: 1.1rem; color: var(--gray);">
+                        Klik pada Kursus untuk melihat detail dan mulai belajar
+                    </p>
+                </div>
+
+                <div id="recommendedCourses" class="recommended-courses"></div>
+
+                <div style="text-align: center; margin-top: 30px;">
+                    <button onclick="resetQuiz()" class="btn btn-outline">
+                        <i class="fas fa-redo"></i> Coba Lagi
+                    </button>
+                    <a href="{{ route('edutech.courses.index') }}" class="btn btn-primary">
+                        <i class="fas fa-th"></i> Lihat Semua Kursus
+                    </a>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- Stats Section -->
+    <!-- Stats -->
     <section class="stats">
         <div class="container">
             <div class="stat-item">
                 <i class="fas fa-book"></i>
                 <h3>{{ $stats['total_courses'] ?? 0 }}+</h3>
-                <p>Courses Tersedia</p>
+                <p>Kursus Tersedia</p>
             </div>
             <div class="stat-item">
                 <i class="fas fa-users"></i>
@@ -517,134 +715,145 @@
 
     <!-- Featured Courses -->
     <section class="featured-courses">
-        <div class="container">
-            <div class="section-title">
-                <h2>✨ Courses Unggulan</h2>
-                <p>Pilihan terbaik untuk memulai perjalanan belajar Anda</p>
+        <div style="max-width: 1200px; margin: 0 auto;">
+            <div style="text-align: center; margin-bottom: 50px;">
+                <h2 style="font-size: 2.5rem; font-weight: 800;">✨ Kursus Unggulan</h2>
+                <p style="font-size: 1.2rem; color: var(--gray);">Pilihan terbaik untuk memulai perjalanan belajar</p>
             </div>
 
             <div class="courses-grid">
                 @forelse($featuredCourses ?? [] as $course)
                 <a href="{{ route('edutech.courses.detail', $course->slug) }}" class="course-card">
                     @if($course->thumbnail)
-                    <img src="{{ asset('storage/' . $course->thumbnail) }}" alt="{{ $course->title }}"
-                        class="course-thumbnail">
+                    <img src="{{ asset('storage/' . $course->thumbnail) }}" alt="{{ $course->title }}" class="course-thumbnail">
                     @else
                     <div class="course-thumbnail"></div>
                     @endif
-                    <div class="course-content">
-                        <span class="course-category">{{ $course->category }}</span>
-                        <h3 class="course-title">{{ $course->title }}</h3>
-                        <div class="course-instructor">
+                    <div style="padding: 25px;">
+                        <span style="display: inline-block; padding: 6px 14px; background: #e6f2ff; color: #4299e1; border-radius: 20px; font-size: 0.85rem; font-weight: 600; margin-bottom: 12px;">{{ $course->category }}</span>
+                        <h3 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 12px;">{{ $course->title }}</h3>
+                        <div style="display: flex; align-items: center; gap: 10px; color: var(--gray);">
                             <i class="fas fa-user-circle"></i>
                             <span>{{ $course->instructor->name }}</span>
-                        </div>
-                        <div class="course-footer">
-                            @if($course->price > 0)
-                            <span class="course-price">Rp {{ number_format($course->price, 0, ',', '.') }}</span>
-                            @else
-                            <span class="course-price free">GRATIS</span>
-                            @endif
-                            <span class="course-students">
-                                <i class="fas fa-user-graduate"></i>
-                                {{ $course->enrollments_count ?? 0 }} siswa
-                            </span>
                         </div>
                     </div>
                 </a>
                 @empty
                 <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px;">
-                    <i class="fas fa-book" style="font-size: 4rem; color: #cbd5e0; margin-bottom: 20px;"></i>
+                    <i class="fas fa-book" style="font-size: 4rem; color: #cbd5e0;"></i>
                     <p style="color: #718096; font-size: 1.1rem;">Belum ada course tersedia</p>
                 </div>
                 @endforelse
             </div>
-
-            <div style="text-align: center; margin-top: 50px;">
-                <a href="{{ route('edutech.courses.index') }}" class="btn btn-primary">Lihat Semua Courses</a>
-            </div>
         </div>
     </section>
 
-    <!-- Categories -->
-    <section class="categories" id="categories">
-        <div class="container">
-            <div class="section-title">
-                <h2>📚 Kategori Populer</h2>
-                <p>Temukan course sesuai minat Anda</p>
-            </div>
+    <script>
+        let currentStep = 0;
+        const totalSteps = 5;
 
-            <div class="categories-grid">
-                <a href="{{ route('edutech.courses.index', ['category' => 'Education']) }}" class="category-card">
-                    <i class="fas fa-graduation-cap"></i>
-                    <h3>Education</h3>
-                    <p>CBTS, Teknik Alba, Media Pembelajaran, AI</p>
-                </a>
-                <a href="{{ route('edutech.courses.index', ['category' => 'Language']) }}" class="category-card">
-                    <i class="fas fa-language"></i>
-                    <h3>Language</h3>
-                    <p>Bahasa Inggris, Bahasa Arab</p>
-                </a>
-                <a href="{{ route('edutech.courses.index', ['category' => 'Teknologi Informasi']) }}"
-                    class="category-card">
-                    <i class="fas fa-laptop-code"></i>
-                    <h3>Teknologi Informasi</h3>
-                    <p>Office Computer, Coding</p>
-                </a>
-                <a href="{{ route('edutech.courses.index', ['category' => 'Desain']) }}" class="category-card">
-                    <i class="fas fa-palette"></i>
-                    <h3>Desain</h3>
-                    <p>Desain Interior, DKV</p>
-                </a>
-                <a href="{{ route('edutech.courses.index', ['category' => 'Manajemen dan Teknik Industri']) }}"
-                    class="category-card">
-                    <i class="fas fa-chart-line"></i>
-                    <h3>Manajemen & Teknik Industri</h3>
-                    <p>ISO 9001, 7 Tools, Quality Management</p>
-                </a>
-            </div>
-        </div>
-    </section>
+        function startQuiz() {
+            document.getElementById('startScreen').style.display = 'none';
+            document.getElementById('quizForm').classList.add('active');
+            updateProgress();
+        }
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h3>KIM EduTech</h3>
-                    <p>Platform pembelajaran online terbaik untuk meningkatkan keterampilan Anda</p>
-                </div>
-                <div class="footer-section">
-                    <h3>Tautan Cepat</h3>
-                    <ul>
-                        <li><a href="{{ route('edutech.courses.index') }}">Courses</a></li>
-                        <li><a href="{{ route('edutech.register') }}">Daftar</a></li>
-                        <li><a href="{{ route('edutech.login') }}">Masuk</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h3>Kategori</h3>
-                    <ul>
-                        <li><a href="{{ route('edutech.courses.index', ['category' => 'CBTS']) }}">Education</a></li>
-                        <li><a
-                                href="{{ route('edutech.courses.index', ['category' => 'Bahasa Inggris']) }}">Language</a>
-                        </li>
-                        <li><a href="{{ route('edutech.courses.index', ['category' => 'Coding']) }}">Teknologi</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h3>Kontak</h3>
-                    <ul>
-                        <li><i class="fas fa-envelope"></i> info@kimedutech.com</li>
-                        <li><i class="fas fa-phone"></i> +62 XXX XXXX XXXX</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2025 KIM EduTech. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
+        function nextStep() {
+            const currentQuiz = document.querySelector('.quiz-step.active');
+            const inputs = currentQuiz.querySelectorAll('input[type="radio"], input[type="checkbox"]');
+            const isAnswered = Array.from(inputs).some(input => input.checked);
+
+            if (!isAnswered) {
+                alert('Silakan pilih minimal satu jawaban!');
+                return;
+            }
+
+            if (currentStep < totalSteps - 1) {
+                currentQuiz.classList.remove('active');
+                currentStep++;
+                document.querySelectorAll('.quiz-step')[currentStep].classList.add('active');
+                updateProgress();
+                updateButtons();
+            }
+        }
+
+        function previousStep() {
+            if (currentStep > 0) {
+                document.querySelector('.quiz-step.active').classList.remove('active');
+                currentStep--;
+                document.querySelectorAll('.quiz-step')[currentStep].classList.add('active');
+                updateProgress();
+                updateButtons();
+            }
+        }
+
+        function updateProgress() {
+            const progress = ((currentStep + 1) / totalSteps) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+            document.getElementById('currentQuestion').textContent = currentStep + 1;
+        }
+
+        function updateButtons() {
+            document.getElementById('prevBtn').style.display = currentStep > 0 ? 'inline-block' : 'none';
+            document.getElementById('nextBtn').style.display = currentStep < totalSteps - 1 ? 'inline-block' : 'none';
+            document.getElementById('submitBtn').style.display = currentStep === totalSteps - 1 ? 'inline-block' : 'none';
+        }
+
+        function getRecommendations() {
+            const interests = Array.from(document.querySelectorAll('input[name="interest"]:checked')).map(i => i.value);
+            
+            if (interests.length === 0) {
+                alert('Silakan pilih minimal satu bidang minat!');
+                return;
+            }
+
+            displayRecommendations(interests);
+            document.getElementById('quizForm').classList.remove('active');
+            document.getElementById('resultsScreen').classList.add('active');
+        }
+
+        function displayRecommendations(categories) {
+            const container = document.getElementById('recommendedCourses');
+            const icons = {
+                'Education': 'fas fa-book',
+                'Language': 'fas fa-language',
+                'Teknologi Informasi': 'fas fa-laptop-code',
+                'Desain': 'fas fa-palette',
+                'Manajemen dan Teknik Industri': 'fas fa-chart-line'
+            };
+
+            container.innerHTML = '';
+            categories.forEach((category, index) => {
+                const match = 95 - (index * 5);
+                container.innerHTML += `
+                    <a href="{{ route('edutech.courses.index') }}?category=${encodeURIComponent(category)}" class="recommended-course">
+                        <div class="recommended-course-icon">
+                            <i class="${icons[category] || 'fas fa-star'}"></i>
+                        </div>
+                        <div style="flex: 1;">
+                            <h4 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 10px;">${category}</h4>
+                            <p style="color: var(--gray); margin-bottom: 10px;">Jelajahi course terbaik di bidang ${category}</p>
+                            <span class="match-badge">
+                                <i class="fas fa-star"></i> ${match}% Cocok
+                            </span>
+                        </div>
+                    </a>
+                `;
+            });
+        }
+
+        function resetQuiz() {
+            currentStep = 0;
+            document.querySelectorAll('input[type="radio"], input[type="checkbox"]').forEach(input => input.checked = false);
+            document.querySelector('.quiz-step.active')?.classList.remove('active');
+            document.querySelectorAll('.quiz-step')[0].classList.add('active');
+            document.getElementById('resultsScreen').classList.remove('active');
+            document.getElementById('startScreen').style.display = 'block';
+            document.getElementById('quizForm').classList.remove('active');
+            updateProgress();
+            updateButtons();
+        }
+    </script>
 </body>
 
 </html>

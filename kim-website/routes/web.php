@@ -21,6 +21,7 @@ Route::prefix('produk')->group(function () {
     Route::get('/consultant/{category}', [ConsultantController::class, 'show'])->name('consultant.show');
     Route::post('/consultant/inquiry', [ConsultantController::class, 'submitInquiry'])->name('consultant.inquiry');
     Route::get('/developer', [DeveloperController::class, 'index'])->name('developer.index');
+    Route::get('/developer/detail', [DeveloperController::class, 'show'])->name('developer.show');
     Route::get('/edutech', [EdutechController::class, 'index'])->name('edutech.index');
 });
 

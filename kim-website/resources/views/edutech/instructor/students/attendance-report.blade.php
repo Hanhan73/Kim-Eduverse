@@ -186,6 +186,23 @@
         box-shadow: 0 5px 15px rgba(72, 187, 120, 0.4);
         color: white;
     }
+
+    .no-data {
+        text-align: center;
+        padding: 40px;
+        color: #718096;
+    }
+
+    @media print {
+        .back-btn,
+        .btn-export {
+            display: none;
+        }
+        
+        .page-header {
+            box-shadow: none;
+        }
+    }
 </style>
 @endpush
 
@@ -226,7 +243,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($students as $index => $student)
+                        @forelse($students as $index => $student)
                         <tr>
                             <td>{{ $index + 1 }}</td>
                             <td>
@@ -238,35 +255,46 @@
                                 </div>
                             </td>
                             <td>
-                                <strong style="font-size: 1.3rem; color: #2d3748;">{{ $student->total_sessions }}</strong>
+                                <strong style="font-size: 1.3rem; color: #2d3748;">{{ $student->total_sessions ?? 0 }}</strong>
                                 <span style="color: #718096;"> sesi</span>
                             </td>
                             <td>
                                 <div class="attendance-stats">
                                     <span class="stat-badge present">
                                         <i class="fas fa-check"></i>
-                                        {{ $student->present_count }} Hadir
+                                        {{ $student->present_count ?? 0 }} Hadir
                                     </span>
                                     <span class="stat-badge absent">
                                         <i class="fas fa-times"></i>
-                                        {{ $student->absent_count }} Absen
+                                        {{ $student->absent_count ?? 0 }} Absen
                                     </span>
                                     <span class="stat-badge late">
                                         <i class="fas fa-clock"></i>
-                                        {{ $student->late_count }} Terlambat
+                                        {{ $student->late_count ?? 0 }} Terlambat
                                     </span>
                                 </div>
                             </td>
                             <td>
+                                @php
+                                    $percentage = $student->attendance_percentage ?? 0;
+                                    $fillClass = $percentage < 60 ? 'low' : ($percentage < 80 ? 'medium' : '');
+                                @endphp
                                 <div class="percentage-bar">
-                                    <div class="percentage-fill {{ $student->attendance_percentage < 60 ? 'low' : ($student->attendance_percentage < 80 ? 'medium' : '') }}" 
-                                         style="width: {{ $student->attendance_percentage }}%">
-                                        {{ $student->attendance_percentage }}%
+                                    <div class="percentage-fill {{ $fillClass }}" 
+                                         style="width: {{ $percentage }}%">
+                                        {{ number_format($percentage, 1) }}%
                                     </div>
                                 </div>
                             </td>
                         </tr>
-                        @endforeach
+                        @empty
+                        <tr>
+                            <td colspan="5" class="no-data">
+                                <i class="fas fa-inbox" style="font-size: 3rem; opacity: 0.3;"></i>
+                                <p style="margin-top: 10px; font-size: 1.1rem;">Belum ada data kehadiran siswa</p>
+                            </td>
+                        </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>

@@ -474,7 +474,7 @@
                         <div class="course-stats">
                             <div class="course-stat">
                                 <i class="fas fa-check-circle" style="color: var(--success);"></i>
-                                <span>Completed {{ $enrollment->completed_at->format('d M Y') }}</span>
+                                <span>Completed {{ $enrollment->completed_at}}</span>
                             </div>
                         </div>
 

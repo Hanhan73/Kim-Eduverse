@@ -294,7 +294,7 @@
         }
 
         .description {
-            color: var(--gray);
+            color: var(--white);
             line-height: 1.8;
             font-size: 1.05rem;
         }

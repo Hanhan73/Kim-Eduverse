@@ -40,7 +40,7 @@ class UsersController extends Controller
         $user = User::with(['coursesAsInstructor', 'enrollments.course'])->findOrFail($id);
 
         $stats = [
-            'total_courses' => $user->role === 'instructor' ? $user->instructorCourses->count() : 0,
+            'total_courses' => $user->role === 'instructor' ? $user->coursesAsInstructor->count() : 0,
             'total_enrollments' => $user->enrollments->count(),
             'completed_courses' => $user->enrollments->whereNotNull('completed_at')->count(),
             'certificates' => $user->enrollments->whereNotNull('certificate_issued_at')->count(),
