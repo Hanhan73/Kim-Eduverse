@@ -234,6 +234,8 @@
             padding: 30px 40px;
             min-height: 100vh;
             width: calc(100% - 260px);
+            position: relative;
+            z-index: 1;
         }
         /* === CONTENT SECTIONS === */
         .content-section {

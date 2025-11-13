@@ -95,6 +95,7 @@ class Payment extends Model
             ]);
         }
     }
+    
 
     public function markAsFailed()
     {

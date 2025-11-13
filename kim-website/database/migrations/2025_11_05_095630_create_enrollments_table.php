@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('student_id')->constrained('users')->onDelete('cascade'); // ← GANTI dari user_id
             $table->foreignId('course_id')->constrained()->onDelete('cascade');
-            $table->enum('status', ['active', 'completed', 'cancelled'])->default('active');
+            $table->enum('status', ['active', 'completed', 'cancelled', 'inactive'])->default('active');
             $table->integer('progress_percentage')->default(0);
             $table->timestamp('enrolled_at')->useCurrent();
             $table->timestamp('completed_at')->nullable();

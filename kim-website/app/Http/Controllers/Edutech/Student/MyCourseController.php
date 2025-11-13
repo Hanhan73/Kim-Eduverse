@@ -15,11 +15,13 @@ class MyCourseController extends Controller
         $activeCourses = Enrollment::with(['course.instructor'])
             ->where('student_id', $studentId)
             ->where('status', 'active')
+            ->where('payment_status', 'paid')
             ->latest()
             ->get();
 
         $completedCourses = Enrollment::with(['course.instructor'])
             ->where('student_id', $studentId)
+            ->where('payment_status', 'paid')
             ->where('status', 'completed')
             ->latest()
             ->get();

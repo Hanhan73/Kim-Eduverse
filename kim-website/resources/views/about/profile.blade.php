@@ -9,7 +9,7 @@
         <div class="header-content">
             <h1 class="page-title animate-fade-in">Tentang PT KIM</h1>
             <p class="page-subtitle animate-fade-in-delay">
-                Mitra terpercaya untuk transformasi digital dan pengembangan bisnis Anda
+                Center of Excellent Competency - Mitra terpercaya untuk transformasi digital dan pengembangan kompetensi
             </p>
         </div>
     </div>
@@ -28,22 +28,18 @@
                 <span class="section-badge">Profil Perusahaan</span>
                 <h2 class="section-title">Siapa Kami?</h2>
                 <p class="overview-text">
-                    <strong>KIM</strong> adalah perusahaan yang bergerak di bidang konsultasi
-                    bisnis,
-                    pengembangan teknologi informasi, dan solusi pendidikan digital. Didirikan pada tahun - ,
-                    kami telah membantu ratusan perusahaan dan institusi dalam mencapai tujuan bisnis mereka
-                    melalui inovasi dan teknologi.
+                    <strong>PT Kompetensi Indonesia Mandiri (PT KIM)</strong> adalah perusahaan perseroan terbatas 
+                    yang berdomisili di Kawasan Bandung Barat. PT KIM melayani pelatihan, konsultasi dan sertifikasi 
+                    untuk hampir semua bidang, antara lain pendidikan, manajemen, manajemen industri, manajemen sumber 
+                    daya manusia, informasi dan teknologi, pertanian, pariwisata, desain, bahasa dan lain-lain untuk 
+                    instansi pemerintah dan swasta.
                 </p>
                 <p class="overview-text">
-                    Dengan tim profesional yang berpengalaman lebih dari 10 tahun di berbagai industri,
-                    kami berkomitmen untuk memberikan solusi terbaik yang disesuaikan dengan kebutuhan
-                    spesifik setiap klien.
+                    Dengan tim profesional yang berpengalaman dan komitmen tinggi terhadap kualitas layanan, 
+                    kami berkomitmen untuk memberikan solusi terbaik yang disesuaikan dengan kebutuhan spesifik 
+                    setiap klien melalui pendekatan yang efektif, efisien, dan berbasis teknologi terkini.
                 </p>
                 <div class="overview-stats">
-                    <div class="stat-box">
-                        <div class="stat-number">10+</div>
-                        <div class="stat-label">Tahun Pengalaman</div>
-                    </div>
                     <div class="stat-box">
                         <div class="stat-number">500+</div>
                         <div class="stat-label">Klien Puas</div>
@@ -51,6 +47,10 @@
                     <div class="stat-box">
                         <div class="stat-number">150+</div>
                         <div class="stat-label">Proyek Selesai</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number">24/7</div>
+                        <div class="stat-label">Support</div>
                     </div>
                 </div>
             </div>
@@ -68,9 +68,8 @@
                 </div>
                 <h3>Visi Kami</h3>
                 <p>
-                    Menjadi perusahaan konsultan dan pengembang teknologi terdepan di Indonesia yang
-                    dikenal dengan solusi inovatif, berkualitas tinggi, dan memberikan dampak nyata
-                    bagi kemajuan bisnis klien.
+                    Menjadi perusahaan penyelenggara pelatihan, konsultasi dan sertifikasi bertaraf 
+                    internasional pada tahun 2032.
                 </p>
             </div>
             <div class="vm-card mission-card">
@@ -81,19 +80,19 @@
                 <ul class="mission-list">
                     <li>
                         <i class="fas fa-check-circle"></i>
-                        Memberikan layanan konsultasi profesional dengan pendekatan yang komprehensif
+                        Memberikan pelayanan secara optimal kepada para customer sesuai kebutuhannya
                     </li>
                     <li>
                         <i class="fas fa-check-circle"></i>
-                        Mengembangkan solusi teknologi yang inovatif dan mudah digunakan
+                        Meningkatkan kompetensi sumber daya manusia perusahaan secara berkala
                     </li>
                     <li>
                         <i class="fas fa-check-circle"></i>
-                        Memberdayakan SDM melalui pendidikan dan pelatihan berkualitas
+                        Menjadi mitra pemerintah dan swasta dalam meningkatkan kompetensi organisasi
                     </li>
                     <li>
                         <i class="fas fa-check-circle"></i>
-                        Membangun kemitraan jangka panjang dengan klien
+                        Meningkatkan pelayanan secara efektif dan efisien berbasis teknologi terbaru
                     </li>
                 </ul>
             </div>
@@ -101,12 +100,12 @@
     </div>
 </section>
 
-<!-- Core Values -->
+<!-- Key Factors -->
 <section class="core-values">
     <div class="container">
         <div class="section-header">
-            <span class="section-badge">Nilai-Nilai Kami</span>
-            <h2 class="section-title">Core Values</h2>
+            <span class="section-badge">Key Factors</span>
+            <h2 class="section-title">Faktor Kunci Kesuksesan</h2>
             <p class="section-subtitle">
                 Nilai-nilai fundamental yang menjadi landasan dalam setiap pekerjaan kami
             </p>
@@ -115,50 +114,130 @@
         <div class="values-grid">
             <div class="value-card">
                 <div class="value-icon" style="background: linear-gradient(135deg, #667eea, #764ba2);">
-                    <i class="fas fa-trophy"></i>
+                    <i class="fas fa-users"></i>
                 </div>
-                <h3>Excellence</h3>
-                <p>Selalu memberikan hasil terbaik dengan standar kualitas tertinggi dalam setiap proyek</p>
+                <h3>Customer Focus</h3>
+                <p>Menjadikan customer sebagai advocate customer dengan memberikan pelayanan terbaik</p>
             </div>
 
             <div class="value-card">
                 <div class="value-icon" style="background: linear-gradient(135deg, #48bb78, #38a169);">
-                    <i class="fas fa-lightbulb"></i>
+                    <i class="fas fa-chart-line"></i>
                 </div>
-                <h3>Innovation</h3>
-                <p>Terus berinovasi dan mengadopsi teknologi terkini untuk solusi yang lebih baik</p>
+                <h3>Effectiveness</h3>
+                <p>Senantiasa menjalankan proses bisnis dengan sistem yang efektif untuk mendukung optimalisasi dan produktivitas</p>
             </div>
 
             <div class="value-card">
                 <div class="value-icon" style="background: linear-gradient(135deg, #3182ce, #2c5aa0);">
-                    <i class="fas fa-shield-alt"></i>
+                    <i class="fas fa-cogs"></i>
                 </div>
-                <h3>Integrity</h3>
-                <p>Menjunjung tinggi kejujuran, transparansi, dan etika bisnis yang baik</p>
+                <h3>Efficiency</h3>
+                <p>Pemanfaatan sumber daya secara efisien untuk mendukung optimalisasi dan produktivitas</p>
             </div>
 
             <div class="value-card">
                 <div class="value-icon" style="background: linear-gradient(135deg, #f56565, #e53e3e);">
-                    <i class="fas fa-users"></i>
+                    <i class="fas fa-arrow-up"></i>
                 </div>
-                <h3>Collaboration</h3>
-                <p>Membangun kerja sama yang solid dengan klien dan tim untuk hasil optimal</p>
+                <h3>Continuous Improvement</h3>
+                <p>Setiap hari adalah peningkatan dari hari sebelumnya. Keberhasilan adalah menjadi lebih baik dari sebelumnya</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Competitive Advantage -->
+<section class="competitive-advantage">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-badge">Keunggulan Kami</span>
+            <h2 class="section-title">Competitive Advantage</h2>
+            <p class="section-subtitle">
+                Keunggulan kompetitif yang membedakan kami dari yang lain
+            </p>
+        </div>
+
+        <div class="advantage-grid">
+            <div class="advantage-item">
+                <div class="advantage-icon">
+                    <i class="fas fa-bullseye"></i>
+                </div>
+                <h3>Niche</h3>
+                <p>Menawarkan layanan dan produk yang lebih unik atau baru dengan kemudahan akses, fleksibilitas layanan dan produk serta harga yang kompetitif</p>
             </div>
 
-            <div class="value-card">
-                <div class="value-icon" style="background: linear-gradient(135deg, #805ad5, #6b46c1);">
-                    <i class="fas fa-user-check"></i>
+            <div class="advantage-item">
+                <div class="advantage-icon">
+                    <i class="fas fa-rocket"></i>
                 </div>
-                <h3>Customer Focus</h3>
-                <p>Mengutamakan kepuasan dan keberhasilan klien dalam setiap layanan kami</p>
+                <h3>Agile</h3>
+                <p>Menawarkan layanan dan produk yang lebih menguntungkan customer karena sesuai kebutuhan dan dapat diadaptasi dengan cepat</p>
             </div>
 
-            <div class="value-card">
-                <div class="value-icon" style="background: linear-gradient(135deg, #d69e2e, #b7791f);">
-                    <i class="fas fa-clock"></i>
+            <div class="advantage-item">
+                <div class="advantage-icon">
+                    <i class="fas fa-tachometer-alt"></i>
                 </div>
-                <h3>Commitment</h3>
-                <p>Berkomitmen penuh dalam menyelesaikan setiap proyek tepat waktu dan sesuai ekspektasi</p>
+                <h3>Function</h3>
+                <p>Bekerja dengan cepat dan efektif untuk memberikan hasil terbaik dalam setiap proyek</p>
+            </div>
+
+            <div class="advantage-item">
+                <div class="advantage-icon">
+                    <i class="fas fa-hand-pointer"></i>
+                </div>
+                <h3>Easy</h3>
+                <p>Mengedepankan kemudahan dalam setiap proses bisnis yang dijalankan untuk kenyamanan klien</p>
+            </div>
+
+            <div class="advantage-item">
+                <div class="advantage-icon">
+                    <i class="fas fa-compress"></i>
+                </div>
+                <h3>Compact</h3>
+                <p>Menawarkan layanan dan produk yang efisien untuk diimplementasikan oleh klien</p>
+            </div>
+
+            <div class="advantage-item">
+                <div class="advantage-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3>Trend</h3>
+                <p>Menawarkan layanan dan produk yang mutakhir tapi masih dapat disesuaikan dengan kemampuan klien</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Strengths -->
+<section class="strengths-section">
+    <div class="container">
+        <div class="sw-grid">
+            <div class="sw-card strengths-card">
+                <h2>
+                    <i class="fas fa-trophy"></i>
+                    Strengths
+                </h2>
+                <ul class="sw-list">
+                    <li><i class="fas fa-check"></i> Harga terbaik dan fleksibel</li>
+                    <li><i class="fas fa-check"></i> Budaya dinamis dan inovatif</li>
+                    <li><i class="fas fa-check"></i> Akses pelayanan cepat berbasis teknologi</li>
+                    <li><i class="fas fa-check"></i> Instruktur dan konsultan yang unggul</li>
+                    <li><i class="fas fa-check"></i> Paket layanan fleksibel sesuai kebutuhan customer</li>
+                    <li><i class="fas fa-check"></i> Sesuai dengan Industri 4.0 dan Society 5.0</li>
+                </ul>
+            </div>
+
+            <div class="sw-card weaknesses-card">
+                <h2>
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Areas for Improvement
+                </h2>
+                <ul class="sw-list">
+                    <li><i class="fas fa-arrow-right"></i> Daya jangkau promosi layanan dan produk perusahaan masih dalam proses peningkatan secara berkelanjutan</li>
+                    <li><i class="fas fa-arrow-right"></i> Peningkatan infrastruktur perusahaan masih dalam proses berkelanjutan</li>
+                </ul>
             </div>
         </div>
     </div>
@@ -180,8 +259,9 @@
                 </div>
                 <h3>KIM Consultant</h3>
                 <p>
-                    Layanan konsultasi profesional di berbagai bidang: Pendidikan, Manajemen,
-                    Teknik Industri, TIK, Pertanian, Pariwisata, dan Desain.
+                    Layanan konsultasi profesional di berbagai bidang: Pendidikan, Manajemen, 
+                    Teknik Industri, TIK, Pertanian, Pariwisata, dan Desain untuk membantu 
+                    meningkatkan kompetensi organisasi Anda.
                 </p>
                 <a href="{{ route('consultant.index') }}" class="service-link">
                     Pelajari Lebih Lanjut <i class="fas fa-arrow-right"></i>
@@ -195,8 +275,8 @@
                 </div>
                 <h3>KIM Developer</h3>
                 <p>
-                    Pengembangan aplikasi dan sistem informasi custom dengan teknologi terkini
-                    untuk berbagai kebutuhan bisnis Anda.
+                    Pengembangan aplikasi dan sistem informasi custom dengan teknologi terkini 
+                    untuk berbagai kebutuhan bisnis Anda, dari aplikasi web hingga mobile.
                 </p>
                 <a href="{{ route('developer.index') }}" class="service-link">
                     Pelajari Lebih Lanjut <i class="fas fa-arrow-right"></i>
@@ -210,8 +290,8 @@
                 </div>
                 <h3>KIM Edutech</h3>
                 <p>
-                    Platform pembelajaran digital dan solusi edutech untuk transformasi
-                    pendidikan modern di era digital.
+                    Platform pembelajaran digital dan solusi edutech untuk transformasi 
+                    pendidikan modern di era digital dengan metode yang efektif dan efisien.
                 </p>
                 <a href="{{ route('edutech.index') }}" class="service-link">
                     Pelajari Lebih Lanjut <i class="fas fa-arrow-right"></i>
@@ -221,107 +301,29 @@
     </div>
 </section>
 
-<!-- Why Choose Us -->
-<section class="why-choose">
-    <div class="container">
-        <div class="why-grid">
-            <div class="why-content">
-                <span class="section-badge">Keunggulan Kami</span>
-                <h2 class="section-title">Mengapa Memilih PT KIM?</h2>
-                <p class="why-description">
-                    Kami memahami bahwa setiap bisnis memiliki tantangan unik. Oleh karena itu,
-                    kami menawarkan pendekatan yang personal dan solusi yang disesuaikan dengan
-                    kebutuhan spesifik Anda.
-                </p>
-
-                <div class="why-list">
-                    <div class="why-item">
-                        <div class="why-icon">
-                            <i class="fas fa-award"></i>
-                        </div>
-                        <div class="why-text">
-                            <h4>Tim Profesional Bersertifikat</h4>
-                            <p>Konsultan dan developer berpengalaman dengan sertifikasi internasional</p>
-                        </div>
-                    </div>
-
-                    <div class="why-item">
-                        <div class="why-icon">
-                            <i class="fas fa-chart-line"></i>
-                        </div>
-                        <div class="why-text">
-                            <h4>Track Record Terbukti</h4>
-                            <p>500+ klien puas dari berbagai industri di seluruh Indonesia</p>
-                        </div>
-                    </div>
-
-                    <div class="why-item">
-                        <div class="why-icon">
-                            <i class="fas fa-headset"></i>
-                        </div>
-                        <div class="why-text">
-                            <h4>Support 24/7</h4>
-                            <p>Tim support yang siap membantu Anda kapan saja</p>
-                        </div>
-                    </div>
-
-                    <div class="why-item">
-                        <div class="why-icon">
-                            <i class="fas fa-dollar-sign"></i>
-                        </div>
-                        <div class="why-text">
-                            <h4>Harga Kompetitif</h4>
-                            <p>Solusi berkualitas dengan harga yang terjangkau dan transparan</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="why-image">
-                <img src="https://via.placeholder.com/500x600/667eea/ffffff?text=Why+Choose+Us" alt="Why Choose Us">
-                <div class="image-badge">
-                    <div class="badge-icon">
-                        <i class="fas fa-star"></i>
-                    </div>
-                    <div class="badge-text">
-                        <div class="badge-number">4.9/5</div>
-                        <div class="badge-label">Rating Klien</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Clients & Partners -->
-<section class="clients-section">
+<!-- Market Targeting -->
+<section class="market-targeting">
     <div class="container">
         <div class="section-header">
-            <span class="section-badge">Klien & Mitra</span>
-            <h2 class="section-title">Dipercaya Oleh</h2>
-            <p class="section-subtitle">
-                Berbagai perusahaan dan institusi terkemuka telah mempercayai kami
-            </p>
+            <span class="section-badge">Target Pasar</span>
+            <h2 class="section-title">Siapa yang Kami Layani?</h2>
         </div>
 
-        <div class="clients-grid">
-            <div class="client-logo">
-                <img src="https://via.placeholder.com/200x100/e0e0e0/666666?text=Client+1" alt="Client 1">
+        <div class="market-grid">
+            <div class="market-card">
+                <div class="market-icon">
+                    <i class="fas fa-building"></i>
+                </div>
+                <h3>Instansi Pemerintah dan Swasta</h3>
+                <p>BUMN, Lembaga Pendidikan Tinggi/Universitas, Lembaga Pendidikan Formal dan Informal, Pemprov, Pemkab, Pemkot, Dinas-Dinas Pemerintah, Perusahaan Swasta, UMKM, Koperasi, dan instansi lainnya baik bidang jasa dan manufaktur.</p>
             </div>
-            <div class="client-logo">
-                <img src="https://via.placeholder.com/200x100/e0e0e0/666666?text=Client+2" alt="Client 2">
-            </div>
-            <div class="client-logo">
-                <img src="https://via.placeholder.com/200x100/e0e0e0/666666?text=Client+3" alt="Client 3">
-            </div>
-            <div class="client-logo">
-                <img src="https://via.placeholder.com/200x100/e0e0e0/666666?text=Client+4" alt="Client 4">
-            </div>
-            <div class="client-logo">
-                <img src="https://via.placeholder.com/200x100/e0e0e0/666666?text=Client+5" alt="Client 5">
-            </div>
-            <div class="client-logo">
-                <img src="https://via.placeholder.com/200x100/e0e0e0/666666?text=Client+6" alt="Client 6">
+
+            <div class="market-card">
+                <div class="market-icon">
+                    <i class="fas fa-user-friends"></i>
+                </div>
+                <h3>Masyarakat Umum</h3>
+                <p>Individu atau organisasi lainnya yang memerlukan peningkatan soft skill dan hard skill sesuai kebutuhannya untuk pengembangan karir dan kompetensi.</p>
             </div>
         </div>
     </div>
@@ -333,6 +335,7 @@
         <div class="cta-content">
             <h2>Mari Bergabung dengan 500+ Klien Kami</h2>
             <p>Konsultasi gratis untuk menentukan solusi terbaik bagi bisnis Anda</p>
+            <p class="cta-tagline"><strong>We're here to help. We're Center of Excellent Competency. Because We're KIM.</strong></p>
             <div class="cta-buttons">
                 <a href="{{ route('contact.index') }}" class="btn btn-white">
                     <i class="fas fa-phone-alt"></i> Hubungi Kami
@@ -583,7 +586,7 @@
 
 .values-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 30px;
 }
 
@@ -625,6 +628,120 @@
 .value-card p {
     color: #718096;
     line-height: 1.7;
+}
+
+/* Competitive Advantage */
+.competitive-advantage {
+    padding: 100px 0;
+    background: #f8f9fa;
+}
+
+.advantage-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+}
+
+.advantage-item {
+    background: white;
+    padding: 40px 30px;
+    border-radius: 20px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+}
+
+.advantage-item:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+}
+
+.advantage-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+}
+
+.advantage-item h3 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 15px;
+}
+
+.advantage-item p {
+    color: #718096;
+    line-height: 1.7;
+}
+
+/* Strengths Section */
+.strengths-section {
+    padding: 100px 0;
+    background: white;
+}
+
+.sw-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+}
+
+.sw-card {
+    background: white;
+    padding: 50px 40px;
+    border-radius: 25px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+}
+
+.sw-card h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.strengths-card h2 {
+    color: #48bb78;
+}
+
+.weaknesses-card h2 {
+    color: #f59e0b;
+}
+
+.sw-list {
+    list-style: none;
+    padding: 0;
+}
+
+.sw-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    margin-bottom: 15px;
+    font-size: 1.05rem;
+    color: #4a5568;
+    line-height: 1.7;
+}
+
+.sw-list li i {
+    margin-top: 5px;
+    flex-shrink: 0;
+}
+
+.strengths-card .sw-list li i {
+    color: #48bb78;
+}
+
+.weaknesses-card .sw-list li i {
+    color: #f59e0b;
 }
 
 /* Services Overview */
@@ -705,146 +822,55 @@
     gap: 15px;
 }
 
-/* Why Choose Us */
-.why-choose {
+/* Market Targeting */
+.market-targeting {
     padding: 100px 0;
     background: white;
 }
 
-.why-grid {
+.market-grid {
     display: grid;
-    grid-template-columns: 1.2fr 1fr;
-    gap: 80px;
-    align-items: center;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 40px;
 }
 
-.why-description {
-    font-size: 1.05rem;
-    color: #4a5568;
-    line-height: 1.8;
-    margin-bottom: 40px;
+.market-card {
+    background: white;
+    padding: 50px 40px;
+    border-radius: 25px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    text-align: center;
+    transition: all 0.3s ease;
 }
 
-.why-list {
-    display: flex;
-    flex-direction: column;
-    gap: 25px;
-}
-
-.why-item {
-    display: flex;
-    gap: 20px;
-    align-items: flex-start;
-}
-
-.why-icon {
-    width: 50px;
-    height: 50px;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 1.3rem;
-    flex-shrink: 0;
-}
-
-.why-text h4 {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #2d3748;
-    margin-bottom: 8px;
-}
-
-.why-text p {
-    color: #718096;
-    line-height: 1.6;
-}
-
-.why-image {
-    position: relative;
-}
-
-.why-image img {
-    width: 100%;
-    border-radius: 20px;
+.market-card:hover {
+    transform: translateY(-10px);
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
 }
 
-.image-badge {
-    position: absolute;
-    bottom: 30px;
-    left: 30px;
-    background: white;
-    padding: 20px 30px;
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.badge-icon {
-    width: 50px;
-    height: 50px;
-    background: linear-gradient(135deg, #f59e0b, #d97706);
-    border-radius: 12px;
+.market-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
-    font-size: 1.3rem;
+    font-size: 2.5rem;
+    margin: 0 auto 25px;
 }
 
-.badge-number {
+.market-card h3 {
     font-size: 1.5rem;
-    font-weight: 800;
+    font-weight: 700;
     color: #2d3748;
+    margin-bottom: 20px;
 }
 
-.badge-label {
-    font-size: 0.9rem;
+.market-card p {
     color: #718096;
-}
-
-/* Clients Section */
-.clients-section {
-    padding: 80px 0;
-    background: #f8f9fa;
-}
-
-.clients-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 30px;
-}
-
-.client-logo {
-    background: white;
-    padding: 30px;
-    border-radius: 15px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-}
-
-.client-logo:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-}
-
-.client-logo img {
-    max-width: 100%;
-    height: auto;
-    opacity: 0.7;
-    transition: opacity 0.3s ease;
-}
-
-.client-logo:hover img {
-    opacity: 1;
+    line-height: 1.7;
 }
 
 /* CTA Profile */
@@ -864,6 +890,11 @@
 .cta-content p {
     font-size: 1.2rem;
     opacity: 0.95;
+    margin-bottom: 20px;
+}
+
+.cta-tagline {
+    font-size: 1.3rem;
     margin-bottom: 40px;
 }
 
@@ -892,26 +923,29 @@
 
 .btn-white {
     background: white;
-    color: #4a4a4a;
+    color: #667eea;
 }
 
 .btn-white:hover {
     background: #f0f0f0;
     transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 }
 
 .btn-outline-white {
     border: 2px solid white;
     color: white;
+    background: transparent;
 }
 
 .btn-outline-white:hover {
     background: white;
-    color: #4a4a4a;
+    color: #667eea;
     transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 }
 
-/* Animation (Optional Fade-in) */
+/* Animation */
 .animate-fade-in {
     opacity: 0;
     transform: translateY(20px);
@@ -928,6 +962,45 @@
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    .overview-grid,
+    .vm-grid,
+    .sw-grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+
+    .page-title {
+        font-size: 2.5rem;
+    }
+
+    .section-title {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .overview-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .values-grid,
+    .advantage-grid,
+    .services-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .cta-buttons {
+        flex-direction: column;
+    }
+
+    .btn {
+        width: 100%;
+        justify-content: center;
     }
 }
 </style>

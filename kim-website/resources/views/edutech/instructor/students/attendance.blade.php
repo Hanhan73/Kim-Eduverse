@@ -1,30 +1,26 @@
 @extends('layouts.instructor')
 
-@section('title', 'Presensi - ' . $course->title)
+@section('title', 'Attendance - ' . $course->title)
 
 @push('styles')
 <style>
     .page-header {
-        background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         padding: 30px 40px;
         border-radius: 20px;
         color: white;
         margin-bottom: 30px;
-        box-shadow: 0 10px 30px rgba(66, 153, 225, 0.3);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
     }
 
-    .page-header-left h2 {
+    .container-fluid{
+        margin-left: 300px;
+    }
+
+    .page-header h2 {
         margin: 0 0 5px 0;
         font-size: 1.8rem;
         font-weight: 700;
-    }
-
-    .page-header-left p {
-        margin: 0;
-        opacity: 0.9;
     }
 
     .back-btn {
@@ -35,7 +31,8 @@
         color: white;
         text-decoration: none;
         font-weight: 600;
-        transition: all 0.3s ease;
+        display: inline-block;
+        margin-bottom: 20px;
     }
 
     .back-btn:hover {
@@ -43,56 +40,133 @@
         color: white;
     }
 
+    .meetings-history {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 30px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    }
+
+    .meetings-history h3 {
+        margin: 0 0 20px 0;
+        font-size: 1.3rem;
+        color: #2d3748;
+    }
+
+    .meeting-card {
+        background: linear-gradient(135deg, #f7fafc, #edf2f7);
+        border-left: 4px solid #667eea;
+        padding: 15px 20px;
+        margin-bottom: 15px;
+        border-radius: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .meeting-info h4 {
+        margin: 0 0 5px 0;
+        color: #2d3748;
+        font-size: 1.1rem;
+    }
+
+    .meeting-info p {
+        margin: 0;
+        color: #718096;
+        font-size: 0.9rem;
+    }
+
+    .meeting-actions {
+        display: flex;
+        gap: 10px;
+    }
+
+    .btn-edit, .btn-download {
+        padding: 8px 15px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.85rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-edit {
+        background: #ed8936;
+        color: white;
+    }
+
+    .btn-edit:hover {
+        background: #dd6b20;
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    .btn-download {
+        background: #4299e1;
+        color: white;
+    }
+
+    .btn-download:hover {
+        background: #3182ce;
+        color: white;
+        transform: translateY(-2px);
+    }
+
     .attendance-controls {
         background: white;
-        padding: 30px;
         border-radius: 15px;
-        margin-bottom: 25px;
+        padding: 25px;
+        margin-bottom: 30px;
         box-shadow: 0 2px 10px rgba(0,0,0,0.08);
     }
 
     .control-row {
         display: grid;
-        grid-template-columns: 1fr 1fr 1fr auto;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         gap: 20px;
         align-items: end;
     }
 
     .form-group label {
-        font-weight: 600;
-        color: #2d3748;
-        margin-bottom: 8px;
         display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #4a5568;
+        font-size: 0.9rem;
     }
 
     .form-control, .form-select {
         width: 100%;
-        padding: 12px 16px;
+        padding: 12px 15px;
         border: 2px solid #e2e8f0;
         border-radius: 10px;
-        font-size: 1rem;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
     }
 
     .form-control:focus, .form-select:focus {
         outline: none;
-        border-color: #4299e1;
-        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
     }
 
-    .btn-load {
+    .btn-submit {
         padding: 12px 30px;
-        background: linear-gradient(135deg, #4299e1, #3182ce);
+        background: linear-gradient(135deg, #48bb78, #38a169);
         color: white;
         border: none;
         border-radius: 10px;
         font-weight: 600;
         cursor: pointer;
+        font-size: 1rem;
         transition: all 0.3s ease;
+        width: 100%;
     }
 
-    .btn-load:hover {
+    .btn-submit:hover {
         transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(66, 153, 225, 0.4);
+        box-shadow: 0 5px 15px rgba(72, 187, 120, 0.4);
     }
 
     .attendance-table-container {
@@ -127,7 +201,6 @@
         color: #4a5568;
         font-size: 0.85rem;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
     }
 
     .attendance-table tbody td {
@@ -176,6 +249,7 @@
         font-weight: 600;
         cursor: pointer;
         transition: all 0.3s ease;
+        width: 100%;
     }
 
     .status-select:focus {
@@ -189,207 +263,204 @@
     .status-excused { background: #bee3f8; color: #2c5282; }
 
     .notes-input {
-        width: 100%;
         padding: 8px 12px;
         border: 2px solid #e2e8f0;
         border-radius: 8px;
+        width: 100%;
         font-size: 0.9rem;
     }
 
-    .notes-input:focus {
-        outline: none;
-        border-color: #4299e1;
-    }
-
-    .btn-submit {
-        width: 100%;
-        padding: 16px;
-        background: linear-gradient(135deg, #48bb78, #38a169);
-        color: white;
-        border: none;
-        border-radius: 12px;
-        font-size: 1.1rem;
-        font-weight: 700;
-        cursor: pointer;
-        margin-top: 25px;
-        transition: all 0.3s ease;
-    }
-
-    .btn-submit:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(72, 187, 120, 0.4);
-    }
-
     .alert {
-        padding: 18px 25px;
-        border-radius: 12px;
-        margin-bottom: 25px;
-        display: flex;
-        align-items: center;
-        gap: 15px;
+        padding: 15px 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        font-weight: 500;
     }
 
     .alert-success {
-        background: linear-gradient(135deg, #c6f6d5, #9ae6b4);
+        background: #c6f6d5;
         color: #22543d;
-        border-left: 4px solid #38a169;
+        border-left: 4px solid #48bb78;
     }
 
-    @media (max-width: 968px) {
-        .control-row {
-            grid-template-columns: 1fr;
-        }
+    .alert-error {
+        background: #fed7d7;
+        color: #742a2a;
+        border-left: 4px solid #f56565;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 40px;
+        color: #718096;
+    }
+
+    .type-display {
+        padding: 6px 12px;
+        background: #edf2f7;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 0.85rem;
     }
 </style>
 @endpush
 
 @section('content')
-<div class="main-content">
-    <div class="container-fluid py-4">
-        <!-- Page Header -->
-        <div class="page-header">
-            <div class="page-header-left">
-                <h2><i class="fas fa-clipboard-check"></i> Presensi</h2>
-                <p>{{ $course->title }} - {{ $batch->batch_name }}</p>
-            </div>
-            <a href="{{ route('edutech.instructor.batches.index', $course->id) }}" class="back-btn">
-                <i class="fas fa-arrow-left"></i> Kembali
+<div class="container-fluid py-4">
+    <a href="{{ route('edutech.instructor.batches.index', $course->id) }}" class="back-btn">
+        <i class="fas fa-arrow-left"></i> Kembali ke Batches
+    </a>
+
+    <div class="page-header">
+        <div>
+            <h2><i class="fas fa-clipboard-check"></i> Manajemen Attendance</h2>
+            <p style="margin: 0; opacity: 0.9;">{{ $course->title }} - {{ $batch->batch_name }}</p>
+        </div>
+    </div>
+
+    @if(session('success'))
+        <div class="alert alert-success">
+            <i class="fas fa-check-circle"></i> {{ session('success') }}
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="alert alert-error">
+            <i class="fas fa-exclamation-circle"></i> {{ session('error') }}
+        </div>
+    @endif
+
+    <!-- History Pertemuan -->
+    @if($meetings->count() > 0)
+    <div class="meetings-history">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3><i class="fas fa-history"></i> Riwayat Pertemuan</h3>
+            <a href="{{ route('edutech.instructor.students.attendance.download', [$course->id, $batch->id]) }}" class="btn-download">
+                <i class="fas fa-download"></i> Download Laporan Lengkap
             </a>
         </div>
-
-        @if(session('success'))
-            <div class="alert alert-success">
-                <i class="fas fa-check-circle" style="font-size: 1.5rem;"></i>
-                <span>{{ session('success') }}</span>
+        
+        @foreach($meetings as $meeting)
+        <div class="meeting-card">
+            <div class="meeting-info">
+                <h4>Pertemuan {{ $meeting->meeting_number }} - {{ $meeting->meeting_topic }}</h4>
+                <p>
+                    <i class="fas fa-calendar"></i> {{ \Carbon\Carbon::parse($meeting->attendance_date)->format('d M Y') }} |
+                    <i class="fas fa-{{ $meeting->type == 'offline' ? 'chalkboard-teacher' : 'video' }}"></i> {{ $meeting->type == 'offline' ? 'Tatap Muka' : 'Online' }}
+                </p>
             </div>
-        @endif
+            <div class="meeting-actions">
+                <a href="{{ route('edutech.instructor.students.attendance.edit', [$course->id, $batch->id, $meeting->meeting_number]) }}" class="btn-edit">
+                    <i class="fas fa-edit"></i> Edit
+                </a>
+                <a href="{{ route('edutech.instructor.students.attendance.download', [$course->id, $batch->id, $meeting->meeting_number]) }}" class="btn-download">
+                    <i class="fas fa-download"></i> PDF
+                </a>
+            </div>
+        </div>
+        @endforeach
+    </div>
+    @endif
 
-        <!-- Attendance Controls -->
+    <!-- Form Attendance Baru -->
+    <form method="POST" action="{{ route('edutech.instructor.students.attendance.store', [$course->id, $batch->id]) }}">
+        @csrf
+        
         <div class="attendance-controls">
-            <form method="GET">
-                <div class="control-row">
-                    <div class="form-group">
-                        <label><i class="fas fa-calendar"></i> Tanggal</label>
-                        <input type="date" name="date" class="form-control" value="{{ $selectedDate }}" required>
-                    </div>
-                    <div class="form-group">
-                        <label><i class="fas fa-info-circle"></i> Keterangan</label>
-                        <input type="text" class="form-control" placeholder="Contoh: Pertemuan 1" >
-                    </div>
-                    <div class="form-group">
-                        <label><i class="fas fa-users"></i> Total Siswa</label>
-                        <input type="text" class="form-control" value="{{ $students->count() }} siswa" readonly>
-                    </div>
-                    <button type="submit" class="btn-load">
-                        <i class="fas fa-sync"></i> Muat
-                    </button>
+            <h3 style="margin: 0 0 20px 0; color: #2d3748;">
+                <i class="fas fa-plus-circle"></i> Tambah Pertemuan Baru
+            </h3>
+            <div class="control-row">
+                <div class="form-group">
+                    <label><i class="fas fa-hashtag"></i> Pertemuan Ke-</label>
+                    <input type="number" name="meeting_number" class="form-control" 
+                           value="{{ $nextMeeting }}" min="1" required>
                 </div>
-            </form>
+                <div class="form-group">
+                    <label><i class="fas fa-book"></i> Topik/Materi</label>
+                    <input type="text" name="meeting_topic" class="form-control" 
+                           placeholder="Contoh: Pengenalan Laravel MVC" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-calendar"></i> Tanggal</label>
+                    <input type="date" name="attendance_date" class="form-control" 
+                           value="{{ $selectedDate }}" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-chalkboard"></i> Jenis Kelas</label>
+                    <select name="type" class="form-select" id="type-select" required>
+                        <option value="offline">Tatap Muka</option>
+                        <option value="online">Online/Live</option>
+                    </select>
+                </div>
+            </div>
         </div>
 
-        <!-- Attendance Table -->
-        <form method="POST" action="{{ route('edutech.instructor.students.attendance.store', [$course->id, $batch->id]) }}">
-            @csrf
-            <input type="hidden" name="attendance_date" value="{{ $selectedDate }}">
-            
-            <div class="attendance-table-container">
-                <div class="table-header">
-                    <h3>Daftar Presensi Siswa</h3>
-                </div>
-                <div class="table-responsive">
-                    <table class="attendance-table">
-                        <thead>
-                            <tr>
-                                <th style="width: 5%;">No</th>
-                                <th style="width: 30%;">Nama Siswa</th>
-                                <th style="width: 15%;">
-                                    <select class="form-select" id="type-select" name="type" required>
-                                        <option value="offline">Tatap Muka</option>
-                                        <option value="online">Online/Live</option>
-                                    </select>
-                                </th>
-                                <th style="width: 20%;">Status</th>
-                                <th style="width: 30%;">Catatan</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($students as $index => $student)
-                            <tr>
-                                <td>{{ $index + 1 }}</td>
-                                <td>
-                                    <div class="student-info">
-                                        <div class="student-avatar">
-                                            {{ strtoupper(substr($student->name, 0, 1)) }}
-                                        </div>
-                                        <div class="student-details">
-                                            <strong>{{ $student->name }}</strong>
-                                            <small>{{ $student->email }}</small>
-                                        </div>
-                                    </div>
-                                    <input type="hidden" name="students[{{ $index }}][student_id]" value="{{ $student->id }}">
-                                </td>
-                                <td>
-                                    <span id="type-display-{{ $index }}" class="type-display">Tatap Muka</span>
-                                </td>
-                                <td>
-                                    <select name="students[{{ $index }}][status]" class="status-select status-present" 
-                                            onchange="this.className='status-select status-' + this.value" required>
-                                        <option value="present" {{ isset($attendances[$student->id]) && $attendances[$student->id]->status === 'present' ? 'selected' : '' }}>
-                                            ✓ Hadir
-                                        </option>
-                                        <option value="absent" {{ isset($attendances[$student->id]) && $attendances[$student->id]->status === 'absent' ? 'selected' : '' }}>
-                                            ✗ Tidak Hadir
-                                        </option>
-                                        <option value="late" {{ isset($attendances[$student->id]) && $attendances[$student->id]->status === 'late' ? 'selected' : '' }}>
-                                            ⏰ Terlambat
-                                        </option>
-                                        <option value="excused" {{ isset($attendances[$student->id]) && $attendances[$student->id]->status === 'excused' ? 'selected' : '' }}>
-                                            📋 Izin
-                                        </option>
-                                    </select>
-                                </td>
-                                <td>
-                                    <input type="text" name="students[{{ $index }}][notes]" class="notes-input" 
-                                           placeholder="Catatan tambahan..." 
-                                           value="{{ isset($attendances[$student->id]) ? $attendances[$student->id]->notes : '' }}">
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
+        <div class="attendance-table-container">
+            <div class="table-header">
+                <h3>Daftar Presensi Siswa ({{ $students->count() }})</h3>
             </div>
+            <div class="table-responsive">
+                <table class="attendance-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 5%;">No</th>
+                            <th style="width: 35%;">Nama Siswa</th>
+                            <th style="width: 20%;">Status Kehadiran</th>
+                            <th style="width: 40%;">Catatan</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($students as $index => $student)
+                        <tr>
+                            <td>{{ $index + 1 }}</td>
+                            <td>
+                                <div class="student-info">
+                                    <div class="student-avatar">
+                                        {{ strtoupper(substr($student->name, 0, 1)) }}
+                                    </div>
+                                    <div class="student-details">
+                                        <strong>{{ $student->name }}</strong>
+                                        <small>{{ $student->email }}</small>
+                                    </div>
+                                </div>
+                                <input type="hidden" name="students[{{ $index }}][student_id]" value="{{ $student->id }}">
+                            </td>
+                            <td>
+                                <select name="students[{{ $index }}][status]" 
+                                        class="status-select status-present" 
+                                        onchange="this.className='status-select status-' + this.value" required>
+                                    <option value="present">✓ Hadir</option>
+                                    <option value="late">⏰ Terlambat</option>
+                                    <option value="absent">✗ Tidak Hadir</option>
+                                    <option value="excused">📝 Izin</option>
+                                </select>
+                            </td>
+                            <td>
+                                <input type="text" name="students[{{ $index }}][notes]" 
+                                       class="notes-input" placeholder="Catatan (opsional)">
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="4" class="empty-state">
+                                <i class="fas fa-users" style="font-size: 3rem; opacity: 0.3;"></i>
+                                <p>Belum ada siswa di batch ini</p>
+                            </td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
+        @if($students->count() > 0)
+        <div style="margin-top: 20px;">
             <button type="submit" class="btn-submit">
-                <i class="fas fa-save"></i> Simpan Presensi
+                <i class="fas fa-save"></i> Simpan Attendance Pertemuan {{ $nextMeeting }}
             </button>
-        </form>
-    </div>
+        </div>
+        @endif
+    </form>
 </div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Get the type select element
-    const typeSelect = document.getElementById('type-select');
-    
-    if (typeSelect) {
-        // Update all type displays when select changes
-        typeSelect.addEventListener('change', function() {
-            const selectedText = this.options[this.selectedIndex].text;
-            
-            // Update all spans with class 'type-display'
-            const typeDisplays = document.querySelectorAll('.type-display');
-            typeDisplays.forEach(function(display) {
-                display.textContent = selectedText;
-            });
-            
-            console.log('Type changed to:', selectedText);
-        });
-        
-        console.log('✅ Attendance type selector loaded');
-    } else {
-        console.error('❌ Type select not found!');
-    }
-});
-</script>
 @endsection

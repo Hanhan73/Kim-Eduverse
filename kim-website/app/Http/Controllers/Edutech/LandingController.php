@@ -126,9 +126,13 @@ class LandingController extends Controller
 
         // Check if user already enrolled
         $isEnrolled = false;
+        $isPaid = false;
         if (session()->has('edutech_user_id')) {
             $isEnrolled = Enrollment::where('student_id', session('edutech_user_id'))
                 ->where('course_id', $course->id)
+                ->exists();
+            $isPaid = Enrollment::where('student_id', session('edutech_user_id'))
+                ->where('payment_status', 'paid')
                 ->exists();
         }
 
@@ -139,7 +143,7 @@ class LandingController extends Controller
             ->take(3)
             ->get();
 
-        return view('edutech.courses.show', compact('course', 'isEnrolled', 'relatedCourses'));
+        return view('edutech.courses.show', compact('course', 'isEnrolled', 'relatedCourses'. 'isPaid'));
     }
 
     // Helper: Get categories

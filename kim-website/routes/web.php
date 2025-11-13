@@ -61,6 +61,7 @@ use App\Http\Controllers\Edutech\Instructor\QuizManagementController;
 use App\Http\Controllers\Edutech\Instructor\LiveMeetingController;
 use App\Http\Controllers\Edutech\Instructor\StudentManagementController;
 use App\Http\Controllers\Edutech\Instructor\BatchManagementController;
+use App\Http\Controllers\Edutech\Instructor\AttendanceController;
 
 use App\Http\Controllers\Edutech\Student\DashboardController as StudentDashboardController;
 use App\Http\Controllers\Edutech\Student\MyCourseController as StudentMyCourseController;
@@ -179,10 +180,19 @@ Route::prefix('edutech/instructor')->name('edutech.instructor.')->middleware('ed
     Route::get('/students/course/{course}', [StudentManagementController::class, 'courseStudents'])->name('students.course');
     Route::get('/students/detail/{student}', [StudentManagementController::class, 'studentDetail'])->name('students.detail');
 
-    // Attendance Management
+    // Student & Attendance Management
+    Route::get('/students/course/{course}', [StudentManagementController::class, 'courseStudents'])->name('students.course');
     Route::get('/students/course/{course}/attendance/{batch?}', [StudentManagementController::class, 'attendance'])->name('students.attendance');
     Route::post('/students/course/{course}/attendance/{batch}', [StudentManagementController::class, 'storeAttendance'])->name('students.attendance.store');
+    
+    // Edit Attendance
+    Route::get('/students/course/{course}/attendance/{batch}/meeting/{meeting}/edit', [StudentManagementController::class, 'editAttendance'])->name('students.attendance.edit');
+    Route::put('/students/course/{course}/attendance/{batch}/meeting/{meeting}', [StudentManagementController::class, 'updateAttendance'])->name('students.attendance.update');
+    
+    // Attendance Reports
     Route::get('/students/course/{course}/attendance/{batch}/report', [StudentManagementController::class, 'attendanceReport'])->name('students.attendance.report');
+    Route::get('/students/course/{course}/attendance/{batch}/download/{meeting?}', [StudentManagementController::class, 'downloadAttendanceReport'])->name('students.attendance.download');
+
 
     // Batch Management
     Route::get('/courses/{course}/batches', [BatchManagementController::class, 'index'])->name('batches.index');

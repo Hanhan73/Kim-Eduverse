@@ -30,6 +30,7 @@ class DashboardController extends Controller
         $activeCourses = Enrollment::with('course.instructor')
             ->where('student_id', $studentId)
             ->where('status', 'active')
+            ->where('payment_status', 'paid')
             ->latest()
             ->take(6)
             ->get();

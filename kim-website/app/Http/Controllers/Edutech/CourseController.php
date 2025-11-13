@@ -29,8 +29,13 @@ class CourseController extends Controller
                 ->where('course_id', $course->id)
                 ->first();
             
-            $isEnrolled = $enrollment !== null;
+            $isEnrolled = Enrollment::where('student_id', session('edutech_user_id'))
+                ->where('course_id', $course->id)
+                ->where('payment_status', 'paid')
+                ->exists();
+
         }
+
 
         // Get related courses
         $relatedCourses = Course::where('category', $course->category)
@@ -84,7 +89,7 @@ class CourseController extends Controller
         $enrollment = Enrollment::create([
             'student_id' => $studentId,
             'course_id' => $course->id,
-            'status' => 'active',
+            'status' => 'inactive',
             'progress_percentage' => 0,
             'enrolled_at' => now(),
             'payment_status' => $course->price > 0 ? 'pending' : 'paid',
