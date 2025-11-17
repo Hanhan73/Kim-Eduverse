@@ -470,10 +470,10 @@
                         </a>
                         <div class="dropdown-menu">
                             <a href="{{ route('about.profile') }}" class="dropdown-item">
-                                <i class="fas fa-building"></i> Profil Singkat
+                                <i class="fas fa-building"></i> Profil Perusahaan 
                             </a>
                             <a href="{{ route('about.organization') }}" class="dropdown-item">
-                                <i class="fas fa-sitemap"></i> Struktur Organisasi
+                                <i class="fas fa-sitemap"></i> Tim Kami
                             </a>
                         </div>
                     </li>
