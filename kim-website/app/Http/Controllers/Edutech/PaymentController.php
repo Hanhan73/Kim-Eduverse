@@ -29,6 +29,13 @@ class PaymentController extends Controller
                 ->with('info', 'Pembayaran sudah berhasil');
         }
 
+        // Cek apakah ada payment yang failed
+        $failedPayment = Payment::where('enrollment_id', $enrollment->id)
+            ->where('status', 'failed')
+            ->latest()
+            ->first();
+
+        // Get atau create payment pending
         $payment = Payment::where('enrollment_id', $enrollment->id)
             ->where('status', 'pending')
             ->first();
@@ -37,7 +44,7 @@ class PaymentController extends Controller
             $payment = $this->createPayment($enrollment);
         }
 
-        return view('edutech.payment.show', compact('enrollment', 'payment'));
+        return view('edutech.payment.show', compact('enrollment', 'payment', 'failedPayment'));
     }
 
     /**
@@ -122,7 +129,9 @@ class PaymentController extends Controller
         } elseif ($transactionStatus == 'pending') {
             \Log::info('Payment still pending: ' . $transactionId);
         } elseif (in_array($transactionStatus, ['deny', 'expire', 'cancel'])) {
-            $payment->markAsFailed();
+            if ($payment->status !== 'failed') {
+                $payment->markAsFailed();
+            }
             \Log::info('Payment marked as failed: ' . $transactionId);
         }
 
@@ -161,7 +170,21 @@ class PaymentController extends Controller
     public function failed($enrollmentId)
     {
         $enrollment = Enrollment::with('course')->findOrFail($enrollmentId);
-        return view('edutech.payment.failed', compact('enrollment'));
+        
+        // Update payment terakhir jadi failed
+        $payment = Payment::where('enrollment_id', $enrollment->id)
+            ->where('status', 'pending')
+            ->orderBy('created_at', 'desc')
+            ->first();
+        
+        if ($payment) {
+            $payment->markAsFailed();
+        return view('edutech.payment.failed', [
+            'enrollment' => $enrollment,
+            'payment' => $payment ?? new \App\Models\Payment(),
+        ]);
+    }
+        return view('edutech.payment.failed', compact('enrollment', 'payment'));
     }
 
     /**

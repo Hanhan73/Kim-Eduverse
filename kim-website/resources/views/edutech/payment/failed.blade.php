@@ -135,36 +135,143 @@
     </style>
 </head>
 <body>
-    <div class="failed-card">
-        <div class="failed-icon">
-            <i class="fas fa-times"></i>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            
+            {{-- Alert jika sebelumnya gagal --}}
+            @if(isset($failedPayment) && $failedPayment)
+            <div class="alert alert-warning alert-dismissible fade show mb-4" role="alert">
+                <div class="d-flex">
+                    <div class="me-2">⚠️</div>
+                    <div>
+                        <strong>Pembayaran Sebelumnya Gagal</strong>
+                        <p class="mb-0 small mt-1">
+                            Transaksi dengan ID <code>{{ $failedPayment->transaction_id }}</code> tidak berhasil. 
+                            Silakan coba lagi dengan metode pembayaran yang sama atau pilih metode lain.
+                        </p>
+                    </div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            @endif
+
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <h4 class="fw-bold mb-4">Pembayaran Kursus</h4>
+
+                    <!-- Detail Kursus -->
+                    <div class="border rounded p-3 mb-4">
+                        <div class="d-flex">
+                            @if($enrollment->course->thumbnail)
+                            <img src="{{ Storage::url($enrollment->course->thumbnail) }}" 
+                                 alt="{{ $enrollment->course->title }}"
+                                 class="rounded me-3"
+                                 style="width: 80px; height: 80px; object-fit: cover;">
+                            @endif
+                            <div class="flex-grow-1">
+                                <h6 class="fw-bold mb-1">{{ $enrollment->course->title }}</h6>
+                                <p class="text-muted small mb-2">{{ $enrollment->course->instructor->name }}</p>
+                                <div class="d-flex align-items-center">
+                                    <span class="badge bg-primary me-2">{{ $enrollment->course->level }}</span>
+                                    <small class="text-muted">{{ $enrollment->course->duration }} jam</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Detail Pembayaran -->
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Harga Kursus</span>
+                            <span class="fw-bold">Rp {{ number_format($enrollment->payment_amount, 0, ',', '.') }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Biaya Admin</span>
+                            <span>Rp 0</span>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between">
+                            <span class="fw-bold">Total Pembayaran</span>
+                            <span class="fw-bold text-primary fs-5">Rp {{ number_format($enrollment->payment_amount, 0, ',', '.') }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Transaction ID -->
+                    <div class="alert alert-light mb-4">
+                        <small class="text-muted d-block">ID Transaksi</small>
+                        <code>{{ $payment->transaction_id }}</code>
+                    </div>
+
+                    <!-- Tombol Bayar -->
+                    <div class="d-grid gap-2">
+                        <button id="pay-button" class="btn btn-primary btn-lg">
+                            <svg width="16" height="16" fill="currentColor" class="me-2" viewBox="0 0 16 16">
+                                <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm2-1a1 1 0 0 0-1 1v1h14V4a1 1 0 0 0-1-1H2zm13 4H1v5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V7z"/>
+                                <path d="M2 10a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-1z"/>
+                            </svg>
+                            Bayar Sekarang
+                        </button>
+                        <a href="{{ route('edutech.courses.show', $enrollment->course->slug) }}" 
+                           class="btn btn-outline-secondary">
+                            Batalkan
+                        </a>
+                    </div>
+
+                    <!-- Info Keamanan -->
+                    <div class="text-center mt-4">
+                        <small class="text-muted">
+                            🔒 Pembayaran aman dengan Midtrans
+                        </small>
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <h1>Pembayaran Gagal</h1>
-        <p class="subtitle">Transaksi tidak dapat diselesaikan</p>
-
-        <div class="error-info">
-            <h3><i class="fas fa-exclamation-triangle"></i> Kemungkinan Penyebab:</h3>
-            <ul>
-                <li><i class="fas fa-dot-circle"></i> Pembayaran dibatalkan oleh pengguna</li>
-                <li><i class="fas fa-dot-circle"></i> Saldo atau limit kartu tidak mencukupi</li>
-                <li><i class="fas fa-dot-circle"></i> Terjadi kesalahan pada sistem pembayaran</li>
-                <li><i class="fas fa-dot-circle"></i> Waktu pembayaran telah habis</li>
-            </ul>
-        </div>
-
-        <div class="btn-container">
-            <a href="{{ route('edutech.payment.show', $enrollment->id) }}" class="btn btn-primary">
-                <i class="fas fa-redo"></i> Coba Bayar Lagi
-            </a>
-            <a href="{{ route('edutech.courses.detail', $enrollment->course->slug) }}" class="btn btn-secondary">
-                <i class="fas fa-arrow-left"></i> Kembali ke Course
-            </a>
-        </div>
-
-        <p style="color: #a0aec0; font-size: 0.9rem; margin-top: 30px;">
-            Jika masalah berlanjut, hubungi customer support kami
-        </p>
     </div>
+</div>
+
+@push('scripts')
+<script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('services.midtrans.client_key') }}"></script>
+<script>
+    document.getElementById('pay-button').addEventListener('click', function() {
+        const button = this;
+        button.disabled = true;
+        button.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Memproses...';
+
+        fetch('{{ route("edutech.payment.process", $enrollment->id) }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                snap.pay(data.snap_token, {
+                    onSuccess: function(result) {
+                        window.location.href = '{{ route("edutech.payment.success", $enrollment->id) }}';
+                    },
+                    onPending: function(result) {
+                        window.location.href = '{{ route("edutech.payment.show", $enrollment->id) }}';
+                    },
+                    onError: function(result) {
+                        window.location.href = '{{ route("edutech.payment.failed", $enrollment->id) }}';
+                    },
+                    onClose: function() {
+                        button.disabled = false;
+                        button.innerHTML = '<svg width="16" height="16" fill="currentColor" class="me-2" viewBox="0 0 16 16"><path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm2-1a1 1 0 0 0-1 1v1h14V4a1 1 0 0 0-1-1H2zm13 4H1v5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V7z"/><path d="M2 10a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-1z"/></svg>Bayar Sekarang';
+                    }
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Terjadi kesalahan. Silakan coba lagi.');
+            button.disabled = false;
+            button.innerHTML = '<svg width="16" height="16" fill="currentColor" class="me-2" viewBox="0 0 16 16"><path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm2-1a1 1 0 0 0-1 1v1h14V4a1 1 0 0 0-1-1H2zm13 4H1v5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V7z"/><path d="M2 10a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-1z"/></svg>Bayar Sekarang';
+        });
+    });
+</script>
 </body>
 </html>
