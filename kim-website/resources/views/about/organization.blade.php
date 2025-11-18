@@ -533,8 +533,9 @@
                     <div class="owner-card-inner">
                         <div class="owner-photo-section">
                             <div class="owner-photo-wrapper">
-                                <img src="https://ui-avatars.com/api/?name=Prof+Edi+Suryadi&size=600&background=ffffff&color=667eea&bold=true&font-size=0.3" alt="Prof. Dr. H. Edi Suryadi">
-                            </div>
+                            <img src="{{ asset('storage/images/team/Prof-Edy.jpg') }}" 
+                                alt="Prof. Dr. H. Edi Suryadi"
+                                onerror="this.src='https://ui-avatars.com/api/?name=Prof+Edi+Suryadi&size=500&background=48bb78&color=fff&bold=true&font-size=0.3'">                            </div>
                         </div>
                         <div class="owner-info-section">
                             <i class="fas fa-crown owner-icon"></i>
@@ -727,7 +728,9 @@
             <div class="expert-staff-grid">
                 <div class="expert-card">
                     <div class="expert-photo">
-                        <img src="https://ui-avatars.com/api/?name=Prof+Edi&size=500&background=667eea&color=fff&bold=true&font-size=0.3" alt="Prof. Dr. H. Edi Suryadi">
+                        <img src="{{ asset('storage/images/team/Prof-Edy.jpg') }}" 
+                        alt="Prof. Dr. H. Edi Suryadi"
+                        onerror="this.src='https://ui-avatars.com/api/?name=Prof+Edi+Suryadi&size=500&background=48bb78&color=fff&bold=true&font-size=0.3'">
                     </div>
                     <div class="expert-content">
                         <h4>Prof. Dr. H. Edi Suryadi, M.Si.</h4>
