@@ -533,7 +533,7 @@
                     <div class="owner-card-inner">
                         <div class="owner-photo-section">
                             <div class="owner-photo-wrapper">
-                            <img src="{{ asset('storage/images/team/Prof-Edy.jpg') }}" 
+                            <img src="{{ asset('storage/images/team/Prof-Edy.png') }}" 
                                 alt="Prof. Dr. H. Edi Suryadi"
                                 onerror="this.src='https://ui-avatars.com/api/?name=Prof+Edi+Suryadi&size=500&background=48bb78&color=fff&bold=true&font-size=0.3'">                            </div>
                         </div>
@@ -550,7 +550,7 @@
             <div class="c-level-grid">
                 <div class="executive-card">
                     <div class="exec-photo">
-                        <img src="{{ asset('storage/images/team/Yosep.jpg') }}" 
+                        <img src="{{ asset('storage/images/team/Yosep.png') }}" 
                              alt="Yosep Hernawan"
                              onerror="this.src='https://ui-avatars.com/api/?name=Yosep+H&size=600&background=48bb78&color=fff&bold=true&font-size=0.3'">
                         <div class="exec-badge ceo">CEO</div>
@@ -563,7 +563,7 @@
 
                 <div class="executive-card">
                     <div class="exec-photo">
-                        <img src="{{ asset('storage/images/team/Rasto.jpg') }}" 
+                        <img src="{{ asset('storage/images/team/Rasto.png') }}" 
                              alt="Dr. Rasto"
                              onerror="this.src='https://ui-avatars.com/api/?name=Dr+Rasto&size=600&background=3182ce&color=fff&bold=true&font-size=0.3'">
                         <div class="exec-badge coo">COO</div>
@@ -585,6 +585,18 @@
                     <div class="exec-info">
                         <h4>Gilang Garnadi Suryadi, S.Si., M.T.</h4>
                         <p class="exec-title">Chief Marketing Officer</p>
+                    </div>
+                </div>
+                <div class="executive-card">
+                    <div class="exec-photo">
+                        <img src="{{ asset('storage/images/team/Farhan.png') }}" 
+                        alt="Farhan Muzhaffar"
+                        onerror="this.src='https://ui-avatars.com/api/?name=Farhan+Muzhaffar+Tiras+Putra&size=600&background=d69e2e&color=fff&bold=true&font-size=0.3'">
+                        <div class="exec-badge cmo">CTO</div>
+                    </div>
+                    <div class="exec-info">
+                        <h4>Farhan Muzhaffar Tiras Putra, S.Kom.</h4>
+                        <p class="exec-title">Chief Technical Officer</p>
                     </div>
                 </div>
             </div>
@@ -646,7 +658,7 @@
                 <div class="junior-staff-grid">
                     <div class="junior-card">
                         <div class="junior-photo">
-                            <img src="{{ asset('storage/images/team/Levi.jpg') }}" 
+                            <img src="{{ asset('storage/images/team/Levi.png') }}" 
                                  alt="Fahlevi Permana"
                                  onerror="this.src='https://ui-avatars.com/api/?name=Fahlevi+P&size=500&background=667eea&color=fff&bold=true&font-size=0.3'">
                         </div>
@@ -657,7 +669,7 @@
 
                     <div class="junior-card">
                         <div class="junior-photo">
-                            <img src="{{ asset('storage/images/team/Hilma.jpg') }}" 
+                            <img src="{{ asset('storage/images/team/Hilma.png') }}" 
                                  alt="Hilma Habibah"
                                  onerror="this.src='https://ui-avatars.com/api/?name=Hilma+H&size=500&background=764ba2&color=fff&bold=true&font-size=0.3'">
                         </div>
@@ -668,7 +680,7 @@
 
                     <div class="junior-card">
                         <div class="junior-photo">
-                            <img src="{{ asset('storage/images/team/Tessa.jpg') }}" 
+                            <img src="{{ asset('storage/images/team/Tessa.png') }}" 
                                  alt="Tessa Ismi"
                                  onerror="this.src='https://ui-avatars.com/api/?name=Tessa+I&size=500&background=48bb78&color=fff&bold=true&font-size=0.3'">
                         </div>
@@ -679,7 +691,7 @@
 
                     <div class="junior-card">
                         <div class="junior-photo">
-                            <img src="{{ asset('storage/images/team/Nabila.jpg') }}" 
+                            <img src="{{ asset('storage/images/team/Nabila.png') }}" 
                                  alt="Nabila Syahtani"
                                  onerror="this.src='https://ui-avatars.com/api/?name=Nabila+S&size=500&background=3182ce&color=fff&bold=true&font-size=0.3'">
                         </div>
@@ -690,7 +702,7 @@
 
                     <div class="junior-card">
                         <div class="junior-photo">
-                            <img src="{{ asset('storage/images/team/Sefty.jpg') }}" 
+                            <img src="{{ asset('storage/images/team/Sefty.png') }}" 
                                  alt="Sefty Mustika"
                                  onerror="this.src='https://ui-avatars.com/api/?name=Sefty+M&size=500&background=d69e2e&color=fff&bold=true&font-size=0.3'">
                         </div>
@@ -701,7 +713,7 @@
 
                     <div class="junior-card">
                         <div class="junior-photo">
-                            <img src="{{ asset('storage/images/team/Doni.jpg') }}" 
+                            <img src="{{ asset('storage/images/team/Doni.png') }}" 
                                  alt="Doni Hamdani"
                                  onerror="this.src='https://ui-avatars.com/api/?name=Doni+H&size=500&background=805ad5&color=fff&bold=true&font-size=0.3'">
                         </div>
@@ -728,7 +740,7 @@
             <div class="expert-staff-grid">
                 <div class="expert-card">
                     <div class="expert-photo">
-                        <img src="{{ asset('storage/images/team/Prof-Edy.jpg') }}" 
+                        <img src="{{ asset('storage/images/team/Prof-Edy.png') }}" 
                         alt="Prof. Dr. H. Edi Suryadi"
                         onerror="this.src='https://ui-avatars.com/api/?name=Prof+Edi+Suryadi&size=500&background=48bb78&color=fff&bold=true&font-size=0.3'">
                     </div>
@@ -740,7 +752,7 @@
 
                 <div class="expert-card">
                     <div class="expert-photo">
-                        <img src="{{ asset('storage/images/team/Prof-Nugraha.jpg') }}" 
+                        <img src="{{ asset('storage/images/team/Prof-Nugraha.png') }}" 
                         alt="Prof. Dr. H. Nugraha"
                         onerror="this.src='https://ui-avatars.com/api/?name=Prof+Nugraha&size=500&background=48bb78&color=fff&bold=true&font-size=0.3'">
                     </div>
@@ -782,7 +794,7 @@
 
                 <div class="expert-card">
                     <div class="expert-photo">
-                        <img src="{{ asset('storage/images/team/Rasto.jpg') }}" 
+                        <img src="{{ asset('storage/images/team/Rasto.png') }}" 
                              alt="Dr. Rasto"
                              onerror="this.src='https://ui-avatars.com/api/?name=Dr+Rasto&size=600&background=3182ce&color=fff&bold=true&font-size=0.3'">
                     </div>
@@ -794,7 +806,7 @@
 
                 <div class="expert-card">
                     <div class="expert-photo">
-                        <img src="{{ asset('storage/images/team/Agus.jpg') }}" 
+                        <img src="{{ asset('storage/images/team/Agus.png') }}" 
                         alt="Agus Rakhmat"
                         onerror="this.src='https://ui-avatars.com/api/?name=Agus+Rakhmat&size=500&background=38b2ac&color=fff&bold=true&font-size=0.3'">
                     </div>
@@ -836,7 +848,7 @@
 
                 <div class="expert-card">
                     <div class="expert-photo">
-                        <img src="{{ asset('storage/images/team/Yosep.jpg') }}" 
+                        <img src="{{ asset('storage/images/team/Yosep.png') }}" 
                              alt="Yosep Hernawan"
                              onerror="this.src='https://ui-avatars.com/api/?name=Yosep+H&size=600&background=48bb78&color=fff&bold=true&font-size=0.3'">
                     </div>
