@@ -184,11 +184,11 @@ Route::prefix('edutech/instructor')->name('edutech.instructor.')->middleware('ed
     Route::get('/students/course/{course}', [StudentManagementController::class, 'courseStudents'])->name('students.course');
     Route::get('/students/course/{course}/attendance/{batch?}', [StudentManagementController::class, 'attendance'])->name('students.attendance');
     Route::post('/students/course/{course}/attendance/{batch}', [StudentManagementController::class, 'storeAttendance'])->name('students.attendance.store');
-    
+
     // Edit Attendance
     Route::get('/students/course/{course}/attendance/{batch}/meeting/{meeting}/edit', [StudentManagementController::class, 'editAttendance'])->name('students.attendance.edit');
     Route::put('/students/course/{course}/attendance/{batch}/meeting/{meeting}', [StudentManagementController::class, 'updateAttendance'])->name('students.attendance.update');
-    
+
     // Attendance Reports
     Route::get('/students/course/{course}/attendance/{batch}/report', [StudentManagementController::class, 'attendanceReport'])->name('students.attendance.report');
     Route::get('/students/course/{course}/attendance/{batch}/download/{meeting?}', [StudentManagementController::class, 'downloadAttendanceReport'])->name('students.attendance.download');
@@ -323,3 +323,79 @@ Route::prefix('edutech')->name('edutech.')->middleware('edutech.auth')->group(fu
 
 // Midtrans Webhook (No auth - untuk menerima notifikasi dari Midtrans)
 Route::post('/edutech/payment/notification', [PaymentController::class, 'notification'])->name('edutech.payment.notification');
+
+
+use App\Http\Controllers\DigitalController;
+use App\Http\Controllers\DigitalPaymentController;
+use App\Http\Controllers\QuestionnaireController;
+
+// ========================================
+// KIM DIGITAL - PUBLIC ROUTES
+// ========================================
+
+Route::prefix('produk/digital')->name('digital.')->group(function () {
+
+    // Landing Page
+    Route::get('/', [DigitalController::class, 'index'])->name('index');
+
+    // Product Catalog
+    Route::get('/catalog', [DigitalController::class, 'catalog'])->name('catalog');
+
+    // Product Detail
+    Route::get('/product/{slug}', [DigitalController::class, 'show'])->name('show');
+
+    // Shopping Cart
+    Route::get('/cart', [DigitalController::class, 'cart'])->name('cart');
+    Route::post('/cart/add/{id}', [DigitalController::class, 'addToCart'])->name('cart.add');
+    Route::delete('/cart/remove/{id}', [DigitalController::class, 'removeFromCart'])->name('cart.remove');
+    Route::post('/cart/clear', [DigitalController::class, 'clearCart'])->name('cart.clear');
+
+    // Checkout
+    Route::get('/checkout', [DigitalController::class, 'checkout'])->name('checkout');
+    Route::post('/checkout/process', [DigitalPaymentController::class, 'processCheckout'])->name('checkout.process');
+
+    // Payment
+    Route::get('/payment/{orderNumber}', [DigitalPaymentController::class, 'show'])->name('payment.show');
+    Route::get('/payment/success/{orderNumber}', [DigitalPaymentController::class, 'success'])->name('payment.success');
+    Route::post('/payment/notification', [DigitalPaymentController::class, 'notification'])->name('payment.notification');
+
+    // Questionnaire
+    Route::get('/questionnaire/{orderNumber}', [QuestionnaireController::class, 'show'])->name('questionnaire.show');
+    Route::post('/questionnaire/submit/{responseId}', [QuestionnaireController::class, 'submit'])->name('questionnaire.submit');
+    Route::get('/questionnaire/result/{responseId}', [QuestionnaireController::class, 'downloadResult'])->name('questionnaire.download');
+});
+
+
+Route::prefix('admin/digital')->middleware(['auth', 'admin'])->name('admin.digital.')->group(function () {
+
+    // Dashboard
+    Route::get('/', [Admin\DigitalDashboardController::class, 'index'])->name('dashboard');
+
+    // Categories
+    Route::resource('categories', Admin\DigitalCategoryController::class);
+
+    // Products
+    Route::resource('products', Admin\DigitalProductController::class);
+    Route::post('products/{id}/toggle-featured', [Admin\DigitalProductController::class, 'toggleFeatured'])->name('products.toggle-featured');
+
+    // Questionnaires
+    Route::resource('questionnaires', Admin\QuestionnaireController::class);
+    Route::get('questionnaires/{id}/questions', [Admin\QuestionnaireController::class, 'questions'])->name('questionnaires.questions');
+
+    // Questions
+    Route::resource('questions', Admin\QuestionController::class);
+
+    // Dimensions
+    Route::resource('dimensions', Admin\DimensionController::class);
+
+    // Orders
+    Route::get('orders', [Admin\DigitalOrderController::class, 'index'])->name('orders.index');
+    Route::get('orders/{id}', [Admin\DigitalOrderController::class, 'show'])->name('orders.show');
+    Route::post('orders/{id}/resend-email', [Admin\DigitalOrderController::class, 'resendEmail'])->name('orders.resend');
+
+    // Responses
+    Route::get('responses', [Admin\QuestionnaireResponseController::class, 'index'])->name('responses.index');
+    Route::get('responses/{id}', [Admin\QuestionnaireResponseController::class, 'show'])->name('responses.show');
+    Route::post('responses/{id}/regenerate', [Admin\QuestionnaireResponseController::class, 'regenerate'])->name('responses.regenerate');
+    Route::post('responses/{id}/resend', [Admin\QuestionnaireResponseController::class, 'resendEmail'])->name('responses.resend');
+});

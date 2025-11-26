@@ -460,6 +460,9 @@
                             <a href="{{ route('edutech.index') }}" class="dropdown-item">
                                 <i class="fas fa-graduation-cap"></i> KIM Edutech
                             </a>
+                            <a href="{{ route('digital.index') }}" class="dropdown-item">
+                                <i class="fas fa-shopping-cart"></i> KIM Digital
+                            </a>
                         </div>
                     </li>
 
@@ -470,7 +473,7 @@
                         </a>
                         <div class="dropdown-menu">
                             <a href="{{ route('about.profile') }}" class="dropdown-item">
-                                <i class="fas fa-building"></i> Profil Perusahaan 
+                                <i class="fas fa-building"></i> Profil Perusahaan
                             </a>
                             <a href="{{ route('about.organization') }}" class="dropdown-item">
                                 <i class="fas fa-sitemap"></i> Tim Kami
@@ -526,6 +529,7 @@
                         <li><a href="{{ route('consultant.index') }}" class="footer-link">KIM Consultant</a></li>
                         <li><a href="{{ route('developer.index') }}" class="footer-link">KIM Developer</a></li>
                         <li><a href="{{ route('edutech.index') }}" class="footer-link">KIM Edutech</a></li>
+                        <li><a href="{{ route('digital.index') }}" class="footer-link">KIM Digital</a></li>
                     </ul>
                 </div>
 
