@@ -377,6 +377,8 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\QuestionnaireManagementController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Admin\DimensionController;
+use App\Http\Controllers\Admin\QuestionnaireResponseController;
+use App\Http\Controllers\Admin\QuestionController;
 
 // Admin Auth Routes (No middleware)
 Route::prefix('admin/digital')->name('admin.digital.')->group(function () {
@@ -409,7 +411,17 @@ Route::prefix('admin/digital')->name('admin.digital.')->middleware(['admin'])->g
 
     // Dimensions (CRUD)
     Route::resource('dimensions', DimensionController::class);
+ 
+    // Questions (CRUD)
+    Route::resource('questions', QuestionController::class);
 
+    // Response (CRUD)
+    Route::resource('responses', QuestionnaireResponseController::class);
+    Route::post('responses/{id}/resend', [QuestionnaireResponseController::class, 'resend'])
+    ->name('responses.resend');
+    Route::post('responses/{id}/regenerate', [QuestionnaireResponseController::class, 'regenerate'])
+    ->name('responses.regenerate');
+    
     // Orders
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{id}', [OrderController::class, 'show'])->name('orders.show');

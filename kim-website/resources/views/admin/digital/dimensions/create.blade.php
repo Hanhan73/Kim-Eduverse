@@ -1,4 +1,4 @@
-@extends('admin.digital.layouts.app')
+@extends('layouts.admin-digital')
 
 @section('title', 'Tambah Dimensi - Admin Digital')
 @section('page-title', 'Tambah Dimensi Baru')
