@@ -655,18 +655,26 @@
 
             <div class="menu-section">Angket</div>
             
-            <a href="{{ route('admin.digital.questionnaires.index') }}" class="menu-item {{ request()->routeIs('admin.digital.questionnaires.*') ? 'active' : '' }}">
-                <i class="fas fa-clipboard-list"></i> Daftar Angket
+            <a href="{{ route('admin.digital.questionnaires.index') }}"
+            class="menu-item {{ request()->routeIs('admin.digital.questionnaires.*') ? 'active' : '' }}">
+                <i class="fas fa-clipboard-check"></i> Daftar Angket
             </a>
-            <a href="{{ route('admin.digital.dimensions.index') }}" class="menu-item {{ request()->routeIs('admin.digital.dimensions.*') ? 'active' : '' }}">
-                <i class="fas fa-clipboard-list"></i> Daftar Dimensi
+
+            <a href="{{ route('admin.digital.dimensions.index') }}"
+            class="menu-item {{ request()->routeIs('admin.digital.dimensions.*') ? 'active' : '' }}">
+                <i class="fas fa-layer-group"></i> Daftar Dimensi
             </a>
-            <a href="{{ route('admin.digital.questions.index') }}" class="menu-item {{ request()->routeIs('admin.digital.questions.*') ? 'active' : '' }}">
-                <i class="fas fa-clipboard-list"></i> Daftar Pertanyaan
+
+            <a href="{{ route('admin.digital.questions.index') }}"
+            class="menu-item {{ request()->routeIs('admin.digital.questions.*') ? 'active' : '' }}">
+                <i class="fas fa-circle-question"></i> Daftar Pertanyaan
             </a>
-            <a href="{{ route('admin.digital.responses.index') }}" class="menu-item {{ request()->routeIs('admin.digital.responses.*') ? 'active' : '' }}">
-                <i class="fas fa-clipboard-list"></i> Daftar Responden
+
+            <a href="{{ route('admin.digital.responses.index') }}"
+            class="menu-item {{ request()->routeIs('admin.digital.responses.*') ? 'active' : '' }}">
+                <i class="fas fa-users"></i> Daftar Responden
             </a>
+
 
             <div class="menu-section">Transaksi</div>
             

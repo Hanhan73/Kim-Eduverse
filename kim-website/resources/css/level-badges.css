@@ -1,0 +1,179 @@
+/**
+ * CSS Classes untuk Level Interpretasi
+ * 
+ * Tambahkan ke:
+ * 1. resources/views/layouts/admin-digital.blade.php
+ * 2. resources/views/pdf/questionnaire-result.blade.php
+ */
+
+/* ==========================================
+   Level Badges - Admin Views
+   ========================================== */
+
+.level-badge {
+    display: inline-block;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+/* Sangat Rendah - Dark Green */
+.level-sangat-rendah {
+    background: #276749;
+    color: #ffffff;
+}
+
+/* Rendah - Green */
+.level-rendah {
+    background: #48bb78;
+    color: #ffffff;
+}
+/* Alternative: Light Green Background */
+.level-rendah-light {
+    background: #c6f6d5;
+    color: #276749;
+}
+
+/* Sedang - Orange */
+.level-sedang {
+    background: #ed8936;
+    color: #ffffff;
+}
+/* Alternative: Light Orange Background */
+.level-sedang-light {
+    background: #feebc8;
+    color: #744210;
+}
+
+/* Tinggi - Red */
+.level-tinggi {
+    background: #f56565;
+    color: #ffffff;
+}
+/* Alternative: Light Red Background */
+.level-tinggi-light {
+    background: #fed7d7;
+    color: #742a2a;
+}
+
+/* Sangat Tinggi - Dark Red */
+.level-sangat-tinggi {
+    background: #742a2a;
+    color: #ffffff;
+}
+
+
+/* ==========================================
+   Level Badges - PDF Version
+   ========================================== */
+
+/* Untuk DomPDF, inline style lebih reliable */
+.pdf-level-sangat-rendah {
+    background-color: #276749;
+    color: #ffffff;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-weight: bold;
+}
+
+.pdf-level-rendah {
+    background-color: #c6f6d5;
+    color: #276749;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-weight: bold;
+}
+
+.pdf-level-sedang {
+    background-color: #feebc8;
+    color: #744210;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-weight: bold;
+}
+
+.pdf-level-tinggi {
+    background-color: #fed7d7;
+    color: #742a2a;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-weight: bold;
+}
+
+.pdf-level-sangat-tinggi {
+    background-color: #742a2a;
+    color: #ffffff;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-weight: bold;
+}
+
+
+/* ==========================================
+   Score Range Cards - Admin Edit Page
+   ========================================== */
+
+.score-range-card {
+    background: #f7fafc;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 15px;
+    border-left: 4px solid #cbd5e0;
+}
+
+.score-range-card.level-sangat-rendah {
+    border-left-color: #276749;
+    background: #f0fff4;
+}
+
+.score-range-card.level-rendah {
+    border-left-color: #48bb78;
+    background: #f0fff4;
+}
+
+.score-range-card.level-sedang {
+    border-left-color: #ed8936;
+    background: #fffaf0;
+}
+
+.score-range-card.level-tinggi {
+    border-left-color: #f56565;
+    background: #fff5f5;
+}
+
+.score-range-card.level-sangat-tinggi {
+    border-left-color: #742a2a;
+    background: #fff5f5;
+}
+
+
+/* ==========================================
+   Interpretation Cards - Show Page
+   ========================================== */
+
+.interpretation-card {
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 15px;
+}
+
+.interpretation-card.low,
+.interpretation-card.sangat_rendah,
+.interpretation-card.rendah {
+    background: #c6f6d5;
+    border-left: 4px solid #48bb78;
+}
+
+.interpretation-card.medium,
+.interpretation-card.sedang {
+    background: #feebc8;
+    border-left: 4px solid #ed8936;
+}
+
+.interpretation-card.high,
+.interpretation-card.tinggi,
+.interpretation-card.sangat_tinggi {
+    background: #fed7d7;
+    border-left: 4px solid #f56565;
+}

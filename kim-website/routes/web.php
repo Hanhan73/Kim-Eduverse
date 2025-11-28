@@ -412,6 +412,28 @@ Route::prefix('admin/digital')->name('admin.digital.')->middleware(['admin'])->g
     // Dimensions (CRUD)
     Route::resource('dimensions', DimensionController::class);
  
+     // Score Range Management
+    Route::post('/dimensions/{id}/score-ranges', [DimensionController::class, 'addScoreRange'])
+        ->name('dimensions.add-range');
+    
+    Route::put('/score-ranges/{id}', [DimensionController::class, 'updateScoreRange'])
+        ->name('score-ranges.update');
+    
+    Route::delete('/score-ranges/{id}', [DimensionController::class, 'deleteScoreRange'])
+        ->name('score-ranges.destroy');
+    
+    // Generate default ranges
+    Route::post('/dimensions/{id}/generate-ranges', [DimensionController::class, 'generateDefaultRanges'])
+        ->name('dimensions.generate-ranges');
+    
+    // Migrate legacy interpretations
+    Route::post('/dimensions/{id}/migrate-interpretations', [DimensionController::class, 'migrateInterpretations'])
+        ->name('dimensions.migrate-interpretations');
+    
+    // Reorder ranges (AJAX)
+    Route::post('/dimensions/{id}/reorder-ranges', [DimensionController::class, 'reorderScoreRanges'])
+        ->name('dimensions.reorder-ranges');
+        
     // Questions (CRUD)
     Route::resource('questions', QuestionController::class);
 
