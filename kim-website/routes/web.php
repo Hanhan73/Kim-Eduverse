@@ -367,6 +367,14 @@ Route::prefix('produk/digital')->name('digital.')->group(function () {
     Route::get('/questionnaire/{orderNumber}', [QuestionnaireController::class, 'show'])->name('questionnaire.show');
     Route::post('/questionnaire/submit/{responseId}', [QuestionnaireController::class, 'submit'])->name('questionnaire.submit');
     Route::get('/questionnaire/result/{responseId}', [QuestionnaireController::class, 'downloadResult'])->name('questionnaire.download');
+
+        // Download Product File (untuk ebook, template, dll)
+    Route::get('/download/{orderNumber}/{productId}', [DigitalPaymentController::class, 'downloadProduct'])
+        ->name('product.download');
+
+    // Download Invoice PDF
+    Route::get('/invoice/{orderNumber}', [DigitalPaymentController::class, 'downloadInvoice'])
+        ->name('invoice.download');
 });
 
 
@@ -433,7 +441,7 @@ Route::prefix('admin/digital')->name('admin.digital.')->middleware(['admin'])->g
     // Reorder ranges (AJAX)
     Route::post('/dimensions/{id}/reorder-ranges', [DimensionController::class, 'reorderScoreRanges'])
         ->name('dimensions.reorder-ranges');
-        
+
     // Questions (CRUD)
     Route::resource('questions', QuestionController::class);
 
@@ -449,6 +457,8 @@ Route::prefix('admin/digital')->name('admin.digital.')->middleware(['admin'])->g
     Route::get('/orders/{id}', [OrderController::class, 'show'])->name('orders.show');
     Route::get('/orders/{id}/invoice', [OrderController::class, 'downloadInvoice'])->name('orders.invoice');
     Route::post('/orders/{id}/status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
+
+
     
 });
 
