@@ -209,10 +209,6 @@
     <!-- Participant Info -->
     <div class="info-box">
         <div class="info-row">
-            <span class="info-label">Nama:</span>
-            <span class="info-value">{{ $response->respondent_name }}</span>
-        </div>
-        <div class="info-row">
             <span class="info-label">Email:</span>
             <span class="info-value">{{ $response->respondent_email }}</span>
         </div>

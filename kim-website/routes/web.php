@@ -12,6 +12,8 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\Admin\ArticleController as AdminArticleController;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 
+
+
 // Landing Page
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -359,6 +361,8 @@ Route::prefix('produk/digital')->name('digital.')->group(function () {
     Route::get('/payment/success/{orderNumber}', [DigitalPaymentController::class, 'success'])->name('payment.success');
     Route::post('/payment/notification', [DigitalPaymentController::class, 'notification'])->name('payment.notification');
 
+    Route::post('/payment/confirm/{orderNumber}', [DigitalPaymentController::class, 'confirmPayment'])->name('payment.confirm');
+
     // Questionnaire
     Route::get('/questionnaire/{orderNumber}', [QuestionnaireController::class, 'show'])->name('questionnaire.show');
     Route::post('/questionnaire/submit/{responseId}', [QuestionnaireController::class, 'submit'])->name('questionnaire.submit');
@@ -366,36 +370,50 @@ Route::prefix('produk/digital')->name('digital.')->group(function () {
 });
 
 
-Route::prefix('admin/digital')->middleware(['auth', 'admin'])->name('admin.digital.')->group(function () {
+use App\Http\Controllers\Admin\DigitalDashboardController as DashboardController;
+use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\QuestionnaireManagementController;
+use App\Http\Controllers\Auth\AuthController;
 
+// Admin Auth Routes (No middleware)
+Route::prefix('admin/digital')->name('admin.digital.')->group(function () {
+    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+});
+
+// Admin Routes - Protected by admin middleware
+Route::prefix('admin/digital')->name('admin.digital.')->middleware(['admin'])->group(function () {
+    
     // Dashboard
-    Route::get('/', [Admin\DigitalDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    
+    // Products
+    Route::resource('products', ProductController::class);
+    
+    // Questionnaires
+    Route::resource('questionnaires', QuestionnaireManagementController::class);
+    Route::post('/questionnaires/{id}/dimensions', [QuestionnaireManagementController::class, 'addDimension'])->name('questionnaires.addDimension');
+    Route::put('/dimensions/{id}', [QuestionnaireManagementController::class, 'updateDimension'])->name('questionnaires.updateDimension');
+    Route::delete('/dimensions/{id}', [QuestionnaireManagementController::class, 'deleteDimension'])->name('questionnaires.deleteDimension');
+    Route::post('/dimensions/{id}/ranges', [QuestionnaireManagementController::class, 'addRange'])->name('questionnaires.addRange');
+    Route::delete('/ranges/{id}', [QuestionnaireManagementController::class, 'deleteRange'])->name('questionnaires.deleteRange');
+    Route::post('/questionnaires/{id}/questions', [QuestionnaireManagementController::class, 'addQuestion'])->name('questionnaires.addQuestion');
+    Route::delete('/questions/{id}', [QuestionnaireManagementController::class, 'deleteQuestion'])->name('questionnaires.deleteQuestion');
 
     // Categories
-    Route::resource('categories', Admin\DigitalCategoryController::class);
-
-    // Products
-    Route::resource('products', Admin\DigitalProductController::class);
-    Route::post('products/{id}/toggle-featured', [Admin\DigitalProductController::class, 'toggleFeatured'])->name('products.toggle-featured');
-
-    // Questionnaires
-    Route::resource('questionnaires', Admin\QuestionnaireController::class);
-    Route::get('questionnaires/{id}/questions', [Admin\QuestionnaireController::class, 'questions'])->name('questionnaires.questions');
-
-    // Questions
-    Route::resource('questions', Admin\QuestionController::class);
-
-    // Dimensions
-    Route::resource('dimensions', Admin\DimensionController::class);
+    Route::resource('categories', CategoryController::class);
 
     // Orders
-    Route::get('orders', [Admin\DigitalOrderController::class, 'index'])->name('orders.index');
-    Route::get('orders/{id}', [Admin\DigitalOrderController::class, 'show'])->name('orders.show');
-    Route::post('orders/{id}/resend-email', [Admin\DigitalOrderController::class, 'resendEmail'])->name('orders.resend');
-
-    // Responses
-    Route::get('responses', [Admin\QuestionnaireResponseController::class, 'index'])->name('responses.index');
-    Route::get('responses/{id}', [Admin\QuestionnaireResponseController::class, 'show'])->name('responses.show');
-    Route::post('responses/{id}/regenerate', [Admin\QuestionnaireResponseController::class, 'regenerate'])->name('responses.regenerate');
-    Route::post('responses/{id}/resend', [Admin\QuestionnaireResponseController::class, 'resendEmail'])->name('responses.resend');
+    Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+    Route::get('/orders/{id}', [OrderController::class, 'show'])->name('orders.show');
+    Route::get('/orders/{id}/invoice', [OrderController::class, 'downloadInvoice'])->name('orders.invoice');
+    Route::post('/orders/{id}/status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
+    
 });
+
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
+
+

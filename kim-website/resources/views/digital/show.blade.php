@@ -436,17 +436,13 @@
 
             <!-- CTA Buttons -->
             <div class="cta-buttons">
-                <form action="{{ route('digital.cart.add', $product->id) }}" method="POST" style="flex: 1;">
+                <form action="{{ route('digital.cart.add', $product->id) }}" method="POST" style="width: 100%;">
                     @csrf
-                    <button type="submit" class="btn-add-cart">
+                    <button type="submit" class="btn-add-cart" style="width: 100%;">
                         <i class="fas fa-shopping-cart"></i>
-                        Tambah ke Keranjang
+                        Beli Sekarang
                     </button>
                 </form>
-                <a href="{{ route('digital.cart') }}" class="btn-buy-now">
-                    <i class="fas fa-bolt"></i>
-                    Beli Sekarang
-                </a>
             </div>
 
             <!-- Security Note -->

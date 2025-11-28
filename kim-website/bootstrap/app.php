@@ -20,6 +20,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'edutech.admin' => \App\Http\Middleware\EdutechAdmin::class,
             'edutech.instructor' => \App\Http\Middleware\EdutechInstructor::class,
             'edutech.student' => \App\Http\Middleware\EdutechStudent::class,
+            'admin' => \App\Http\Middleware\AdminMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

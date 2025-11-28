@@ -11,47 +11,25 @@ class QuestionnaireDimension extends Model
 
     protected $fillable = [
         'questionnaire_id',
-        'code',
         'name',
         'description',
-        'interpretations',
+        'min_score',
+        'max_score',
         'order',
     ];
 
-    protected $casts = [
-        'interpretations' => 'array',
-    ];
-
-    /**
-     * Get the questionnaire that owns the dimension.
-     */
     public function questionnaire()
     {
         return $this->belongsTo(Questionnaire::class);
     }
 
-    /**
-     * Get the questions for this dimension.
-     */
-    public function questions()
+    public function ranges()
     {
-        return $this->hasMany(QuestionnaireQuestion::class, 'dimension_id')->orderBy('order');
+        return $this->hasMany(QuestionnaireDimensionRange::class, 'dimension_id');
     }
 
-    /**
-     * Get interpretation for a score.
-     */
-    public function getInterpretation($score)
+    public function questions()
     {
-        $interpretations = $this->interpretations;
-        
-        // Determine category based on score ranges
-        if ($score >= 4 && $score <= 9) {
-            return $interpretations['low'] ?? null;
-        } elseif ($score >= 10 && $score <= 14) {
-            return $interpretations['medium'] ?? null;
-        } else {
-            return $interpretations['high'] ?? null;
-        }
+        return $this->belongsToMany(QuestionnaireQuestion::class, 'questionnaire_question_dimension', 'dimension_id', 'question_id');
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\DigitalProduct;
 use App\Models\DigitalProductCategory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class DigitalController extends Controller
 {
@@ -99,9 +100,17 @@ class DigitalController extends Controller
      */
     public function cart()
     {
+        Log::info('=== CART PAGE ACCESSED ===');
+        
         $cart = session()->get('digital_cart', []);
-
+        
+        Log::info('Cart contents', [
+            'items_count' => count($cart),
+            'cart_data' => $cart
+        ]);
+        
         if (empty($cart)) {
+            Log::info('Cart is empty');
             $subtotal = 0;
             $tax = 0;
             $total = 0;
@@ -109,40 +118,78 @@ class DigitalController extends Controller
             $subtotal = collect($cart)->sum('price');
             $tax = round($subtotal * 0.01); // 1% admin fee
             $total = $subtotal + $tax;
+            
+            Log::info('Cart totals calculated', [
+                'subtotal' => $subtotal,
+                'tax' => $tax,
+                'total' => $total
+            ]);
         }
 
+        Log::info('Rendering cart view');
         return view('digital.cart', compact('cart', 'subtotal', 'tax', 'total'));
     }
 
     /**
-     * Add product to cart
+     * Add product to cart and show cart page
      */
     public function addToCart($id)
     {
-        $product = DigitalProduct::where('id', $id)
-            ->where('is_active', true)
-            ->firstOrFail();
+        Log::info('=== ADD TO CART STARTED ===');
+        Log::info('Product ID: ' . $id);
+        
+        try {
+            $product = DigitalProduct::where('id', $id)
+                ->where('is_active', true)
+                ->firstOrFail();
+            
+            Log::info('Product found', [
+                'id' => $product->id,
+                'name' => $product->name,
+                'price' => $product->price,
+                'type' => $product->type
+            ]);
 
-        $cart = session()->get('digital_cart', []);
+            // Clear any existing cart (only 1 product allowed)
+            $oldCart = session()->get('digital_cart', []);
+            Log::info('Old cart', ['items' => count($oldCart)]);
+            
+            session()->forget('digital_cart');
+            Log::info('Cart cleared');
 
-        // Check if product already in cart
-        if (isset($cart[$id])) {
-            return back()->with('info', 'Produk sudah ada di keranjang');
+            // Add single product to cart
+            $cart = [
+                $id => [
+                    'id' => $product->id,
+                    'name' => $product->name,
+                    'price' => $product->price,
+                    'type' => $product->type,
+                    'thumbnail' => $product->thumbnail,
+                    'slug' => $product->slug,
+                ]
+            ];
+
+            session()->put('digital_cart', $cart);
+            Log::info('New cart created', ['cart' => $cart]);
+            
+            // Verify cart saved
+            $savedCart = session()->get('digital_cart', []);
+            Log::info('Cart verification', ['items_in_session' => count($savedCart)]);
+
+            // Redirect ke CART PAGE
+            Log::info('Redirecting to cart page');
+            $redirectUrl = route('digital.cart');
+            Log::info('Redirect URL: ' . $redirectUrl);
+            
+            return redirect()->route('digital.cart')
+                ->with('success', 'Produk berhasil ditambahkan. Silakan lanjutkan ke pembayaran.');
+                
+        } catch (\Exception $e) {
+            Log::error('Add to cart failed: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
+            
+            return back()->with('error', 'Gagal menambahkan produk. Silakan coba lagi.');
         }
-
-        // Add to cart
-        $cart[$id] = [
-            'id' => $product->id,
-            'name' => $product->name,
-            'price' => $product->price,
-            'type' => $product->type,
-            'thumbnail' => $product->thumbnail,
-            'slug' => $product->slug,
-        ];
-
-        session()->put('digital_cart', $cart);
-
-        return back()->with('success', 'Produk berhasil ditambahkan ke keranjang');
     }
 
     /**

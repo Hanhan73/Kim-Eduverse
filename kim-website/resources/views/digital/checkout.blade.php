@@ -324,20 +324,6 @@
                     </h3>
 
                     <div class="form-group">
-                        <label for="customer_name">Nama Lengkap <span>*</span></label>
-                        <input type="text" 
-                               id="customer_name" 
-                               name="customer_name" 
-                               class="form-control @error('customer_name') error @enderror" 
-                               value="{{ old('customer_name') }}" 
-                               required
-                               placeholder="Masukkan nama lengkap Anda">
-                        @error('customer_name')
-                        <div class="error-message">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <div class="form-group">
                         <label for="customer_email">Email <span>*</span></label>
                         <input type="email" 
                                id="customer_email" 
@@ -352,19 +338,6 @@
                         <small style="color: #718096; font-size: 0.85rem; margin-top: 5px; display: block;">
                             Hasil akan dikirim ke email ini
                         </small>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="customer_phone">Nomor WhatsApp</label>
-                        <input type="tel" 
-                               id="customer_phone" 
-                               name="customer_phone" 
-                               class="form-control @error('customer_phone') error @enderror" 
-                               value="{{ old('customer_phone') }}"
-                               placeholder="08xxxxxxxxxx">
-                        @error('customer_phone')
-                        <div class="error-message">{{ $message }}</div>
-                        @enderror
                     </div>
                 </div>
 

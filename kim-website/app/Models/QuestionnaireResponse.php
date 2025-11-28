@@ -12,7 +12,6 @@ class QuestionnaireResponse extends Model
     protected $fillable = [
         'order_id',
         'questionnaire_id',
-        'respondent_name',
         'respondent_email',
         'answers',
         'scores',

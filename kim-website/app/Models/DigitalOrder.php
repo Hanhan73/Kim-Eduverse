@@ -11,9 +11,7 @@ class DigitalOrder extends Model
 
     protected $fillable = [
         'order_number',
-        'customer_name',
         'customer_email',
-        'customer_phone',
         'subtotal',
         'tax',
         'total',

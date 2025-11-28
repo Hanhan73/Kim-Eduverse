@@ -1,6 +1,9 @@
 @extends('layouts.app')
-
-@section('title', 'Pembayaran Berhasil - KIM Digital')
+@if($hasQuestionnaire && !$questionnaireCompleted)
+    @section('title', 'Pembayaran Berhasil - Isi Angket - KIM Digital')
+@else
+    @section('title', 'Angket Selesai Diisi - KIM Digital')
+@endif
 
 @push('styles')
 <style>
@@ -244,8 +247,13 @@
             <i class="fas fa-check"></i>
         </div>
 
-        <h1>Pembayaran Berhasil!</h1>
-        <p class="subtitle">Terima kasih atas pembelian Anda</p>
+        @if($hasQuestionnaire && !$questionnaireCompleted)
+            <h1>Pembayaran Berhasil!</h1>
+            <p class="subtitle">Terima kasih atas pembelian Anda</p>
+        @else
+            <h1>Angket Selesai Diisi!</h1>
+            <p class="subtitle">Terima kasih telah menyelesaikan angket</p>
+        @endif
 
         <div class="order-number">
             <label>Nomor Pesanan</label>
@@ -259,45 +267,66 @@
                 Langkah Selanjutnya
             </h3>
             <ul class="steps-list">
-                @php
-                    $hasQuestionnaire = $order->items->contains(function($item) {
-                        return $item->product_type === 'questionnaire';
-                    });
-                @endphp
-
                 @if($hasQuestionnaire)
-                <li class="step-item">
-                    <div class="step-number">1</div>
-                    <div class="step-content">
-                        <strong>Isi Angket</strong>
-                        <span>Klik tombol "Isi Angket Sekarang" untuk mulai mengisi kuesioner</span>
-                    </div>
-                </li>
-                <li class="step-item">
-                    <div class="step-number">2</div>
-                    <div class="step-content">
-                        <strong>Terima Hasil</strong>
-                        <span>Hasil analisis akan dikirim ke email Anda dalam format PDF</span>
-                    </div>
-                </li>
+                    @if($questionnaireCompleted)
+                        <!-- Sudah selesai isi angket -->
+                        <li class="step-item">
+                            <div class="step-number">✓</div>
+                            <div class="step-content">
+                                <strong>Terima Kasih!</strong>
+                                <span>Anda sudah menyelesaikan pengisian angket</span>
+                            </div>
+                        </li>
+                        <li class="step-item">
+                            <div class="step-number">✓</div>
+                            <div class="step-content">
+                                <strong>Hasil Sudah Dikirim</strong>
+                                <span>Hasil analisis lengkap sudah dikirim ke email <strong>{{ $order->customer_email }}</strong> dalam format PDF</span>
+                            </div>
+                        </li>
+                        <li class="step-item">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <strong>Cek Email</strong>
+                                <span>Buka email Anda dan download file PDF. Periksa folder spam jika tidak ditemukan di inbox.</span>
+                            </div>
+                        </li>
+                    @else
+                        <!-- Belum isi angket -->
+                        <li class="step-item">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <strong>Isi Angket</strong>
+                                <span>Klik tombol "Isi Angket Sekarang" untuk mulai mengisi kuesioner</span>
+                            </div>
+                        </li>
+                        <li class="step-item">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <strong>Terima Hasil</strong>
+                                <span>Hasil analisis akan dikirim ke email Anda dalam format PDF</span>
+                            </div>
+                        </li>
+                    @endif
                 @else
-                <li class="step-item">
-                    <div class="step-number">1</div>
-                    <div class="step-content">
-                        <strong>Cek Email</strong>
-                        <span>Kami telah mengirim email konfirmasi dan link download produk</span>
-                    </div>
-                </li>
-                <li class="step-item">
-                    <div class="step-number">2</div>
-                    <div class="step-content">
-                        <strong>Download Produk</strong>
-                        <span>Klik link di email untuk download produk digital Anda</span>
-                    </div>
-                </li>
+                    <!-- Bukan questionnaire -->
+                    <li class="step-item">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <strong>Cek Email</strong>
+                            <span>Kami telah mengirim email konfirmasi dan link download produk</span>
+                        </div>
+                    </li>
+                    <li class="step-item">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <strong>Download Produk</strong>
+                            <span>Klik link di email untuk download produk digital Anda</span>
+                        </div>
+                    </li>
                 @endif
                 <li class="step-item">
-                    <div class="step-number">{{ $hasQuestionnaire ? '3' : '3' }}</div>
+                    <div class="step-number">{{ $hasQuestionnaire ? ($questionnaireCompleted ? '4' : '3') : '3' }}</div>
                     <div class="step-content">
                         <strong>Butuh Bantuan?</strong>
                         <span>Hubungi customer service kami jika ada pertanyaan</span>
@@ -308,11 +337,18 @@
 
         <!-- CTA Buttons -->
         <div class="cta-buttons">
-            @if($hasQuestionnaire)
-            <a href="{{ route('digital.questionnaire.show', $order->order_number) }}" class="btn-primary">
-                <i class="fas fa-clipboard-list"></i>
-                Isi Angket Sekarang
-            </a>
+            @if($hasQuestionnaire && !$questionnaireCompleted)
+                <!-- Belum isi angket -->
+                <a href="{{ route('digital.questionnaire.show', $order->order_number) }}" class="btn-primary">
+                    <i class="fas fa-clipboard-list"></i>
+                    Isi Angket Sekarang
+                </a>
+            @else
+                <!-- Sudah selesai atau bukan questionnaire -->
+                <a href="{{ route('digital.index') }}" class="btn-primary">
+                    <i class="fas fa-home"></i>
+                    Kembali ke Home KIM Digital
+                </a>
             @endif
             <a href="{{ route('digital.catalog') }}" class="btn-secondary">
                 <i class="fas fa-shopping-bag"></i>

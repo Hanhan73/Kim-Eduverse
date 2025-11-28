@@ -4,68 +4,59 @@ namespace App\Http\Controllers;
 
 use App\Models\DigitalProduct;
 use App\Models\DigitalProductCategory;
-use App\Models\DigitalOrder;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Log;
 
 class DigitalController extends Controller
 {
     /**
-     * Display KIM Digital landing page.
+     * Display landing page
      */
     public function index()
     {
+        $categories = DigitalProductCategory::withCount([
+            'products' => function ($query) {
+                $query->where('is_active', true);
+            }
+        ])->get();
+
         $featuredProducts = DigitalProduct::where('is_active', true)
             ->where('is_featured', true)
             ->with('category')
-            ->orderBy('order')
+            ->latest()
             ->limit(6)
             ->get();
 
-        $categories = DigitalProductCategory::where('is_active', true)
-            ->withCount(['activeProducts'])
-            ->orderBy('order')
-            ->get();
-
-        return view('digital.index', compact('featuredProducts', 'categories'));
+        return view('digital.index', compact('categories', 'featuredProducts'));
     }
 
     /**
-     * Display product catalog.
+     * Display product catalog with filters
      */
     public function catalog(Request $request)
     {
         $query = DigitalProduct::where('is_active', true)->with('category');
 
         // Filter by category
-        if ($request->has('category')) {
+        if ($request->filled('category')) {
             $query->whereHas('category', function ($q) use ($request) {
                 $q->where('slug', $request->category);
             });
         }
 
-        // Filter by type
-        if ($request->has('type')) {
-            $query->where('type', $request->type);
-        }
-
-        // Search
-        if ($request->has('search')) {
+        // Search functionality
+        if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('description', 'like', "%{$search}%");
+                $q->where('name', 'like', '%' . $search . '%')
+                    ->orWhere('description', 'like', '%' . $search . '%');
             });
         }
 
-        // Sort
-        $sort = $request->get('sort', 'popular');
-        switch ($sort) {
-            case 'popular':
-                $query->orderBy('sold_count', 'desc');
-                break;
+        // Sorting
+        switch ($request->get('sort', 'popular')) {
             case 'newest':
-                $query->orderBy('created_at', 'desc');
+                $query->latest('created_at');
                 break;
             case 'price_low':
                 $query->orderBy('price', 'asc');
@@ -73,28 +64,28 @@ class DigitalController extends Controller
             case 'price_high':
                 $query->orderBy('price', 'desc');
                 break;
-            default:
-                $query->orderBy('order');
+            default: // popular
+                $query->orderBy('sold_count', 'desc')->latest();
+                break;
         }
 
-        $products = $query->paginate(12);
-        $categories = DigitalProductCategory::where('is_active', true)
-            ->orderBy('order')
-            ->get();
+        $products = $query->paginate(12)->withQueryString();
+        $categories = DigitalProductCategory::all();
 
         return view('digital.catalog', compact('products', 'categories'));
     }
 
     /**
-     * Display product detail.
+     * Display product detail
      */
     public function show($slug)
     {
         $product = DigitalProduct::where('slug', $slug)
             ->where('is_active', true)
-            ->with(['category', 'questionnaire.questions'])
+            ->with(['category', 'questionnaire'])
             ->firstOrFail();
 
+        // Get related products from same category
         $relatedProducts = DigitalProduct::where('category_id', $product->category_id)
             ->where('id', '!=', $product->id)
             ->where('is_active', true)
@@ -105,85 +96,141 @@ class DigitalController extends Controller
     }
 
     /**
-     * Add product to cart.
-     */
-    public function addToCart(Request $request, $productId)
-    {
-        $product = DigitalProduct::findOrFail($productId);
-
-        $cart = Session::get('digital_cart', []);
-
-        // Check if product already in cart
-        if (isset($cart[$productId])) {
-            return redirect()->back()->with('info', 'Produk sudah ada di keranjang');
-        }
-
-        // Add product to cart
-        $cart[$productId] = [
-            'id' => $product->id,
-            'name' => $product->name,
-            'slug' => $product->slug,
-            'price' => $product->price,
-            'type' => $product->type,
-            'thumbnail' => $product->thumbnail,
-            'quantity' => 1,
-        ];
-
-        Session::put('digital_cart', $cart);
-
-        return redirect()->back()->with('success', 'Produk ditambahkan ke keranjang');
-    }
-
-    /**
-     * Display cart.
+     * Display shopping cart
      */
     public function cart()
     {
-        $cart = Session::get('digital_cart', []);
-        $subtotal = 0;
-
-        foreach ($cart as $item) {
-            $subtotal += $item['price'] * $item['quantity'];
+        Log::info('=== CART PAGE ACCESSED ===');
+        
+        $cart = session()->get('digital_cart', []);
+        
+        Log::info('Cart contents', [
+            'items_count' => count($cart),
+            'cart_data' => $cart
+        ]);
+        
+        if (empty($cart)) {
+            Log::info('Cart is empty');
+            $subtotal = 0;
+            $tax = 0;
+            $total = 0;
+        } else {
+            $subtotal = collect($cart)->sum('price');
+            $tax = round($subtotal * 0.01); // 1% admin fee
+            $total = $subtotal + $tax;
+            
+            Log::info('Cart totals calculated', [
+                'subtotal' => $subtotal,
+                'tax' => $tax,
+                'total' => $total
+            ]);
         }
 
-        $tax = 0; // You can add tax calculation here
-        $total = $subtotal + $tax;
-
+        Log::info('Rendering cart view');
         return view('digital.cart', compact('cart', 'subtotal', 'tax', 'total'));
     }
 
     /**
-     * Remove item from cart.
+     * Add product to cart and show cart page
      */
-    public function removeFromCart($productId)
+    public function addToCart($id)
     {
-        $cart = Session::get('digital_cart', []);
+        Log::info('=== ADD TO CART STARTED ===');
+        Log::info('Product ID: ' . $id);
+        
+        try {
+            $product = DigitalProduct::where('id', $id)
+                ->where('is_active', true)
+                ->firstOrFail();
+            
+            Log::info('Product found', [
+                'id' => $product->id,
+                'name' => $product->name,
+                'price' => $product->price,
+                'type' => $product->type
+            ]);
 
-        if (isset($cart[$productId])) {
-            unset($cart[$productId]);
-            Session::put('digital_cart', $cart);
+            // Clear any existing cart (only 1 product allowed)
+            $oldCart = session()->get('digital_cart', []);
+            Log::info('Old cart', ['items' => count($oldCart)]);
+            
+            session()->forget('digital_cart');
+            Log::info('Cart cleared');
+
+            // Add single product to cart
+            $cart = [
+                $id => [
+                    'id' => $product->id,
+                    'name' => $product->name,
+                    'price' => $product->price,
+                    'type' => $product->type,
+                    'thumbnail' => $product->thumbnail,
+                    'slug' => $product->slug,
+                ]
+            ];
+
+            session()->put('digital_cart', $cart);
+            Log::info('New cart created', ['cart' => $cart]);
+            
+            // Verify cart saved
+            $savedCart = session()->get('digital_cart', []);
+            Log::info('Cart verification', ['items_in_session' => count($savedCart)]);
+
+            // Redirect ke CART PAGE
+            Log::info('Redirecting to cart page');
+            $redirectUrl = route('digital.cart');
+            Log::info('Redirect URL: ' . $redirectUrl);
+            
+            return redirect()->route('digital.cart')
+                ->with('success', 'Produk berhasil ditambahkan. Silakan lanjutkan ke pembayaran.');
+                
+        } catch (\Exception $e) {
+            Log::error('Add to cart failed: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
+            
+            return back()->with('error', 'Gagal menambahkan produk. Silakan coba lagi.');
         }
-
-        return redirect()->back()->with('success', 'Produk dihapus dari keranjang');
     }
 
     /**
-     * Display checkout page.
+     * Remove product from cart
+     */
+    public function removeFromCart($id)
+    {
+        $cart = session()->get('digital_cart', []);
+
+        if (isset($cart[$id])) {
+            unset($cart[$id]);
+            session()->put('digital_cart', $cart);
+            return back()->with('success', 'Produk berhasil dihapus dari keranjang');
+        }
+
+        return back()->with('error', 'Produk tidak ditemukan di keranjang');
+    }
+
+    /**
+     * Clear cart
+     */
+    public function clearCart()
+    {
+        session()->forget('digital_cart');
+        return redirect()->route('digital.catalog')->with('success', 'Keranjang berhasil dikosongkan');
+    }
+
+    /**
+     * Display checkout page
      */
     public function checkout()
     {
-        $cart = Session::get('digital_cart', []);
+        $cart = session()->get('digital_cart', []);
 
         if (empty($cart)) {
-            return redirect()->route('digital.catalog')->with('error', 'Keranjang kosong');
+            return redirect()->route('digital.catalog')
+                ->with('error', 'Keranjang belanja kosong. Silakan pilih produk terlebih dahulu.');
         }
 
-        $subtotal = 0;
-        foreach ($cart as $item) {
-            $subtotal += $item['price'] * $item['quantity'];
-        }
-
-        $tax = 0;
+        $subtotal = collect($cart)->sum('price');
+        $tax = round($subtotal * 0.01);
         $total = $subtotal + $tax;
 
         return view('digital.checkout', compact('cart', 'subtotal', 'tax', 'total'));

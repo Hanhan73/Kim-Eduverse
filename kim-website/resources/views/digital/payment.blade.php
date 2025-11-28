@@ -225,10 +225,6 @@
         <!-- Order Info -->
         <div class="order-info">
             <div class="order-row">
-                <span class="label">Nama</span>
-                <span class="value">{{ $order->customer_name }}</span>
-            </div>
-            <div class="order-row">
                 <span class="label">Email</span>
                 <span class="value">{{ $order->customer_email }}</span>
             </div>
@@ -321,7 +317,29 @@ payButton.addEventListener('click', function() {
     snap.pay(snapToken, {
         onSuccess: function(result) {
             console.log('Payment success:', result);
-            window.location.href = '{{ route("digital.payment.success", $order->order_number) }}';
+            
+            // Call manual confirmation endpoint
+            fetch('{{ route("digital.payment.confirm", $order->order_number) }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({
+                    transaction_id: result.transaction_id,
+                    order_id: result.order_id,
+                    status_code: result.status_code
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Confirmation:', data);
+                window.location.href = '{{ route("digital.payment.success", $order->order_number) }}';
+            })
+            .catch(error => {
+                console.error('Confirmation error:', error);
+                window.location.href = '{{ route("digital.payment.success", $order->order_number) }}';
+            });
         },
         onPending: function(result) {
             console.log('Payment pending:', result);
