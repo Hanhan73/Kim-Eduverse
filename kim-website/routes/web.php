@@ -376,6 +376,7 @@ use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\QuestionnaireManagementController;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Admin\DimensionController;
 
 // Admin Auth Routes (No middleware)
 Route::prefix('admin/digital')->name('admin.digital.')->group(function () {
@@ -405,6 +406,9 @@ Route::prefix('admin/digital')->name('admin.digital.')->middleware(['admin'])->g
 
     // Categories
     Route::resource('categories', CategoryController::class);
+
+    // Dimensions (CRUD)
+    Route::resource('dimensions', DimensionController::class);
 
     // Orders
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');

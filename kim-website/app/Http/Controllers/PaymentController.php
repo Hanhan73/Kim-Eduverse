@@ -18,9 +18,7 @@ class PaymentController extends Controller
     public function processCheckout(Request $request)
     {
         $request->validate([
-            'customer_name' => 'required|string|max:255',
             'customer_email' => 'required|email|max:255',
-            'customer_phone' => 'nullable|string|max:20',
         ]);
 
         $cart = Session::get('digital_cart', []);
@@ -39,9 +37,7 @@ class PaymentController extends Controller
 
         // Create order
         $order = DigitalOrder::create([
-            'customer_name' => $request->customer_name,
             'customer_email' => $request->customer_email,
-            'customer_phone' => $request->customer_phone,
             'subtotal' => $subtotal,
             'tax' => $tax,
             'total' => $total,
@@ -68,7 +64,6 @@ class PaymentController extends Controller
                     QuestionnaireResponse::create([
                         'order_id' => $order->id,
                         'questionnaire_id' => $product->questionnaire_id,
-                        'respondent_name' => $request->customer_name,
                         'respondent_email' => $request->customer_email,
                         'answers' => [],
                         'is_completed' => false,

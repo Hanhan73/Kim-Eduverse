@@ -163,9 +163,10 @@
                                 <span class="badge badge-primary">{{ $dimension->questions->count() }} pertanyaan</span>
                             </div>
                             <div style="display: flex; gap: 5px;">
-                                <button type="button" class="btn btn-sm btn-icon btn-secondary" onclick="editDimension({{ json_encode($dimension) }})" title="Edit">
+                                <a href="{{ route('admin.digital.dimensions.edit', $dimension->id) }}" 
+                                class="btn btn-sm btn-warning">
                                     <i class="fas fa-edit"></i>
-                                </button>
+                                </a>
                                 <form action="{{ route('admin.digital.questionnaires.deleteDimension', $dimension->id) }}" method="POST" style="display: inline;" onsubmit="return confirmDelete('Hapus dimensi ini?')">
                                     @csrf
                                     @method('DELETE')

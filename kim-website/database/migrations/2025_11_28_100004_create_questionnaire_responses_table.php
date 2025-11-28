@@ -19,7 +19,6 @@ return new class extends Migration
                 ->on('digital_orders')
                 ->onDelete('cascade');
                   $table->foreignId('questionnaire_id')->constrained('questionnaires')->onDelete('cascade');
-            $table->string('respondent_name');
             $table->string('respondent_email');
             $table->json('answers')->nullable(); // JSON: {question_id: answer_value, ...}
             $table->json('scores')->nullable(); // JSON: {dimension_code: score, ...}
