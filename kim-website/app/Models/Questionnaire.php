@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 
 class Questionnaire extends Model
 {
@@ -24,26 +23,12 @@ class Questionnaire extends Model
 
     protected $casts = [
         'has_dimensions' => 'boolean',
-        'scoring_rules' => 'array',
         'is_active' => 'boolean',
+        'scoring_rules' => 'array',
     ];
 
     /**
-     * Boot the model.
-     */
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::creating(function ($questionnaire) {
-            if (empty($questionnaire->slug)) {
-                $questionnaire->slug = Str::slug($questionnaire->name);
-            }
-        });
-    }
-
-    /**
-     * Get the dimensions for the questionnaire.
+     * Get dimensions for this questionnaire
      */
     public function dimensions()
     {
@@ -51,7 +36,7 @@ class Questionnaire extends Model
     }
 
     /**
-     * Get the questions for the questionnaire.
+     * Get questions for this questionnaire
      */
     public function questions()
     {
@@ -59,7 +44,7 @@ class Questionnaire extends Model
     }
 
     /**
-     * Get the responses for the questionnaire.
+     * Get responses for this questionnaire
      */
     public function responses()
     {
@@ -67,7 +52,7 @@ class Questionnaire extends Model
     }
 
     /**
-     * Get the products using this questionnaire.
+     * Get products using this questionnaire
      */
     public function products()
     {

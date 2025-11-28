@@ -13,12 +13,17 @@ return new class extends Migration
     {
         Schema::create('questionnaire_responses', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('order_id')->constrained('digital_orders')->onDelete('cascade');
-            $table->foreignId('questionnaire_id')->constrained()->onDelete('cascade');
+            $table->unsignedBigInteger('order_id');
+            $table->foreign('order_id')
+                ->references('id')
+                ->on('digital_orders')
+                ->onDelete('cascade');
+                  $table->foreignId('questionnaire_id')->constrained('questionnaires')->onDelete('cascade');
+            $table->string('respondent_name');
             $table->string('respondent_email');
-            $table->text('answers'); // JSON array of answers
-            $table->text('scores')->nullable(); // JSON scores by dimension
-            $table->text('result_summary')->nullable(); // JSON result summary
+            $table->json('answers')->nullable(); // JSON: {question_id: answer_value, ...}
+            $table->json('scores')->nullable(); // JSON: {dimension_code: score, ...}
+            $table->json('result_summary')->nullable(); // JSON result
             $table->string('result_pdf_path')->nullable();
             $table->boolean('is_completed')->default(false);
             $table->timestamp('completed_at')->nullable();

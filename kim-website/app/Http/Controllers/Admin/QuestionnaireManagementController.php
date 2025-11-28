@@ -4,72 +4,161 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Questionnaire;
-use App\Models\QuestionnaireQuestion;
 use App\Models\QuestionnaireDimension;
-use App\Models\QuestionnaireDimensionRange;
+use App\Models\QuestionnaireQuestion;
+use App\Models\QuestionnaireResponse;
+use App\Models\DigitalProduct;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class QuestionnaireManagementController extends Controller
 {
     /**
-     * Display listing of questionnaires
+     * Display a listing of questionnaires.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $questionnaires = Questionnaire::withCount('questions')
-            ->orderBy('created_at', 'desc')
-            ->paginate(20);
+        $query = Questionnaire::withCount(['questions', 'dimensions', 'responses']);
 
-        return view('admin.digital.questionnaires.index', compact('questionnaires'));
+        // Search
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('type', 'like', "%{$search}%");
+            });
+        }
+
+        // Filter by type
+        if ($request->filled('type')) {
+            $query->where('type', $request->type);
+        }
+
+        // Filter by status
+        if ($request->filled('status')) {
+            $query->where('is_active', $request->status === 'active');
+        }
+
+        $questionnaires = $query->latest()->paginate(10);
+
+        // Get unique types for filter
+        $types = Questionnaire::distinct()->pluck('type')->filter();
+
+        // Stats
+        $stats = [
+            'total' => Questionnaire::count(),
+            'active' => Questionnaire::where('is_active', true)->count(),
+            'inactive' => Questionnaire::where('is_active', false)->count(),
+            'total_responses' => QuestionnaireResponse::where('is_completed', true)->count(),
+        ];
+
+        return view('admin.digital.questionnaires.index', compact('questionnaires', 'types', 'stats'));
     }
 
     /**
-     * Show create form
+     * Show the form for creating a new questionnaire.
      */
     public function create()
     {
-        return view('admin.digital.questionnaires.create');
+        $types = [
+            'burnout' => 'Burnout',
+            'stress' => 'Stress',
+            'anxiety' => 'Anxiety',
+            'depression' => 'Depression',
+            'motivation' => 'Motivation',
+            'satisfaction' => 'Satisfaction',
+            'personality' => 'Personality',
+            'procrastination' => 'Procrastination',
+            'other' => 'Lainnya',
+        ];
+
+        return view('admin.digital.questionnaires.create', compact('types'));
     }
 
     /**
-     * Store new questionnaire
+     * Store a newly created questionnaire.
      */
     public function store(Request $request)
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'slug' => 'nullable|string|max:255|unique:questionnaires,slug',
-            'description' => 'nullable|string',
+            'description' => 'required|string',
             'instructions' => 'nullable|string',
+            'type' => 'required|string|max:100',
             'duration_minutes' => 'nullable|integer|min:1',
+            'has_dimensions' => 'boolean',
             'is_active' => 'boolean',
         ]);
 
-        if (empty($validated['slug'])) {
-            $validated['slug'] = Str::slug($validated['name']);
-        }
-
+        $validated['slug'] = Str::slug($validated['name']);
+        $validated['has_dimensions'] = $request->has('has_dimensions');
         $validated['is_active'] = $request->has('is_active');
-        $validated['type'] = 'general'; // Default type
 
         $questionnaire = Questionnaire::create($validated);
 
-        return redirect()->route('admin.digital.questionnaires.edit', $questionnaire->id)
-            ->with('success', 'Questionnaire berhasil dibuat! Sekarang tambahkan dimensi & pertanyaan.');
+        return redirect()
+            ->route('admin.digital.questionnaires.show', $questionnaire->id)
+            ->with('success', 'Angket berhasil dibuat! Sekarang tambahkan dimensi dan pertanyaan.');
     }
 
     /**
-     * Show edit form with questions & dimensions
+     * Display the specified questionnaire.
+     */
+    public function show($id)
+    {
+        $questionnaire = Questionnaire::with([
+            'dimensions' => function ($query) {
+                $query->orderBy('order');
+            },
+            'dimensions.questions' => function ($query) {
+                $query->orderBy('order');
+            },
+            'questions' => function ($query) {
+                $query->orderBy('order');
+            },
+            'questions.dimension',
+            'responses' => function ($query) {
+                $query->where('is_completed', true)->latest()->limit(10);
+            }
+        ])->findOrFail($id);
+
+        // Response stats
+        $responseStats = [
+            'total' => $questionnaire->responses()->count(),
+            'completed' => $questionnaire->responses()->where('is_completed', true)->count(),
+            'pending' => $questionnaire->responses()->where('is_completed', false)->count(),
+        ];
+
+        // Products using this questionnaire
+        $products = DigitalProduct::where('questionnaire_id', $questionnaire->id)->get();
+
+        return view('admin.digital.questionnaires.show', compact('questionnaire', 'responseStats', 'products'));
+    }
+
+    /**
+     * Show the form for editing the specified questionnaire.
      */
     public function edit($id)
     {
-        $questionnaire = Questionnaire::with(['questions.options', 'questions.dimensions', 'dimensions.ranges', 'dimensions.questions'])->findOrFail($id);
-        return view('admin.digital.questionnaires.edit', compact('questionnaire'));
+        $questionnaire = Questionnaire::with(['dimensions', 'questions.dimension'])->findOrFail($id);
+
+        $types = [
+            'burnout' => 'Burnout',
+            'stress' => 'Stress',
+            'anxiety' => 'Anxiety',
+            'depression' => 'Depression',
+            'motivation' => 'Motivation',
+            'satisfaction' => 'Satisfaction',
+            'personality' => 'Personality',
+            'procrastination' => 'Procrastination',
+            'other' => 'Lainnya',
+        ];
+
+        return view('admin.digital.questionnaires.edit', compact('questionnaire', 'types'));
     }
 
     /**
-     * Update questionnaire
+     * Update the specified questionnaire.
      */
     public function update(Request $request, $id)
     {
@@ -77,202 +166,274 @@ class QuestionnaireManagementController extends Controller
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'slug' => 'nullable|string|max:255|unique:questionnaires,slug,' . $id,
-            'description' => 'nullable|string',
+            'description' => 'required|string',
             'instructions' => 'nullable|string',
+            'type' => 'required|string|max:100',
             'duration_minutes' => 'nullable|integer|min:1',
+            'has_dimensions' => 'boolean',
             'is_active' => 'boolean',
         ]);
 
-        if (empty($validated['slug'])) {
-            $validated['slug'] = Str::slug($validated['name']);
-        }
-
+        $validated['slug'] = Str::slug($validated['name']);
+        $validated['has_dimensions'] = $request->has('has_dimensions');
         $validated['is_active'] = $request->has('is_active');
 
         $questionnaire->update($validated);
 
-        return back()->with('success', 'Questionnaire berhasil diupdate!');
+        return redirect()
+            ->route('admin.digital.questionnaires.show', $questionnaire->id)
+            ->with('success', 'Angket berhasil diperbarui!');
     }
 
     /**
-     * Delete questionnaire
+     * Remove the specified questionnaire.
      */
     public function destroy($id)
     {
         $questionnaire = Questionnaire::findOrFail($id);
 
-        if ($questionnaire->products()->count() > 0) {
-            return back()->with('error', 'Tidak bisa menghapus questionnaire yang terhubung dengan produk!');
+        // Check if questionnaire has completed responses
+        if ($questionnaire->responses()->where('is_completed', true)->exists()) {
+            return redirect()
+                ->back()
+                ->with('error', 'Tidak dapat menghapus angket yang sudah memiliki respons!');
         }
 
-        foreach ($questionnaire->questions as $question) {
-            $question->options()->delete();
-            $question->dimensions()->detach();
-            $question->delete();
-        }
-
-        foreach ($questionnaire->dimensions as $dimension) {
-            $dimension->ranges()->delete();
-            $dimension->delete();
+        // Check if used by products
+        if (DigitalProduct::where('questionnaire_id', $questionnaire->id)->exists()) {
+            return redirect()
+                ->back()
+                ->with('error', 'Tidak dapat menghapus angket yang sedang digunakan oleh produk!');
         }
 
         $questionnaire->delete();
 
-        return redirect()->route('admin.digital.questionnaires.index')
-            ->with('success', 'Questionnaire berhasil dihapus!');
+        return redirect()
+            ->route('admin.digital.questionnaires.index')
+            ->with('success', 'Angket berhasil dihapus!');
     }
 
+    // ========================================
+    // DIMENSION MANAGEMENT
+    // ========================================
+
     /**
-     * Add dimension
+     * Add dimension to questionnaire.
      */
     public function addDimension(Request $request, $id)
     {
         $questionnaire = Questionnaire::findOrFail($id);
 
         $validated = $request->validate([
+            'code' => 'required|string|max:50',
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'min_score' => 'required|integer|min:0',
-            'max_score' => 'required|integer|gt:min_score',
         ]);
 
-        $validated['questionnaire_id'] = $id;
-        $validated['order'] = $questionnaire->dimensions()->max('order') + 1;
+        // Auto-generate order
+        $maxOrder = QuestionnaireDimension::where('questionnaire_id', $id)->max('order') ?? 0;
 
-        QuestionnaireDimension::create($validated);
+        // Default interpretations
+        $defaultInterpretations = [
+            'low' => [
+                'level' => 'RENDAH',
+                'class' => 'level-rendah',
+                'description' => 'Tingkat pada aspek ini tergolong rendah.',
+                'suggestions' => [],
+            ],
+            'medium' => [
+                'level' => 'SEDANG',
+                'class' => 'level-sedang',
+                'description' => 'Tingkat pada aspek ini tergolong sedang.',
+                'suggestions' => [],
+            ],
+            'high' => [
+                'level' => 'TINGGI',
+                'class' => 'level-tinggi',
+                'description' => 'Tingkat pada aspek ini tergolong tinggi.',
+                'suggestions' => [],
+            ],
+        ];
 
-        return back()->with('success', 'Dimensi berhasil ditambahkan!');
+        QuestionnaireDimension::create([
+            'questionnaire_id' => $id,
+            'code' => $validated['code'],
+            'name' => $validated['name'],
+            'description' => $validated['description'],
+            'order' => $maxOrder + 1,
+            'interpretations' => $defaultInterpretations,
+        ]);
+
+        return redirect()
+            ->back()
+            ->with('success', 'Dimensi berhasil ditambahkan!');
     }
 
     /**
-     * Update dimension
+     * Update dimension.
      */
-    public function updateDimension(Request $request, $dimensionId)
+    public function updateDimension(Request $request, $id)
     {
-        $dimension = QuestionnaireDimension::findOrFail($dimensionId);
+        $dimension = QuestionnaireDimension::findOrFail($id);
 
         $validated = $request->validate([
+            'code' => 'required|string|max:50',
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'min_score' => 'required|integer|min:0',
-            'max_score' => 'required|integer|gt:min_score',
+            'order' => 'nullable|integer|min:0',
+            'interpretations' => 'nullable|array',
         ]);
+
+        // Process interpretations if provided
+        if ($request->has('interpretations')) {
+            $interpretations = $request->interpretations;
+            foreach (['low', 'medium', 'high'] as $level) {
+                if (isset($interpretations[$level]['suggestions'])) {
+                    $interpretations[$level]['suggestions'] = array_filter(
+                        $interpretations[$level]['suggestions'],
+                        fn($s) => !empty(trim($s))
+                    );
+                    $interpretations[$level]['suggestions'] = array_values($interpretations[$level]['suggestions']);
+                }
+            }
+            $validated['interpretations'] = $interpretations;
+        }
 
         $dimension->update($validated);
 
-        return back()->with('success', 'Dimensi berhasil diupdate!');
+        return redirect()
+            ->back()
+            ->with('success', 'Dimensi berhasil diperbarui!');
     }
 
     /**
-     * Delete dimension
+     * Delete dimension.
      */
-    public function deleteDimension($dimensionId)
+    public function deleteDimension($id)
     {
-        $dimension = QuestionnaireDimension::findOrFail($dimensionId);
-        $dimension->ranges()->delete();
-        $dimension->questions()->detach();
+        $dimension = QuestionnaireDimension::findOrFail($id);
+
+        // Check if dimension has questions
+        if ($dimension->questions()->exists()) {
+            return redirect()
+                ->back()
+                ->with('error', 'Tidak dapat menghapus dimensi yang masih memiliki pertanyaan!');
+        }
+
         $dimension->delete();
 
-        return back()->with('success', 'Dimensi berhasil dihapus!');
+        return redirect()
+            ->back()
+            ->with('success', 'Dimensi berhasil dihapus!');
     }
 
     /**
-     * Add range to dimension
+     * Add score range to dimension.
      */
-    public function addRange(Request $request, $dimensionId)
+    public function addRange(Request $request, $id)
     {
+        $dimension = QuestionnaireDimension::findOrFail($id);
+
         $validated = $request->validate([
-            'min_score' => 'required|integer',
-            'max_score' => 'required|integer|gte:min_score',
-            'category' => 'required|string|max:255',
-            'interpretation' => 'required|string',
-            'recommendations' => 'nullable|string',
+            'level' => 'required|in:low,medium,high',
+            'min_score' => 'required|integer|min:0',
+            'max_score' => 'required|integer|min:0',
+            'label' => 'required|string|max:50',
+            'description' => 'required|string',
+            'suggestions' => 'nullable|array',
         ]);
 
-        $validated['dimension_id'] = $dimensionId;
+        $interpretations = $dimension->interpretations ?? [];
+        
+        $interpretations[$validated['level']] = [
+            'level' => $validated['label'],
+            'class' => 'level-' . strtolower($validated['label']),
+            'min_score' => $validated['min_score'],
+            'max_score' => $validated['max_score'],
+            'description' => $validated['description'],
+            'suggestions' => array_filter($validated['suggestions'] ?? [], fn($s) => !empty(trim($s))),
+        ];
 
-        QuestionnaireDimensionRange::create($validated);
+        $dimension->update(['interpretations' => $interpretations]);
 
-        return back()->with('success', 'Range berhasil ditambahkan!');
+        return redirect()
+            ->back()
+            ->with('success', 'Range skor berhasil ditambahkan!');
     }
 
     /**
-     * Delete range
+     * Delete score range from dimension.
      */
-    public function deleteRange($rangeId)
+    public function deleteRange($id)
     {
-        QuestionnaireDimensionRange::findOrFail($rangeId)->delete();
-        return back()->with('success', 'Range berhasil dihapus!');
+        // This would need range_id passed, for now redirect back
+        return redirect()->back()->with('info', 'Fitur delete range akan segera tersedia.');
     }
 
+    // ========================================
+    // QUESTION MANAGEMENT
+    // ========================================
+
     /**
-     * Add question
+     * Add question to questionnaire.
      */
     public function addQuestion(Request $request, $id)
     {
         $questionnaire = Questionnaire::findOrFail($id);
 
         $validated = $request->validate([
+            'dimension_id' => 'nullable|exists:questionnaire_dimensions,id',
             'question_text' => 'required|string',
-            'question_type' => 'required|in:multiple_choice,scale,text',
-            'dimension_ids' => 'nullable|array',
-            'dimension_ids.*' => 'exists:questionnaire_dimensions,id',
-            'options' => 'required_if:question_type,multiple_choice|array',
-            'options.*.text' => 'required_with:options|string',
-            'options.*.score' => 'nullable|integer',
-            'scale_min' => 'required_if:question_type,scale|nullable|integer',
-            'scale_max' => 'required_if:question_type,scale|nullable|integer',
-            'is_required' => 'boolean',
+            'is_reverse_scored' => 'boolean',
         ]);
 
-        $question = $questionnaire->questions()->create([
+        // Auto-generate order
+        $maxOrder = QuestionnaireQuestion::where('questionnaire_id', $id)->max('order') ?? 0;
+
+        // Default Likert options
+        $defaultOptions = [
+            1 => 'Sangat Tidak Setuju',
+            2 => 'Tidak Setuju',
+            3 => 'Netral',
+            4 => 'Setuju',
+            5 => 'Sangat Setuju',
+        ];
+
+        QuestionnaireQuestion::create([
+            'questionnaire_id' => $id,
+            'dimension_id' => $validated['dimension_id'],
             'question_text' => $validated['question_text'],
-            'question_type' => $validated['question_type'],
-            'is_required' => $request->has('is_required'),
-            'order' => $questionnaire->questions()->max('order') + 1,
+            'order' => $maxOrder + 1,
+            'is_reverse_scored' => $request->has('is_reverse_scored'),
+            'options' => $defaultOptions,
         ]);
 
-        // Attach dimensions
-        if (!empty($validated['dimension_ids'])) {
-            $question->dimensions()->attach($validated['dimension_ids']);
-        }
-
-        // Add options for multiple choice
-        if ($validated['question_type'] === 'multiple_choice' && !empty($validated['options'])) {
-            foreach ($validated['options'] as $optionData) {
-                $question->options()->create([
-                    'option_text' => $optionData['text'],
-                    'score' => $optionData['score'] ?? 0,
-                ]);
-            }
-        }
-
-        // Add scale options
-        if ($validated['question_type'] === 'scale') {
-            $min = $validated['scale_min'];
-            $max = $validated['scale_max'];
-            for ($i = $min; $i <= $max; $i++) {
-                $question->options()->create([
-                    'option_text' => (string)$i,
-                    'score' => $i,
-                ]);
-            }
-        }
-
-        return back()->with('success', 'Pertanyaan berhasil ditambahkan!');
+        return redirect()
+            ->back()
+            ->with('success', 'Pertanyaan berhasil ditambahkan!');
     }
 
     /**
-     * Delete question
+     * Delete question.
      */
-    public function deleteQuestion($questionId)
+    public function deleteQuestion($id)
     {
-        $question = QuestionnaireQuestion::findOrFail($questionId);
-        $question->options()->delete();
-        $question->dimensions()->detach();
+        $question = QuestionnaireQuestion::findOrFail($id);
+        $questionnaireId = $question->questionnaire_id;
+
         $question->delete();
 
-        return back()->with('success', 'Pertanyaan berhasil dihapus!');
+        // Reorder remaining questions
+        $remainingQuestions = QuestionnaireQuestion::where('questionnaire_id', $questionnaireId)
+            ->orderBy('order')
+            ->get();
+
+        foreach ($remainingQuestions as $index => $q) {
+            $q->update(['order' => $index + 1]);
+        }
+
+        return redirect()
+            ->back()
+            ->with('success', 'Pertanyaan berhasil dihapus!');
     }
 }

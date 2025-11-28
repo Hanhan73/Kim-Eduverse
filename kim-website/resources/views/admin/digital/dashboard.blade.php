@@ -1,4 +1,4 @@
-@extends('admin.digital.layouts.app')
+@extends('layouts.admin-digital')
 
 @section('title', 'Dashboard - Admin Digital')
 @section('page-title', 'Dashboard')
@@ -164,9 +164,6 @@
 <div class="card" style="margin-top: 25px;">
     <div class="card-header">
         <h3><i class="fas fa-chart-bar"></i> Respons Terbaru</h3>
-        <a href="{{ route('admin.digital.responses.index') }}" class="btn btn-sm btn-secondary">
-            Lihat Semua
-        </a>
     </div>
     <div class="card-body" style="padding: 0;">
         @if($recentResponses->count() > 0)
@@ -221,54 +218,6 @@
         <div class="empty-state">
             <i class="fas fa-chart-bar"></i>
             <h3>Belum Ada Respons</h3>
-        </div>
-        @endif
-    </div>
-</div>
-
-<!-- Popular Products -->
-<div class="card" style="margin-top: 25px;">
-    <div class="card-header">
-        <h3><i class="fas fa-star"></i> Produk Populer</h3>
-    </div>
-    <div class="card-body" style="padding: 0;">
-        @if($popularProducts->count() > 0)
-        <div class="table-responsive">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Produk</th>
-                        <th>Harga</th>
-                        <th>Terjual</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($popularProducts as $product)
-                    <tr>
-                        <td>
-                            <strong>{{ $product->name }}</strong>
-                        </td>
-                        <td>Rp {{ number_format($product->price, 0, ',', '.') }}</td>
-                        <td>
-                            <span class="badge badge-primary">{{ $product->sold_count }} terjual</span>
-                        </td>
-                        <td>
-                            @if($product->is_active)
-                                <span class="badge badge-success">Aktif</span>
-                            @else
-                                <span class="badge badge-danger">Nonaktif</span>
-                            @endif
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-        @else
-        <div class="empty-state">
-            <i class="fas fa-box"></i>
-            <h3>Belum Ada Produk</h3>
         </div>
         @endif
     </div>

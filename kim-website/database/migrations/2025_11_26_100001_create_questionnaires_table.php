@@ -19,8 +19,8 @@ return new class extends Migration
             $table->text('instructions')->nullable();
             $table->string('type'); // 'burnout', 'procrastination', 'stress', etc.
             $table->integer('duration_minutes')->nullable();
-            $table->boolean('has_dimensions')->default(false); // Apakah ada dimensi pengukuran
-            $table->text('scoring_rules')->nullable(); // JSON rules untuk scoring
+            $table->boolean('has_dimensions')->default(false);
+            $table->text('scoring_rules')->nullable(); // JSON
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         });

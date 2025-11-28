@@ -24,7 +24,7 @@ class QuestionnaireQuestion extends Model
     ];
 
     /**
-     * Get the questionnaire that owns the question.
+     * Get the questionnaire
      */
     public function questionnaire()
     {
@@ -32,7 +32,7 @@ class QuestionnaireQuestion extends Model
     }
 
     /**
-     * Get the dimension that owns the question.
+     * Get the dimension
      */
     public function dimension()
     {
@@ -40,13 +40,38 @@ class QuestionnaireQuestion extends Model
     }
 
     /**
-     * Calculate score for an answer.
+     * Calculate score based on answer
+     * For Likert scale 1-5:
+     * - Normal: score = answer
+     * - Reverse: score = 6 - answer
+     * 
+     * @param int $answer
+     * @return int
      */
     public function calculateScore($answer)
     {
+        $answer = (int) $answer;
+        
         if ($this->is_reverse_scored) {
-            return 6 - (int)$answer;
+            return 6 - $answer; // Reverse: 5->1, 4->2, 3->3, 2->4, 1->5
         }
-        return (int)$answer;
+        
+        return $answer;
+    }
+
+    /**
+     * Get default Likert scale options
+     * 
+     * @return array
+     */
+    public static function getDefaultOptions()
+    {
+        return [
+            1 => 'Sangat Tidak Setuju',
+            2 => 'Tidak Setuju',
+            3 => 'Netral',
+            4 => 'Setuju',
+            5 => 'Sangat Setuju',
+        ];
     }
 }

@@ -1,4 +1,4 @@
-@extends('admin.digital.layouts.app')
+@extends('layouts.admin-digital')
 
 @section('title', 'Tambah Angket - Admin Digital')
 @section('page-title', 'Tambah Angket Baru')
@@ -91,7 +91,7 @@
                     <i class="fas fa-info-circle"></i> Langkah Selanjutnya
                 </h4>
                 <p style="color: #2c5282; margin: 0;">
-                    Setelah membuat angket, Anda akan diarahkan ke halaman edit untuk:
+                    Setelah membuat angket, Anda akan diarahkan ke halaman detail untuk:
                 </p>
                 <ul style="color: #2c5282; margin: 10px 0 0 20px;">
                     <li>Menambahkan <strong>Dimensi</strong> (jika diperlukan)</li>

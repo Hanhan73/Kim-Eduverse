@@ -12,6 +12,7 @@ class QuestionnaireResponse extends Model
     protected $fillable = [
         'order_id',
         'questionnaire_id',
+        'respondent_name',
         'respondent_email',
         'answers',
         'scores',
@@ -34,15 +35,7 @@ class QuestionnaireResponse extends Model
     ];
 
     /**
-     * Get the order that owns the response.
-     */
-    public function order()
-    {
-        return $this->belongsTo(DigitalOrder::class, 'order_id');
-    }
-
-    /**
-     * Get the questionnaire that owns the response.
+     * Get the questionnaire
      */
     public function questionnaire()
     {
@@ -50,24 +43,10 @@ class QuestionnaireResponse extends Model
     }
 
     /**
-     * Mark response as completed.
+     * Get the order
      */
-    public function markAsCompleted()
+    public function order()
     {
-        $this->update([
-            'is_completed' => true,
-            'completed_at' => now(),
-        ]);
-    }
-
-    /**
-     * Mark result as sent.
-     */
-    public function markResultAsSent()
-    {
-        $this->update([
-            'result_sent' => true,
-            'result_sent_at' => now(),
-        ]);
+        return $this->belongsTo(DigitalOrder::class, 'order_id');
     }
 }

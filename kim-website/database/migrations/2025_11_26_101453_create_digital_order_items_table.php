@@ -13,8 +13,10 @@ return new class extends Migration
     {
         Schema::create('digital_order_items', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('order_id')->constrained('digital_orders')->onDelete('cascade');
-            $table->foreignId('product_id')->constrained('digital_products')->onDelete('cascade');
+            $table->unsignedBigInteger('order_id');
+            $table->unsignedBigInteger('product_id');
+            $table->foreign('order_id')->references('id')->on('digital_orders')->onDelete('cascade');
+            $table->foreign('product_id')->references('id')->on('digital_products')->onDelete('cascade');
             $table->string('product_name');
             $table->string('product_type');
             $table->decimal('price', 10, 2);

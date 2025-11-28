@@ -415,6 +415,7 @@
         .badge-danger { background: #fed7d7; color: #742a2a; }
         .badge-info { background: #bee3f8; color: #2a4365; }
         .badge-primary { background: #e9d8fd; color: #44337a; }
+        .badge-secondary { background: #e2e8f0; color: #4a5568; }
 
         /* Alerts */
         .alert {
@@ -515,6 +516,38 @@
             margin-bottom: 20px;
         }
 
+        /* Filter Section */
+        .filter-section {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .filter-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: flex-end;
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filter-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+
+        .filter-group .form-control {
+            padding: 10px 12px;
+        }
+
         /* Modal */
         .modal {
             display: none;
@@ -576,38 +609,6 @@
             gap: 10px;
         }
 
-        /* Filter Section */
-        .filter-section {
-            background: #f7fafc;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-
-        .filter-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            align-items: flex-end;
-        }
-
-        .filter-group {
-            flex: 1;
-            min-width: 200px;
-        }
-
-        .filter-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 500;
-            font-size: 0.85rem;
-            color: var(--gray);
-        }
-
-        .filter-group .form-control {
-            padding: 10px 12px;
-        }
-
         /* Responsive */
         @media (max-width: 1024px) {
             .sidebar {
@@ -657,18 +658,6 @@
             <a href="{{ route('admin.digital.questionnaires.index') }}" class="menu-item {{ request()->routeIs('admin.digital.questionnaires.*') ? 'active' : '' }}">
                 <i class="fas fa-clipboard-list"></i> Daftar Angket
             </a>
-            
-            <a href="{{ route('admin.digital.dimensions.index') }}" class="menu-item {{ request()->routeIs('admin.digital.dimensions.*') ? 'active' : '' }}">
-                <i class="fas fa-layer-group"></i> Dimensi
-            </a>
-            
-            <a href="{{ route('admin.digital.questions.index') }}" class="menu-item {{ request()->routeIs('admin.digital.questions.*') ? 'active' : '' }}">
-                <i class="fas fa-question-circle"></i> Pertanyaan
-            </a>
-            
-            <a href="{{ route('admin.digital.responses.index') }}" class="menu-item {{ request()->routeIs('admin.digital.responses.*') ? 'active' : '' }}">
-                <i class="fas fa-chart-bar"></i> Hasil Respons
-            </a>
 
             <div class="menu-section">Transaksi</div>
             
@@ -682,7 +671,7 @@
                 <i class="fas fa-arrow-left"></i> Kembali ke Blog Admin
             </a>
             
-            <form action="{{ route('admin.logout') }}" method="POST" style="margin: 0;">
+            <form action="{{ route('admin.digital.logout') }}" method="POST" style="margin: 0;">
                 @csrf
                 <button type="submit" class="menu-item" style="width: 100%; border: none; background: none; text-align: left; cursor: pointer;">
                     <i class="fas fa-sign-out-alt"></i> Logout
@@ -770,24 +759,6 @@
         function confirmDelete(message) {
             return confirm(message || 'Apakah Anda yakin ingin menghapus item ini?');
         }
-
-        // Modal functions
-        function openModal(modalId) {
-            document.getElementById(modalId).classList.add('show');
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.remove('show');
-        }
-
-        // Close modal on outside click
-        document.querySelectorAll('.modal').forEach(function(modal) {
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) {
-                    modal.classList.remove('show');
-                }
-            });
-        });
     </script>
 
     @yield('scripts')

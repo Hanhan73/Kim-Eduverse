@@ -6,25 +6,27 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
     {
         Schema::create('questionnaire_dimensions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('questionnaire_id')->constrained('questionnaires')->onDelete('cascade');
+            $table->string('code', 50); // e.g., 'exhaustion', 'cynicism'
             $table->string('name');
             $table->text('description')->nullable();
-            $table->integer('min_score');
-            $table->integer('max_score');
+            $table->json('interpretations')->nullable(); // JSON: {low: {...}, medium: {...}, high: {...}}
             $table->integer('order')->default(0);
             $table->timestamps();
         });
-
-        // JANGAN buat pivot table di sini! 
-        // Karena table questionnaire_questions belum ada!
-        // Pivot table dibuat di migration update_questionnaire_structure nanti
     }
 
-    public function down()
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
     {
         Schema::dropIfExists('questionnaire_dimensions');
     }

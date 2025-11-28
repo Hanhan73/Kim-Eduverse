@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('slug')->unique();
             $table->text('description');
-            $table->text('features')->nullable(); // JSON array of features
+            $table->json('features')->nullable(); // JSON array of features
             $table->decimal('price', 10, 2);
             $table->string('thumbnail')->nullable();
             $table->string('type'); // 'questionnaire', 'ebook', 'worksheet', 'template', etc.

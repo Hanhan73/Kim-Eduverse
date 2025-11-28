@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('questionnaire_questions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('questionnaire_id')->constrained()->onDelete('cascade');
+            $table->foreignId('questionnaire_id')->constrained('questionnaires')->onDelete('cascade');
             $table->foreignId('dimension_id')->nullable()->constrained('questionnaire_dimensions')->onDelete('set null');
             $table->text('question_text');
-            $table->integer('order');
-            $table->boolean('is_reverse_scored')->default(false); // For reverse scoring questions
-            $table->text('options')->nullable(); // JSON array of options if multiple choice
+            $table->integer('order')->default(0);
+            $table->boolean('is_reverse_scored')->default(false);
+            $table->json('options')->nullable(); // JSON: {1: "Sangat Tidak Setuju", 2: "Tidak Setuju", ...}
             $table->timestamps();
         });
     }

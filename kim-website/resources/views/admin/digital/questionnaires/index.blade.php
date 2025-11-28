@@ -1,4 +1,4 @@
-@extends('admin.digital.layouts.app')
+@extends('layouts.admin-digital')
 
 @section('title', 'Daftar Angket - Admin Digital')
 @section('page-title', 'Daftar Angket')
@@ -88,7 +88,7 @@
                         <i class="fas fa-search"></i> Filter
                     </button>
                     <a href="{{ route('admin.digital.questionnaires.index') }}" class="btn btn-secondary">
-                        <i class="fas fa-refresh"></i> Reset
+                        <i class="fas fa-sync"></i> Reset
                     </a>
                 </div>
             </div>
@@ -145,14 +145,11 @@
                         </td>
                         <td>
                             <div style="display: flex; gap: 5px;">
-                                <a href="{{ route('admin.digital.questionnaires.show', $questionnaire->id) }}" class="btn btn-sm btn-icon btn-secondary" title="Lihat">
+                                <a href="{{ route('admin.digital.questionnaires.show', $questionnaire->id) }}" class="btn btn-sm btn-icon btn-secondary" title="Lihat & Kelola">
                                     <i class="fas fa-eye"></i>
                                 </a>
                                 <a href="{{ route('admin.digital.questionnaires.edit', $questionnaire->id) }}" class="btn btn-sm btn-icon btn-primary" title="Edit">
                                     <i class="fas fa-edit"></i>
-                                </a>
-                                <a href="{{ route('admin.digital.questions.index', ['questionnaire_id' => $questionnaire->id]) }}" class="btn btn-sm btn-icon btn-warning" title="Kelola Pertanyaan">
-                                    <i class="fas fa-question-circle"></i>
                                 </a>
                                 <form action="{{ route('admin.digital.questionnaires.destroy', $questionnaire->id) }}" method="POST" style="display: inline;" onsubmit="return confirmDelete('Hapus angket ini?')">
                                     @csrf

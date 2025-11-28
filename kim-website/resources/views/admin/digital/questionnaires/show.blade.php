@@ -1,7 +1,52 @@
-@extends('admin.digital.layouts.app')
+@extends('layouts.admin-digital')
 
 @section('title', 'Detail Angket - Admin Digital')
 @section('page-title', 'Detail Angket')
+
+@section('styles')
+<style>
+    .dimension-card {
+        background: #f7fafc;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 15px;
+        border-left: 4px solid var(--primary);
+    }
+    .question-item {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 10px;
+        display: flex;
+        gap: 15px;
+        align-items: flex-start;
+    }
+    .question-number {
+        background: var(--primary);
+        color: white;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        flex-shrink: 0;
+    }
+    .interpretation-badge {
+        display: inline-block;
+        padding: 8px 15px;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        margin-right: 5px;
+        margin-bottom: 5px;
+    }
+    .interpretation-badge.low { background: #c6f6d5; color: #22543d; }
+    .interpretation-badge.medium { background: #feebc8; color: #744210; }
+    .interpretation-badge.high { background: #fed7d7; color: #742a2a; }
+</style>
+@endsection
 
 @section('content')
 <div style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
@@ -11,9 +56,6 @@
     <div style="display: flex; gap: 10px;">
         <a href="{{ route('admin.digital.questionnaires.edit', $questionnaire->id) }}" class="btn btn-primary">
             <i class="fas fa-edit"></i> Edit Angket
-        </a>
-        <a href="{{ route('admin.digital.questions.index', ['questionnaire_id' => $questionnaire->id]) }}" class="btn btn-warning">
-            <i class="fas fa-question-circle"></i> Kelola Pertanyaan
         </a>
     </div>
 </div>
@@ -62,7 +104,7 @@
 </div>
 
 <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 25px;">
-    <!-- Main Info -->
+    <!-- Main Content -->
     <div>
         <!-- Basic Info -->
         <div class="card" style="margin-bottom: 25px;">
@@ -99,70 +141,89 @@
             </div>
         </div>
 
-        <!-- Dimensions -->
-        @if($questionnaire->has_dimensions && $questionnaire->dimensions->count() > 0)
+        <!-- Dimensions Section -->
+        @if($questionnaire->has_dimensions)
         <div class="card" style="margin-bottom: 25px;">
             <div class="card-header">
-                <h3><i class="fas fa-layer-group"></i> Dimensi Pengukuran</h3>
-                <a href="{{ route('admin.digital.dimensions.create', ['questionnaire_id' => $questionnaire->id]) }}" class="btn btn-sm btn-primary">
-                    <i class="fas fa-plus"></i> Tambah
-                </a>
+                <h3><i class="fas fa-layer-group"></i> Dimensi Pengukuran ({{ $questionnaire->dimensions->count() }})</h3>
+                <button type="button" class="btn btn-sm btn-primary" onclick="document.getElementById('addDimensionModal').classList.add('show')">
+                    <i class="fas fa-plus"></i> Tambah Dimensi
+                </button>
             </div>
-            <div class="card-body" style="padding: 0;">
-                @foreach($questionnaire->dimensions as $dimension)
-                <div style="padding: 20px; border-bottom: 1px solid #edf2f7;">
-                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
-                        <div>
-                            <h4 style="color: var(--dark); margin-bottom: 5px;">
-                                {{ $dimension->order }}. {{ $dimension->name }}
-                            </h4>
-                            <span class="badge badge-info">{{ $dimension->code }}</span>
-                            <span class="badge badge-primary">{{ $dimension->questions->count() }} pertanyaan</span>
+            <div class="card-body">
+                @if($questionnaire->dimensions->count() > 0)
+                    @foreach($questionnaire->dimensions as $dimension)
+                    <div class="dimension-card">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px;">
+                            <div>
+                                <h4 style="color: var(--dark); margin-bottom: 5px;">
+                                    {{ $dimension->order }}. {{ $dimension->name }}
+                                </h4>
+                                <span class="badge badge-info">{{ $dimension->code }}</span>
+                                <span class="badge badge-primary">{{ $dimension->questions->count() }} pertanyaan</span>
+                            </div>
+                            <div style="display: flex; gap: 5px;">
+                                <button type="button" class="btn btn-sm btn-icon btn-secondary" onclick="editDimension({{ json_encode($dimension) }})" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <form action="{{ route('admin.digital.questionnaires.deleteDimension', $dimension->id) }}" method="POST" style="display: inline;" onsubmit="return confirmDelete('Hapus dimensi ini?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-icon btn-danger" title="Hapus">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
                         </div>
-                        <a href="{{ route('admin.digital.dimensions.edit', $dimension->id) }}" class="btn btn-sm btn-secondary">
-                            <i class="fas fa-edit"></i>
-                        </a>
-                    </div>
-                    @if($dimension->description)
-                    <p style="color: var(--gray); font-size: 0.9rem; margin-bottom: 15px;">{{ $dimension->description }}</p>
-                    @endif
 
-                    <!-- Interpretations -->
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
-                        @foreach(['low' => 'Rendah', 'medium' => 'Sedang', 'high' => 'Tinggi'] as $level => $label)
-                        @if(isset($dimension->interpretations[$level]))
-                        <div style="background: {{ $level == 'low' ? '#c6f6d5' : ($level == 'medium' ? '#feebc8' : '#fed7d7') }}; padding: 10px; border-radius: 8px;">
-                            <strong style="font-size: 0.8rem;">{{ $label }}</strong>
-                            <p style="font-size: 0.8rem; margin: 5px 0 0; color: var(--dark);">
-                                {{ Str::limit($dimension->interpretations[$level]['description'] ?? '', 100) }}
-                            </p>
-                        </div>
+                        @if($dimension->description)
+                        <p style="color: var(--gray); font-size: 0.9rem; margin-bottom: 15px;">{{ $dimension->description }}</p>
                         @endif
-                        @endforeach
+
+                        <!-- Interpretations -->
+                        <div style="margin-top: 15px;">
+                            <small style="color: var(--gray); font-weight: 600;">Interpretasi:</small>
+                            <div style="margin-top: 8px;">
+                                @if($dimension->interpretations)
+                                    @foreach(['low' => 'Rendah', 'medium' => 'Sedang', 'high' => 'Tinggi'] as $level => $label)
+                                        @if(isset($dimension->interpretations[$level]))
+                                        <span class="interpretation-badge {{ $level }}">
+                                            {{ $dimension->interpretations[$level]['level'] ?? $label }}
+                                        </span>
+                                        @endif
+                                    @endforeach
+                                @else
+                                    <span style="color: var(--gray); font-size: 0.85rem;">Belum diatur</span>
+                                @endif
+                            </div>
+                        </div>
                     </div>
+                    @endforeach
+                @else
+                <div class="empty-state" style="padding: 30px;">
+                    <i class="fas fa-layer-group" style="font-size: 2rem;"></i>
+                    <p>Belum ada dimensi. Tambahkan dimensi untuk mengkategorikan pertanyaan.</p>
                 </div>
-                @endforeach
+                @endif
             </div>
         </div>
         @endif
 
-        <!-- Questions -->
+        <!-- Questions Section -->
         <div class="card">
             <div class="card-header">
-                <h3><i class="fas fa-question-circle"></i> Daftar Pertanyaan</h3>
-                <a href="{{ route('admin.digital.questions.create', ['questionnaire_id' => $questionnaire->id]) }}" class="btn btn-sm btn-primary">
-                    <i class="fas fa-plus"></i> Tambah
-                </a>
+                <h3><i class="fas fa-question-circle"></i> Daftar Pertanyaan ({{ $questionnaire->questions->count() }})</h3>
+                <button type="button" class="btn btn-sm btn-primary" onclick="document.getElementById('addQuestionModal').classList.add('show')">
+                    <i class="fas fa-plus"></i> Tambah Pertanyaan
+                </button>
             </div>
-            <div class="card-body" style="padding: 0;">
+            <div class="card-body">
                 @if($questionnaire->questions->count() > 0)
                     @foreach($questionnaire->questions as $question)
-                    <div style="padding: 15px 20px; border-bottom: 1px solid #edf2f7; display: flex; gap: 15px; align-items: start;">
-                        <div style="background: var(--primary); color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; flex-shrink: 0;">
-                            {{ $question->order }}
-                        </div>
+                    <div class="question-item">
+                        <div class="question-number">{{ $question->order }}</div>
                         <div style="flex: 1;">
-                            <p style="margin: 0 0 5px; color: var(--dark);">{{ $question->question_text }}</p>
+                            <p style="margin: 0 0 10px; color: var(--dark);">{{ $question->question_text }}</p>
                             <div style="display: flex; gap: 5px; flex-wrap: wrap;">
                                 @if($question->dimension)
                                 <span class="badge badge-primary">{{ $question->dimension->name }}</span>
@@ -172,18 +233,20 @@
                                 @endif
                             </div>
                         </div>
-                        <a href="{{ route('admin.digital.questions.edit', $question->id) }}" class="btn btn-sm btn-icon btn-secondary">
-                            <i class="fas fa-edit"></i>
-                        </a>
+                        <form action="{{ route('admin.digital.questionnaires.deleteQuestion', $question->id) }}" method="POST" style="display: inline;" onsubmit="return confirmDelete('Hapus pertanyaan ini?')">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-sm btn-icon btn-danger" title="Hapus">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
                     </div>
                     @endforeach
                 @else
                 <div class="empty-state" style="padding: 40px;">
                     <i class="fas fa-question-circle" style="font-size: 2rem;"></i>
                     <h3>Belum Ada Pertanyaan</h3>
-                    <a href="{{ route('admin.digital.questions.create', ['questionnaire_id' => $questionnaire->id]) }}" class="btn btn-primary">
-                        <i class="fas fa-plus"></i> Tambah Pertanyaan
-                    </a>
+                    <p>Tambahkan pertanyaan untuk angket ini</p>
                 </div>
                 @endif
             </div>
@@ -192,34 +255,39 @@
 
     <!-- Sidebar -->
     <div>
+        <!-- Products using this questionnaire -->
+        @if($products->count() > 0)
+        <div class="card" style="margin-bottom: 20px;">
+            <div class="card-header">
+                <h3><i class="fas fa-box"></i> Produk Terkait</h3>
+            </div>
+            <div class="card-body" style="padding: 0;">
+                @foreach($products as $product)
+                <div style="padding: 15px; border-bottom: 1px solid #edf2f7;">
+                    <strong>{{ $product->name }}</strong>
+                    <br>
+                    <small style="color: var(--gray);">Rp {{ number_format($product->price, 0, ',', '.') }}</small>
+                </div>
+                @endforeach
+            </div>
+        </div>
+        @endif
+
         <!-- Recent Responses -->
-        <div class="card">
+        <div class="card" style="margin-bottom: 20px;">
             <div class="card-header">
                 <h3><i class="fas fa-chart-bar"></i> Respons Terbaru</h3>
-                <a href="{{ route('admin.digital.responses.index', ['questionnaire_id' => $questionnaire->id]) }}" class="btn btn-sm btn-secondary">
-                    Semua
-                </a>
             </div>
             <div class="card-body" style="padding: 0;">
                 @if($questionnaire->responses->count() > 0)
-                    @foreach($questionnaire->responses as $response)
+                    @foreach($questionnaire->responses->take(5) as $response)
                     <div style="padding: 15px; border-bottom: 1px solid #edf2f7;">
-                        <div style="display: flex; justify-content: space-between; align-items: start;">
-                            <div>
-                                <strong style="color: var(--dark);">{{ $response->respondent_name }}</strong>
-                                <br>
-                                <small style="color: var(--gray);">{{ $response->respondent_email }}</small>
-                            </div>
-                            @if($response->is_completed)
-                            <span class="badge badge-success">Selesai</span>
-                            @else
-                            <span class="badge badge-warning">Pending</span>
-                            @endif
-                        </div>
+                        <strong style="color: var(--dark);">{{ $response->respondent_name }}</strong>
+                        <br>
+                        <small style="color: var(--gray);">{{ $response->respondent_email }}</small>
                         @if($response->completed_at)
-                        <small style="color: var(--gray); display: block; margin-top: 5px;">
-                            <i class="fas fa-clock"></i> {{ $response->completed_at->format('d M Y H:i') }}
-                        </small>
+                        <br>
+                        <small style="color: var(--gray);">{{ $response->completed_at->format('d M Y H:i') }}</small>
                         @endif
                     </div>
                     @endforeach
@@ -233,7 +301,7 @@
         </div>
 
         <!-- Meta Info -->
-        <div class="card" style="margin-top: 20px;">
+        <div class="card">
             <div class="card-header">
                 <h3><i class="fas fa-info-circle"></i> Info Sistem</h3>
             </div>
@@ -244,7 +312,7 @@
                 </div>
                 <div style="margin-bottom: 15px;">
                     <small style="color: var(--gray);">Slug</small>
-                    <div style="font-family: monospace; background: #f7fafc; padding: 5px 10px; border-radius: 5px;">{{ $questionnaire->slug }}</div>
+                    <div style="font-family: monospace; background: #f7fafc; padding: 5px 10px; border-radius: 5px; font-size: 0.85rem;">{{ $questionnaire->slug }}</div>
                 </div>
                 <div style="margin-bottom: 15px;">
                     <small style="color: var(--gray);">Dibuat</small>
@@ -256,25 +324,111 @@
                 </div>
             </div>
         </div>
-
-        <!-- Danger Zone -->
-        <div class="card" style="margin-top: 20px; border: 1px solid #fed7d7;">
-            <div class="card-header" style="background: #fff5f5;">
-                <h3 style="color: #c53030;"><i class="fas fa-exclamation-triangle"></i> Zona Berbahaya</h3>
-            </div>
-            <div class="card-body">
-                <p style="color: var(--gray); font-size: 0.9rem; margin-bottom: 15px;">
-                    Tindakan ini tidak dapat dibatalkan. Pastikan Anda yakin sebelum menghapus angket.
-                </p>
-                <form action="{{ route('admin.digital.questionnaires.destroy', $questionnaire->id) }}" method="POST" onsubmit="return confirmDelete('Apakah Anda yakin ingin menghapus angket ini? Semua data termasuk dimensi dan pertanyaan akan ikut terhapus.')">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn btn-danger" style="width: 100%;">
-                        <i class="fas fa-trash"></i> Hapus Angket
-                    </button>
-                </form>
-            </div>
-        </div>
     </div>
 </div>
+
+<!-- Add Dimension Modal -->
+<div id="addDimensionModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Tambah Dimensi</h3>
+            <button class="modal-close" onclick="document.getElementById('addDimensionModal').classList.remove('show')">&times;</button>
+        </div>
+        <form action="{{ route('admin.digital.questionnaires.addDimension', $questionnaire->id) }}" method="POST">
+            @csrf
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Nama Dimensi <span style="color: var(--danger);">*</span></label>
+                    <input type="text" name="name" class="form-control" required placeholder="Contoh: Kelelahan Emosional">
+                </div>
+                <div class="form-group">
+                    <label>Kode <span style="color: var(--danger);">*</span></label>
+                    <input type="text" name="code" class="form-control" required placeholder="Contoh: exhaustion">
+                    <small style="color: var(--gray);">Gunakan huruf kecil tanpa spasi</small>
+                </div>
+                <div class="form-group">
+                    <label>Deskripsi</label>
+                    <textarea name="description" class="form-control" rows="3" placeholder="Jelaskan apa yang diukur..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="document.getElementById('addDimensionModal').classList.remove('show')">Batal</button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Simpan
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Add Question Modal -->
+<div id="addQuestionModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Tambah Pertanyaan</h3>
+            <button class="modal-close" onclick="document.getElementById('addQuestionModal').classList.remove('show')">&times;</button>
+        </div>
+        <form action="{{ route('admin.digital.questionnaires.addQuestion', $questionnaire->id) }}" method="POST">
+            @csrf
+            <div class="modal-body">
+                @if($questionnaire->has_dimensions && $questionnaire->dimensions->count() > 0)
+                <div class="form-group">
+                    <label>Dimensi</label>
+                    <select name="dimension_id" class="form-control">
+                        <option value="">Tanpa Dimensi</option>
+                        @foreach($questionnaire->dimensions as $dimension)
+                        <option value="{{ $dimension->id }}">{{ $dimension->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                @endif
+                <div class="form-group">
+                    <label>Pertanyaan <span style="color: var(--danger);">*</span></label>
+                    <textarea name="question_text" class="form-control" rows="3" required placeholder="Tulis pertanyaan angket..."></textarea>
+                </div>
+                <div class="form-group">
+                    <div class="form-check">
+                        <input type="checkbox" name="is_reverse_scored" id="is_reverse_scored" value="1">
+                        <label for="is_reverse_scored">Reverse Scored</label>
+                    </div>
+                    <small style="color: var(--gray);">Centang jika skor dibalik (5 menjadi 1, dst.)</small>
+                </div>
+
+                <div style="background: #f7fafc; padding: 15px; border-radius: 10px;">
+                    <small style="color: var(--gray);">Opsi jawaban default (Skala Likert 1-5):</small>
+                    <div style="display: flex; gap: 5px; flex-wrap: wrap; margin-top: 8px;">
+                        <span class="badge badge-primary">1 - STS</span>
+                        <span class="badge badge-primary">2 - TS</span>
+                        <span class="badge badge-primary">3 - N</span>
+                        <span class="badge badge-primary">4 - S</span>
+                        <span class="badge badge-primary">5 - SS</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="document.getElementById('addQuestionModal').classList.remove('show')">Batal</button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Simpan
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+@endsection
+
+@section('scripts')
+<script>
+function editDimension(dimension) {
+    alert('Fitur edit dimensi akan segera tersedia. Untuk saat ini, hapus dan buat ulang dimensi dengan data yang benar.');
+}
+
+// Close modal on outside click
+document.querySelectorAll('.modal').forEach(function(modal) {
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            modal.classList.remove('show');
+        }
+    });
+});
+</script>
 @endsection
