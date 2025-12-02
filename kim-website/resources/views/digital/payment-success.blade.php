@@ -542,6 +542,13 @@
                 <h1>Pembayaran Berhasil!</h1>
                 <p>Terima kasih atas pembelian Anda</p>
             </div>
+            @elseif($hasQuestionnaire && $order->responses->where('is_completed', true)->count() > 0)
+            <!-- Success Header for Completed Questionnaire -->
+            <div class="success-header">
+                <div class="success-icon">✓</div>
+                <h1>Angket Telah Berhasil Diisi!</h1>
+                <p>Terima kasih atas pembelian Anda</p>
+            </div>
             @else
             <!-- Pending Header -->
             <div class="success-header pending">
@@ -569,10 +576,6 @@
                     <div class="order-info-row">
                         <span class="order-info-label">No. Pesanan</span>
                         <span class="order-info-value">{{ $order->order_number }}</span>
-                    </div>
-                    <div class="order-info-row">
-                        <span class="order-info-label">Nama</span>
-                        <span class="order-info-value">{{ $order->customer_name }}</span>
                     </div>
                     <div class="order-info-row">
                         <span class="order-info-label">Email</span>

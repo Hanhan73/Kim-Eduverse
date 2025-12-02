@@ -4,63 +4,76 @@ namespace App\Mail;
 
 use App\Models\QuestionnaireResponse;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Content;
+use Illuminate\Mail\Mailables\Envelope;
+use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Log;
 
 class QuestionnaireResult extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $response;
+    public QuestionnaireResponse $response;
 
     /**
      * Create a new message instance.
      */
     public function __construct(QuestionnaireResponse $response)
     {
-        $this->response = $response;
+        $this->response = $response->load(['questionnaire', 'order']);
     }
 
     /**
-     * Build the message.
+     * Get the message envelope.
      */
-    public function build()
+    public function envelope(): Envelope
     {
-        Log::info('Building QuestionnaireResult email', [
-            'response_id' => $this->response->id,
-            'pdf_path' => $this->response->result_pdf_path
-        ]);
+        $questionnaireName = $this->response->questionnaire->name;
+        
+        return new Envelope(
+            subject: "Hasil Analisis: {$questionnaireName}",
+        );
+    }
 
-        $mail = $this->subject('Hasil ' . $this->response->questionnaire->name)
-                     ->view('emails.questionnaire-result');
+    /**
+     * Get the message content definition.
+     */
+    public function content(): Content
+    {
+        // Use AI template if AI analysis is available
+        $view = $this->response->hasAIAnalysis() 
+            ? 'emails.questionnaire-result-ai' 
+            : 'emails.questionnaire-result';
 
-        // Attach PDF if exists
-        if ($this->response->result_pdf_path && Storage::exists($this->response->result_pdf_path)) {
-            $fullPath = Storage::path($this->response->result_pdf_path);
+        return new Content(
+            view: $view,
+        );
+    }
+
+    /**
+     * Get the attachments for the message.
+     */
+    public function attachments(): array
+    {
+        $attachments = [];
+
+        // Attach PDF result if available
+        if ($this->response->result_pdf_path) {
+            $pdfPath = Storage::disk('public')->path($this->response->result_pdf_path);
             
-            Log::info('Attaching PDF', [
-                'path' => $fullPath,
-                'exists' => file_exists($fullPath)
-            ]);
-            
-            $mail->attach(
-                $fullPath,
-                [
-                    'as' => 'Hasil-' . $this->response->questionnaire->name . '.pdf',
-                    'mime' => 'application/pdf',
-                ]
-            );
-            
-            Log::info('PDF attached successfully');
-        } else {
-            Log::warning('PDF not found for attachment', [
-                'pdf_path' => $this->response->result_pdf_path,
-                'exists' => $this->response->result_pdf_path ? Storage::exists($this->response->result_pdf_path) : false
-            ]);
+            if (file_exists($pdfPath)) {
+                $questionnaireName = str_replace(' ', '_', $this->response->questionnaire->name);
+                $fileName = "Hasil_Analisis_{$questionnaireName}.pdf";
+                
+                $attachments[] = Attachment::fromPath($pdfPath)
+                    ->as($fileName)
+                    ->withMime('application/pdf');
+            }
         }
 
-        return $mail;
+        return $attachments;
     }
 }

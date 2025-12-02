@@ -2,13 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Module extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
         'course_id',
         'title',
@@ -22,7 +19,6 @@ class Module extends Model
         'is_published' => 'boolean',
     ];
 
-    // Relationships
     public function course()
     {
         return $this->belongsTo(Course::class);
@@ -33,25 +29,11 @@ class Module extends Model
         return $this->hasMany(Lesson::class)->orderBy('order');
     }
 
-    public function quizzes()
+    /**
+     * RELASI BARU: Quiz untuk module ini
+     */
+    public function quiz()
     {
-        return $this->hasMany(Quiz::class);
-    }
-
-    // Scopes
-    public function scopePublished($query)
-    {
-        return $query->where('is_published', true);
-    }
-
-    // Helpers
-    public function getTotalDurationAttribute()
-    {
-        return $this->lessons->sum('duration_minutes');
-    }
-
-    public function getLessonsCountAttribute()
-    {
-        return $this->lessons->count();
+        return $this->hasOne(Quiz::class)->where('type', 'module_quiz');
     }
 }

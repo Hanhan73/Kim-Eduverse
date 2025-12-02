@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Edutech\Instructor;
 
 use App\Http\Controllers\Controller;
 use App\Models\Course;
+use App\Models\Module;
 use App\Models\Quiz;
 use App\Models\QuizQuestion;
 use Illuminate\Http\Request;
@@ -20,7 +21,7 @@ class QuizManagementController extends Controller
         $quizzes = Quiz::whereHas('course', function($query) use ($instructorId) {
             $query->where('instructor_id', $instructorId);
         })
-        ->with(['course', 'questions'])
+        ->with(['course', 'module', 'questions'])
         ->withCount('questions')
         ->latest()
         ->get();
@@ -37,11 +38,14 @@ class QuizManagementController extends Controller
         
         $courses = Course::where('instructor_id', $instructorId)
             ->where('is_published', true)
+            ->with('modules')
             ->get();
 
         $selectedCourseId = $request->get('course_id');
+        $selectedModuleId = $request->get('module_id');
+        $quizType = $request->get('type', 'module_quiz'); // default module_quiz
 
-        return view('edutech.instructor.quiz.create', compact('courses', 'selectedCourseId'));
+        return view('edutech.instructor.quiz.create', compact('courses', 'selectedCourseId', 'selectedModuleId', 'quizType'));
     }
 
     /**
@@ -53,6 +57,8 @@ class QuizManagementController extends Controller
 
         $request->validate([
             'course_id' => 'required|exists:courses,id',
+            'type' => 'required|in:pre_test,post_test,module_quiz',
+            'module_id' => 'required_if:type,module_quiz|nullable|exists:modules,id',
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'passing_score' => 'required|integer|min:0|max:100',
@@ -64,27 +70,38 @@ class QuizManagementController extends Controller
             ->where('instructor_id', $instructorId)
             ->firstOrFail();
 
-        $existingQuiz = Quiz::where('course_id', $course->id)
-            ->where('type', $request->type)
-            ->first();
+        // Check if pre/post test already exists
+        if ($request->type === 'pre_test' || $request->type === 'post_test') {
+            $existingQuiz = Quiz::where('course_id', $course->id)
+                ->where('type', $request->type)
+                ->first();
 
-        if ($existingQuiz) {
-            return redirect()
-                ->back()
-                ->withInput()
-                ->with('error', 'This course already has a ' . str_replace('_', '-', $request->type));
+            if ($existingQuiz) {
+                return redirect()
+                    ->back()
+                    ->withInput()
+                    ->with('error', 'This course already has a ' . str_replace('_', '-', $request->type));
+            }
         }
 
-        $existingPre = Quiz::where('course_id', $request->course_id)->where('type', 'pre_test')->first();
-        $existingPost = Quiz::where('course_id', $request->course_id)->where('type', 'post_test')->first();
+        // Check if module quiz already exists for this module
+        if ($request->type === 'module_quiz' && $request->module_id) {
+            $existingModuleQuiz = Quiz::where('module_id', $request->module_id)
+                ->where('type', 'module_quiz')
+                ->first();
 
-        if ($existingPre || $existingPost) {
-            return back()->with('error', 'This course already has both Pre-Test and Post-Test quizzes.');
+            if ($existingModuleQuiz) {
+                return redirect()
+                    ->back()
+                    ->withInput()
+                    ->with('error', 'This module already has a quiz');
+            }
         }
 
-        // Buat dua quiz sekaligus
         $quizData = [
             'course_id' => $request->course_id,
+            'module_id' => $request->type === 'module_quiz' ? $request->module_id : null,
+            'type' => $request->type,
             'title' => $request->title,
             'description' => $request->description,
             'passing_score' => $request->passing_score,
@@ -93,11 +110,10 @@ class QuizManagementController extends Controller
             'is_active' => true,
         ];
 
-        $preTest = Quiz::create(array_merge($quizData, ['type' => 'pre_test']));
-        $postTest = Quiz::create(array_merge($quizData, ['type' => 'post_test']));
+        $quiz = Quiz::create($quizData);
 
         return redirect()
-            ->route('edutech.instructor.quiz.edit', $preTest->id)
+            ->route('edutech.instructor.quiz.edit', $quiz->id)
             ->with('success', 'Quiz created! Now add questions.');
     }
 
@@ -108,7 +124,7 @@ class QuizManagementController extends Controller
     {
         $instructorId = session('edutech_user_id');
 
-        $quiz = Quiz::with(['course', 'questions' => function($query) {
+        $quiz = Quiz::with(['course', 'module', 'questions' => function($query) {
             $query->orderBy('order');
         }])
         ->whereHas('course', function($query) use ($instructorId) {
@@ -192,9 +208,9 @@ class QuizManagementController extends Controller
 
         $request->validate([
             'question' => 'required|string',
-            'type' => 'required|in:multiple_choice,true_false,essay',
+            'type' => 'required|in:multiple_choice,true_false',
             'options' => 'required_if:type,multiple_choice|array|min:2',
-            'correct_answer' => 'required_if:question_type,multiple_choice|required_if:question_type,true_false|nullable',
+            'correct_answer' => 'required',
             'points' => 'required|integer|min:1',
         ]);
 
@@ -210,7 +226,7 @@ class QuizManagementController extends Controller
         QuizQuestion::create([
             'quiz_id' => $quiz->id,
             'question' => $request->question,
-            'type' => "multiple_choice",
+            'type' => $request->type,
             'options' => $options,
             'correct_answer' => $request->correct_answer,
             'points' => $request->points,
@@ -232,9 +248,9 @@ class QuizManagementController extends Controller
 
         $request->validate([
             'question' => 'required|string',
-            'type' => 'required|in:multiple_choice,true_false,essay',
+            'type' => 'required|in:multiple_choice,true_false',
             'options' => 'required_if:type,multiple_choice|array|min:2',
-            'correct_answer' => 'required_if:question_type,multiple_choice|required_if:question_type,true_false|nullable',
+            'correct_answer' => 'required',
             'points' => 'required|integer|min:1',
         ]);
 
@@ -247,7 +263,7 @@ class QuizManagementController extends Controller
 
         $question->update([
             'question' => $request->question,
-            'type' => 'multiple_choice',
+            'type' => $request->type,
             'options' => $options,
             'correct_answer' => $request->correct_answer,
             'points' => $request->points,
@@ -269,42 +285,4 @@ class QuizManagementController extends Controller
 
         return redirect()->back()->with('success', 'Question deleted!');
     }
-
-    public function syncQuestions(Request $request, Quiz $quiz, $target)
-    {
-        // pastikan target valid
-        if (!in_array($target, ['pre_test', 'post_test'])) {
-            return back()->with('error', 'Invalid target type.');
-        }
-
-        // cari quiz pasangan di course yang sama
-        $pairQuiz = Quiz::where('course_id', $quiz->course_id)
-            ->where('type', $target)
-            ->first();
-
-        if (!$pairQuiz) {
-            return back()->with('error', ucfirst(str_replace('_', ' ', $target)) . ' not found for this course.');
-        }
-
-        // tentukan arah salinan
-        $source = $quiz->type === 'pre_test' ? $quiz : $pairQuiz;
-        $destination = $quiz->type === 'pre_test' ? $pairQuiz : $quiz;
-
-        // hapus pertanyaan lama di tujuan
-        $destination->questions()->delete();
-
-        // salin pertanyaan dari sumber
-        foreach ($source->questions as $question) {
-            $newQuestion = $destination->questions()->create([
-                'question' => $question->question,
-                'type' => 'multiple_choice',
-                'points' => $question->points,
-                'correct_answer' => $question->correct_answer,
-                'options' => $question->options,
-            ]);
-        }
-
-        return back()->with('success', 'Questions synced successfully between Pre-Test and Post-Test!');
-    }
 }
-

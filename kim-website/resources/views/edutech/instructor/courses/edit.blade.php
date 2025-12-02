@@ -80,6 +80,11 @@
             color: white;
         }
 
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+        }
+
         .btn-secondary {
             background: white;
             color: var(--dark);
@@ -177,9 +182,13 @@
             border: 1px solid #e2e8f0;
             border-radius: 8px;
             margin-bottom: 10px;
+        }
+
+        .lesson-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: 10px;
         }
 
         .lesson-info {
@@ -194,6 +203,34 @@
         .lesson-meta {
             font-size: 0.85rem;
             color: var(--gray);
+        }
+
+        .lesson-quiz-section {
+            background: #f0f9ff;
+            border: 2px dashed #3b82f6;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 10px;
+        }
+
+        .lesson-quiz-section.has-quiz {
+            background: #d1fae5;
+            border-color: var(--success);
+        }
+
+        .quiz-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .quiz-badge {
+            background: var(--success);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
         }
 
         .alert {
@@ -269,6 +306,26 @@
             font-size: 1.5rem;
             cursor: pointer;
             color: var(--gray);
+        }
+
+        .lesson-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .info-box {
+            background: #e6fffa;
+            border: 2px solid #81e6d9;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+
+        .info-box i {
+            color: #2c7a7b;
+            margin-right: 8px;
         }
     </style>
 </head>
@@ -366,6 +423,11 @@
                 </button>
             </div>
 
+            <div class="info-box">
+                <i class="fas fa-lightbulb"></i>
+                <strong>Tip:</strong> Anda dapat menambahkan quiz ke setiap lesson untuk menguji pemahaman siswa secara bertahap.
+            </div>
+
             @if($course->modules->count() > 0)
             <div class="modules-list">
                 @foreach($course->modules as $module)
@@ -395,24 +457,68 @@
                     <div class="lessons-list">
                         @foreach($module->lessons as $lesson)
                         <div class="lesson-item">
-                            <div class="lesson-info">
-                                <div class="lesson-title">
-                                    <i class="fas fa-play-circle"></i> {{ $lesson->title }}
+                            <div class="lesson-header">
+                                <div class="lesson-info">
+                                    <div class="lesson-title">
+                                        <i class="fas fa-play-circle"></i> {{ $lesson->title }}
+                                    </div>
+                                    <div class="lesson-meta">
+                                        {{ ucfirst($lesson->type) }} · {{ $lesson->duration_minutes }} menit
+                                        @if($lesson->video_id)
+                                        · Video ID: {{ $lesson->video_id }}
+                                        @endif
+                                    </div>
                                 </div>
-                                <div class="lesson-meta">
-                                    {{ ucfirst($lesson->type) }} · {{ $lesson->duration_minutes }} menit
-                                    @if($lesson->video_id)
-                                    · Video ID: {{ $lesson->video_id }}
-                                    @endif
+                                <div class="lesson-actions">
+                                    <form action="{{ route('edutech.instructor.lessons.destroy', [$course->id, $module->id, $lesson->id]) }}" method="POST" onsubmit="return confirm('Hapus lesson ini?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-danger">
+                                            <i class="fas fa-trash"></i> Delete
+                                        </button>
+                                    </form>
                                 </div>
                             </div>
-                            <form action="{{ route('edutech.instructor.lessons.destroy', [$course->id, $module->id, $lesson->id]) }}" method="POST" onsubmit="return confirm('Hapus lesson ini?')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-sm btn-danger">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </form>
+
+                            <!-- Quiz Section for this Lesson -->
+                            <div class="lesson-quiz-section {{ $lesson->quiz ? 'has-quiz' : '' }}">
+                                @if($lesson->quiz)
+                                    <!-- Has Quiz -->
+                                    <div class="quiz-info">
+                                        <div>
+                                            <span class="quiz-badge">
+                                                <i class="fas fa-clipboard-check"></i> HAS QUIZ
+                                            </span>
+                                            <span style="margin-left: 10px; color: var(--gray); font-size: 0.9rem;">
+                                                {{ $lesson->quiz->title }} 
+                                                ({{ $lesson->quiz->questions->count() }} questions · {{ $lesson->quiz->passing_score }}% to pass)
+                                            </span>
+                                        </div>
+                                        <div style="display: flex; gap: 8px;">
+                                            <a href="{{ route('edutech.instructor.quiz.edit', $lesson->quiz->id) }}" class="btn btn-sm btn-primary">
+                                                <i class="fas fa-edit"></i> Edit Quiz
+                                            </a>
+                                            <form action="{{ route('edutech.instructor.quiz.destroy', $lesson->quiz->id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Delete this quiz?')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-sm btn-danger">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                @else
+                                    <!-- No Quiz -->
+                                    <div class="quiz-info">
+                                        <div style="color: var(--gray);">
+                                            <i class="fas fa-clipboard-question"></i> No quiz for this lesson yet
+                                        </div>
+                                        <button onclick="openQuizModal({{ $lesson->id }}, '{{ $lesson->title }}')" class="btn btn-sm btn-warning">
+                                            <i class="fas fa-plus"></i> Add Quiz
+                                        </button>
+                                    </div>
+                                @endif
+                            </div>
                         </div>
                         @endforeach
                     </div>
@@ -512,6 +618,64 @@
         </div>
     </div>
 
+    <!-- Add Quiz to Lesson Modal -->
+    <div id="quizModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add Quiz to Lesson</h3>
+                <button class="btn-close" onclick="closeModal('quizModal')">&times;</button>
+            </div>
+            
+            <div class="info-box">
+                <i class="fas fa-info-circle"></i>
+                Creating quiz for lesson: <strong id="lessonTitleDisplay"></strong>
+            </div>
+
+            <form id="quizForm" action="{{ route('edutech.instructor.quiz.store') }}" method="POST">                
+                @csrf
+                <input type="hidden" name="course_id" value="{{ $course->id }}">
+                <input type="hidden" name="type" value="lesson_quiz">
+                <input type="hidden" name="lesson_id" id="quizLessonId">
+
+                <div class="form-group">
+                    <label>Quiz Title <span style="color: var(--danger);">*</span></label>
+                    <input type="text" name="title" id="quizTitle" class="form-control" placeholder="e.g., Lesson 1 Quiz" required>
+                    <small style="color: var(--gray);">Give your quiz a descriptive title</small>
+                </div>
+
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea name="description" class="form-control" placeholder="Describe what this quiz will assess..."></textarea>
+                    <small style="color: var(--gray);">Optional: Provide instructions for students</small>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label>Passing Score (%) <span style="color: var(--danger);">*</span></label>
+                        <input type="number" name="passing_score" class="form-control" value="70" min="0" max="100" required>
+                        <small style="color: var(--gray);">Minimum score to pass (0-100)</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Duration (Minutes) <span style="color: var(--danger);">*</span></label>
+                        <input type="number" name="duration_minutes" class="form-control" value="15" min="1" required>
+                        <small style="color: var(--gray);">Time limit for this quiz</small>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Maximum Attempts <span style="color: var(--danger);">*</span></label>
+                    <input type="number" name="max_attempts" class="form-control" value="3" min="1" max="10" required>
+                    <small style="color: var(--gray);">How many times can students retake? (1-10)</small>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    <i class="fas fa-save"></i> Create Quiz & Add Questions
+                </button>
+            </form>
+        </div>
+    </div>
+
     <script>
         function openModuleModal() {
             document.getElementById('moduleModal').classList.add('active');
@@ -521,6 +685,13 @@
             const form = document.getElementById('lessonForm');
             form.action = `/edutech/instructor/courses/{{ $course->id }}/modules/${moduleId}/lessons`;
             document.getElementById('lessonModal').classList.add('active');
+        }
+
+        function openQuizModal(lessonId, lessonTitle) {
+            document.getElementById('quizLessonId').value = lessonId;
+            document.getElementById('lessonTitleDisplay').textContent = lessonTitle;
+            document.getElementById('quizTitle').value = lessonTitle + ' - Quiz';
+            document.getElementById('quizModal').classList.add('active');
         }
 
         function closeModal(modalId) {

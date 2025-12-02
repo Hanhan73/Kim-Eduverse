@@ -522,11 +522,6 @@
                 <i class="fas fa-book"></i>
                 My Courses
             </a>
-            <a href="{{ route('edutech.instructor.quiz.index') }}"
-                class="menu-item {{ request()->routeIs('edutech.instructor.quiz.index') ? 'active' : '' }}">
-                <i class="fas fa-clipboard-list"></i>
-                Quiz Management
-            </a>
             <a href="{{ route('edutech.instructor.live-meetings.index') }}"
                 class="menu-item {{ request()->routeIs('edutech.instructor.live-meetings.index') ? 'active' : '' }}">
                 <i class="fas fa-video"></i>

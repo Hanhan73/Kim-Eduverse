@@ -58,76 +58,240 @@ class Enrollment extends Model
     }
 
     /**
-     * Calculate progress percentage based on NEW SYSTEM:
-     * - Pre-test + All Modules + Post-test
-     * - Each component has equal weight
-     * 
-     * Example: 
-     * - Pre-test (1) + 3 Modules + Post-test (1) = 5 total components
-     * - Each component = 100% / 5 = 20%
+     * ============================================================
+     * NEW SYSTEM: ACCESS CONTROL METHODS
+     * ============================================================
+     */
+
+    /**
+     * Check if user can access course materials
+     * RULE: Must pass pre-test first (if exists)
+     */
+    public function canAccessMaterials()
+    {
+        $course = $this->course()->with('quizzes')->first();
+        
+        // Check if pre-test exists
+        $preTest = $course->quizzes()
+            ->where('type', 'pre_test')
+            ->where('is_active', true)
+            ->first();
+        
+        // If no pre-test, allow access immediately
+        if (!$preTest) {
+            return true;
+        }
+        
+        // Check if user has passed pre-test
+        $preTestPassed = \App\Models\QuizAttempt::where('user_id', $this->student_id)
+            ->where('quiz_id', $preTest->id)
+            ->where('is_passed', true)
+            ->exists();
+        
+        return $preTestPassed;
+    }
+
+    /**
+     * Check if user can access specific module
+     * RULE: Previous module must be completed (all lessons + quiz if exists)
+     */
+    public function canAccessModule($moduleId)
+    {
+        $module = \App\Models\Module::findOrFail($moduleId);
+        
+        // Module pertama selalu bisa diakses (jika pre-test sudah lulus)
+        if ($module->order === 1) {
+            return $this->canAccessMaterials();
+        }
+        
+        // Cek module sebelumnya
+        $previousModule = \App\Models\Module::where('course_id', $module->course_id)
+            ->where('order', '<', $module->order)
+            ->orderBy('order', 'desc')
+            ->first();
+            
+        if (!$previousModule) {
+            return true; // Tidak ada module sebelumnya
+        }
+        
+        // 1. Cek apakah semua lessons di module sebelumnya sudah completed
+        $totalLessons = $previousModule->lessons()->count();
+        $completedLessons = \App\Models\LessonCompletion::where('user_id', $this->student_id)
+            ->whereIn('lesson_id', $previousModule->lessons()->pluck('id'))
+            ->where('is_completed', true)
+            ->count();
+            
+        if ($totalLessons !== $completedLessons) {
+            return false; // Lessons belum selesai
+        }
+        
+        // 2. Cek apakah ada quiz di module sebelumnya
+        $previousModuleQuiz = \App\Models\Quiz::where('module_id', $previousModule->id)
+            ->where('type', 'module_quiz')
+            ->where('is_active', true)
+            ->first();
+            
+        if ($previousModuleQuiz) {
+            // Harus lulus quiz module sebelumnya
+            $passedQuiz = \App\Models\QuizAttempt::where('user_id', $this->student_id)
+                ->where('quiz_id', $previousModuleQuiz->id)
+                ->where('is_passed', true)
+                ->exists();
+                
+            return $passedQuiz;
+        }
+        
+        return true; // Tidak ada quiz, bisa lanjut
+    }
+
+    /**
+     * Check if user can access post-test
+     * RULE: ALL modules must be completed (all lessons + all module quizzes)
+     */
+    public function canAccessPostTest()
+    {
+        $course = $this->course()->with(['modules.lessons'])->first();
+        
+        // Check if post-test exists
+        $postTest = $course->quizzes()
+            ->where('type', 'post_test')
+            ->where('is_active', true)
+            ->first();
+        
+        if (!$postTest) {
+            return false; // Tidak ada post-test
+        }
+        
+        // 1. Hitung total lessons di course
+        $totalLessons = 0;
+        foreach ($course->modules as $module) {
+            $totalLessons += $module->lessons()->count();
+        }
+        
+        // 2. Hitung completed lessons
+        $completedLessons = \App\Models\LessonCompletion::where('user_id', $this->student_id)
+            ->whereHas('lesson.module', function($query) use ($course) {
+                $query->where('course_id', $course->id);
+            })
+            ->where('is_completed', true)
+            ->count();
+            
+        // Jika lessons belum 100%, tidak bisa post-test
+        if ($totalLessons !== $completedLessons) {
+            return false;
+        }
+        
+        // 3. Cek semua quiz module harus lulus
+        $moduleQuizzes = \App\Models\Quiz::where('course_id', $course->id)
+            ->where('type', 'module_quiz')
+            ->where('is_active', true)
+            ->get();
+            
+        foreach ($moduleQuizzes as $quiz) {
+            $passed = \App\Models\QuizAttempt::where('user_id', $this->student_id)
+                ->where('quiz_id', $quiz->id)
+                ->where('is_passed', true)
+                ->exists();
+                
+            if (!$passed) {
+                return false; // Ada quiz module yang belum lulus
+            }
+        }
+        
+        return true; // Semua syarat terpenuhi
+    }
+
+    /**
+     * ============================================================
+     * PROGRESS CALCULATION - NEW SYSTEM
+     * ============================================================
+     * Calculate based on: Lessons + Quizzes (Pre-test, Module Quizzes, Post-test)
      */
     public function calculateProgress()
     {
         $course = $this->course()->with(['modules.lessons', 'quizzes'])->first();
         
-        // Count total components
-        $totalComponents = 0;
-        $completedComponents = 0;
+        // Count total items (lessons + quizzes)
+        $totalItems = 0;
+        $completedItems = 0;
         
-        // 1. Pre-test (if exists)
-        $preTest = $course->quizzes()->where('type', 'pre_test')->where('is_active', true)->first();
-        if ($preTest) {
-            $totalComponents++;
+        // 1. PRE-TEST (jika ada dan active)
+        $preTest = $course->quizzes()
+            ->where('type', 'pre_test')
+            ->where('is_active', true)
+            ->first();
             
-            // Check if pre-test is passed
+        if ($preTest) {
+            $totalItems++;
+            
             $preTestPassed = \App\Models\QuizAttempt::where('user_id', $this->student_id)
                 ->where('quiz_id', $preTest->id)
                 ->where('is_passed', true)
                 ->exists();
                 
             if ($preTestPassed) {
-                $completedComponents++;
+                $completedItems++;
             }
         }
         
-        // 2. All Modules (count each module's lessons)
+        // 2. MODULES (lessons + module quizzes)
         foreach ($course->modules as $module) {
-            $totalLessons = $module->lessons->count();
+            // Count lessons
+            $totalLessons = $module->lessons()->count();
             
             if ($totalLessons > 0) {
-                $totalComponents++;
+                $totalItems += $totalLessons;
                 
-                // Check if all lessons in this module are completed
                 $completedLessons = \App\Models\LessonCompletion::where('user_id', $this->student_id)
                     ->whereIn('lesson_id', $module->lessons->pluck('id'))
                     ->where('is_completed', true)
                     ->count();
                 
-                if ($completedLessons >= $totalLessons) {
-                    $completedComponents++;
+                $completedItems += $completedLessons;
+            }
+            
+            // Count module quiz (jika ada)
+            $moduleQuiz = \App\Models\Quiz::where('module_id', $module->id)
+                ->where('type', 'module_quiz')
+                ->where('is_active', true)
+                ->first();
+                
+            if ($moduleQuiz) {
+                $totalItems++;
+                
+                $moduleQuizPassed = \App\Models\QuizAttempt::where('user_id', $this->student_id)
+                    ->where('quiz_id', $moduleQuiz->id)
+                    ->where('is_passed', true)
+                    ->exists();
+                    
+                if ($moduleQuizPassed) {
+                    $completedItems++;
                 }
             }
         }
         
-        // 3. Post-test (if exists)
-        $postTest = $course->quizzes()->where('type', 'post_test')->where('is_active', true)->first();
-        if ($postTest) {
-            $totalComponents++;
+        // 3. POST-TEST (jika ada dan active)
+        $postTest = $course->quizzes()
+            ->where('type', 'post_test')
+            ->where('is_active', true)
+            ->first();
             
-            // Check if post-test is passed
+        if ($postTest) {
+            $totalItems++;
+            
             $postTestPassed = \App\Models\QuizAttempt::where('user_id', $this->student_id)
                 ->where('quiz_id', $postTest->id)
                 ->where('is_passed', true)
                 ->exists();
                 
             if ($postTestPassed) {
-                $completedComponents++;
+                $completedItems++;
             }
         }
         
         // Calculate percentage
-        if ($totalComponents > 0) {
-            $progressPercentage = ($completedComponents / $totalComponents) * 100;
+        if ($totalItems > 0) {
+            $progressPercentage = ($completedItems / $totalItems) * 100;
         } else {
             $progressPercentage = 0;
         }
@@ -154,7 +318,12 @@ class Enrollment extends Model
         return $newProgress;
     }
 
-    // Helpers
+    /**
+     * ============================================================
+     * HELPERS
+     * ============================================================
+     */
+
     public function markAsCompleted()
     {
         $this->update([
@@ -189,60 +358,5 @@ class Enrollment extends Model
         ]);
 
         return $certificate;
-    }
-
-    /**
-     * Check if user can access course materials
-     * User MUST pass pre-test first (if exists)
-     */
-    public function canAccessMaterials()
-    {
-        $course = $this->course()->with('quizzes')->first();
-        
-        // Check if pre-test exists
-        $preTest = $course->quizzes()->where('type', 'pre_test')->where('is_active', true)->first();
-        
-        // If no pre-test, allow access
-        if (!$preTest) {
-            return true;
-        }
-        
-        // Check if user has passed pre-test
-        $preTestPassed = \App\Models\QuizAttempt::where('user_id', $this->student_id)
-            ->where('quiz_id', $preTest->id)
-            ->where('is_passed', true)
-            ->exists();
-        
-        return $preTestPassed;
-    }
-
-    /**
-     * Check if user can access post-test
-     * User must complete ALL modules first
-     */
-    public function canAccessPostTest()
-    {
-        $course = $this->course()->with(['modules.lessons'])->first();
-        
-        // Count total lessons
-        $totalLessons = 0;
-        foreach ($course->modules as $module) {
-            $totalLessons += $module->lessons->count();
-        }
-        
-        if ($totalLessons == 0) {
-            return false;
-        }
-        
-        // Check completed lessons
-        $completedLessons = \App\Models\LessonCompletion::where('user_id', $this->student_id)
-            ->whereHas('lesson.module', function($query) use ($course) {
-                $query->where('course_id', $course->id);
-            })
-            ->where('is_completed', true)
-            ->count();
-        
-        // Must complete ALL lessons
-        return $completedLessons >= $totalLessons;
     }
 }

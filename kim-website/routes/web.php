@@ -134,12 +134,15 @@ Route::prefix('edutech/student')->name('edutech.student.')->middleware('edutech.
     Route::get('/my-courses', [StudentMyCourseController::class, 'index'])->name('my-courses');
     Route::get('/certificates', [StudentCertificateController::class, 'index'])->name('certificates');
     Route::get('/certificate/{id}/download', [StudentCertificateController::class, 'download'])->name('certificate.download');
-
-    // Quiz Routes
-    Route::get('/quiz/{quiz}/start', [StudentQuizController::class, 'start'])->name('quiz.start');
-    Route::post('/quiz/{quiz}/submit', [StudentQuizController::class, 'submit'])->name('quiz.submit');
-    Route::get('/quiz/{quiz}/result/{attempt}', [StudentQuizController::class, 'result'])->name('quiz.result');
-    Route::get('/quiz/history', [StudentQuizController::class, 'history'])->name('quiz.history');
+    // Learning Page (BARU - satu halaman untuk semua)
+    Route::get('/courses/{slug}/learn', [LearningController::class, 'show'])->name('edutech.courses.learn');
+    Route::post('/learning/lesson/{lesson}/complete', [LearningController::class, 'completeLesson'])->name('edutech.learning.complete');
+    Route::get('/learning/lesson/{lesson}/next', [LearningController::class, 'nextLesson'])->name('edutech.learning.next');
+    
+    // Quiz Routes (Update)
+    Route::post('/quiz/{quiz}/start', [StudentQuizController::class, 'start'])->name('edutech.student.quiz.start');
+    Route::post('/quiz/{quiz}/submit', [StudentQuizController::class, 'submit'])->name('edutech.student.quiz.submit');
+ 
 });
 
 // ========================================
@@ -206,21 +209,21 @@ Route::prefix('edutech/instructor')->name('edutech.instructor.')->middleware('ed
 
     Route::post('/students/course/{course}/assign-batch', [StudentManagementController::class, 'assignBatch'])->name('students.assign-batch');
 
-
     // Quiz Management
-    Route::get('/quiz', [QuizManagementController::class, 'index'])->name('quiz.index');
-    Route::get('/quiz/create', [QuizManagementController::class, 'create'])->name('quiz.create');
-    Route::post('/quiz', [QuizManagementController::class, 'store'])->name('quiz.store');
-    Route::get('/quiz/{id}/edit', [QuizManagementController::class, 'edit'])->name('quiz.edit');
-    Route::put('/quiz/{id}', [QuizManagementController::class, 'update'])->name('quiz.update');
-    Route::delete('/quiz/{id}', [QuizManagementController::class, 'destroy'])->name('quiz.destroy');
-    Route::post('/quiz/{id}/toggle', [QuizManagementController::class, 'toggleActive'])->name('quiz.toggle');
-    Route::post('/instructor/quiz/{quiz}/sync/{target}', [QuizManagementController::class, 'syncQuestions'])->name('quiz.sync');
+    Route::prefix('quiz')->name('quiz.')->group(function () {
+        Route::get('/', [QuizManagementController::class, 'index'])->name('index');
+        Route::get('/create', [QuizManagementController::class, 'create'])->name('create');
+        Route::post('/', [QuizManagementController::class, 'store'])->name('store');
+        Route::get('/{quiz}/edit', [QuizManagementController::class, 'edit'])->name('edit');
+        Route::put('/{quiz}', [QuizManagementController::class, 'update'])->name('update');
+        Route::delete('/{quiz}', [QuizManagementController::class, 'destroy'])->name('destroy');
+        Route::post('/{quiz}/toggle', [QuizManagementController::class, 'toggleActive'])->name('toggle');
 
-    // Question Management
-    Route::post('/quiz/{quiz}/questions', [QuizManagementController::class, 'storeQuestion'])->name('quiz.questions.store');
-    Route::put('/quiz/{quiz}/questions/{question}', [QuizManagementController::class, 'updateQuestion'])->name('quiz.questions.update');
-    Route::delete('/quiz/{quiz}/questions/{question}', [QuizManagementController::class, 'destroyQuestion'])->name('quiz.questions.destroy');
+        // Questions
+        Route::post('/{quiz}/questions', [QuizManagementController::class, 'storeQuestion'])->name('questions.store');
+        Route::put('/{quiz}/questions/{question}', [QuizManagementController::class, 'updateQuestion'])->name('questions.update');
+        Route::delete('/{quiz}/questions/{question}', [QuizManagementController::class, 'destroyQuestion'])->name('questions.destroy');
+    });
 
     // Live Meeting
     Route::get('/live-meetings', [LiveMeetingController::class, 'index'])->name('live-meetings.index');
@@ -459,9 +462,31 @@ Route::prefix('admin/digital')->name('admin.digital.')->middleware(['admin'])->g
     Route::post('/orders/{id}/status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
 
 
+        // Regenerate AI Analysis untuk response tertentu
+    Route::post('responses/{id}/regenerate-ai', [QuestionnaireResponseController::class, 'regenerateAI'])
+        ->name('responses.regenerate-ai');
     
+    // Bulk regenerate AI untuk multiple responses
+    Route::post('responses/bulk-regenerate-ai', [QuestionnaireResponseController::class, 'bulkRegenerateAI'])
+        ->name('responses.bulk-regenerate-ai');
+    
+    // Preview AI analysis (tanpa save)
+    Route::post('responses/{id}/preview-ai', [QuestionnaireResponseController::class, 'previewAI'])
+        ->name('responses.preview-ai');
+    
+    // Test AI configuration
+    Route::post('questionnaires/{id}/test-ai', [QuestionnaireController::class, 'testAI'])
+        ->name('questionnaires.test-ai');
 });
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
 
 
+use App\Http\Controllers\TestClaudeController;
+
+Route::prefix('test-claude')->name('test.claude.')->group(function () {
+    Route::get('/config', [TestClaudeController::class, 'testConfig'])->name('config');
+    Route::get('/simple', [TestClaudeController::class, 'testSimpleCall'])->name('simple');
+    Route::get('/analysis', [TestClaudeController::class, 'testFullAnalysis'])->name('analysis');
+    Route::get('/logs', [TestClaudeController::class, 'viewLogs'])->name('logs');
+});

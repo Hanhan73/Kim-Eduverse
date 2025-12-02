@@ -13,35 +13,63 @@ use Carbon\Carbon;
 class StudentQuizController extends Controller
 {
     /**
-     * Start a quiz attempt with NEW SYSTEM checks
+     * Start quiz attempt
      */
-    public function start($quiz)
+    public function start($quizId)
     {
         $studentId = session('edutech_user_id');
         
-        $quiz = Quiz::with(['course', 'questions' => function($query) {
+        $quiz = Quiz::with(['course', 'module', 'questions' => function($query) {
             $query->orderBy('order');
         }])
         ->where('is_active', true)
-        ->findOrFail($quiz);
+        ->findOrFail($quizId);
 
-        // Check if student is enrolled in the course
         $enrollment = Enrollment::where('student_id', $studentId)
             ->where('course_id', $quiz->course_id)
             ->where('status', 'active')
             ->firstOrFail();
 
-        // ===== NEW SYSTEM: POST-TEST REQUIREMENT =====
-        // Post-test can ONLY be accessed if ALL modules are completed
-        if ($quiz->type == 'post_test') {
+        // === CHECK ACCESS RULES ===
+        
+        // 1. Pre-test: bisa langsung diakses
+        if ($quiz->type === 'pre_test') {
+            // OK, no extra checks
+        }
+        
+        // 2. Module Quiz: harus selesaikan semua lessons di module ini dulu
+        elseif ($quiz->type === 'module_quiz') {
+            $module = $quiz->module;
+            $totalLessons = $module->lessons()->count();
+            $completedLessons = \App\Models\LessonCompletion::where('user_id', $studentId)
+                ->whereIn('lesson_id', $module->lessons()->pluck('id'))
+                ->where('is_completed', true)
+                ->count();
+                
+            if ($totalLessons !== $completedLessons) {
+                return redirect()
+                    ->back()
+                    ->with('error', 'Complete all lessons in this module first!');
+            }
+            
+            // Cek apakah module sebelumnya sudah accessible
+            if (!$enrollment->canAccessModule($module->id)) {
+                return redirect()
+                    ->back()
+                    ->with('error', 'Complete previous module first!');
+            }
+        }
+        
+        // 3. Post-test: harus selesaikan SEMUA module + quiz
+        elseif ($quiz->type === 'post_test') {
             if (!$enrollment->canAccessPostTest()) {
                 return redirect()
                     ->back()
-                    ->with('error', 'You must complete ALL course modules before taking the post-test!');
+                    ->with('error', 'Complete ALL course modules and quizzes before taking the post-test!');
             }
         }
 
-        // Check if user has attempts left
+        // Check attempts
         $attemptCount = QuizAttempt::where('user_id', $studentId)
             ->where('quiz_id', $quiz->id)
             ->count();
@@ -63,17 +91,22 @@ class StudentQuizController extends Controller
             'answers' => json_encode([]),
         ]);
         
-        return view('edutech.student.quiz-take', compact('quiz', 'attempt', 'enrollment'));
+        // Redirect kembali ke learning page dengan parameter quiz
+        return redirect()->route('edutech.courses.learn', [
+            'slug' => $quiz->course->slug,
+            'quiz' => $quiz->id,
+            'attempt' => $attempt->id,
+        ]);
     }
 
     /**
-     * Submit quiz and UPDATE PROGRESS with NEW SYSTEM
+     * Submit quiz
      */
-    public function submit(Request $request, $quiz)
+    public function submit(Request $request, $quizId)
     {
         $studentId = session('edutech_user_id');
         
-        $quiz = Quiz::with(['course', 'questions'])->findOrFail($quiz);
+        $quiz = Quiz::with(['course', 'questions'])->findOrFail($quizId);
         
         $enrollment = Enrollment::where('student_id', $studentId)
             ->where('course_id', $quiz->course_id)
@@ -99,7 +132,6 @@ class StudentQuizController extends Controller
             $isCorrect = false;
             $pointsEarned = 0;
 
-            // Check answer based on question type
             if ($question->type === 'multiple_choice' || $question->type === 'true_false') {
                 $isCorrect = ($userAnswer == $question->correct_answer);
                 $pointsEarned = $isCorrect ? $question->points : 0;
@@ -117,7 +149,7 @@ class StudentQuizController extends Controller
             ];
         }
 
-        // Calculate percentage
+        // Calculate score
         $score = $totalPoints > 0 ? ($earnedPoints / $totalPoints) * 100 : 0;
         $isPassed = $score >= $quiz->passing_score;
 
@@ -133,50 +165,16 @@ class StudentQuizController extends Controller
             'duration' => $duration,
         ]);
 
-        // ===== NEW SYSTEM: UPDATE PROGRESS AFTER QUIZ =====
-        // Progress is recalculated including quiz completion
+        // Update progress
         $enrollment->updateProgress();
 
-        // Redirect to result page
+        // Redirect ke learning page dengan hasil quiz
         return redirect()
-            ->route('edutech.student.quiz.result', ['quiz' => $quiz->id, 'attempt' => $attempt->id])
+            ->route('edutech.courses.learn', [
+                'slug' => $quiz->course->slug,
+                'quiz' => $quiz->id,
+                'result' => $attempt->id,
+            ])
             ->with('success', 'Quiz submitted successfully!');
-    }
-
-    /**
-     * Show quiz result
-     */
-    public function result($quiz, $attempt)
-    {
-        $studentId = session('edutech_user_id');
-        
-        $quiz = Quiz::with(['course', 'questions'])->findOrFail($quiz);
-        $attempt = QuizAttempt::where('user_id', $studentId)
-            ->where('id', $attempt)
-            ->where('quiz_id', $quiz->id)
-            ->firstOrFail();
-
-        $enrollment = Enrollment::where('student_id', $studentId)
-            ->where('course_id', $quiz->course_id)
-            ->where('status', 'active')
-            ->firstOrFail();
-
-        return view('edutech.student.quiz-result', compact('quiz', 'attempt', 'enrollment'));
-    }
-
-    /**
-     * Show quiz history for student
-     */
-    public function history()
-    {
-        $studentId = session('edutech_user_id');
-        
-        $attempts = QuizAttempt::with(['quiz.course'])
-            ->where('user_id', $studentId)
-            ->whereNotNull('submitted_at')
-            ->orderBy('submitted_at', 'desc')
-            ->paginate(10);
-
-        return view('edutech.student.quiz-history', compact('attempts'));
     }
 }
