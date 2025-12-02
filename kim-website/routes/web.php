@@ -219,6 +219,8 @@ Route::prefix('edutech/instructor')->name('edutech.instructor.')->middleware('ed
         Route::delete('/{quiz}', [QuizManagementController::class, 'destroy'])->name('destroy');
         Route::post('/{quiz}/toggle', [QuizManagementController::class, 'toggleActive'])->name('toggle');
 
+         Route::post('/{quiz}/sync/{targetType}', [QuizManagementController::class, 'syncQuestions'])->name('sync');
+
         // Questions
         Route::post('/{quiz}/questions', [QuizManagementController::class, 'storeQuestion'])->name('questions.store');
         Route::put('/{quiz}/questions/{question}', [QuizManagementController::class, 'updateQuestion'])->name('questions.update');

@@ -8,18 +8,20 @@ class Quiz extends Model
 {
     protected $fillable = [
         'course_id',
-        'module_id', // NEW: untuk quiz di module
+        'module_id',
         'title',
         'description',
-        'type', // pre_test, post_test, module_quiz
+        'type',
         'passing_score',
         'duration_minutes',
         'max_attempts',
+        'randomize_questions',
         'is_active',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
+        'randomize_questions' => 'boolean',
     ];
 
     public function course()
@@ -43,8 +45,19 @@ class Quiz extends Model
     }
 
     /**
-     * Cek apakah user bisa attempt quiz ini
+     * Get questions dengan randomize jika diperlukan
      */
+    public function getQuestionsForAttempt()
+    {
+        $query = $this->questions();
+        
+        if ($this->randomize_questions && ($this->type === 'pre_test' || $this->type === 'post_test')) {
+            return $query->inRandomOrder()->get();
+        }
+        
+        return $query->orderBy('order')->get();
+    }
+
     public function canUserAttempt($userId)
     {
         $attemptCount = $this->attempts()
@@ -54,9 +67,6 @@ class Quiz extends Model
         return $attemptCount < $this->max_attempts;
     }
 
-    /**
-     * Get best attempt score untuk user
-     */
     public function getBestAttempt($userId)
     {
         return $this->attempts()
@@ -66,9 +76,6 @@ class Quiz extends Model
             ->first();
     }
 
-    /**
-     * Get passed attempt untuk user
-     */
     public function getPassedAttempt($userId)
     {
         return $this->attempts()
@@ -78,9 +85,6 @@ class Quiz extends Model
             ->first();
     }
 
-    /**
-     * Get total points dari semua questions
-     */
     public function getTotalPointsAttribute()
     {
         return $this->questions()->sum('points');

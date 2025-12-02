@@ -285,4 +285,79 @@ class QuizManagementController extends Controller
 
         return redirect()->back()->with('success', 'Question deleted!');
     }
+
+
+    /**
+ * Sync questions between pre-test and post-test
+ */
+public function syncQuestions($id, $targetType)
+{
+    $instructorId = session('edutech_user_id');
+
+    // Validate target type
+    if (!in_array($targetType, ['pre_test', 'post_test'])) {
+        return redirect()->back()->with('error', 'Invalid target quiz type!');
+    }
+
+    // Get source quiz
+    $sourceQuiz = Quiz::whereHas('course', function($query) use ($instructorId) {
+        $query->where('instructor_id', $instructorId);
+    })->findOrFail($id);
+
+    // Ensure source is pre_test or post_test
+    if (!in_array($sourceQuiz->type, ['pre_test', 'post_test'])) {
+        return redirect()->back()->with('error', 'Can only sync between pre-test and post-test!');
+    }
+
+    // Prevent syncing to self
+    if ($sourceQuiz->type === $targetType) {
+        return redirect()->back()->with('error', 'Cannot sync to the same quiz type!');
+    }
+
+    // Get or create target quiz
+    $targetQuiz = Quiz::where('course_id', $sourceQuiz->course_id)
+        ->where('type', $targetType)
+        ->first();
+
+    if (!$targetQuiz) {
+        // Create new target quiz with similar settings
+        $targetQuiz = Quiz::create([
+            'course_id' => $sourceQuiz->course_id,
+            'module_id' => null,
+            'type' => $targetType,
+            'title' => ucfirst(str_replace('_', '-', $targetType)) . ': ' . $sourceQuiz->course->title,
+            'description' => $sourceQuiz->description,
+            'passing_score' => $sourceQuiz->passing_score,
+            'duration_minutes' => $sourceQuiz->duration_minutes,
+            'max_attempts' => $sourceQuiz->max_attempts,
+            'is_active' => false, // Keep inactive until instructor reviews
+        ]);
+    }
+
+    // Delete existing questions in target
+    QuizQuestion::where('quiz_id', $targetQuiz->id)->delete();
+
+    // Copy questions from source to target
+    $sourceQuestions = QuizQuestion::where('quiz_id', $sourceQuiz->id)
+        ->orderBy('order')
+        ->get();
+
+    foreach ($sourceQuestions as $index => $question) {
+        QuizQuestion::create([
+            'quiz_id' => $targetQuiz->id,
+            'question' => $question->question,
+            'type' => $question->type,
+            'options' => $question->options,
+            'correct_answer' => $question->correct_answer,
+            'points' => $question->points,
+            'order' => $index + 1,
+        ]);
+    }
+
+    $targetTypeLabel = ucfirst(str_replace('_', '-', $targetType));
+    
+    return redirect()
+        ->route('edutech.instructor.quiz.edit', $targetQuiz->id)
+        ->with('success', "Successfully synced {$sourceQuestions->count()} questions to {$targetTypeLabel}!");
+}
 }

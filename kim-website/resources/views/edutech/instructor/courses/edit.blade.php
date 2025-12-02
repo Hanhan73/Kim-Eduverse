@@ -8,325 +8,66 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
-            --primary: #667eea;
-            --secondary: #764ba2;
-            --success: #48bb78;
-            --danger: #f56565;
-            --warning: #ed8936;
-            --dark: #2d3748;
-            --gray: #718096;
-            --light: #f7fafc;
+            --primary: #667eea; --secondary: #764ba2; --success: #48bb78;
+            --danger: #f56565; --warning: #ed8936; --dark: #2d3748;
+            --gray: #718096; --light: #f7fafc;
         }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--light);
-            color: var(--dark);
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 30px 20px;
-        }
-
-        .header {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            padding: 30px;
-            border-radius: 12px;
-            margin-bottom: 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .header h1 {
-            font-size: 2rem;
-        }
-
-        .btn {
-            padding: 10px 20px;
-            border-radius: 8px;
-            border: none;
-            font-weight: 600;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s;
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
-
-        .btn-success {
-            background: var(--success);
-            color: white;
-        }
-
-        .btn-danger {
-            background: var(--danger);
-            color: white;
-        }
-
-        .btn-warning {
-            background: var(--warning);
-            color: white;
-        }
-
-        .btn-secondary {
-            background: white;
-            color: var(--dark);
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-
-        .card {
-            background: white;
-            border-radius: 12px;
-            padding: 30px;
-            margin-bottom: 25px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
-
-        .card h2 {
-            margin-bottom: 20px;
-            color: var(--dark);
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: var(--dark);
-        }
-
-        input, select, textarea {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 1rem;
-        }
-
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-
-        textarea {
-            min-height: 120px;
-            resize: vertical;
-        }
-
-        .modules-list {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .module-card {
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
-            overflow: hidden;
-        }
-
-        .module-header {
-            background: var(--light);
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-        }
-
-        .module-header:hover {
-            background: #edf2f7;
-        }
-
-        .module-title {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: var(--dark);
-        }
-
-        .module-actions {
-            display: flex;
-            gap: 10px;
-        }
-
-        .lessons-list {
-            padding: 20px;
-        }
-
-        .lesson-item {
-            padding: 15px;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            margin-bottom: 10px;
-        }
-
-        .lesson-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .lesson-info {
-            flex: 1;
-        }
-
-        .lesson-title {
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-
-        .lesson-meta {
-            font-size: 0.85rem;
-            color: var(--gray);
-        }
-
-        .lesson-quiz-section {
-            background: #f0f9ff;
-            border: 2px dashed #3b82f6;
-            border-radius: 8px;
-            padding: 15px;
-            margin-top: 10px;
-        }
-
-        .lesson-quiz-section.has-quiz {
-            background: #d1fae5;
-            border-color: var(--success);
-        }
-
-        .quiz-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .quiz-badge {
-            background: var(--success);
-            color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        .alert {
-            padding: 15px 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-
-        .alert-success {
-            background: #c6f6d5;
-            color: #22543d;
-            border: 1px solid #9ae6b4;
-        }
-
-        .btn-sm {
-            padding: 6px 12px;
-            font-size: 0.85rem;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: var(--gray);
-        }
-
-        .empty-state i {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            opacity: 0.3;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: white;
-            border-radius: 12px;
-            padding: 30px;
-            max-width: 600px;
-            width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .modal-header h3 {
-            font-size: 1.5rem;
-        }
-
-        .btn-close {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: var(--gray);
-        }
-
-        .lesson-actions {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .info-box {
-            background: #e6fffa;
-            border: 2px solid #81e6d9;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 20px;
-            font-size: 0.9rem;
-        }
-
-        .info-box i {
-            color: #2c7a7b;
-            margin-right: 8px;
-        }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--light); color: var(--dark); }
+        .container { max-width: 1200px; margin: 0 auto; padding: 30px 20px; }
+        .header { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; padding: 30px; border-radius: 12px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; }
+        .header h1 { font-size: 2rem; }
+        .btn { padding: 10px 20px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: all 0.3s; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-success { background: var(--success); color: white; }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-warning { background: var(--warning); color: white; }
+        .btn-secondary { background: white; color: var(--dark); }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .card { background: white; border-radius: 12px; padding: 30px; margin-bottom: 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .card h2 { margin-bottom: 20px; color: var(--dark); }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; color: var(--dark); }
+        input, select, textarea { width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 1rem; }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary); }
+        textarea { min-height: 120px; resize: vertical; }
+        .modules-list { display: flex; flex-direction: column; gap: 20px; }
+        .module-card { border: 2px solid #e2e8f0; border-radius: 12px; overflow: hidden; }
+        .module-header { background: var(--light); padding: 20px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        .module-header:hover { background: #edf2f7; }
+        .module-title { font-size: 1.2rem; font-weight: 700; color: var(--dark); }
+        .module-actions { display: flex; gap: 10px; }
+        .lessons-list { padding: 20px; }
+        .lesson-item { padding: 15px; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 10px; }
+        .lesson-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .lesson-info { flex: 1; }
+        .lesson-title { font-weight: 600; margin-bottom: 5px; }
+        .lesson-meta { font-size: 0.85rem; color: var(--gray); }
+        .lesson-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+        .alert { padding: 15px 20px; border-radius: 8px; margin-bottom: 20px; }
+        .alert-success { background: #c6f6d5; color: #22543d; border: 1px solid #9ae6b4; }
+        .btn-sm { padding: 6px 12px; font-size: 0.85rem; }
+        .empty-state { text-align: center; padding: 60px 20px; color: var(--gray); }
+        .empty-state i { font-size: 4rem; margin-bottom: 20px; opacity: 0.3; }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; }
+        .modal.active { display: flex; }
+        .modal-content { background: white; border-radius: 12px; padding: 30px; max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .modal-header h3 { font-size: 1.5rem; }
+        .btn-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--gray); }
+        .info-box { background: #e6fffa; border: 2px solid #81e6d9; border-radius: 8px; padding: 15px; margin-bottom: 20px; font-size: 0.9rem; }
+        .info-box i { color: #2c7a7b; margin-right: 8px; }
+        .quiz-section { background: #f0f9ff; border: 2px solid #3b82f6; border-radius: 8px; padding: 20px; margin-top: 20px; }
+        .quiz-section h3 { color: #1e40af; margin-bottom: 15px; }
+        .quiz-card { background: white; border: 2px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 10px; }
+        .quiz-header { display: flex; justify-content: space-between; align-items: center; }
+        .quiz-badge { padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+        .quiz-badge.pre_test { background: #feebc8; color: #7c2d12; }
+        .quiz-badge.post_test { background: #c6f6d5; color: #22543d; }
+        .quiz-badge.module_quiz { background: #e6fffa; color: #234e52; }
+        .module-quiz-section { background: #d1fae5; border: 2px solid var(--success); border-radius: 8px; padding: 15px; margin-top: 15px; }
+        .module-quiz-section.no-quiz { background: #f0f9ff; border-color: #3b82f6; }
     </style>
 </head>
 <body>
@@ -337,7 +78,6 @@
         </div>
         @endif
 
-        <!-- Header -->
         <div class="header">
             <div>
                 <h1>{{ $course->title }}</h1>
@@ -414,6 +154,89 @@
             </form>
         </div>
 
+        <!-- PRE-TEST & POST-TEST -->
+        <div class="card">
+            <h2><i class="fas fa-clipboard-check"></i> Pre-Test & Post-Test</h2>
+            
+            <div class="quiz-section">
+                <h3><i class="fas fa-clipboard-list"></i> Pre-Test</h3>
+                @php
+                    $preTest = $course->quizzes->where('type', 'pre_test')->first();
+                @endphp
+                
+                @if($preTest)
+                    <div class="quiz-card">
+                        <div class="quiz-header">
+                            <div>
+                                <strong>{{ $preTest->title }}</strong>
+                                <p style="color: var(--gray); font-size: 0.9rem; margin-top: 5px;">
+                                    {{ $preTest->questions->count() }} soal · {{ $preTest->duration_minutes }} menit · {{ $preTest->passing_score }}% passing
+                                    @if($preTest->randomize_questions)
+                                    · <i class="fas fa-random"></i> Random
+                                    @endif
+                                </p>
+                            </div>
+                            <div style="display: flex; gap: 8px;">
+                                <a href="{{ route('edutech.instructor.quiz.edit', $preTest->id) }}" class="btn btn-sm btn-primary">
+                                    <i class="fas fa-edit"></i> Edit
+                                </a>
+                                <form action="{{ route('edutech.instructor.quiz.destroy', $preTest->id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Hapus Pre-Test?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-danger">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                @else
+                    <button onclick="openQuizModal('pre_test')" class="btn btn-warning">
+                        <i class="fas fa-plus"></i> Tambah Pre-Test
+                    </button>
+                @endif
+            </div>
+
+            <div class="quiz-section" style="margin-top: 20px;">
+                <h3><i class="fas fa-clipboard-check"></i> Post-Test</h3>
+                @php
+                    $postTest = $course->quizzes->where('type', 'post_test')->first();
+                @endphp
+                
+                @if($postTest)
+                    <div class="quiz-card">
+                        <div class="quiz-header">
+                            <div>
+                                <strong>{{ $postTest->title }}</strong>
+                                <p style="color: var(--gray); font-size: 0.9rem; margin-top: 5px;">
+                                    {{ $postTest->questions->count() }} soal · {{ $postTest->duration_minutes }} menit · {{ $postTest->passing_score }}% passing
+                                    @if($postTest->randomize_questions)
+                                    · <i class="fas fa-random"></i> Random
+                                    @endif
+                                </p>
+                            </div>
+                            <div style="display: flex; gap: 8px;">
+                                <a href="{{ route('edutech.instructor.quiz.edit', $postTest->id) }}" class="btn btn-sm btn-primary">
+                                    <i class="fas fa-edit"></i> Edit
+                                </a>
+                                <form action="{{ route('edutech.instructor.quiz.destroy', $postTest->id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Hapus Post-Test?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-danger">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                @else
+                    <button onclick="openQuizModal('post_test')" class="btn btn-warning">
+                        <i class="fas fa-plus"></i> Tambah Post-Test
+                    </button>
+                @endif
+            </div>
+        </div>
+
         <!-- Modules & Lessons -->
         <div class="card">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
@@ -421,11 +244,6 @@
                 <button onclick="openModuleModal()" class="btn btn-primary">
                     <i class="fas fa-plus"></i> Add Module
                 </button>
-            </div>
-
-            <div class="info-box">
-                <i class="fas fa-lightbulb"></i>
-                <strong>Tip:</strong> Anda dapat menambahkan quiz ke setiap lesson untuk menguji pemahaman siswa secara bertahap.
             </div>
 
             @if($course->modules->count() > 0)
@@ -453,6 +271,45 @@
                         </div>
                     </div>
 
+                    <!-- MODULE QUIZ -->
+                    <div class="module-quiz-section {{ $module->quiz ? '' : 'no-quiz' }}">
+                        @php
+                            $moduleQuiz = $course->quizzes->where('type', 'module_quiz')->where('module_id', $module->id)->first();
+                        @endphp
+                        
+                        @if($moduleQuiz)
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <strong><i class="fas fa-tasks"></i> Module Quiz: {{ $moduleQuiz->title }}</strong>
+                                    <p style="color: var(--gray); font-size: 0.85rem; margin-top: 5px;">
+                                        {{ $moduleQuiz->questions->count() }} soal · {{ $moduleQuiz->duration_minutes }} menit · {{ $moduleQuiz->passing_score }}% passing
+                                    </p>
+                                </div>
+                                <div style="display: flex; gap: 8px;">
+                                    <a href="{{ route('edutech.instructor.quiz.edit', $moduleQuiz->id) }}" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </a>
+                                    <form action="{{ route('edutech.instructor.quiz.destroy', $moduleQuiz->id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Hapus quiz module?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-danger">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        @else
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="color: var(--gray);">
+                                    <i class="fas fa-clipboard-question"></i> Belum ada quiz untuk module ini
+                                </span>
+                                <button onclick="openQuizModal('module_quiz', {{ $module->id }})" class="btn btn-sm btn-warning">
+                                    <i class="fas fa-plus"></i> Tambah Quiz Module
+                                </button>
+                            </div>
+                        @endif
+                    </div>
+
                     @if($module->lessons->count() > 0)
                     <div class="lessons-list">
                         @foreach($module->lessons as $lesson)
@@ -478,46 +335,6 @@
                                         </button>
                                     </form>
                                 </div>
-                            </div>
-
-                            <!-- Quiz Section for this Lesson -->
-                            <div class="lesson-quiz-section {{ $lesson->quiz ? 'has-quiz' : '' }}">
-                                @if($lesson->quiz)
-                                    <!-- Has Quiz -->
-                                    <div class="quiz-info">
-                                        <div>
-                                            <span class="quiz-badge">
-                                                <i class="fas fa-clipboard-check"></i> HAS QUIZ
-                                            </span>
-                                            <span style="margin-left: 10px; color: var(--gray); font-size: 0.9rem;">
-                                                {{ $lesson->quiz->title }} 
-                                                ({{ $lesson->quiz->questions->count() }} questions · {{ $lesson->quiz->passing_score }}% to pass)
-                                            </span>
-                                        </div>
-                                        <div style="display: flex; gap: 8px;">
-                                            <a href="{{ route('edutech.instructor.quiz.edit', $lesson->quiz->id) }}" class="btn btn-sm btn-primary">
-                                                <i class="fas fa-edit"></i> Edit Quiz
-                                            </a>
-                                            <form action="{{ route('edutech.instructor.quiz.destroy', $lesson->quiz->id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Delete this quiz?')">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-danger">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                @else
-                                    <!-- No Quiz -->
-                                    <div class="quiz-info">
-                                        <div style="color: var(--gray);">
-                                            <i class="fas fa-clipboard-question"></i> No quiz for this lesson yet
-                                        </div>
-                                        <button onclick="openQuizModal({{ $lesson->id }}, '{{ $lesson->title }}')" class="btn btn-sm btn-warning">
-                                            <i class="fas fa-plus"></i> Add Quiz
-                                        </button>
-                                    </div>
-                                @endif
                             </div>
                         </div>
                         @endforeach
@@ -618,55 +435,51 @@
         </div>
     </div>
 
-    <!-- Add Quiz to Lesson Modal -->
+    <!-- Add Quiz Modal -->
     <div id="quizModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Add Quiz to Lesson</h3>
+                <h3 id="quizModalTitle">Add Quiz</h3>
                 <button class="btn-close" onclick="closeModal('quizModal')">&times;</button>
             </div>
-            
-            <div class="info-box">
-                <i class="fas fa-info-circle"></i>
-                Creating quiz for lesson: <strong id="lessonTitleDisplay"></strong>
-            </div>
 
-            <form id="quizForm" action="{{ route('edutech.instructor.quiz.store') }}" method="POST">                
+            <form id="quizForm" action="{{ route('edutech.instructor.quiz.store') }}" method="POST">
                 @csrf
                 <input type="hidden" name="course_id" value="{{ $course->id }}">
-                <input type="hidden" name="type" value="lesson_quiz">
-                <input type="hidden" name="lesson_id" id="quizLessonId">
+                <input type="hidden" name="type" id="quizType">
+                <input type="hidden" name="module_id" id="quizModuleId">
 
                 <div class="form-group">
-                    <label>Quiz Title <span style="color: var(--danger);">*</span></label>
-                    <input type="text" name="title" id="quizTitle" class="form-control" placeholder="e.g., Lesson 1 Quiz" required>
-                    <small style="color: var(--gray);">Give your quiz a descriptive title</small>
+                    <label>Quiz Title</label>
+                    <input type="text" name="title" id="quizTitle" required>
                 </div>
 
                 <div class="form-group">
                     <label>Description</label>
-                    <textarea name="description" class="form-control" placeholder="Describe what this quiz will assess..."></textarea>
-                    <small style="color: var(--gray);">Optional: Provide instructions for students</small>
+                    <textarea name="description"></textarea>
                 </div>
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                     <div class="form-group">
-                        <label>Passing Score (%) <span style="color: var(--danger);">*</span></label>
-                        <input type="number" name="passing_score" class="form-control" value="70" min="0" max="100" required>
-                        <small style="color: var(--gray);">Minimum score to pass (0-100)</small>
+                        <label>Passing Score (%)</label>
+                        <input type="number" name="passing_score" value="70" min="0" max="100" required>
                     </div>
-
                     <div class="form-group">
-                        <label>Duration (Minutes) <span style="color: var(--danger);">*</span></label>
-                        <input type="number" name="duration_minutes" class="form-control" value="15" min="1" required>
-                        <small style="color: var(--gray);">Time limit for this quiz</small>
+                        <label>Duration (Minutes)</label>
+                        <input type="number" name="duration_minutes" value="30" min="1" required>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label>Maximum Attempts <span style="color: var(--danger);">*</span></label>
-                    <input type="number" name="max_attempts" class="form-control" value="3" min="1" max="10" required>
-                    <small style="color: var(--gray);">How many times can students retake? (1-10)</small>
+                    <label>Maximum Attempts</label>
+                    <input type="number" name="max_attempts" value="3" min="1" required>
+                </div>
+
+                <div class="form-group" id="randomizeField" style="display: none;">
+                    <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                        <input type="checkbox" name="randomize_questions" value="1" style="width: auto;">
+                        <span>Randomize Questions (Acak urutan soal setiap attempt)</span>
+                    </label>
                 </div>
 
                 <button type="submit" class="btn btn-primary" style="width: 100%;">
@@ -687,11 +500,32 @@
             document.getElementById('lessonModal').classList.add('active');
         }
 
-        function openQuizModal(lessonId, lessonTitle) {
-            document.getElementById('quizLessonId').value = lessonId;
-            document.getElementById('lessonTitleDisplay').textContent = lessonTitle;
-            document.getElementById('quizTitle').value = lessonTitle + ' - Quiz';
-            document.getElementById('quizModal').classList.add('active');
+        function openQuizModal(type, moduleId = null) {
+            const modal = document.getElementById('quizModal');
+            const titleField = document.getElementById('quizTitle');
+            const typeField = document.getElementById('quizType');
+            const moduleField = document.getElementById('quizModuleId');
+            const randomizeField = document.getElementById('randomizeField');
+            const modalTitle = document.getElementById('quizModalTitle');
+
+            typeField.value = type;
+            moduleField.value = moduleId || '';
+
+            if (type === 'pre_test') {
+                titleField.value = 'Pre-Test';
+                modalTitle.textContent = 'Tambah Pre-Test';
+                randomizeField.style.display = 'block';
+            } else if (type === 'post_test') {
+                titleField.value = 'Post-Test';
+                modalTitle.textContent = 'Tambah Post-Test';
+                randomizeField.style.display = 'block';
+            } else if (type === 'module_quiz') {
+                titleField.value = 'Module Quiz';
+                modalTitle.textContent = 'Tambah Module Quiz';
+                randomizeField.style.display = 'none';
+            }
+
+            modal.classList.add('active');
         }
 
         function closeModal(modalId) {
@@ -704,7 +538,6 @@
             document.getElementById('textField').style.display = type === 'text' ? 'block' : 'none';
         }
 
-        // Close modal when clicking outside
         window.onclick = function(event) {
             if (event.target.classList.contains('modal')) {
                 event.target.classList.remove('active');

@@ -101,7 +101,7 @@
                     </span>
                 </div>
             </div>
-            <a href="{{ route('edutech.instructor.quiz.index') }}" class="btn btn-secondary">
+            <a href="{{ route('edutech.instructor.courses.edit', $quiz->course->id) }}" class="btn btn-secondary">
                 <i class="fas fa-arrow-left"></i> Back to List
             </a>
         </div>
