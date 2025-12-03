@@ -282,6 +282,7 @@
         margin-top: 15px;
     }
 
+    /* MODAL - DIPERBAIKI SESUAI EDUTECH */
     .modal {
         display: none;
         position: fixed;
@@ -295,7 +296,7 @@
     }
 
     .modal.active {
-        display: flex;
+        display: flex !important;
         align-items: center;
         justify-content: center;
     }
@@ -349,6 +350,37 @@
         width: 20px;
         height: 20px;
         cursor: pointer;
+    }
+
+    .btn-add-option {
+        background: var(--light);
+        color: var(--dark);
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        cursor: pointer;
+        border: 2px dashed #e2e8f0;
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .btn-add-option:hover {
+        border-color: var(--primary);
+        background: #f0f4ff;
+    }
+
+    .btn-remove-option {
+        background: var(--danger);
+        color: white;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        cursor: pointer;
+        border: none;
+    }
+
+    .btn-remove-option:hover {
+        background: #c53030;
     }
 
     .empty-state {
@@ -600,8 +632,7 @@
                 </div>
 
                 <div class="question-actions">
-                    <button type="button" class="btn btn-sm btn-edit"
-                        onclick="editQuestion({{ $question->id }}, '{{ $question->question_text }}', '{{ $question->option_a }}', '{{ $question->option_b }}', '{{ $question->option_c }}', '{{ $question->option_d }}', '{{ $question->option_e ?? '' }}', '{{ $question->correct_answer }}', {{ $question->points }})">
+                    <button type="button" class="btn btn-sm btn-edit" data-question-id="{{ $question->id }}">
                         <i class="fas fa-edit"></i> Edit
                     </button>
                     <form action="{{ route('admin.digital.quizzes.destroy-question', [$quiz->id, $question->id]) }}"
@@ -627,21 +658,21 @@
     </div>
 </div>
 
-<!-- Question Modal (for both Add & Edit) -->
+<!-- Add Question Modal - DIPERBAIKI SESUAI EDUTECH -->
 <div id="questionModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <h3 id="modalTitle">Add Question</h3>
+            <h3>Add Question</h3>
             <button class="btn-close" onclick="closeModal()">&times;</button>
         </div>
 
-        <form id="questionForm" action="{{ route('admin.digital.quizzes.store-question', $quiz->id) }}" method="POST">
+        <form action="{{ route('admin.digital.quizzes.store-question', $quiz->id) }}" method="POST" id="questionForm">
             @csrf
 
             <div class="form-group">
                 <label>Question <span style="color: var(--danger);">*</span></label>
-                <textarea id="question_text" name="question_text" class="form-control"
-                    placeholder="Enter your question here..." required></textarea>
+                <textarea name="question_text" class="form-control" placeholder="Enter your question here..."
+                    required></textarea>
             </div>
 
             <!-- Multiple Choice Options -->
@@ -653,36 +684,31 @@
                     <i class="fas fa-info-circle"></i> Click the radio button to mark the correct answer
                 </div>
                 <div class="option-input">
-                    <input type="radio" name="correct_answer" value="a" required>
-                    <input type="text" name="option_a" class="form-control" placeholder="Option A" required>
+                    <input type="radio" name="correct_answer" value="" required>
+                    <input type="text" name="options[]" class="form-control" placeholder="Option 1" required
+                        oninput="updateRadioValue(this)">
+                    <button type="button" class="btn-remove-option" onclick="removeOption(this)">✖</button>
                 </div>
                 <div class="option-input">
-                    <input type="radio" name="correct_answer" value="b" required>
-                    <input type="text" name="option_b" class="form-control" placeholder="Option B" required>
+                    <input type="radio" name="correct_answer" value="" required>
+                    <input type="text" name="options[]" class="form-control" placeholder="Option 2" required
+                        oninput="updateRadioValue(this)">
+                    <button type="button" class="btn-remove-option" onclick="removeOption(this)">✖</button>
                 </div>
-                <div class="option-input">
-                    <input type="radio" name="correct_answer" value="c" required>
-                    <input type="text" name="option_c" class="form-control" placeholder="Option C" required>
-                </div>
-                <div class="option-input">
-                    <input type="radio" name="correct_answer" value="d" required>
-                    <input type="text" name="option_d" class="form-control" placeholder="Option D" required>
-                </div>
-                <div class="option-input">
-                    <input type="radio" name="correct_answer" value="e">
-                    <input type="text" name="option_e" class="form-control" placeholder="Option E (Optional)">
-                </div>
+                <button type="button" class="btn-add-option" onclick="addOption()">
+                    <i class="fas fa-plus"></i> Add Option
+                </button>
             </div>
 
             <div class="form-group">
                 <label>Points <span style="color: var(--danger);">*</span></label>
-                <input type="number" id="question_points" name="points" class="form-control" value="1" min="1" required>
+                <input type="number" name="points" class="form-control" value="1" min="1" required>
                 <div class="form-hint">Point value for this question</div>
             </div>
 
             <div style="display: flex; gap: 10px; margin-top: 25px;">
                 <button type="submit" class="btn btn-primary" style="flex: 1;">
-                    <i class="fas fa-save"></i> <span id="submitButtonText">Save Question</span>
+                    <i class="fas fa-save"></i> Save Question
                 </button>
                 <button type="button" onclick="closeModal()" class="btn btn-secondary">
                     <i class="fas fa-times"></i> Cancel
@@ -695,72 +721,111 @@
 
 @push('scripts')
 <script>
-    function openModal() {
-        document.getElementById('questionModal').classList.add('active');
-        document.getElementById('modalTitle').innerText = 'Add Question';
-        document.getElementById('submitButtonText').innerText = 'Save Question';
-        document.getElementById('questionForm').reset();
-        document.getElementById('questionForm').action = "{{ route('admin.digital.quizzes.store-question', $quiz->id) }}";
-        // Reset form method to POST for adding new question
-        document.getElementById('questionForm').method = 'POST';
-        // Remove any existing PUT method input
-        const methodInput = document.querySelector('#questionForm input[name="_method"]');
-        if (methodInput) {
-            methodInput.remove();
-        }
-    }
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('✅ Modal script loaded successfully');
 
-    function closeModal() {
-        document.getElementById('questionModal').classList.remove('active');
-    }
-
-    function editQuestion(id, text, optA, optB, optC, optD, optE, correct, points) {
+        // Get the modal element
         const modal = document.getElementById('questionModal');
-        const form = document.getElementById('questionForm');
 
-        // Populate form fields
-        document.getElementById('question_text').value = text;
-        document.querySelector('input[name="option_a"]').value = optA;
-        document.querySelector('input[name="option_b"]').value = optB;
-        document.querySelector('input[name="option_c"]').value = optC;
-        document.querySelector('input[name="option_d"]').value = optD;
-        document.querySelector('input[name="option_e"]').value = optE;
-        document.getElementById('question_points').value = points;
-
-        // Set the correct answer radio button
-        document.querySelectorAll('input[name="correct_answer"]').forEach(radio => {
-            radio.checked = (radio.value === correct);
-        });
-
-        // Change modal title and button text
-        document.getElementById('modalTitle').innerText = 'Edit Question';
-        document.getElementById('submitButtonText').innerText = 'Update Question';
-
-        // Change form action and method for editing
-        form.action = `{{ route('admin.digital.quizzes.update-question', [$quiz->id, 'QUESTION_ID']) }}`.replace(
-            'QUESTION_ID', id);
-        form.method = 'POST';
-
-        // Add or update the _method input for PUT
-        let methodInput = document.querySelector('#questionForm input[name="_method"]');
-        if (!methodInput) {
-            methodInput = document.createElement('input');
-            methodInput.type = 'hidden';
-            methodInput.name = '_method';
-            form.appendChild(methodInput);
+        // --- Define all functions on the window object ---
+        window.openModal = function() {
+            if (modal) {
+                modal.classList.add('active');
+                document.getElementById('questionForm').reset();
+                resetOptions();
+                console.log('Modal opened');
+            } else {
+                console.error('Modal element not found!');
+            }
         }
-        methodInput.value = 'PUT';
 
-        // Show the modal
-        modal.classList.add('active');
-    }
-
-    // Close modal when clicking outside
-    window.onclick = function(event) {
-        const modal = document.getElementById('questionModal');
-        if (event.target === modal) {
-            closeModal();
+        window.closeModal = function() {
+            if (modal) {
+                modal.classList.remove('active');
+                console.log('Modal closed');
+            }
         }
-    }
+
+        // Close modal when clicking outside of it
+        window.onclick = function(event) {
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
+        let optionCount = 2;
+
+        window.resetOptions = function() {
+            const mcOptions = document.getElementById('mcOptions');
+            if (!mcOptions) return;
+            const optionInputs = mcOptions.querySelectorAll('.option-input');
+
+            // Remove all options except the first 2
+            optionInputs.forEach((opt, index) => {
+                if (index > 1) {
+                    mcOptions.removeChild(opt);
+                }
+            });
+
+            // Reset the first 2 options
+            optionInputs.forEach((opt, index) => {
+                if (index < 2) {
+                    const textInput = opt.querySelector('input[type="text"]');
+                    const radioInput = opt.querySelector('input[type="radio"]');
+                    textInput.value = '';
+                    textInput.placeholder = `Option ${index + 1}`;
+                    radioInput.value = '';
+                    radioInput.checked = false;
+                }
+            });
+
+            optionCount = 2;
+        }
+
+        window.updateRadioValue = function(input) {
+            const radio = input.parentElement.querySelector('input[type="radio"]');
+            radio.value = input.value;
+            if (!input.value.trim()) {
+                radio.checked = false;
+            }
+        }
+
+        window.addOption = function() {
+            optionCount++;
+            const mcOptions = document.getElementById('mcOptions');
+            const addButton = mcOptions.querySelector('.btn-add-option');
+            const newOption = document.createElement('div');
+            newOption.className = 'option-input';
+            newOption.innerHTML = `
+            <input type="radio" name="correct_answer" value="" required>
+            <input type="text" name="options[]" class="form-control" placeholder="Option ${optionCount}" required oninput="updateRadioValue(this)">
+            <button type="button" class="btn-remove-option" onclick="removeOption(this)">✖</button>
+        `;
+            mcOptions.insertBefore(newOption, addButton);
+        }
+
+        window.removeOption = function(button) {
+            const mcOptions = document.getElementById('mcOptions');
+            const optionDiv = button.parentElement;
+            const optionInputs = mcOptions.querySelectorAll('.option-input');
+
+            if (optionInputs.length <= 2) {
+                alert("A question must have at least 2 options!");
+                return;
+            }
+
+            mcOptions.removeChild(optionDiv);
+            updateOptionPlaceholders();
+        }
+
+        window.updateOptionPlaceholders = function() {
+            const optionInputs = document.querySelectorAll('#mcOptions .option-input');
+            optionInputs.forEach((opt, i) => {
+                const textInput = opt.querySelector('input[type="text"]');
+                textInput.placeholder = `Option ${i + 1}`;
+            });
+            optionCount = optionInputs.length;
+        }
+    });
 </script>
 @endpush
