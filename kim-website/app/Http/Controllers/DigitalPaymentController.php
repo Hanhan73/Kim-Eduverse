@@ -160,8 +160,8 @@ class DigitalPaymentController extends Controller
 
         // Get downloadable products (support file_path atau file_url)
         $downloadableProducts = $order->items->filter(function ($item) {
-            $hasFile = $item->product && 
-                       ($item->product->file_path || $item->product->file_url);
+            $hasFile = $item->product &&
+                ($item->product->file_path || $item->product->file_url);
             $isDownloadableType = in_array($item->product_type, ['ebook', 'template', 'worksheet', 'document']);
             return $hasFile && $isDownloadableType;
         });
@@ -187,11 +187,11 @@ class DigitalPaymentController extends Controller
         try {
             $serverKey = config('services.midtrans.server_key');
             $isProduction = config('services.midtrans.is_production', false);
-            
-            $baseUrl = $isProduction 
-                ? 'https://api.midtrans.com' 
+
+            $baseUrl = $isProduction
+                ? 'https://api.midtrans.com'
                 : 'https://api.sandbox.midtrans.com';
-            
+
             $response = Http::withBasicAuth($serverKey, '')
                 ->get("{$baseUrl}/v2/{$order->order_number}/status");
 
@@ -335,7 +335,23 @@ class DigitalPaymentController extends Controller
                 }
                 $hasQuestionnaire = true;
             }
-            
+            // Di processSuccessfulPayment(), setelah mark as paid
+
+            // Create seminar enrollment for seminar products
+            if ($item->product_type === 'seminar') {
+                $existingEnrollment = \App\Models\SeminarEnrollment::where('order_id', $order->id)
+                    ->where('seminar_id', $item->product_id)
+                    ->first();
+
+                if (!$existingEnrollment) {
+                    \App\Models\SeminarEnrollment::create([
+                        'seminar_id' => $item->product_id,
+                        'customer_email' => $order->customer_email,
+                        'order_id' => $order->id,
+                    ]);
+                }
+            }
+
             // Mark downloadable products
             if (in_array($item->product_type, ['ebook', 'template', 'worksheet', 'document'])) {
                 $hasDownloadable = true;
@@ -383,7 +399,7 @@ class DigitalPaymentController extends Controller
 
         // Check if product has file source (file_path atau file_url)
         $fileSource = $product->file_url ?? $product->file_path;
-        
+
         if (!$fileSource) {
             abort(404, 'File tidak ditemukan');
         }

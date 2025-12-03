@@ -17,16 +17,13 @@ return new class extends Migration
         }
 
         Schema::table('quizzes', function (Blueprint $table) {
-            // Tambah module_id
-            $table->foreignId('module_id')->nullable()->after('course_id')->constrained()->onDelete('cascade');
-            
             // Tambah kolom randomize untuk pre/post test
             $table->boolean('randomize_questions')->default(false)->after('max_attempts');
-            
+
             // Drop dan recreate type enum
             $table->dropColumn('type');
         });
-        
+
         Schema::table('quizzes', function (Blueprint $table) {
             $table->enum('type', ['pre_test', 'post_test', 'module_quiz'])->after('module_id');
         });
@@ -38,7 +35,7 @@ return new class extends Migration
             $table->dropForeign(['module_id']);
             $table->dropColumn(['module_id', 'randomize_questions', 'type']);
         });
-        
+
         Schema::table('quizzes', function (Blueprint $table) {
             $table->enum('type', ['pre_test', 'post_test'])->after('course_id');
         });

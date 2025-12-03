@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -237,11 +238,25 @@
             color: white;
         }
 
-        .stat-icon.primary { background: linear-gradient(135deg, var(--primary), var(--secondary)); }
-        .stat-icon.success { background: linear-gradient(135deg, #38a169, #48bb78); }
-        .stat-icon.warning { background: linear-gradient(135deg, #dd6b20, #ed8936); }
-        .stat-icon.danger { background: linear-gradient(135deg, #c53030, #f56565); }
-        .stat-icon.info { background: linear-gradient(135deg, #2b6cb0, #4299e1); }
+        .stat-icon.primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+        .stat-icon.success {
+            background: linear-gradient(135deg, #38a169, #48bb78);
+        }
+
+        .stat-icon.warning {
+            background: linear-gradient(135deg, #dd6b20, #ed8936);
+        }
+
+        .stat-icon.danger {
+            background: linear-gradient(135deg, #c53030, #f56565);
+        }
+
+        .stat-icon.info {
+            background: linear-gradient(135deg, #2b6cb0, #4299e1);
+        }
 
         .stat-content h4 {
             font-size: 1.5rem;
@@ -377,7 +392,8 @@
             border-collapse: collapse;
         }
 
-        th, td {
+        th,
+        td {
             padding: 15px;
             text-align: left;
             border-bottom: 1px solid #edf2f7;
@@ -410,12 +426,35 @@
             font-weight: 600;
         }
 
-        .badge-success { background: #c6f6d5; color: #22543d; }
-        .badge-warning { background: #feebc8; color: #744210; }
-        .badge-danger { background: #fed7d7; color: #742a2a; }
-        .badge-info { background: #bee3f8; color: #2a4365; }
-        .badge-primary { background: #e9d8fd; color: #44337a; }
-        .badge-secondary { background: #e2e8f0; color: #4a5568; }
+        .badge-success {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .badge-warning {
+            background: #feebc8;
+            color: #744210;
+        }
+
+        .badge-danger {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .badge-info {
+            background: #bee3f8;
+            color: #2a4365;
+        }
+
+        .badge-primary {
+            background: #e9d8fd;
+            color: #44337a;
+        }
+
+        .badge-secondary {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
 
         /* Alerts */
         .alert {
@@ -628,6 +667,7 @@
         @yield('styles')
     </style>
 </head>
+
 <body>
     <!-- Sidebar -->
     <aside class="sidebar">
@@ -638,59 +678,71 @@
 
         <nav class="sidebar-menu">
             <div class="menu-section">Menu Utama</div>
-            
-            <a href="{{ route('admin.digital.dashboard') }}" class="menu-item {{ request()->routeIs('admin.digital.dashboard') ? 'active' : '' }}">
+
+            <a href="{{ route('admin.digital.dashboard') }}"
+                class="menu-item {{ request()->routeIs('admin.digital.dashboard') ? 'active' : '' }}">
                 <i class="fas fa-home"></i> Dashboard
             </a>
 
             <div class="menu-section">Produk</div>
-            
-            <a href="{{ route('admin.digital.categories.index') }}" class="menu-item {{ request()->routeIs('admin.digital.categories.*') ? 'active' : '' }}">
+
+            <a href="{{ route('admin.digital.categories.index') }}"
+                class="menu-item {{ request()->routeIs('admin.digital.categories.*') ? 'active' : '' }}">
                 <i class="fas fa-folder"></i> Kategori
             </a>
-            
-            <a href="{{ route('admin.digital.products.index') }}" class="menu-item {{ request()->routeIs('admin.digital.products.*') ? 'active' : '' }}">
+
+            <a href="{{ route('admin.digital.products.index') }}"
+                class="menu-item {{ request()->routeIs('admin.digital.products.*') ? 'active' : '' }}">
                 <i class="fas fa-box"></i> Produk
             </a>
 
             <div class="menu-section">Angket</div>
-            
+
             <a href="{{ route('admin.digital.questionnaires.index') }}"
-            class="menu-item {{ request()->routeIs('admin.digital.questionnaires.*') ? 'active' : '' }}">
+                class="menu-item {{ request()->routeIs('admin.digital.questionnaires.*') ? 'active' : '' }}">
                 <i class="fas fa-clipboard-check"></i> Daftar Angket
             </a>
 
             <a href="{{ route('admin.digital.dimensions.index') }}"
-            class="menu-item {{ request()->routeIs('admin.digital.dimensions.*') ? 'active' : '' }}">
+                class="menu-item {{ request()->routeIs('admin.digital.dimensions.*') ? 'active' : '' }}">
                 <i class="fas fa-layer-group"></i> Daftar Dimensi
             </a>
 
             <a href="{{ route('admin.digital.questions.index') }}"
-            class="menu-item {{ request()->routeIs('admin.digital.questions.*') ? 'active' : '' }}">
+                class="menu-item {{ request()->routeIs('admin.digital.questions.*') ? 'active' : '' }}">
                 <i class="fas fa-circle-question"></i> Daftar Pertanyaan
             </a>
 
             <a href="{{ route('admin.digital.responses.index') }}"
-            class="menu-item {{ request()->routeIs('admin.digital.responses.*') ? 'active' : '' }}">
+                class="menu-item {{ request()->routeIs('admin.digital.responses.*') ? 'active' : '' }}">
                 <i class="fas fa-users"></i> Daftar Responden
             </a>
 
 
             <div class="menu-section">Transaksi</div>
-            
-            <a href="{{ route('admin.digital.orders.index') }}" class="menu-item {{ request()->routeIs('admin.digital.orders.*') ? 'active' : '' }}">
+
+            <a href="{{ route('admin.digital.orders.index') }}"
+                class="menu-item {{ request()->routeIs('admin.digital.orders.*') ? 'active' : '' }}">
                 <i class="fas fa-shopping-cart"></i> Orders
             </a>
 
+            <div class="menu-section">Seminar On-Demand</div>
+
+            <a href="{{ route('admin.digital.seminars.index') }}"
+                class="menu-item {{ request()->routeIs('admin.digital.seminars.*') ? 'active' : '' }}">
+                <i class="fas fa-whiteboard"></i> Seminar
+            </a>
+
             <div class="menu-section">Navigasi</div>
-            
+
             <a href="{{ route('admin.articles.index') }}" class="menu-item">
                 <i class="fas fa-arrow-left"></i> Kembali ke Blog Admin
             </a>
-            
+
             <form action="{{ route('admin.digital.logout') }}" method="POST" style="margin: 0;">
                 @csrf
-                <button type="submit" class="menu-item" style="width: 100%; border: none; background: none; text-align: left; cursor: pointer;">
+                <button type="submit" class="menu-item"
+                    style="width: 100%; border: none; background: none; text-align: left; cursor: pointer;">
                     <i class="fas fa-sign-out-alt"></i> Logout
                 </button>
             </form>
@@ -715,45 +767,45 @@
         <!-- Content Area -->
         <div class="content-area">
             @if(session('success'))
-                <div class="alert alert-success">
-                    <i class="fas fa-check-circle"></i>
-                    {{ session('success') }}
-                </div>
+            <div class="alert alert-success">
+                <i class="fas fa-check-circle"></i>
+                {{ session('success') }}
+            </div>
             @endif
 
             @if(session('error'))
-                <div class="alert alert-danger">
-                    <i class="fas fa-exclamation-circle"></i>
-                    {{ session('error') }}
-                </div>
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-circle"></i>
+                {{ session('error') }}
+            </div>
             @endif
 
             @if(session('warning'))
-                <div class="alert alert-warning">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    {{ session('warning') }}
-                </div>
+            <div class="alert alert-warning">
+                <i class="fas fa-exclamation-triangle"></i>
+                {{ session('warning') }}
+            </div>
             @endif
 
             @if(session('info'))
-                <div class="alert alert-info">
-                    <i class="fas fa-info-circle"></i>
-                    {{ session('info') }}
-                </div>
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i>
+                {{ session('info') }}
+            </div>
             @endif
 
             @if($errors->any())
-                <div class="alert alert-danger">
-                    <i class="fas fa-exclamation-circle"></i>
-                    <div>
-                        <strong>Terjadi kesalahan:</strong>
-                        <ul style="margin: 5px 0 0 20px;">
-                            @foreach($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-circle"></i>
+                <div>
+                    <strong>Terjadi kesalahan:</strong>
+                    <ul style="margin: 5px 0 0 20px;">
+                        @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
                 </div>
+            </div>
             @endif
 
             @yield('content')
@@ -779,5 +831,7 @@
     </script>
 
     @yield('scripts')
+    @stack('scripts')
 </body>
+
 </html>

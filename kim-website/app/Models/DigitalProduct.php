@@ -96,4 +96,14 @@ class DigitalProduct extends Model
     {
         return $this->type === 'questionnaire';
     }
+
+    public function seminar()
+    {
+        return $this->belongsTo(Seminar::class);
+    }
+
+    public function isSeminar()
+    {
+        return $this->type === 'seminar';
+    }
 }

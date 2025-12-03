@@ -138,11 +138,10 @@ Route::prefix('edutech/student')->name('edutech.student.')->middleware('edutech.
     Route::get('/courses/{slug}/learn', [LearningController::class, 'show'])->name('courses.learn');
     Route::post('/learning/lesson/{lesson}/complete', [LearningController::class, 'completeLesson'])->name('learning.complete');
     Route::get('/learning/lesson/{lesson}/next', [LearningController::class, 'nextLesson'])->name('learning.next');
-    
+
     // Quiz Routes (Update)
     Route::post('/quiz/{quiz}/start', [StudentQuizController::class, 'start'])->name('quiz.start');
     Route::post('/quiz/{quiz}/submit', [StudentQuizController::class, 'submit'])->name('quiz.submit');
- 
 });
 
 // ========================================
@@ -219,7 +218,7 @@ Route::prefix('edutech/instructor')->name('edutech.instructor.')->middleware('ed
         Route::delete('/{quiz}', [QuizManagementController::class, 'destroy'])->name('destroy');
         Route::post('/{quiz}/toggle', [QuizManagementController::class, 'toggleActive'])->name('toggle');
 
-         Route::post('/{quiz}/sync/{targetType}', [QuizManagementController::class, 'syncQuestions'])->name('sync');
+        Route::post('/{quiz}/sync/{targetType}', [QuizManagementController::class, 'syncQuestions'])->name('sync');
 
         // Questions
         Route::post('/{quiz}/questions', [QuizManagementController::class, 'storeQuestion'])->name('questions.store');
@@ -335,6 +334,8 @@ Route::post('/edutech/payment/notification', [PaymentController::class, 'notific
 use App\Http\Controllers\DigitalController;
 use App\Http\Controllers\DigitalPaymentController;
 use App\Http\Controllers\QuestionnaireController;
+use App\Http\Controllers\SeminarController;
+use App\Http\Controllers\Admin\SeminarController as AdminSeminarController;
 
 // ========================================
 // KIM DIGITAL - PUBLIC ROUTES
@@ -368,12 +369,27 @@ Route::prefix('produk/digital')->name('digital.')->group(function () {
 
     Route::post('/payment/confirm/{orderNumber}', [DigitalPaymentController::class, 'confirmPayment'])->name('payment.confirm');
 
+    Route::prefix('seminar')->name('digital.seminar.')->group(function () {
+        Route::get('/{orderNumber}', [SeminarController::class, 'learn'])->name('learn');
+
+        // Quiz
+        Route::post('/{orderNumber}/quiz/{quizType}/start', [SeminarController::class, 'startQuiz'])->name('quiz.start');
+        Route::post('/{orderNumber}/quiz/{quizType}/submit', [SeminarController::class, 'submitQuiz'])->name('quiz.submit');
+
+        // Material
+        Route::post('/{orderNumber}/material/viewed', [SeminarController::class, 'markMaterialViewed'])->name('material.viewed');
+        Route::get('/{orderNumber}/material/download', [SeminarController::class, 'downloadMaterial'])->name('download.material');
+
+        // Certificate
+        Route::get('/certificate/{enrollmentId}/download', [SeminarController::class, 'downloadCertificate'])->name('certificate.download');
+    });
+
     // Questionnaire
     Route::get('/questionnaire/{orderNumber}', [QuestionnaireController::class, 'show'])->name('questionnaire.show');
     Route::post('/questionnaire/submit/{responseId}', [QuestionnaireController::class, 'submit'])->name('questionnaire.submit');
     Route::get('/questionnaire/result/{responseId}', [QuestionnaireController::class, 'downloadResult'])->name('questionnaire.download');
 
-        // Download Product File (untuk ebook, template, dll)
+    // Download Product File (untuk ebook, template, dll)
     Route::get('/download/{orderNumber}/{productId}', [DigitalPaymentController::class, 'downloadProduct'])
         ->name('product.download');
 
@@ -392,6 +408,7 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Admin\DimensionController;
 use App\Http\Controllers\Admin\QuestionnaireResponseController;
 use App\Http\Controllers\Admin\QuestionController;
+use App\Http\Controllers\Admin\QuizController;
 
 // Admin Auth Routes (No middleware)
 Route::prefix('admin/digital')->name('admin.digital.')->group(function () {
@@ -402,13 +419,13 @@ Route::prefix('admin/digital')->name('admin.digital.')->group(function () {
 
 // Admin Routes - Protected by admin middleware
 Route::prefix('admin/digital')->name('admin.digital.')->middleware(['admin'])->group(function () {
-    
+
     // Dashboard
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-    
+
     // Products
     Route::resource('products', ProductController::class);
-    
+
     // Questionnaires
     Route::resource('questionnaires', QuestionnaireManagementController::class);
     Route::post('/questionnaires/{id}/dimensions', [QuestionnaireManagementController::class, 'addDimension'])->name('questionnaires.addDimension');
@@ -424,25 +441,25 @@ Route::prefix('admin/digital')->name('admin.digital.')->middleware(['admin'])->g
 
     // Dimensions (CRUD)
     Route::resource('dimensions', DimensionController::class);
- 
-     // Score Range Management
+
+    // Score Range Management
     Route::post('/dimensions/{id}/score-ranges', [DimensionController::class, 'addScoreRange'])
         ->name('dimensions.add-range');
-    
+
     Route::put('/score-ranges/{id}', [DimensionController::class, 'updateScoreRange'])
         ->name('score-ranges.update');
-    
+
     Route::delete('/score-ranges/{id}', [DimensionController::class, 'deleteScoreRange'])
         ->name('score-ranges.destroy');
-    
+
     // Generate default ranges
     Route::post('/dimensions/{id}/generate-ranges', [DimensionController::class, 'generateDefaultRanges'])
         ->name('dimensions.generate-ranges');
-    
+
     // Migrate legacy interpretations
     Route::post('/dimensions/{id}/migrate-interpretations', [DimensionController::class, 'migrateInterpretations'])
         ->name('dimensions.migrate-interpretations');
-    
+
     // Reorder ranges (AJAX)
     Route::post('/dimensions/{id}/reorder-ranges', [DimensionController::class, 'reorderScoreRanges'])
         ->name('dimensions.reorder-ranges');
@@ -453,10 +470,10 @@ Route::prefix('admin/digital')->name('admin.digital.')->middleware(['admin'])->g
     // Response (CRUD)
     Route::resource('responses', QuestionnaireResponseController::class);
     Route::post('responses/{id}/resend', [QuestionnaireResponseController::class, 'resend'])
-    ->name('responses.resend');
+        ->name('responses.resend');
     Route::post('responses/{id}/regenerate', [QuestionnaireResponseController::class, 'regenerate'])
-    ->name('responses.regenerate');
-    
+        ->name('responses.regenerate');
+
     // Orders
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{id}', [OrderController::class, 'show'])->name('orders.show');
@@ -464,21 +481,52 @@ Route::prefix('admin/digital')->name('admin.digital.')->middleware(['admin'])->g
     Route::post('/orders/{id}/status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
 
 
-        // Regenerate AI Analysis untuk response tertentu
+    // Regenerate AI Analysis untuk response tertentu
     Route::post('responses/{id}/regenerate-ai', [QuestionnaireResponseController::class, 'regenerateAI'])
         ->name('responses.regenerate-ai');
-    
+
     // Bulk regenerate AI untuk multiple responses
     Route::post('responses/bulk-regenerate-ai', [QuestionnaireResponseController::class, 'bulkRegenerateAI'])
         ->name('responses.bulk-regenerate-ai');
-    
+
     // Preview AI analysis (tanpa save)
     Route::post('responses/{id}/preview-ai', [QuestionnaireResponseController::class, 'previewAI'])
         ->name('responses.preview-ai');
-    
+
     // Test AI configuration
     Route::post('questionnaires/{id}/test-ai', [QuestionnaireController::class, 'testAI'])
         ->name('questionnaires.test-ai');
+
+    // Route untuk mengelola Quiz
+    Route::get('quizzes/{quiz}/edit', [QuizController::class, 'edit'])->name('quizzes.edit');
+    Route::put('quizzes/{quiz}', [QuizController::class, 'update'])->name('quizzes.update');
+
+    // Route untuk mengelola Pertanyaan
+    Route::post('quizzes/{quiz}/questions', [QuizController::class, 'storeQuestion'])->name('quizzes.store-question');
+    Route::get('quizzes/{quiz}/questions/{question}/edit', [QuizController::class, 'editQuestion'])->name('quizzes.edit-question');
+    Route::put('quizzes/{quiz}/questions/{question}', [QuizController::class, 'updateQuestion'])->name('quizzes.update-question');
+    Route::delete('quizzes/{quiz}/questions/{question}', [QuizController::class, 'destroyQuestion'])->name('quizzes.destroy-question');
+
+    // Route untuk mengatur ulang urutan pertanyaan
+    Route::post('quizzes/{quiz}/reorder-questions', [QuizController::class, 'reorderQuestions'])->name('quizzes.reorder-questions');
+    Route::prefix('seminars')->name('seminars.')->group(function () {
+        Route::get('/', [AdminSeminarController::class, 'index'])->name('index');
+        Route::get('/create', [AdminSeminarController::class, 'create'])->name('create');
+        Route::post('/', [AdminSeminarController::class, 'store'])->name('store');
+        Route::get('/{seminar}', [AdminSeminarController::class, 'show'])->name('show');
+        Route::get('/{seminar}/edit', [AdminSeminarController::class, 'edit'])->name('edit');
+        Route::put('/{seminar}', [AdminSeminarController::class, 'update'])->name('update');
+        Route::delete('/{seminar}', [AdminSeminarController::class, 'destroy'])->name('destroy');
+
+        // Toggle Actions
+        Route::patch('/{seminar}/toggle-active', [AdminSeminarController::class, 'toggleActive'])->name('toggle-active');
+        Route::patch('/{seminar}/toggle-featured', [AdminSeminarController::class, 'toggleFeatured'])->name('toggle-featured');
+
+        // Enrollments
+        Route::get('/{seminar}/enrollments', [AdminSeminarController::class, 'enrollments'])->name('enrollments');
+
+        Route::post('/quizzes', [AdminSeminarController::class, 'storeQuiz'])->name('quizzes.store');
+    });
 });
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');

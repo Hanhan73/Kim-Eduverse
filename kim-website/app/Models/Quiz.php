@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Quiz extends Model
 {
     protected $fillable = [
-        'course_id',
+        'course_id', // Pertahankan untuk backward compatibility
         'module_id',
         'title',
         'description',
@@ -17,6 +17,8 @@ class Quiz extends Model
         'max_attempts',
         'randomize_questions',
         'is_active',
+        'quizable_type', // Tambahkan
+        'quizable_id',   // Tambahkan
     ];
 
     protected $casts = [
@@ -24,6 +26,13 @@ class Quiz extends Model
         'randomize_questions' => 'boolean',
     ];
 
+    // Polymorphic relationship
+    public function quizable()
+    {
+        return $this->morphTo();
+    }
+
+    // Pertahankan untuk backward compatibility
     public function course()
     {
         return $this->belongsTo(Course::class);
@@ -50,11 +59,11 @@ class Quiz extends Model
     public function getQuestionsForAttempt()
     {
         $query = $this->questions();
-        
+
         if ($this->randomize_questions && ($this->type === 'pre_test' || $this->type === 'post_test')) {
             return $query->inRandomOrder()->get();
         }
-        
+
         return $query->orderBy('order')->get();
     }
 
@@ -63,7 +72,7 @@ class Quiz extends Model
         $attemptCount = $this->attempts()
             ->where('user_id', $userId)
             ->count();
-            
+
         return $attemptCount < $this->max_attempts;
     }
 
