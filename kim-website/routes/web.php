@@ -135,13 +135,13 @@ Route::prefix('edutech/student')->name('edutech.student.')->middleware('edutech.
     Route::get('/certificates', [StudentCertificateController::class, 'index'])->name('certificates');
     Route::get('/certificate/{id}/download', [StudentCertificateController::class, 'download'])->name('certificate.download');
     // Learning Page (BARU - satu halaman untuk semua)
-    Route::get('/courses/{slug}/learn', [LearningController::class, 'show'])->name('edutech.courses.learn');
-    Route::post('/learning/lesson/{lesson}/complete', [LearningController::class, 'completeLesson'])->name('edutech.learning.complete');
-    Route::get('/learning/lesson/{lesson}/next', [LearningController::class, 'nextLesson'])->name('edutech.learning.next');
+    Route::get('/courses/{slug}/learn', [LearningController::class, 'show'])->name('courses.learn');
+    Route::post('/learning/lesson/{lesson}/complete', [LearningController::class, 'completeLesson'])->name('learning.complete');
+    Route::get('/learning/lesson/{lesson}/next', [LearningController::class, 'nextLesson'])->name('learning.next');
     
     // Quiz Routes (Update)
-    Route::post('/quiz/{quiz}/start', [StudentQuizController::class, 'start'])->name('edutech.student.quiz.start');
-    Route::post('/quiz/{quiz}/submit', [StudentQuizController::class, 'submit'])->name('edutech.student.quiz.submit');
+    Route::post('/quiz/{quiz}/start', [StudentQuizController::class, 'start'])->name('quiz.start');
+    Route::post('/quiz/{quiz}/submit', [StudentQuizController::class, 'submit'])->name('quiz.submit');
  
 });
 
