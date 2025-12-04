@@ -1,717 +1,948 @@
 @extends('layouts.admin-digital')
 
-@section('title', 'Edit Quiz: ' . $quiz->title)
+@section('title', 'Edit Quiz - ' . $quiz->title)
+@section('page-title', 'Edit Quiz')
 
-@push('styles')
+@section('styles')
 <style>
-    :root {
-        --primary: #667eea;
-        --secondary: #764ba2;
-        --success: #48bb78;
-        --warning: #ed8936;
-        --danger: #f56565;
-        --info: #4299e1;
-        --dark: #2d3748;
-        --gray: #718096;
-        --light: #f7fafc;
+:root {
+    --primary: #667eea;
+    --primary-dark: #5a67d8;
+    --secondary: #764ba2;
+    --success: #48bb78;
+    --warning: #ed8936;
+    --danger: #f56565;
+    --info: #4299e1;
+    --dark: #2d3748;
+    --gray: #718096;
+    --light: #f7fafc;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.page-header h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--dark);
+}
+
+.page-header .breadcrumb {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    color: var(--gray);
+    font-size: 0.9rem;
+}
+
+.page-header .breadcrumb a {
+    color: var(--primary);
+    text-decoration: none;
+}
+
+/* Stats Cards */
+.stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+}
+
+.stat-icon {
+    width: 55px;
+    height: 55px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+}
+
+.stat-icon.primary {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+}
+
+.stat-icon.success {
+    background: linear-gradient(135deg, #38a169, #48bb78);
+}
+
+.stat-icon.warning {
+    background: linear-gradient(135deg, #dd6b20, #ed8936);
+}
+
+.stat-icon.info {
+    background: linear-gradient(135deg, #2b6cb0, #4299e1);
+}
+
+.stat-content h4 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--dark);
+    margin: 0;
+}
+
+.stat-content p {
+    color: var(--gray);
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+/* Main Grid */
+.main-grid {
+    display: grid;
+    grid-template-columns: 1fr 350px;
+    gap: 25px;
+}
+
+/* Card */
+.card {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+    margin-bottom: 25px;
+    overflow: hidden;
+}
+
+.card-header {
+    padding: 20px 25px;
+    border-bottom: 1px solid #edf2f7;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-header h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--dark);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.card-body {
+    padding: 25px;
+}
+
+/* Form */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--dark);
+    font-size: 0.9rem;
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+textarea.form-control {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 15px;
+}
+
+.form-check {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.form-check input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+/* Buttons */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-weight: 600;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+}
+
+.btn-secondary {
+    background: #edf2f7;
+    color: var(--dark);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #38a169, #48bb78);
+    color: white;
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, #dd6b20, #ed8936);
+    color: white;
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #c53030, #f56565);
+    color: white;
+}
+
+.btn-info {
+    background: linear-gradient(135deg, #2b6cb0, #4299e1);
+    color: white;
+}
+
+.btn-sm {
+    padding: 8px 14px;
+    font-size: 0.85rem;
+}
+
+.btn-block {
+    width: 100%;
+    justify-content: center;
+}
+
+/* Questions List */
+.questions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.question-item {
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 20px;
+    transition: all 0.3s ease;
+}
+
+.question-item:hover {
+    border-color: var(--primary);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.1);
+}
+
+.question-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.question-number {
+    width: 35px;
+    height: 35px;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+}
+
+.question-text {
+    flex: 1;
+    font-weight: 600;
+    color: var(--dark);
+    line-height: 1.5;
+}
+
+.question-meta {
+    display: flex;
+    gap: 15px;
+    font-size: 0.85rem;
+    color: var(--gray);
+    margin-top: 10px;
+}
+
+.question-meta span {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.question-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.option-item {
+    padding: 10px 15px;
+    background: white;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.option-item.correct {
+    background: #c6f6d5;
+    border-color: #48bb78;
+    color: #22543d;
+}
+
+.option-label {
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.question-actions {
+    display: flex;
+    gap: 8px;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.empty-state i {
+    font-size: 4rem;
+    color: #cbd5e0;
+    margin-bottom: 20px;
+}
+
+.empty-state h3 {
+    color: var(--dark);
+    margin-bottom: 10px;
+}
+
+.empty-state p {
+    color: var(--gray);
+    margin-bottom: 20px;
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.modal.show {
+    display: flex !important;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 15px;
+    width: 100%;
+    max-width: 700px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+    animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
     }
 
-    body {
-        font-family: 'Inter', sans-serif;
-        background: #f8f9fa;
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-header {
+    padding: 20px 25px;
+    border-bottom: 1px solid #edf2f7;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    border-radius: 15px 15px 0 0;
+}
+
+.modal-header h3 {
+    font-size: 1.2rem;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.modal-close {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: white;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.modal-close:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.modal-body {
+    padding: 25px;
+}
+
+.modal-footer {
+    padding: 20px 25px;
+    border-top: 1px solid #edf2f7;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    background: #f8fafc;
+    border-radius: 0 0 15px 15px;
+}
+
+/* Options Grid in Modal */
+.options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.option-group {
+    position: relative;
+}
+
+.option-group label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.option-group .option-marker {
+    width: 28px;
+    height: 28px;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.8rem;
+}
+
+/* Radio Group for Correct Answer */
+.correct-answer-group {
+    background: #f0fff4;
+    border: 2px solid #68d391;
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.correct-answer-group h4 {
+    color: #22543d;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.radio-options {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.radio-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: white;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.radio-option:hover {
+    border-color: var(--success);
+}
+
+.radio-option input[type="radio"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.radio-option input[type="radio"]:checked+span {
+    color: var(--success);
+    font-weight: 700;
+}
+
+/* Badge */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.badge-success {
+    background: #c6f6d5;
+    color: #22543d;
+}
+
+.badge-warning {
+    background: #feebc8;
+    color: #744210;
+}
+
+.badge-danger {
+    background: #fed7d7;
+    color: #742a2a;
+}
+
+.badge-info {
+    background: #bee3f8;
+    color: #2a4365;
+}
+
+/* Info Box */
+.info-box {
+    background: #ebf8ff;
+    border: 2px solid #90cdf4;
+    border-radius: 10px;
+    padding: 15px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+}
+
+.info-box i {
+    color: #2b6cb0;
+    font-size: 1.2rem;
+    margin-top: 2px;
+}
+
+.info-box p {
+    color: #2c5282;
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .main-grid {
+        grid-template-columns: 1fr;
     }
 
-    .container {
-        max-width: 1200px;
-        margin: 40px auto;
-        padding: 0 20px;
+    .stats-row {
+        grid-template-columns: repeat(2, 1fr);
     }
+}
 
-    .page-header {
-        background: white;
-        padding: 30px;
-        border-radius: 12px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        margin-bottom: 30px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .page-header h1 {
-        font-size: 2rem;
-        color: var(--dark);
-    }
-
-    .quiz-badge {
-        padding: 6px 15px;
-        border-radius: 20px;
-        font-size: 0.85rem;
-        font-weight: 600;
-    }
-
-    .quiz-badge.pre_test {
-        background: #feebc8;
-        color: #7c2d12;
-    }
-
-    .quiz-badge.post_test {
-        background: #c6f6d5;
-        color: #22543d;
-    }
-
-    .btn {
-        padding: 12px 24px;
-        border-radius: 8px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        border: none;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .btn-primary {
-        background: linear-gradient(135deg, var(--primary), var(--secondary));
-        color: white;
-    }
-
-    .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
-    }
-
-    .btn-secondary {
-        background: var(--light);
-        color: var(--dark);
-    }
-
-    .btn-secondary:hover {
-        background: #e2e8f0;
-    }
-
-    .btn-sm {
-        padding: 8px 16px;
-        font-size: 0.85rem;
-    }
-
-    .btn-edit {
-        background: #bee3f8;
-        color: #2c5282;
-    }
-
-    .btn-edit:hover {
-        background: #90cdf4;
-    }
-
-    .btn-delete {
-        background: #fed7d7;
-        color: #742a2a;
-    }
-
-    .btn-delete:hover {
-        background: #fc8181;
-    }
-
-    .alert {
-        padding: 15px 20px;
-        border-radius: 8px;
-        margin-bottom: 20px;
-    }
-
-    .alert-success {
-        background: #c6f6d5;
-        color: #22543d;
-        border: 1px solid #9ae6b4;
-    }
-
-    .alert-error {
-        background: #fed7d7;
-        color: #742a2a;
-        border: 1px solid #fc8181;
-    }
-
-    .grid-2col {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 25px;
-    }
-
-    .card {
-        background: white;
-        padding: 30px;
-        border-radius: 12px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        margin-bottom: 25px;
-    }
-
-    .card h2 {
-        font-size: 1.5rem;
-        color: var(--dark);
-        margin-bottom: 20px;
-        padding-bottom: 15px;
-        border-bottom: 2px solid var(--light);
-    }
-
-    .form-group {
-        margin-bottom: 20px;
-    }
-
-    .form-group label {
-        display: block;
-        font-weight: 600;
-        color: var(--dark);
-        margin-bottom: 8px;
-    }
-
-    .form-control {
-        width: 100%;
-        padding: 12px 15px;
-        border: 2px solid #e2e8f0;
-        border-radius: 8px;
-        font-size: 1rem;
-        transition: all 0.3s ease;
-    }
-
-    .form-control:focus {
-        outline: none;
-        border-color: var(--primary);
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-    }
-
-    .form-control:disabled {
-        background: #f7fafc;
-        color: #a0aec0;
-        cursor: not-allowed;
-    }
-
-    textarea.form-control {
-        min-height: 100px;
-        resize: vertical;
+@media (max-width: 768px) {
+    .stats-row {
+        grid-template-columns: 1fr;
     }
 
     .form-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 15px;
+        grid-template-columns: 1fr;
     }
 
-    .form-hint {
-        font-size: 0.85rem;
-        color: var(--gray);
-        margin-top: 5px;
-    }
-
-    .question-list {
-        margin-top: 20px;
-    }
-
-    .question-item {
-        background: var(--light);
-        border: 2px solid #e2e8f0;
-        border-radius: 8px;
-        padding: 20px;
-        margin-bottom: 15px;
-        transition: all 0.3s ease;
-    }
-
-    .question-item:hover {
-        border-color: var(--primary);
-    }
-
-    .question-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        margin-bottom: 15px;
-    }
-
-    .question-number {
-        background: var(--primary);
-        color: white;
-        width: 35px;
-        height: 35px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 700;
-    }
-
-    .question-type {
-        padding: 4px 10px;
-        background: var(--info);
-        color: white;
-        border-radius: 6px;
-        font-size: 0.75rem;
-        font-weight: 600;
-    }
-
-    .question-text {
-        font-size: 1.05rem;
-        color: var(--dark);
-        margin: 15px 0;
-        line-height: 1.6;
+    .options-grid {
+        grid-template-columns: 1fr;
     }
 
     .question-options {
-        margin: 10px 0 10px 20px;
+        grid-template-columns: 1fr;
     }
-
-    .question-options li {
-        margin: 5px 0;
-        color: var(--gray);
-    }
-
-    .question-options li.correct {
-        color: var(--success);
-        font-weight: 600;
-    }
-
-    .question-points {
-        color: var(--warning);
-        font-weight: 600;
-        margin-top: 10px;
-    }
-
-    .question-actions {
-        display: flex;
-        gap: 10px;
-        margin-top: 15px;
-    }
-
-    /* MODAL - DIPERBAIKI SESUAI EDUTECH */
-    .modal {
-        display: none;
-        position: fixed;
-        z-index: 1000;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        background-color: rgba(0, 0, 0, 0.5);
-    }
-
-    .modal.active {
-        display: flex !important;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .modal-content {
-        background: white;
-        padding: 40px;
-        border-radius: 12px;
-        max-width: 600px;
-        width: 90%;
-        max-height: 90vh;
-        overflow-y: auto;
-    }
-
-    .modal-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 25px;
-    }
-
-    .modal-header h3 {
-        font-size: 1.5rem;
-        color: var(--dark);
-    }
-
-    .btn-close {
-        background: none;
-        border: none;
-        font-size: 1.5rem;
-        cursor: pointer;
-        color: var(--gray);
-    }
-
-    .btn-close:hover {
-        color: var(--dark);
-    }
-
-    .option-input {
-        display: flex;
-        gap: 10px;
-        align-items: center;
-        margin-bottom: 10px;
-    }
-
-    .option-input input[type="text"] {
-        flex: 1;
-    }
-
-    .option-input input[type="radio"] {
-        width: 20px;
-        height: 20px;
-        cursor: pointer;
-    }
-
-    .btn-add-option {
-        background: var(--light);
-        color: var(--dark);
-        padding: 8px 16px;
-        border-radius: 6px;
-        font-size: 0.85rem;
-        cursor: pointer;
-        border: 2px dashed #e2e8f0;
-        width: 100%;
-        margin-top: 10px;
-    }
-
-    .btn-add-option:hover {
-        border-color: var(--primary);
-        background: #f0f4ff;
-    }
-
-    .btn-remove-option {
-        background: var(--danger);
-        color: white;
-        padding: 8px 12px;
-        border-radius: 6px;
-        font-size: 0.85rem;
-        cursor: pointer;
-        border: none;
-    }
-
-    .btn-remove-option:hover {
-        background: #c53030;
-    }
-
-    .empty-state {
-        text-align: center;
-        padding: 60px 20px;
-        color: var(--gray);
-    }
-
-    .empty-state i {
-        font-size: 4rem;
-        margin-bottom: 20px;
-        opacity: 0.3;
-    }
-
-    .info-note {
-        background: #fffbeb;
-        padding: 12px 15px;
-        border-radius: 8px;
-        border-left: 4px solid var(--warning);
-        margin-bottom: 15px;
-    }
-
-    .info-note i {
-        color: var(--warning);
-        margin-right: 8px;
-    }
-
-    .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 20px;
-    }
-
-    .stat-card {
-        background: var(--light);
-        padding: 20px;
-        border-radius: 8px;
-        text-align: center;
-    }
-
-    .stat-value {
-        font-size: 2.5rem;
-        font-weight: 800;
-        margin-bottom: 5px;
-    }
-
-    .stat-label {
-        color: var(--gray);
-        font-size: 0.9rem;
-    }
-
-    @media (max-width: 968px) {
-        .grid-2col {
-            grid-template-columns: 1fr;
-        }
-
-        .form-row {
-            grid-template-columns: 1fr;
-        }
-
-        .stats-grid {
-            grid-template-columns: 1fr;
-        }
-    }
+}
 </style>
-@endpush
+@endsection
 
 @section('content')
-<div class="container">
-    <div class="page-header">
-        <div>
-            <h1>Edit Quiz</h1>
-            <div style="margin-top: 10px;">
-                <span class="quiz-badge {{ $quiz->type ?? 'quiz' }}">
-                    @if($quiz->type === 'pre_test')
-                    PRE-TEST
-                    @elseif($quiz->type === 'post_test')
-                    POST-TEST
-                    @else
-                    QUIZ
-                    @endif
-                </span>
-                <span style="color: var(--gray); margin-left: 15px;">
-                    <i class="fas fa-book"></i> {{ $quiz->title }}
-                </span>
-            </div>
+<!-- Page Header -->
+<div class="page-header">
+    <div>
+        <div class="breadcrumb">
+            <a href="{{ route('admin.digital.seminars.index') }}">Seminars</a>
+            <i class="fas fa-chevron-right"></i>
+            <span>Edit Quiz</span>
         </div>
-        <a href="{{ request()->header('referer') ?? route('admin.digital.seminars.index') }}" class="btn btn-secondary">
-            <i class="fas fa-arrow-left"></i> Back to List
-        </a>
+        <h1>{{ $quiz->title }}</h1>
     </div>
+    <a href="{{ route('admin.digital.seminars.index') }}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Kembali
+    </a>
+</div>
 
-    @if(session('success'))
-    <div class="alert alert-success">
-        <i class="fas fa-check-circle"></i> {{ session('success') }}
-    </div>
-    @endif
-
-    @if($errors->any())
-    <div class="alert alert-error">
-        <strong>Error:</strong>
-        <ul style="margin-top: 10px;">
-            @foreach($errors->all() as $error)
-            <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-    @endif
-
-    <div class="grid-2col">
-        <!-- Edit Quiz Details -->
-        <div class="card">
-            <h2>Quiz Details</h2>
-            <form action="{{ route('admin.digital.quizzes.update', $quiz->id) }}" method="POST">
-                @csrf
-                @method('PUT')
-
-                <div class="info-note">
-                    <i class="fas fa-info-circle"></i>
-                    Quiz type cannot be changed after creation
-                </div>
-
-                <div class="form-group">
-                    <label>Quiz Type</label>
-                    <input type="text" class="form-control"
-                        value="{{ ucwords(str_replace('_', ' ', $quiz->type ?? 'quiz')) }}" disabled>
-                </div>
-
-                <div class="form-group">
-                    <label>Title <span style="color: var(--danger);">*</span></label>
-                    <input type="text" name="title" class="form-control" value="{{ old('title', $quiz->title) }}"
-                        required>
-                    <div class="form-hint">Give your quiz a clear, descriptive title</div>
-                </div>
-
-                <div class="form-group">
-                    <label>Description</label>
-                    <textarea name="description" class="form-control"
-                        placeholder="Describe what this quiz will assess...">{{ old('description', $quiz->description) }}</textarea>
-                    <div class="form-hint">Optional: Provide instructions or context for students</div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Passing Score (%) <span style="color: var(--danger);">*</span></label>
-                        <input type="number" name="passing_score" class="form-control"
-                            value="{{ old('passing_score', $quiz->passing_score) }}" min="0" max="100" required>
-                        <div class="form-hint">Minimum score to pass (0-100)</div>
-                    </div>
-                    <div class="form-group">
-                        <label>Duration (Minutes) <span style="color: var(--danger);">*</span></label>
-                        <input type="number" name="duration_minutes" class="form-control"
-                            value="{{ old('duration_minutes', $quiz->duration_minutes) }}" min="1" required>
-                        <div class="form-hint">Time limit for this quiz</div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>Maximum Attempts <span style="color: var(--danger);">*</span></label>
-                    <input type="number" name="max_attempts" class="form-control"
-                        value="{{ old('max_attempts', $quiz->max_attempts) }}" min="1" max="10" required>
-                    <div class="form-hint">How many times can students retake this quiz? (1-10)</div>
-                </div>
-
-                <button type="submit" class="btn btn-primary" style="width: 100%;">
-                    <i class="fas fa-save"></i> Update Quiz Details
-                </button>
-            </form>
+<!-- Stats Row -->
+<div class="stats-row">
+    <div class="stat-card">
+        <div class="stat-icon primary">
+            <i class="fas fa-question-circle"></i>
         </div>
-
-        <!-- Quiz Stats -->
-        <div class="card">
-            <h2>Quiz Statistics</h2>
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-value" style="color: var(--primary);">{{ $quiz->questions->count() }}</div>
-                    <div class="stat-label">Total Questions</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value" style="color: var(--success);">{{ $quiz->questions->sum('points') }}</div>
-                    <div class="stat-label">Total Points</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value" style="color: var(--warning);">{{ $quiz->passing_score }}%</div>
-                    <div class="stat-label">Passing Score</div>
-                </div>
-            </div>
+        <div class="stat-content">
+            <h4>{{ $quiz->questions->count() }}</h4>
+            <p>Total Soal</p>
         </div>
     </div>
 
-    <!-- Questions Section -->
-    <div class="card">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <h2 style="margin: 0; border: none; padding: 0;">Questions ({{ $quiz->questions->count() }})</h2>
-
-            <button onclick="openModal()" class="btn btn-primary">
-                <i class="fas fa-plus"></i> Add Question
-            </button>
+    <div class="stat-card">
+        <div class="stat-icon success">
+            <i class="fas fa-star"></i>
         </div>
-
-        @if($quiz->questions->count() > 0)
-        <div class="question-list">
-            @foreach($quiz->questions as $index => $question)
-            <div class="question-item">
-                <div class="question-header">
-                    <span class="question-number">{{ $index + 1 }}</span>
-                    <span class="question-type">MULTIPLE CHOICE</span>
-                </div>
-
-                <div class="question-text">{{ $question->question_text }}</div>
-
-                <ul class="question-options">
-                    <li class="{{ $question->correct_answer === 'a' ? 'correct' : '' }}">
-                        A. {{ $question->option_a }}
-                        @if($question->correct_answer === 'a')
-                        <i class="fas fa-check-circle"></i>
-                        @endif
-                    </li>
-                    <li class="{{ $question->correct_answer === 'b' ? 'correct' : '' }}">
-                        B. {{ $question->option_b }}
-                        @if($question->correct_answer === 'b')
-                        <i class="fas fa-check-circle"></i>
-                        @endif
-                    </li>
-                    <li class="{{ $question->correct_answer === 'c' ? 'correct' : '' }}">
-                        C. {{ $question->option_c }}
-                        @if($question->correct_answer === 'c')
-                        <i class="fas fa-check-circle"></i>
-                        @endif
-                    </li>
-                    <li class="{{ $question->correct_answer === 'd' ? 'correct' : '' }}">
-                        D. {{ $question->option_d }}
-                        @if($question->correct_answer === 'd')
-                        <i class="fas fa-check-circle"></i>
-                        @endif
-                    </li>
-                    @if($question->option_e)
-                    <li class="{{ $question->correct_answer === 'e' ? 'correct' : '' }}">
-                        E. {{ $question->option_e }}
-                        @if($question->correct_answer === 'e')
-                        <i class="fas fa-check-circle"></i>
-                        @endif
-                    </li>
-                    @endif
-                </ul>
-
-                <div class="question-points">
-                    <i class="fas fa-star"></i> {{ $question->points }} points
-                </div>
-
-                <div class="question-actions">
-                    <button type="button" class="btn btn-sm btn-edit" data-question-id="{{ $question->id }}">
-                        <i class="fas fa-edit"></i> Edit
-                    </button>
-                    <form action="{{ route('admin.digital.quizzes.destroy-question', [$quiz->id, $question->id]) }}"
-                        method="POST" style="display:inline;"
-                        onsubmit="return confirm('Delete this question? This action cannot be undone.')">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-sm btn-delete">
-                            <i class="fas fa-trash"></i> Delete
-                        </button>
-                    </form>
-                </div>
-            </div>
-            @endforeach
+        <div class="stat-content">
+            <h4>{{ $quiz->questions->sum('points') }}</h4>
+            <p>Total Poin</p>
         </div>
-        @else
-        <div class="empty-state">
-            <i class="fas fa-clipboard-question"></i>
-            <h3>No Questions Yet</h3>
-            <p>Click "Add Question" to create your first question</p>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon warning">
+            <i class="fas fa-check-circle"></i>
         </div>
-        @endif
+        <div class="stat-content">
+            <h4>{{ $quiz->passing_score }}%</h4>
+            <p>Passing Score</p>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon info">
+            <i class="fas fa-clock"></i>
+        </div>
+        <div class="stat-content">
+            <h4>{{ $quiz->duration_minutes }}</h4>
+            <p>Menit</p>
+        </div>
     </div>
 </div>
 
-<!-- Add Question Modal - DIPERBAIKI SESUAI EDUTECH -->
+<div class="main-grid">
+    <!-- Questions Section -->
+    <div>
+        <div class="card">
+            <div class="card-header">
+                <h3><i class="fas fa-list-ol"></i> Daftar Pertanyaan ({{ $quiz->questions->count() }})</h3>
+                <button type="button" class="btn btn-primary" onclick="openAddQuestionModal()">
+                    <i class="fas fa-plus"></i> Tambah Pertanyaan
+                </button>
+            </div>
+            <div class="card-body">
+                @if($quiz->questions->count() > 0)
+                <div class="questions-list">
+                    @foreach($quiz->questions->sortBy('order') as $index => $question)
+                    <div class="question-item" data-id="{{ $question->id }}">
+                        <div class="question-header">
+                            <div style="display: flex; gap: 15px; align-items: flex-start; flex: 1;">
+                                <div class="question-number">{{ $index + 1 }}</div>
+                                <div>
+                                    <div class="question-text">{{ $question->question }}</div>
+                                    <div class="question-meta">
+                                        <span><i class="fas fa-star"></i> {{ $question->points }} poin</span>
+                                        <span><i class="fas fa-check-circle"></i> Jawaban:
+                                            {{ $question->correct_answer }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="question-actions">
+                                <button type="button" class="btn btn-sm btn-info"
+                                    onclick="openEditQuestionModal({{ $question->id }}, {{ json_encode($question) }})">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <form
+                                    action="{{ route('admin.digital.quizzes.destroy-question', [$quiz->id, $question->id]) }}"
+                                    method="POST" style="display: inline;"
+                                    onsubmit="return confirm('Yakin ingin menghapus pertanyaan ini?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-danger">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+
+                        @if($question->options)
+                        <div class="question-options">
+                            @foreach($question->options as $key => $option)
+                            @if($option)
+                            <div class="option-item {{ $key == $question->correct_answer ? 'correct' : '' }}">
+                                <span class="option-label">{{ $key }}.</span>
+                                <span>{{ $option }}</span>
+                                @if($key == $question->correct_answer)
+                                <i class="fas fa-check" style="margin-left: auto; color: #22543d;"></i>
+                                @endif
+                            </div>
+                            @endif
+                            @endforeach
+                        </div>
+                        @endif
+                    </div>
+                    @endforeach
+                </div>
+                @else
+                <div class="empty-state">
+                    <i class="fas fa-question-circle"></i>
+                    <h3>Belum Ada Pertanyaan</h3>
+                    <p>Klik tombol "Tambah Pertanyaan" untuk menambahkan soal ke quiz ini</p>
+                    <button type="button" class="btn btn-primary" onclick="openAddQuestionModal()">
+                        <i class="fas fa-plus"></i> Tambah Pertanyaan Pertama
+                    </button>
+                </div>
+                @endif
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar - Quiz Settings -->
+    <div>
+        <div class="card">
+            <div class="card-header">
+                <h3><i class="fas fa-cog"></i> Pengaturan Quiz</h3>
+            </div>
+            <div class="card-body">
+                <form action="{{ route('admin.digital.quizzes.update', $quiz) }}" method="POST">
+                    @csrf
+                    @method('PUT')
+
+                    <div class="form-group">
+                        <label>Judul Quiz</label>
+                        <input type="text" name="title" class="form-control" value="{{ old('title', $quiz->title) }}"
+                            required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Deskripsi</label>
+                        <textarea name="description" class="form-control"
+                            rows="3">{{ old('description', $quiz->description) }}</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Durasi (menit)</label>
+                        <input type="number" name="duration_minutes" class="form-control"
+                            value="{{ old('duration_minutes', $quiz->duration_minutes) }}" min="1" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Passing Score (%)</label>
+                        <input type="number" name="passing_score" class="form-control"
+                            value="{{ old('passing_score', $quiz->passing_score) }}" min="0" max="100" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Maksimal Percobaan</label>
+                        <input type="number" name="max_attempts" class="form-control"
+                            value="{{ old('max_attempts', $quiz->max_attempts) }}" min="1" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-check">
+                            <input type="checkbox" name="is_active" value="1" {{ $quiz->is_active ? 'checked' : '' }}>
+                            <span>Quiz Aktif</span>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <i class="fas fa-save"></i> Simpan Perubahan
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <div class="info-box">
+                    <i class="fas fa-info-circle"></i>
+                    <p>
+                        <strong>Tips:</strong><br>
+                        • Pastikan setiap pertanyaan memiliki minimal 2 opsi jawaban<br>
+                        • Tentukan jawaban yang benar dengan tepat<br>
+                        • Sesuaikan poin berdasarkan tingkat kesulitan
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add/Edit Question Modal -->
 <div id="questionModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <h3>Add Question</h3>
-            <button class="btn-close" onclick="closeModal()">&times;</button>
+            <h3><i class="fas fa-question-circle"></i> <span id="modalTitle">Tambah Pertanyaan</span></h3>
+            <button type="button" class="modal-close" onclick="closeQuestionModal()">&times;</button>
         </div>
 
-        <form action="{{ route('admin.digital.quizzes.store-question', $quiz->id) }}" method="POST" id="questionForm">
+        <form id="questionForm" method="POST">
             @csrf
+            <input type="hidden" name="_method" id="formMethod" value="POST">
 
-            <div class="form-group">
-                <label>Question <span style="color: var(--danger);">*</span></label>
-                <textarea name="question_text" class="form-control" placeholder="Enter your question here..."
-                    required></textarea>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Pertanyaan <span style="color: red;">*</span></label>
+                    <textarea name="question_text" id="questionText" class="form-control" rows="3" required
+                        placeholder="Tulis pertanyaan di sini..."></textarea>
+                </div>
+
+                <div class="options-grid">
+                    <div class="option-group">
+                        <label>
+                            <span class="option-marker">A</span>
+                            Opsi A <span style="color: red;">*</span>
+                        </label>
+                        <input type="text" name="option_a" id="optionA" class="form-control" required
+                            placeholder="Jawaban opsi A">
+                    </div>
+
+                    <div class="option-group">
+                        <label>
+                            <span class="option-marker">B</span>
+                            Opsi B <span style="color: red;">*</span>
+                        </label>
+                        <input type="text" name="option_b" id="optionB" class="form-control" required
+                            placeholder="Jawaban opsi B">
+                    </div>
+
+                    <div class="option-group">
+                        <label>
+                            <span class="option-marker">C</span>
+                            Opsi C
+                        </label>
+                        <input type="text" name="option_c" id="optionC" class="form-control"
+                            placeholder="Jawaban opsi C (opsional)">
+                    </div>
+
+                    <div class="option-group">
+                        <label>
+                            <span class="option-marker">D</span>
+                            Opsi D
+                        </label>
+                        <input type="text" name="option_d" id="optionD" class="form-control"
+                            placeholder="Jawaban opsi D (opsional)">
+                    </div>
+
+                    <div class="option-group" style="grid-column: span 2;">
+                        <label>
+                            <span class="option-marker">E</span>
+                            Opsi E
+                        </label>
+                        <input type="text" name="option_e" id="optionE" class="form-control"
+                            placeholder="Jawaban opsi E (opsional)">
+                    </div>
+                </div>
+
+                <div class="correct-answer-group">
+                    <h4><i class="fas fa-check-circle"></i> Jawaban Benar <span style="color: red;">*</span></h4>
+                    <div class="radio-options">
+                        <label class="radio-option">
+                            <input type="radio" name="correct_answer" value="A" required>
+                            <span>Opsi A</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="correct_answer" value="B">
+                            <span>Opsi B</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="correct_answer" value="C">
+                            <span>Opsi C</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="correct_answer" value="D">
+                            <span>Opsi D</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="correct_answer" value="E">
+                            <span>Opsi E</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-top: 20px;">
+                    <label>Poin <span style="color: red;">*</span></label>
+                    <input type="number" name="points" id="questionPoints" class="form-control" value="10" min="1"
+                        required>
+                    <small style="color: var(--gray);">Poin yang didapat jika menjawab benar</small>
+                </div>
             </div>
 
-            <!-- Multiple Choice Options -->
-            <div id="mcOptions">
-                <label style="display: block; font-weight: 600; margin-bottom: 10px;">
-                    Answer Options <span style="color: var(--danger);">*</span>
-                </label>
-                <div class="form-hint" style="margin-bottom: 15px;">
-                    <i class="fas fa-info-circle"></i> Click the radio button to mark the correct answer
-                </div>
-                <div class="option-input">
-                    <input type="radio" name="correct_answer" value="" required>
-                    <input type="text" name="options[]" class="form-control" placeholder="Option 1" required
-                        oninput="updateRadioValue(this)">
-                    <button type="button" class="btn-remove-option" onclick="removeOption(this)">✖</button>
-                </div>
-                <div class="option-input">
-                    <input type="radio" name="correct_answer" value="" required>
-                    <input type="text" name="options[]" class="form-control" placeholder="Option 2" required
-                        oninput="updateRadioValue(this)">
-                    <button type="button" class="btn-remove-option" onclick="removeOption(this)">✖</button>
-                </div>
-                <button type="button" class="btn-add-option" onclick="addOption()">
-                    <i class="fas fa-plus"></i> Add Option
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeQuestionModal()">
+                    <i class="fas fa-times"></i> Batal
                 </button>
-            </div>
-
-            <div class="form-group">
-                <label>Points <span style="color: var(--danger);">*</span></label>
-                <input type="number" name="points" class="form-control" value="1" min="1" required>
-                <div class="form-hint">Point value for this question</div>
-            </div>
-
-            <div style="display: flex; gap: 10px; margin-top: 25px;">
-                <button type="submit" class="btn btn-primary" style="flex: 1;">
-                    <i class="fas fa-save"></i> Save Question
-                </button>
-                <button type="button" onclick="closeModal()" class="btn btn-secondary">
-                    <i class="fas fa-times"></i> Cancel
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> <span id="submitBtnText">Simpan Pertanyaan</span>
                 </button>
             </div>
         </form>
@@ -719,113 +950,104 @@
 </div>
 @endsection
 
-@push('scripts')
+@section('scripts')
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('✅ Modal script loaded successfully');
+// Pindahkan semua fungsi ke global scope
+window.openAddQuestionModal = function() {
+    console.log('Opening add question modal...');
+    document.getElementById('modalTitle').textContent = 'Tambah Pertanyaan';
+    document.getElementById('submitBtnText').textContent = 'Simpan Pertanyaan';
+    document.getElementById('questionForm').action =
+        "{{ route('admin.digital.quizzes.store-question', $quiz->id) }}";
+    document.getElementById('formMethod').value = 'POST';
 
-        // Get the modal element
-        const modal = document.getElementById('questionModal');
+    // Reset form
+    document.getElementById('questionForm').reset();
+    document.getElementById('questionPoints').value = 10;
 
-        // --- Define all functions on the window object ---
-        window.openModal = function() {
-            if (modal) {
-                modal.classList.add('active');
-                document.getElementById('questionForm').reset();
-                resetOptions();
-                console.log('Modal opened');
-            } else {
-                console.error('Modal element not found!');
+    // Show modal
+    document.getElementById('questionModal').classList.add('show');
+    document.body.style.overflow = 'hidden';
+};
+
+window.openEditQuestionModal = function(questionId, questionData) {
+    console.log('Opening edit modal for question:', questionId);
+
+    try {
+        // Parse questionData jika string
+        if (typeof questionData === 'string') {
+            questionData = JSON.parse(questionData);
+        }
+
+        document.getElementById('modalTitle').textContent = 'Edit Pertanyaan';
+        document.getElementById('submitBtnText').textContent = 'Update Pertanyaan';
+        document.getElementById('questionForm').action =
+            `/admin/digital/quizzes/{{ $quiz->id }}/questions/${questionId}`;
+        document.getElementById('formMethod').value = 'PUT';
+
+        // Fill form with question data
+        document.getElementById('questionText').value = questionData.question || '';
+        document.getElementById('questionPoints').value = questionData.points || 10;
+
+        // Fill options
+        if (questionData.options) {
+            const options = typeof questionData.options === 'string' ?
+                JSON.parse(questionData.options) : questionData.options;
+
+            document.getElementById('optionA').value = options.A || '';
+            document.getElementById('optionB').value = options.B || '';
+            document.getElementById('optionC').value = options.C || '';
+            document.getElementById('optionD').value = options.D || '';
+            document.getElementById('optionE').value = options.E || '';
+        }
+
+        // Select correct answer
+        const correctAnswer = questionData.correct_answer;
+        if (correctAnswer) {
+            const radio = document.querySelector(`input[name="correct_answer"][value="${correctAnswer}"]`);
+            if (radio) radio.checked = true;
+        }
+
+        // Show modal
+        document.getElementById('questionModal').classList.add('show');
+        document.body.style.overflow = 'hidden';
+    } catch (error) {
+        console.error('Error opening edit modal:', error);
+        alert('Terjadi kesalahan saat membuka modal edit');
+    }
+};
+
+window.closeQuestionModal = function() {
+    document.getElementById('questionModal').classList.remove('show');
+    document.body.style.overflow = 'auto';
+};
+
+// Event listeners
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Page loaded, initializing modal functions...');
+
+    // Close modal when clicking outside
+    const modal = document.getElementById('questionModal');
+    if (modal) {
+        modal.addEventListener('click', function(e) {
+            if (e.target === this) {
+                window.closeQuestionModal();
             }
-        }
+        });
+    }
 
-        window.closeModal = function() {
-            if (modal) {
-                modal.classList.remove('active');
-                console.log('Modal closed');
-            }
-        }
-
-        // Close modal when clicking outside of it
-        window.onclick = function(event) {
-            if (event.target === modal) {
-                closeModal();
-            }
-        }
-
-        let optionCount = 2;
-
-        window.resetOptions = function() {
-            const mcOptions = document.getElementById('mcOptions');
-            if (!mcOptions) return;
-            const optionInputs = mcOptions.querySelectorAll('.option-input');
-
-            // Remove all options except the first 2
-            optionInputs.forEach((opt, index) => {
-                if (index > 1) {
-                    mcOptions.removeChild(opt);
-                }
-            });
-
-            // Reset the first 2 options
-            optionInputs.forEach((opt, index) => {
-                if (index < 2) {
-                    const textInput = opt.querySelector('input[type="text"]');
-                    const radioInput = opt.querySelector('input[type="radio"]');
-                    textInput.value = '';
-                    textInput.placeholder = `Option ${index + 1}`;
-                    radioInput.value = '';
-                    radioInput.checked = false;
-                }
-            });
-
-            optionCount = 2;
-        }
-
-        window.updateRadioValue = function(input) {
-            const radio = input.parentElement.querySelector('input[type="radio"]');
-            radio.value = input.value;
-            if (!input.value.trim()) {
-                radio.checked = false;
-            }
-        }
-
-        window.addOption = function() {
-            optionCount++;
-            const mcOptions = document.getElementById('mcOptions');
-            const addButton = mcOptions.querySelector('.btn-add-option');
-            const newOption = document.createElement('div');
-            newOption.className = 'option-input';
-            newOption.innerHTML = `
-            <input type="radio" name="correct_answer" value="" required>
-            <input type="text" name="options[]" class="form-control" placeholder="Option ${optionCount}" required oninput="updateRadioValue(this)">
-            <button type="button" class="btn-remove-option" onclick="removeOption(this)">✖</button>
-        `;
-            mcOptions.insertBefore(newOption, addButton);
-        }
-
-        window.removeOption = function(button) {
-            const mcOptions = document.getElementById('mcOptions');
-            const optionDiv = button.parentElement;
-            const optionInputs = mcOptions.querySelectorAll('.option-input');
-
-            if (optionInputs.length <= 2) {
-                alert("A question must have at least 2 options!");
-                return;
-            }
-
-            mcOptions.removeChild(optionDiv);
-            updateOptionPlaceholders();
-        }
-
-        window.updateOptionPlaceholders = function() {
-            const optionInputs = document.querySelectorAll('#mcOptions .option-input');
-            optionInputs.forEach((opt, i) => {
-                const textInput = opt.querySelector('input[type="text"]');
-                textInput.placeholder = `Option ${i + 1}`;
-            });
-            optionCount = optionInputs.length;
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            window.closeQuestionModal();
         }
     });
+
+    // Test: expose function to global scope
+    console.log('Functions available:', {
+        openAddQuestionModal: typeof window.openAddQuestionModal,
+        closeQuestionModal: typeof window.closeQuestionModal
+    });
+});
 </script>
-@endpush
+@endsection

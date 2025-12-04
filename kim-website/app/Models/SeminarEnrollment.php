@@ -25,6 +25,7 @@ class SeminarEnrollment extends Model
         'certificate_sent_via_email',
         'is_completed',
         'completed_at',
+        'participant_name',
     ];
 
     protected $casts = [

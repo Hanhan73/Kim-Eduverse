@@ -62,6 +62,11 @@ class DigitalOrder extends Model
         return $this->hasMany(QuestionnaireResponse::class, 'order_id');
     }
 
+    public function seminarEnrollments()
+    {
+        return $this->hasMany(SeminarEnrollment::class, 'order_id');
+    }
+
     /**
      * Mark order as paid.
      */

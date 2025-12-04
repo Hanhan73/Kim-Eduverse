@@ -18,7 +18,7 @@ class DigitalProductSeeder extends Seeder
             [
                 'name' => 'Sample E-Book Digital',
                 'slug' => 'sample-ebook-digital',
-                'category_id' => 1,
+                'category_id' => 3,
                 'description' => 'Contoh e-book digital untuk testing sistem download dari Google Drive.',
                 'type' => 'ebook',
                 'price' => 25000,

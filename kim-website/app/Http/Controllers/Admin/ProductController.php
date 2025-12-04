@@ -52,7 +52,7 @@ class ProductController extends Controller
             'slug' => 'nullable|string|unique:digital_products,slug',
             'description' => 'required|string',
             'short_description' => 'nullable|string|max:500',
-            'type' => 'required|in:questionnaire,module,template,ebook,video,other',
+            'type' => 'required|in:questionnaire,module,template,ebook,video,seminar,other',
             'category_id' => 'required|exists:digital_product_categories,id',
             'price' => 'required|numeric|min:0',
             'questionnaire_id' => 'nullable|exists:questionnaires,id',
@@ -73,7 +73,17 @@ class ProductController extends Controller
         }
 
         $product = DigitalProduct::create($validated);
-
+        if ($validated['type'] === 'seminar') {
+            \App\Models\Seminar::create([
+                'product_id' => $product->id,
+                'title' => $validated['name'],
+                'slug' => $validated['slug'],
+                'description' => $validated['description'],
+                'instructor_name' => $request->instructor_name ?? 'Instruktur',
+                'duration_minutes' => $request->duration_minutes ?? 60,
+                'is_active' => $validated['is_active'] ?? true,
+            ]);
+        }
         return redirect()
             ->route('admin.digital.products.index')
             ->with('success', 'Produk berhasil ditambahkan');
@@ -118,6 +128,17 @@ class ProductController extends Controller
 
         $product->update($validated);
 
+        if ($product->type === 'seminar' && $product->seminar) {
+            $product->seminar->update([
+                'title' => $validated['name'],
+                'slug' => $validated['slug'],
+                'description' => $validated['description'],
+                'instructor_name' => $request->instructor_name ?? $product->seminar->instructor_name,
+                'duration_minutes' => $request->duration_minutes ?? $product->seminar->duration_minutes,
+                'is_active' => $validated['is_active'] ?? true,
+            ]);
+        }
+
         return redirect()
             ->route('admin.digital.products.index')
             ->with('success', 'Produk berhasil diupdate');
@@ -132,6 +153,10 @@ class ProductController extends Controller
             Storage::disk('public')->delete($product->thumbnail);
         }
 
+        if ($product->type === 'seminar' && $product->seminar) {
+            $product->seminar->delete();
+        }
+        
         $product->delete();
 
         return redirect()

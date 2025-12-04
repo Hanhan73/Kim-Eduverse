@@ -33,4 +33,4 @@ return new class extends Migration
             $table->enum('type', ['pre_test', 'post_test'])->after('course_id');
         });
     }
-};
+};  

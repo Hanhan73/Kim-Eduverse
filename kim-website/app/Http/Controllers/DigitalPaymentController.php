@@ -143,6 +143,8 @@ class DigitalPaymentController extends Controller
             ->with(['items.product', 'responses.questionnaire'])
             ->firstOrFail();
 
+        $hasSeminar = $order->items->contains('product_type', 'seminar');
+
         // Jika belum paid, cek status ke Midtrans langsung
         if ($order->payment_status !== 'paid') {
             $this->checkMidtransStatus($order);
@@ -174,7 +176,8 @@ class DigitalPaymentController extends Controller
             'hasQuestionnaire',
             'hasDownloadable',
             'downloadableProducts',
-            'incompleteQuestionnaires'
+            'incompleteQuestionnaires',
+            'hasSeminar'
         ));
     }
 

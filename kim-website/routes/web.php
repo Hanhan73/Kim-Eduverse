@@ -369,7 +369,7 @@ Route::prefix('produk/digital')->name('digital.')->group(function () {
 
     Route::post('/payment/confirm/{orderNumber}', [DigitalPaymentController::class, 'confirmPayment'])->name('payment.confirm');
 
-    Route::prefix('seminar')->name('digital.seminar.')->group(function () {
+    Route::prefix('seminar')->name('seminar.')->group(function () {
         Route::get('/{orderNumber}', [SeminarController::class, 'learn'])->name('learn');
 
         // Quiz
@@ -382,6 +382,7 @@ Route::prefix('produk/digital')->name('digital.')->group(function () {
 
         // Certificate
         Route::get('/certificate/{enrollmentId}/download', [SeminarController::class, 'downloadCertificate'])->name('certificate.download');
+        Route::post('/{orderNumber}/save-name', [SeminarController::class, 'saveParticipantName'])->name('save-name');
     });
 
     // Questionnaire
@@ -399,6 +400,10 @@ Route::prefix('produk/digital')->name('digital.')->group(function () {
 });
 
 
+use App\Http\Controllers\LandingPageController;
+Route::get('/promo/{slug}', [\App\Http\Controllers\LandingPageController::class, 'show'])->name('digital.landing');
+
+
 use App\Http\Controllers\Admin\DigitalDashboardController as DashboardController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\OrderController;
@@ -409,6 +414,7 @@ use App\Http\Controllers\Admin\DimensionController;
 use App\Http\Controllers\Admin\QuestionnaireResponseController;
 use App\Http\Controllers\Admin\QuestionController;
 use App\Http\Controllers\Admin\QuizController;
+use App\Http\Controllers\Admin\LandingPageController as DigitalLandingPageController;
 
 // Admin Auth Routes (No middleware)
 Route::prefix('admin/digital')->name('admin.digital.')->group(function () {
@@ -526,6 +532,15 @@ Route::prefix('admin/digital')->name('admin.digital.')->middleware(['admin'])->g
         Route::get('/{seminar}/enrollments', [AdminSeminarController::class, 'enrollments'])->name('enrollments');
 
         Route::post('/quizzes', [AdminSeminarController::class, 'storeQuiz'])->name('quizzes.store');
+    });
+
+    // Landing Pages Management (di dalam group admin)
+    Route::prefix('landing-pages')->name('landing-pages.')->group(function () {
+        Route::get('/', [DigitalLandingPageController::class, 'index'])->name('index');
+        Route::get('/{product}/edit', [DigitalLandingPageController::class, 'edit'])->name('edit');
+        Route::put('/{product}', [DigitalLandingPageController::class, 'update'])->name('update');
+        Route::delete('/{product}', [DigitalLandingPageController::class, 'destroy'])->name('destroy');
+        Route::get('/{product}/preview', [DigitalLandingPageController::class, 'preview'])->name('preview');
     });
 });
 

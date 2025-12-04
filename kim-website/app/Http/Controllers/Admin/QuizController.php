@@ -6,26 +6,22 @@ use App\Http\Controllers\Controller;
 use App\Models\Quiz;
 use App\Models\QuizQuestion;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class QuizController extends Controller
 {
     /**
-     * Show the form for editing the specified quiz.
+     * Show quiz edit page with questions management
      */
     public function edit(Quiz $quiz)
     {
-        // Muat quiz beserta pertanyaannya, diurutkan berdasarkan kolom 'order'
-        $quiz->load(['questions' => function ($query) {
-            $query->orderBy('order');
-        }]);
-
+        $quiz->load('questions');
+        
         return view('admin.digital.quizzes.edit', compact('quiz'));
     }
 
     /**
-     * Update the specified quiz in storage.
+     * Update quiz details
      */
     public function update(Request $request, Quiz $quiz)
     {
@@ -38,14 +34,17 @@ class QuizController extends Controller
             'is_active' => 'boolean',
         ]);
 
+        $validated['is_active'] = $request->has('is_active');
+
         $quiz->update($validated);
 
-        return back()
-            ->with('success', 'Informasi quiz berhasil diperbarui!');
+        return redirect()
+            ->route('admin.digital.quizzes.edit', $quiz)
+            ->with('success', 'Quiz berhasil diupdate!');
     }
 
     /**
-     * Store a newly created question in storage.
+     * Store new question
      */
     public function storeQuestion(Request $request, Quiz $quiz)
     {
@@ -53,25 +52,51 @@ class QuizController extends Controller
             'question_text' => 'required|string',
             'option_a' => 'required|string',
             'option_b' => 'required|string',
-            'option_c' => 'required|string',
-            'option_d' => 'required|string',
+            'option_c' => 'nullable|string',
+            'option_d' => 'nullable|string',
             'option_e' => 'nullable|string',
-            'correct_answer' => 'required|in:a,b,c,d,e',
+            'correct_answer' => 'required|in:A,B,C,D,E',
             'points' => 'required|integer|min:1',
+            'explanation' => 'nullable|string',
         ]);
 
-        // Tentukan urutan baru untuk pertanyaan ini
-        $maxOrder = $quiz->questions()->max('order');
-        $validated['order'] = $maxOrder ? $maxOrder + 1 : 1;
+        // Get max order
+        $maxOrder = $quiz->questions()->max('order') ?? 0;
 
-        $quiz->questions()->create($validated);
+        // Create question with proper field mapping
+        $quiz->questions()->create([
+            'question' => $validated['question_text'],
+            'type' => 'multiple_choice',
+            'options' => [
+                'A' => $validated['option_a'],
+                'B' => $validated['option_b'],
+                'C' => $validated['option_c'] ?? null,
+                'D' => $validated['option_d'] ?? null,
+                'E' => $validated['option_e'] ?? null,
+            ],
+            'correct_answer' => $validated['correct_answer'],
+            'points' => $validated['points'],
+            'order' => $maxOrder + 1,
+        ]);
 
-        return back()
+        return redirect()
+            ->route('admin.digital.quizzes.edit', $quiz)
             ->with('success', 'Pertanyaan berhasil ditambahkan!');
     }
 
     /**
-     * Update the specified question in storage.
+     * Edit question form (returns JSON for AJAX modal)
+     */
+    public function editQuestion(Quiz $quiz, QuizQuestion $question)
+    {
+        return response()->json([
+            'success' => true,
+            'question' => $question
+        ]);
+    }
+
+    /**
+     * Update question
      */
     public function updateQuestion(Request $request, Quiz $quiz, QuizQuestion $question)
     {
@@ -79,51 +104,65 @@ class QuizController extends Controller
             'question_text' => 'required|string',
             'option_a' => 'required|string',
             'option_b' => 'required|string',
-            'option_c' => 'required|string',
-            'option_d' => 'required|string',
+            'option_c' => 'nullable|string',
+            'option_d' => 'nullable|string',
             'option_e' => 'nullable|string',
-            'correct_answer' => 'required|in:a,b,c,d,e',
+            'correct_answer' => 'required|in:A,B,C,D,E',
             'points' => 'required|integer|min:1',
+            'explanation' => 'nullable|string',
         ]);
 
-        $question->update($validated);
+        $question->update([
+            'question' => $validated['question_text'],
+            'options' => [
+                'A' => $validated['option_a'],
+                'B' => $validated['option_b'],
+                'C' => $validated['option_c'] ?? null,
+                'D' => $validated['option_d'] ?? null,
+                'E' => $validated['option_e'] ?? null,
+            ],
+            'correct_answer' => $validated['correct_answer'],
+            'points' => $validated['points'],
+        ]);
 
-        return back()
-            ->with('success', 'Pertanyaan berhasil diperbarui!');
+        return redirect()
+            ->route('admin.digital.quizzes.edit', $quiz)
+            ->with('success', 'Pertanyaan berhasil diupdate!');
     }
 
     /**
-     * Remove the specified question from storage.
+     * Delete question
      */
     public function destroyQuestion(Quiz $quiz, QuizQuestion $question)
     {
         $question->delete();
 
-        return back()
+        // Reorder remaining questions
+        $quiz->questions()->orderBy('order')->get()->each(function ($q, $index) {
+            $q->update(['order' => $index + 1]);
+        });
+
+        return redirect()
+            ->route('admin.digital.quizzes.edit', $quiz)
             ->with('success', 'Pertanyaan berhasil dihapus!');
     }
 
     /**
-     * Reorder questions.
+     * Reorder questions (AJAX)
      */
     public function reorderQuestions(Request $request, Quiz $quiz)
     {
-        $questionIds = $request->input('question_ids', []);
+        $request->validate([
+            'questions' => 'required|array',
+            'questions.*' => 'integer|exists:quiz_questions,id',
+        ]);
 
-        foreach ($questionIds as $index => $questionId) {
+        foreach ($request->questions as $index => $questionId) {
             QuizQuestion::where('id', $questionId)
                 ->where('quiz_id', $quiz->id)
                 ->update(['order' => $index + 1]);
         }
 
         return response()->json(['success' => true]);
-    }
-
-    public function editQuestion(Quiz $quiz, QuizQuestion $question)
-    {
-        return view('admin.digital.quizzes._edit_question_form', [
-            'quiz' => $quiz,
-            'question' => $question
-        ]);
     }
 }

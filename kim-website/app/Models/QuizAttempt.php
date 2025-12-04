@@ -10,13 +10,15 @@ class QuizAttempt extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
         'quiz_id',
-        'attempt_number',
+        'user_id',
+        'user_email',
+        'started_at',
         'answers',
         'score',
+        'percentage',
         'is_passed',
-        'started_at',
+        'is_submitted',
         'submitted_at',
     ];
 

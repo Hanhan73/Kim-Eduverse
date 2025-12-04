@@ -20,7 +20,8 @@ class StudentQuizController extends Controller
         $studentId = session('edutech_user_id');
         
         $quiz = Quiz::with(['course', 'module', 'questions' => function($query) {
-            $query->orderBy('order');
+            // Hapus orderBy('order') untuk memungkinkan pengacakan
+            // $query->orderBy('order');
         }])
         ->where('is_active', true)
         ->findOrFail($quizId);
@@ -80,6 +81,12 @@ class StudentQuizController extends Controller
                 ->with('error', 'You have reached the maximum attempts for this quiz.');
         }
         
+        // Acak urutan pertanyaan
+        $shuffledQuestions = $quiz->questions->shuffle();
+        
+        // Simpan ID pertanyaan dalam urutan acak untuk digunakan saat submit
+        $questionOrder = $shuffledQuestions->pluck('id')->toArray();
+        
         // Create new attempt
         $attempt = QuizAttempt::create([
             'user_id' => $studentId,
@@ -89,6 +96,7 @@ class StudentQuizController extends Controller
             'score' => 0,
             'is_passed' => false,
             'answers' => json_encode([]),
+            'question_order' => json_encode($questionOrder), // Tambahkan kolom ini di database
         ]);
         
         // Redirect kembali ke learning page dengan parameter quiz
@@ -119,13 +127,30 @@ class StudentQuizController extends Controller
             ->latest()
             ->firstOrFail();
 
+        // Ambil urutan pertanyaan yang disimpan saat start
+        $questionOrder = json_decode($attempt->question_order, true) ?? [];
+        
+        // Urutkan pertanyaan sesuai dengan yang disimpan
+        $orderedQuestions = [];
+        foreach ($questionOrder as $questionId) {
+            $question = $quiz->questions->where('id', $questionId)->first();
+            if ($question) {
+                $orderedQuestions[] = $question;
+            }
+        }
+        
+        // Jika tidak ada urutan yang tersimpan, gunakan urutan default
+        if (empty($orderedQuestions)) {
+            $orderedQuestions = $quiz->questions->all();
+        }
+
         // Process answers
         $answers = $request->input('answers', []);
         $detailedAnswers = [];
         $totalPoints = 0;
         $earnedPoints = 0;
 
-        foreach ($quiz->questions as $question) {
+        foreach ($orderedQuestions as $question) {
             $totalPoints += $question->points;
             
             $userAnswer = $answers[$question->id] ?? null;

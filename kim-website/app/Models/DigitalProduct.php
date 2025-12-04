@@ -96,14 +96,43 @@ class DigitalProduct extends Model
     {
         return $this->type === 'questionnaire';
     }
+    
 
-    public function seminar()
-    {
-        return $this->belongsTo(Seminar::class);
-    }
 
     public function isSeminar()
     {
         return $this->type === 'seminar';
     }
+
+    public function seminar()
+    {
+        return $this->hasOne(\App\Models\Seminar::class, 'product_id');
+    }
+
+/**
+ * Relasi ke Landing Page
+ */
+public function landingPage()
+{
+    return $this->hasOne(\App\Models\ProductLandingPage::class, 'product_id');
+}
+
+/**
+ * Check apakah produk punya landing page yang aktif
+ */
+public function hasLandingPage()
+{
+    return $this->landingPage && $this->landingPage->is_active;
+}
+
+/**
+ * Get URL landing page (jika ada)
+ */
+public function getLandingPageUrlAttribute()
+{
+    if ($this->hasLandingPage()) {
+        return route('digital.landing', $this->slug);
+    }
+    return null;
+}
 }

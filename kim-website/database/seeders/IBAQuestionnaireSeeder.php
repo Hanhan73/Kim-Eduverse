@@ -16,15 +16,6 @@ class IBAQuestionnaireSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create Category
-        $category = DigitalProductCategory::create([
-            'name' => 'Angket Psikologi',
-            'slug' => 'angket-psikologi',
-            'description' => 'Angket dan tes psikologi untuk mengukur berbagai aspek psikologis',
-            'icon' => 'fa-brain',
-            'order' => 1,
-            'is_active' => true,
-        ]);
 
         // Create Questionnaire
         $questionnaire = Questionnaire::create([
@@ -180,7 +171,7 @@ class IBAQuestionnaireSeeder extends Seeder
 
         // Create Digital Product
         DigitalProduct::create([
-            'category_id' => $category->id,
+            'category_id' => 1,
             'name' => 'Indeks Burnout Akademik (IBA)',
             'slug' => 'indeks-burnout-akademik',
             'description' => 'Tes untuk mengukur tingkat burnout akademik Anda. Dapatkan hasil analisis lengkap dengan saran penanganan.',

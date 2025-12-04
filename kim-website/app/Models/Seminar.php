@@ -84,4 +84,9 @@ class Seminar extends Model
     {
         return $this->morphMany(Quiz::class, 'quizable');
     }
+
+    public function product()
+    {
+        return $this->belongsTo(DigitalProduct::class, 'product_id');
+    }
 }

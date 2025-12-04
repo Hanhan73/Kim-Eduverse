@@ -16,10 +16,16 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // User::factory(10)->create();
+    $this->call([
+        DigitalProductCategorySeeder::class,
+        IBAQuestionnaireSeeder::class,
+        DigitalProductSeeder::class,
+        AIGuruSeminarSeeder::class,
+        DigitalAdminSeeder::class,
+        EdutechSeeder::class,
+        ModuleLessonSeeder::class,
+        QuestionnaireAISeeder::class,
+    ]);
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
     }
 }
