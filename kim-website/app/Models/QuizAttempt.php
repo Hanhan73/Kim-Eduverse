@@ -20,7 +20,6 @@ class QuizAttempt extends Model
         'is_passed',
         'is_submitted',
         'submitted_at',
-        'question_order',
     ];
 
     protected $casts = [
