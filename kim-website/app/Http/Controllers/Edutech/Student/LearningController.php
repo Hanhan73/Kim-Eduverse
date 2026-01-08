@@ -20,13 +20,13 @@ class LearningController extends Controller
     public function show(Request $request, $slug)
     {
         $studentId = session('edutech_user_id');
-        
+
         $course = Course::where('slug', $slug)
             ->with([
                 'modules.lessons',
                 'modules.quiz', // Quiz per module
                 'instructor',
-                'quizzes' => function($query) {
+                'quizzes' => function ($query) {
                     $query->where('is_active', true)->with('questions');
                 }
             ])
@@ -54,11 +54,11 @@ class LearningController extends Controller
         // === GET QUIZZES ===
         $preTest = $course->quizzes->where('type', 'pre_test')->first();
         $postTest = $course->quizzes->where('type', 'post_test')->first();
-        
+
         // Get quiz attempts
         $preTestAttempt = null;
         $postTestAttempt = null;
-        
+
         if ($preTest) {
             $preTestAttempt = QuizAttempt::where('user_id', $studentId)
                 ->where('quiz_id', $preTest->id)
@@ -66,50 +66,64 @@ class LearningController extends Controller
                 ->orderBy('created_at', 'desc')
                 ->first();
         }
-        
+
         if ($postTest) {
             $postTestAttempt = QuizAttempt::where('user_id', $studentId)
                 ->where('quiz_id', $postTest->id)
                 ->orderBy('created_at', 'desc')
                 ->first();
         }
-        
-        // Check access
-        $canAccessMaterials = $enrollment->canAccessMaterials();
-        $canAccessPostTest = $enrollment->canAccessPostTest();
-        
+
+        // Check access based on enrollment status
+        $canAccessMaterials = $enrollment->status === 'active' || $enrollment->status === 'completed';
+        $canAccessPostTest = $enrollment->status === 'active' || $enrollment->status === 'completed';
+
         // Check jika ada quiz yang sedang ongoing (tidak boleh akses module lain)
         $ongoingQuiz = QuizAttempt::where('user_id', $studentId)
             ->whereNull('submitted_at')
-            ->whereHas('quiz', function($q) use ($course) {
+            ->whereHas('quiz', function ($q) use ($course) {
                 $q->where('course_id', $course->id);
             })
             ->with('quiz')
             ->first();
 
-        // Get current lesson/quiz
-        $currentView = 'lesson'; // 'lesson' atau 'quiz'
+        // Get current lesson/quiz/result
+        $currentView = 'lesson'; // 'lesson', 'quiz', atau 'result'
         $currentLesson = null;
         $currentQuiz = null;
         $currentAttempt = null;
-        
-        if ($request->has('quiz')) {
+        $resultAttempt = null; // Untuk menampilkan hasil quiz
+
+        // Check if user is viewing a quiz result
+        if ($request->has('result')) {
+            $currentView = 'result';
+            $resultAttempt = QuizAttempt::with(['quiz', 'quiz.questions'])
+                ->where('id', $request->result)
+                ->where('user_id', $studentId)
+                ->firstOrFail();
+
+            $currentQuiz = $resultAttempt->quiz;
+        }
+        // Check if user is taking a quiz
+        elseif ($request->has('quiz')) {
             // User mau lihat quiz
             $currentQuiz = Quiz::with('questions')->findOrFail($request->quiz);
             $currentView = 'quiz';
-            
+
             // Check if quiz sudah di-attempt tapi belum submit
             $currentAttempt = QuizAttempt::where('user_id', $studentId)
                 ->where('quiz_id', $currentQuiz->id)
                 ->whereNull('submitted_at')
                 ->latest()
                 ->first();
-        } elseif ($canAccessMaterials) {
+        }
+        // Otherwise, show lesson content
+        elseif ($canAccessMaterials) {
             // User lihat lesson
             if ($request->has('lesson')) {
                 $currentLesson = Lesson::find($request->lesson);
             }
-            
+
             if (!$currentLesson && $course->modules->count() > 0) {
                 $firstModule = $course->modules->first();
                 if ($firstModule && $firstModule->lessons->count() > 0) {
@@ -120,7 +134,7 @@ class LearningController extends Controller
 
         // Get completed lessons
         $completedLessons = LessonCompletion::where('user_id', $studentId)
-            ->whereHas('lesson.module', function($query) use ($course) {
+            ->whereHas('lesson.module', function ($query) use ($course) {
                 $query->where('course_id', $course->id);
             })
             ->where('is_completed', true)
@@ -129,7 +143,7 @@ class LearningController extends Controller
 
         // Get passed quizzes (untuk badge di sidebar)
         $passedQuizzes = QuizAttempt::where('user_id', $studentId)
-            ->whereHas('quiz', function($q) use ($course) {
+            ->whereHas('quiz', function ($q) use ($course) {
                 $q->where('course_id', $course->id);
             })
             ->where('is_passed', true)
@@ -155,6 +169,7 @@ class LearningController extends Controller
             'currentLesson',
             'currentQuiz',
             'currentAttempt',
+            'resultAttempt', // Tambahkan ini untuk menampilkan hasil quiz
             'completedLessons',
             'passedQuizzes',
             'preTest',
@@ -183,7 +198,7 @@ class LearningController extends Controller
             ->where('course_id', $courseId)
             ->first();
 
-        if (!$enrollment->canAccessMaterials()) {
+        if ($enrollment->status !== 'active' && $enrollment->status !== 'completed') {
             return response()->json([
                 'success' => false,
                 'message' => 'You must pass the pre-test first!',
@@ -216,7 +231,7 @@ class LearningController extends Controller
     public function nextLesson($lessonId)
     {
         $studentId = session('edutech_user_id');
-        
+
         $lesson = Lesson::findOrFail($lessonId);
         $module = $lesson->module;
         $course = $module->course;
@@ -225,7 +240,7 @@ class LearningController extends Controller
             ->where('course_id', $course->id)
             ->first();
 
-        if (!$enrollment->canAccessMaterials()) {
+        if ($enrollment->status !== 'active' && $enrollment->status !== 'completed') {
             return redirect()
                 ->route('edutech.courses.learn', $course->slug)
                 ->with('error', 'You must pass the pre-test first!');
