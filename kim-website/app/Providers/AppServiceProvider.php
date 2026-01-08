@@ -3,9 +3,6 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Event;
-use App\Events\PaymentPaid;
-use App\Listeners\CreateRevenueShare;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -22,7 +19,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Register event listener for payment paid events
-        Event::listen(PaymentPaid::class, CreateRevenueShare::class);
+        //
     }
 }

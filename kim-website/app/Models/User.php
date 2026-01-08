@@ -18,12 +18,6 @@ class User extends Authenticatable
         'email',
         'password',
         'role_id',
-        'phone',
-        'bio',
-        'avatar',
-        'is_active',
-        'verification_token',
-        'email_verified_at',
     ];
 
     protected $hidden = [
@@ -75,64 +69,64 @@ class User extends Authenticatable
         return $this->hasMany(Course::class, 'instructor_id');
     }
 
-    public function hasRole(string $roleName): bool
-    {
-        // Use relationLoaded() to check, and getRelation() to get the object
-        // This avoids the conflict with the 'role' column
-        $role = $this->relationLoaded('role') ? $this->getRelation('role') : $this->role()->first();
+public function hasRole(string $roleName): bool
+{
+    // Use relationLoaded() to check, and getRelation() to get the object
+    // This avoids the conflict with the 'role' column
+    $role = $this->relationLoaded('role') ? $this->getRelation('role') : $this->role()->first();
 
-        return $role && $role->name === $roleName;
-    }
+    return $role && $role->name === $roleName;
+}
 
-    public function hasAnyRole(array $roleNames): bool
-    {
-        // Use relationLoaded() to check, and getRelation() to get the object
-        // This avoids the conflict with the 'role' column
-        $role = $this->relationLoaded('role') ? $this->getRelation('role') : $this->role()->first();
+public function hasAnyRole(array $roleNames): bool
+{
+    // Use relationLoaded() to check, and getRelation() to get the object
+    // This avoids the conflict with the 'role' column
+    $role = $this->relationLoaded('role') ? $this->getRelation('role') : $this->role()->first();
 
-        return $role && in_array($role->name, $roleNames);
-    }
+    return $role && in_array($role->name, $roleNames);
+}
 
-    public function hasPermission(string $permission): bool
-    {
-        // Apply the same fix here for consistency
-        $role = $this->relationLoaded('role') ? $this->getRelation('role') : $this->role()->first();
+public function hasPermission(string $permission): bool
+{
+    // Apply the same fix here for consistency
+    $role = $this->relationLoaded('role') ? $this->getRelation('role') : $this->role()->first();
 
-        return $role && $role->hasPermission($permission);
-    }
+    return $role && $role->hasPermission($permission);
+}
 
-    public function hasAnyPermission(array $permissions): bool
-    {
-        // And here as well
-        $role = $this->relationLoaded('role') ? $this->getRelation('role') : $this->role()->first();
+public function hasAnyPermission(array $permissions): bool
+{
+    // And here as well
+    $role = $this->relationLoaded('role') ? $this->getRelation('role') : $this->role()->first();
 
-        return $role && $role->hasAnyPermission($permissions);
-    }
+    return $role && $role->hasAnyPermission($permissions);
+}
 
-    public function isSuperAdmin(): bool
-    {
-        return $this->hasRole('super_admin');
-    }
+public function isSuperAdmin(): bool
+{
+    return $this->hasRole('super_admin');
+}
 
-    public function isBendahara(): bool
-    {
-        return $this->hasRole('bendahara');
-    }
+public function isBendahara(): bool
+{
+    return $this->hasRole('bendahara');
+}
 
-    public function isInstruktor(): bool
-    {
-        return $this->hasRole('instruktor');
-    }
+public function isInstruktor(): bool
+{
+    return $this->hasRole('instruktor');
+}
 
-    public function isStudent(): bool
-    {
-        return $this->hasRole('student');
-    }
+public function isStudent(): bool
+{
+    return $this->hasRole('student');
+}
 
-    public function isAdminBlog(): bool
-    {
-        return $this->hasRole('blog_admin');
-    }
+public function isAdminBlog(): bool
+{
+    return $this->hasRole('blog_admin');
+}
 
     public function isAdminDigital(): bool
     {

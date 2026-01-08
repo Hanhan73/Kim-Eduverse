@@ -16,7 +16,7 @@ class Payment extends Model
         'transaction_id',
         'amount',
         'payment_method',
-        'status',
+        'status',   
         'payment_url',
         'metadata',
         'paid_at',
@@ -94,16 +94,8 @@ class Payment extends Model
                 'payment_status' => 'paid',
             ]);
         }
-
-        // Dispatch event for payment paid so listeners (eg revenue share) can react
-        try {
-            event(new \App\Events\PaymentPaid($this));
-        } catch (\Exception $e) {
-            // Log but do not break flow
-            \Illuminate\Support\Facades\Log::error('Error dispatching PaymentPaid event: ' . $e->getMessage());
-        }
     }
-
+    
 
     public function markAsFailed()
     {

@@ -43,7 +43,7 @@ class AuthController extends Controller
                 'edutech_user_id' => $user->id,
                 'edutech_user_name' => $user->name,
                 'edutech_user_email' => $user->email,
-                'edutech_user_role' => $user->role->name,
+                'edutech_user_role' => $user->role,
             ]);
 
             if ($request->has('remember')) {
@@ -83,7 +83,7 @@ class AuthController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'phone' => $request->phone,
-            'role_id' => 5,
+            'role' => 'student',
             'is_active' => true,
             'verification_token' => $verificationToken,
             'email_verified_at' => null,

@@ -61,7 +61,7 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                         <small class="text-muted">Current role:
-                            <strong>{{ $user->role?->display_name ?? 'No Role' }}</strong></small>
+                            <strong>{{ $user->role->display_name ?? 'No Role' }}</strong></small>
                     </div>
 
                     <hr>

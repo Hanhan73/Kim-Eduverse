@@ -142,7 +142,7 @@ Route::prefix('edutech/student')->name('edutech.student.')->middleware('role:stu
 // ========================================
 // INSTRUCTOR DASHBOARD ROUTES
 // ========================================
-Route::prefix('edutech/instructor')->name('edutech.instructor.')->middleware('role:instruktor')->group(function () {
+Route::prefix('edutech/instructor')->name('edutech.instructor.')->middleware('role:instructor')->group(function () {
     // Dashboard
     Route::get('/dashboard', [InstructorDashboardController::class, 'index'])->name('dashboard');
 
@@ -318,7 +318,7 @@ Route::prefix('edutech')->name('edutech.')->middleware('edutech.auth')->group(fu
 });
 
 // Midtrans Webhook (No auth - untuk menerima notifikasi dari Midtrans)
-Route::post('/edutech/payment/notification', [PaymentController::class, 'notification'])->middleware('web-no-csrf')->name('edutech.payment.notification');
+Route::post('/edutech/payment/notification', [PaymentController::class, 'notification'])->name('edutech.payment.notification');
 
 use App\Http\Controllers\DigitalController;
 use App\Http\Controllers\DigitalPaymentController;
@@ -352,7 +352,7 @@ Route::prefix('produk/digital')->name('digital.')->group(function () {
     // Payment
     Route::get('/payment/{orderNumber}', [DigitalPaymentController::class, 'show'])->name('payment.show');
     Route::get('/payment/success/{orderNumber}', [DigitalPaymentController::class, 'success'])->name('payment.success');
-    Route::post('/payment/notification', [DigitalPaymentController::class, 'notification'])->middleware('web-no-csrf')->name('payment.notification');
+    Route::post('/payment/notification', [DigitalPaymentController::class, 'notification'])->name('payment.notification');
 
     Route::post('/payment/confirm/{orderNumber}', [DigitalPaymentController::class, 'confirmPayment'])->name('payment.confirm');
 
@@ -559,7 +559,7 @@ Route::prefix('admin/super-admin')->name('admin.super-admin.')->middleware(['aut
     Route::post('/users', [SuperAdminController::class, 'storeUser'])->name('users.store');
     Route::get('/users/{user}/edit', [SuperAdminController::class, 'editUser'])->name('users.edit');
     Route::put('/users/{user}', [SuperAdminController::class, 'updateUser'])->name('users.update');
-    Route::delete('/users/{user}', [SuperAdminController::class, 'deleteUser'])->name('users.destroy');
+    Route::delete('/users/{user}', [SuperAdminController::class, 'deleteUser'])->name('users.delete');
 
     // Revenue Management
     Route::get('/revenue', [SuperAdminController::class, 'revenue'])->name('revenue');
@@ -576,7 +576,7 @@ Route::prefix('admin/super-admin')->name('admin.super-admin.')->middleware(['aut
 });
 
 // <-- MODIFIED: Added middleware for Bendahara & Super Admin
-Route::prefix('admin/bendahara')->name('admin.bendahara.')->middleware(['auth', 'role:bendahara,super_admin'])->group(function () {
+Route::prefix('admin/bendahara')->name('admin.bendahara.')->middleware(['auth','role:bendahara,super_admin'])->group(function () {
     Route::get('/dashboard', [BendaharaController::class, 'dashboard'])->name('dashboard');
 
     // Revenue / Pemasukan
@@ -598,7 +598,7 @@ Route::prefix('admin/bendahara')->name('admin.bendahara.')->middleware(['auth', 
 });
 
 // <-- MODIFIED: Added middleware for Instructor & Super Admin
-Route::prefix('instructor')->name('instructor.')->middleware(['auth', 'role:instruktor, role:super_admin'])->group(function () {
+Route::prefix('instructor')->name('instructor.')->middleware(['auth', 'role:instruktor', 'role:super_admin'])->group(function () {
     Route::get('/dashboard', [InstructorController::class, 'dashboard'])->name('dashboard');
 
     // Earnings

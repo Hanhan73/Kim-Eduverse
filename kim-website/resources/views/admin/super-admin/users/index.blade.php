@@ -57,8 +57,8 @@
                         <td>
                             @if($user->role)
                             <span
-                                class="badge bg-{{ $user->role->name === 'super_admin' ? 'danger' : ($user->role->name === 'bendahara' ? 'warning' : ($user->role->name === 'instructor' ? 'info' : 'secondary')) }}">
-                                {{ $user->role->display_name }}
+                                class="badge bg-{{ $user->role === 'super_admin' ? 'danger' : ($user->role === 'bendahara' ? 'warning' : ($user->role === 'instructor' ? 'info' : 'secondary')) }}">
+                                {{ $user->role }}
                             </span>
                             @else
                             <span class="badge bg-secondary">No Role</span>
@@ -115,10 +115,10 @@
 
 @push('scripts')
 <script>
-    function deleteUser(userId) {
-        const form = document.getElementById('deleteForm');
-        form.action = `/admin/super-admin/users/${userId}`;
-        new bootstrap.Modal(document.getElementById('deleteModal')).show();
-    }
+function deleteUser(userId) {
+    const form = document.getElementById('deleteForm');
+    form.action = `/admin/super-admin/users/${userId}`;
+    new bootstrap.Modal(document.getElementById('deleteModal')).show();
+}
 </script>
 @endpush
