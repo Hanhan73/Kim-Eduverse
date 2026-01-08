@@ -401,6 +401,7 @@ Route::prefix('produk/digital')->name('digital.')->group(function () {
 
 
 use App\Http\Controllers\LandingPageController;
+
 Route::get('/promo/{slug}', [\App\Http\Controllers\LandingPageController::class, 'show'])->name('digital.landing');
 
 
@@ -555,3 +556,124 @@ Route::prefix('test-claude')->name('test.claude.')->group(function () {
     Route::get('/analysis', [TestClaudeController::class, 'testFullAnalysis'])->name('analysis');
     Route::get('/logs', [TestClaudeController::class, 'viewLogs'])->name('logs');
 });
+
+use App\Http\Controllers\Admin\SuperAdminController;
+use App\Http\Controllers\Admin\BendaharaController;
+use App\Http\Controllers\Instructor\InstructorController;
+
+/*
+|--------------------------------------------------------------------------
+| Admin Routes - Unified Backend
+|--------------------------------------------------------------------------
+*/
+
+// Super Admin Routes
+Route::prefix('admin/super-admin')->name('admin.super-admin.')->group(function () {
+    Route::get('/dashboard', [SuperAdminController::class, 'dashboard'])->name('dashboard');
+
+    // User Management
+    Route::get('/users', [SuperAdminController::class, 'users'])->name('users');
+    Route::get('/users/create', [SuperAdminController::class, 'createUser'])->name('users.create');
+    Route::post('/users', [SuperAdminController::class, 'storeUser'])->name('users.store');
+    Route::get('/users/{user}/edit', [SuperAdminController::class, 'editUser'])->name('users.edit');
+    Route::put('/users/{user}', [SuperAdminController::class, 'updateUser'])->name('users.update');
+    Route::delete('/users/{user}', [SuperAdminController::class, 'deleteUser'])->name('users.delete');
+
+    // Revenue Management
+    Route::get('/revenue', [SuperAdminController::class, 'revenue'])->name('revenue');
+
+    // Instructor Management
+    Route::get('/instructors', [SuperAdminController::class, 'instructors'])->name('instructors');
+    Route::get('/instructors/{instructor}', [SuperAdminController::class, 'instructorDetail'])->name('instructors.detail');
+
+    // Withdrawal Management
+    Route::get('/withdrawals', [SuperAdminController::class, 'withdrawals'])->name('withdrawals');
+
+    // Settings
+    Route::get('/settings', [SuperAdminController::class, 'settings'])->name('settings');
+});
+
+// Bendahara Routes
+Route::prefix('admin/bendahara')->name('admin.bendahara.')->group(function () {
+    Route::get('/dashboard', [BendaharaController::class, 'dashboard'])->name('dashboard');
+
+    // Revenue / Pemasukan
+    Route::get('/revenue', [BendaharaController::class, 'revenue'])->name('revenue');
+
+    // Instructor Earnings
+    Route::get('/instructor-earnings', [BendaharaController::class, 'instructorEarnings'])->name('instructor-earnings');
+    Route::get('/instructor-earnings/{instructorId}', [BendaharaController::class, 'instructorEarningDetail'])->name('instructor-earnings.detail');
+
+    // Withdrawal Management
+    Route::get('/withdrawals', [BendaharaController::class, 'withdrawals'])->name('withdrawals');
+    Route::get('/withdrawals/{withdrawal}', [BendaharaController::class, 'withdrawalDetail'])->name('withdrawals.detail');
+    Route::post('/withdrawals/{withdrawal}/approve', [BendaharaController::class, 'approveWithdrawal'])->name('withdrawals.approve');
+    Route::post('/withdrawals/{withdrawal}/reject', [BendaharaController::class, 'rejectWithdrawal'])->name('withdrawals.reject');
+    Route::post('/withdrawals/{withdrawal}/complete', [BendaharaController::class, 'completeWithdrawal'])->name('withdrawals.complete');
+
+    // Reports
+    Route::get('/reports', [BendaharaController::class, 'reports'])->name('reports');
+});
+
+// Instructor Routes
+Route::prefix('instructor')->name('instructor.')->group(function () {
+    Route::get('/dashboard', [InstructorController::class, 'dashboard'])->name('dashboard');
+
+    // Earnings
+    Route::get('/earnings', [InstructorController::class, 'earnings'])->name('earnings');
+
+    // Withdrawals
+    Route::get('/withdrawals', [InstructorController::class, 'withdrawals'])->name('withdrawals');
+    Route::post('/withdrawals/request', [InstructorController::class, 'requestWithdrawal'])->name('withdrawals.request');
+    Route::delete('/withdrawals/{withdrawal}/cancel', [InstructorController::class, 'cancelWithdrawal'])->name('withdrawals.cancel');
+
+    // Bank Accounts
+    Route::get('/bank-accounts', [InstructorController::class, 'bankAccounts'])->name('bank-accounts');
+    Route::post('/bank-accounts', [InstructorController::class, 'storeBankAccount'])->name('bank-accounts.store');
+    Route::put('/bank-accounts/{bankAccount}', [InstructorController::class, 'updateBankAccount'])->name('bank-accounts.update');
+    Route::delete('/bank-accounts/{bankAccount}', [InstructorController::class, 'deleteBankAccount'])->name('bank-accounts.delete');
+
+    // My Courses
+    Route::get('/courses', [InstructorController::class, 'courses'])->name('courses');
+});
+
+// Admin Dashboard Redirector - redirect based on role
+Route::get('/admin', function () {
+    $user = auth()->user();
+
+    if (!$user) {
+        return redirect()->route('login');
+    }
+
+    if ($user->isSuperAdmin()) {
+        return redirect()->route('admin.super-admin.dashboard');
+    }
+
+    if ($user->isBendahara()) {
+        return redirect()->route('admin.bendahara.dashboard');
+    }
+
+    if ($user->isInstruktor()) {
+        return redirect()->route('instructor.dashboard');
+    }
+
+    if ($user->isAdminBlog()) {
+        return redirect()->route('admin.blog.dashboard');
+    }
+
+    // Default untuk student atau role lain
+    return redirect()->route('home');
+})->middleware('auth')->name('admin');
+
+
+use App\Http\Controllers\Auth\UnifiedLoginController;
+
+/*
+|--------------------------------------------------------------------------
+| Authentication Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/login', [UnifiedLoginController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [UnifiedLoginController::class, 'login'])->name('login.post');
+Route::post('/logout', [UnifiedLoginController::class, 'logout'])->name('logout');
