@@ -316,12 +316,12 @@ class DigitalPaymentController extends Controller
         // Process items based on type
         $hasQuestionnaire = false;
         $hasDownloadable = false;
-        $hasSeminar = false;
 
         foreach ($order->items as $item) {
             // Create questionnaire responses for questionnaire products
             if ($item->product_type === 'questionnaire') {
                 if ($item->product && $item->product->questionnaire_id) {
+                    // Check if response already exists
                     $existingResponse = QuestionnaireResponse::where('order_id', $order->id)
                         ->where('questionnaire_id', $item->product->questionnaire_id)
                         ->first();
@@ -338,55 +338,22 @@ class DigitalPaymentController extends Controller
                 }
                 $hasQuestionnaire = true;
             }
-
-            // --- PERBAIKAN DIMULAI DI SINI ---
+            // Di processSuccessfulPayment(), setelah mark as paid
 
             // Create seminar enrollment for seminar products
             if ($item->product_type === 'seminar') {
-                // 1. Ambil data DigitalProduct berdasarkan product_id dari order item
-                $digitalProduct = DigitalProduct::find($item->product_id);
+                $existingEnrollment = \App\Models\SeminarEnrollment::where('order_id', $order->id)
+                    ->where('seminar_id', $item->product_id)
+                    ->first();
 
-                Log::info('Processing seminar enrollment', [
-                    'order_id' => $order->id,
-                    'product_id' => $item->product_id,
-                    'digital_product_seminar_id' => $digitalProduct ? $digitalProduct->seminar_id : 'NULL',
-                ]);
-
-                // 2. Pastikan digital product ada dan memiliki seminar_id
-                if ($digitalProduct && $digitalProduct->seminar_id) {
-                    // 3. Gunakan seminar_id dari digital_product untuk membuat enrollment
-                    $seminarId = $digitalProduct->seminar_id;
-
-                    $existingEnrollment = \App\Models\SeminarEnrollment::where('order_id', $order->id)
-                        ->where('seminar_id', $seminarId) // Gunakan ID seminar yang benar
-                        ->first();
-
-                    if (!$existingEnrollment) {
-                        \App\Models\SeminarEnrollment::create([
-                            'seminar_id' => $seminarId, // Ini adalah ID dari tabel seminars
-                            'customer_email' => $order->customer_email,
-                            'order_id' => $order->id,
-                        ]);
-
-                        Log::info('Seminar enrollment created successfully', [
-                            'order_id' => $order->id,
-                            'seminar_id' => $seminarId,
-                        ]);
-                    } else {
-                        Log::info('Seminar enrollment already exists', [
-                            'order_id' => $order->id,
-                            'seminar_id' => $seminarId,
-                        ]);
-                    }
-                } else {
-                    Log::error('Digital product or seminar_id not found', [
-                        'product_id' => $item->product_id,
+                if (!$existingEnrollment) {
+                    \App\Models\SeminarEnrollment::create([
+                        'seminar_id' => $item->product_id,
+                        'customer_email' => $order->customer_email,
+                        'order_id' => $order->id,
                     ]);
                 }
-                $hasSeminar = true;
             }
-
-            // --- PERBAIKAN SELESAI DI SINI ---
 
             // Mark downloadable products
             if (in_array($item->product_type, ['ebook', 'template', 'worksheet', 'document'])) {
@@ -396,19 +363,15 @@ class DigitalPaymentController extends Controller
 
         // Send appropriate email
         try {
-            if ($hasSeminar) {
-                // Send specific seminar access email
-                Mail::to($order->customer_email)->send(new \App\Mail\SeminarAccessMail($order));
-                Log::info('Seminar access email sent', ['order' => $order->order_number]);
-            } elseif ($hasDownloadable) {
+            if ($hasDownloadable) {
                 // Send email with download links for downloadable products
                 Mail::to($order->customer_email)->send(new DigitalProductDelivery($order));
-                Log::info('Digital product delivery email sent', ['order' => $order->order_number]);
             } else {
                 // Send standard confirmation email
                 Mail::to($order->customer_email)->send(new OrderConfirmation($order));
-                Log::info('Standard order confirmation email sent', ['order' => $order->order_number]);
             }
+
+            Log::info('Order confirmation email sent', ['order' => $order->order_number]);
         } catch (\Exception $e) {
             Log::error('Failed to send order confirmation email: ' . $e->getMessage());
         }
