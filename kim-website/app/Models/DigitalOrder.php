@@ -83,6 +83,13 @@ class DigitalOrder extends Model
         foreach ($this->items as $item) {
             $item->product->incrementSoldCount();
         }
+
+        // Dispatch event so revenue listener can create revenue share
+        try {
+            event(new \App\Events\PaymentPaid($this));
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Error dispatching PaymentPaid event: ' . $e->getMessage());
+        }
     }
 
     /**
