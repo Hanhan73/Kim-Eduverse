@@ -12,20 +12,20 @@ use Illuminate\Http\Request;
 
 class BendaharaController extends Controller
 {
-    protected $revenueService;
-    protected $withdrawalService;
+    // protected $revenueService;
+    // protected $withdrawalService;
 
-    public function __construct(RevenueService $revenueService, WithdrawalService $withdrawalService)
-    {
-        $this->middleware(['auth', 'role:bendahara']);
-        $this->revenueService = $revenueService;
-        $this->withdrawalService = $withdrawalService;
-    }
+    // public function __construct(RevenueService $revenueService, WithdrawalService $withdrawalService)
+    // {
+    //     $this->middleware(['auth', 'role:bendahara']);
+    //     $this->revenueService = $revenueService;
+    //     $this->withdrawalService = $withdrawalService;
+    // }
 
     /**
      * Dashboard bendahara
      */
-    public function dashboard()
+    public function dashboard(RevenueService $revenueService, WithdrawalService $withdrawalService)
     {
         $stats = [
             'total_revenue' => RevenueShare::completed()->sum('total_amount'),
@@ -38,9 +38,9 @@ class BendaharaController extends Controller
                 ->sum('total_amount'),
         ];
 
-        $revenueStats = $this->revenueService->getRevenueStatistics('month');
-        $breakdown = $this->revenueService->getRevenueBreakdown('month');
-        $pendingWithdrawals = $this->withdrawalService->getPendingWithdrawals();
+        $revenueStats = $revenueService->getRevenueStatistics('month');
+        $breakdown = $revenueService->getRevenueBreakdown('month');
+        $pendingWithdrawals = $withdrawalService->getPendingWithdrawals();
 
         return view('admin.bendahara.dashboard', compact('stats', 'revenueStats', 'breakdown', 'pendingWithdrawals'));
     }
@@ -48,13 +48,13 @@ class BendaharaController extends Controller
     /**
      * Revenue / Pemasukan
      */
-    public function revenue(Request $request)
+    public function revenue(Request $request, RevenueService $revenueService, WithdrawalService $withdrawalService)
     {
         $period = $request->get('period', 'month');
         $instructorId = $request->get('instructor_id');
 
-        $stats = $this->revenueService->getRevenueStatistics($period);
-        $breakdown = $this->revenueService->getRevenueBreakdown($period);
+        $stats = $revenueService->getRevenueStatistics($period);
+        $breakdown = $revenueService->getRevenueBreakdown($period);
 
         $query = RevenueShare::with(['instructor', 'user'])->completed();
 
@@ -112,7 +112,7 @@ class BendaharaController extends Controller
     /**
      * Withdrawal requests
      */
-    public function withdrawals(Request $request)
+    public function withdrawals(Request $request, WithdrawalService $withdrawalService)
     {
         $status = $request->get('status', 'all');
 
@@ -124,7 +124,7 @@ class BendaharaController extends Controller
 
         $withdrawals = $query->latest()->paginate(20);
 
-        $stats = $this->withdrawalService->getWithdrawalStatistics('all');
+        $stats = $withdrawalService->getWithdrawalStatistics('all');
 
         return view('admin.bendahara.withdrawals', compact('withdrawals', 'stats', 'status'));
     }
@@ -204,14 +204,14 @@ class BendaharaController extends Controller
     /**
      * Reports
      */
-    public function reports(Request $request)
+    public function reports(Request $request, RevenueService $revenueService, WithdrawalService $withdrawalService)
     {
         $period = $request->get('period', 'month');
 
-        $revenueStats = $this->revenueService->getRevenueStatistics($period);
-        $withdrawalStats = $this->withdrawalService->getWithdrawalStatistics($period);
-        $breakdown = $this->revenueService->getRevenueBreakdown($period);
-        $topInstructors = $this->revenueService->getTopInstructors(10);
+        $revenueStats = $revenueService->getRevenueStatistics($period);
+        $withdrawalStats = $withdrawalService->getWithdrawalStatistics($period);
+        $breakdown = $revenueService->getRevenueBreakdown($period);
+        $topInstructors = $revenueService->getTopInstructors(10);
 
         return view('admin.bendahara.reports', compact('revenueStats', 'withdrawalStats', 'breakdown', 'topInstructors', 'period'));
     }

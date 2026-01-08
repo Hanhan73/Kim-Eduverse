@@ -1,5 +1,4 @@
 @extends('layouts.admin-digital')
-
 @section('title', 'Manage Orders - Admin KIM Digital')
 
 @section('content')

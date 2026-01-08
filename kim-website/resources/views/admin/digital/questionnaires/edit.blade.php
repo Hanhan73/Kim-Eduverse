@@ -1,4 +1,4 @@
-@extends('layouts.admin-digital')
+@extends('layouts.admin')
 
 @section('title', 'Edit Angket - ' . $questionnaire->name)
 @section('page-title', 'Edit Angket')

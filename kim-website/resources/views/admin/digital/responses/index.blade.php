@@ -1,5 +1,4 @@
 @extends('layouts.admin-digital')
-
 @section('title', 'Hasil Respons - Admin Digital')
 @section('page-title', 'Hasil Respons Angket')
 

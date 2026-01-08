@@ -1,5 +1,4 @@
 @extends('layouts.admin-digital')
-
 @section('title', 'Detail Seminar')
 @section('page-title', $seminar->title)
 

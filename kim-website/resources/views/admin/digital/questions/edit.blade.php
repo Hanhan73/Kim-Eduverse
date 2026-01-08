@@ -1,5 +1,4 @@
 @extends('layouts.admin-digital')
-
 @section('title', 'Edit Pertanyaan - Admin Digital')
 @section('page-title', 'Edit Pertanyaan')
 

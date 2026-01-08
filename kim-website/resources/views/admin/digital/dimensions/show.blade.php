@@ -1,5 +1,4 @@
 @extends('layouts.admin-digital')
-
 @section('title', 'Detail Dimensi - Admin Digital')
 @section('page-title', 'Detail Dimensi')
 
