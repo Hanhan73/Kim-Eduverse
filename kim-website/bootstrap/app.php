@@ -17,8 +17,10 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin.auth' => AdminAuth::class,
             'edutech.auth' => \App\Http\Middleware\EdutechAuth::class,
+            'edutech.admin' => \App\Http\Middleware\EdutechAdmin::class,
             'edutech.instructor' => \App\Http\Middleware\EdutechInstructor::class,
             'edutech.student' => \App\Http\Middleware\EdutechStudent::class,
+            'admin' => \App\Http\Middleware\AdminMiddleware::class,
             'role' => \App\Http\Middleware\CheckRole::class,
             'permission' => \App\Http\Middleware\CheckPermission::class,
 

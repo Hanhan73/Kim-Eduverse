@@ -1,532 +1,436 @@
 <!DOCTYPE html>
-<html lang="id">
-
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title') - PT KIM Eduverse</title>
-
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
+    <title>@yield('title', 'Admin Panel')</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- DataTables -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
-
     <style>
-    :root {
-        --primary-purple: #6F42C1;
-        --primary-gold: #FFD700;
-        --dark-purple: #563d7c;
-        --sidebar-width: 260px;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --success: #48bb78;
+            --warning: #ed8936;
+            --danger: #f56565;
+            --info: #4299e1;
+            --dark: #2d3748;
+            --gray: #718096;
+            --light: #f7fafc;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f8fafc;
+            color: var(--dark);
+        }
+
+        /* Sidebar - DARK GRADIENT */
+        .sidebar {
+            width: 260px;
+            background: linear-gradient(180deg, #2d3748 0%, #1a202c 100%);
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            padding: 30px 25px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-header h2 {
+            color: white;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 0;
+        }
+
+        .sidebar-menu {
+            padding: 20px 0;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 25px;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            border-left: 4px solid transparent;
+        }
+
+        .menu-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+        }
+
+        .menu-item.active {
+            background: rgba(255, 255, 255, 0.1);
+            border-left-color: white;
+            color: white;
+        }
+
+        .menu-item i {
+            width: 25px;
+            margin-right: 12px;
+        }
+
+        .menu-divider {
+            margin: 20px 25px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Main Content - FULL WIDTH & RESPONSIVE */
+        .main-content {
+            margin-left: 260px;
+            padding: 30px 40px;
+            min-height: 100vh;
+        }
+
+        /* Content wrapper untuk max-width */
+        .content-wrapper {
+            max-width: 1600px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+
+        .stat-icon.red { background: linear-gradient(135deg, #fc8181, #f56565); color: white; }
+        .stat-icon.purple { background: linear-gradient(135deg, #b794f4, #9f7aea); color: white; }
+        .stat-icon.success { background: linear-gradient(135deg, #68d391, #48bb78); color: white; }
+        .stat-icon.warning { background: linear-gradient(135deg, #f6ad55, #ed8936); color: white; }
+
+        .stat-content h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 5px;
+        }
+
+        .stat-content p {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        /* Content Card */
+        .content-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            margin-bottom: 25px;
+        }
+
+        .card-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .card-header h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .card-body {
+            padding: 25px;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #f7fafc;
+        }
+
+        th {
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--dark);
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e2e8f0;
+            color: var(--gray);
+        }
+
+        tbody tr:hover {
+            background: #f7fafc;
+        }
+
+        /* Badge */
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .badge.admin { background: #fed7d7; color: #742a2a; }
+        .badge.instructor { background: #feebc8; color: #7c2d12; }
+        .badge.student { background: #e6f2ff; color: #2c5282; }
+        .badge.success { background: #c6f6d5; color: #22543d; }
+        .badge.warning { background: #feebc8; color: #7c2d12; }
+        .badge.danger { background: #fed7d7; color: #742a2a; }
+
+        /* Alert */
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .alert-success { background: #c6f6d5; color: #22543d; }
+        .alert-error { background: #fed7d7; color: #742a2a; }
+        .alert-info { background: #bee3f8; color: #2c5282; }
+
+        /* Buttons */
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .main-content {
+                padding: 25px 30px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+                padding: 20px 15px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .logout-btn {
+    background-color: #ef4444;
+    color: white;
+    font-weight: 600;
+    transition: all 0.2s ease-in-out;
+    border-radius: 0.5rem;
+}
+
+.logout-btn:hover {
+    background-color: #dc2626;
+    transform: scale(1.02);
+}
+
+    .pagination-wrapper {
+        display: flex;
+        justify-content: center;
+        margin-top: 25px;
     }
 
-    body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background-color: #f8f9fa;
+    .pagination i {
+        font-size: 16px;
+        color: #5b21b6;
+        transition: color 0.2s ease;
     }
 
-    /* Sidebar */
-    .sidebar {
-        position: fixed;
-        top: 0;
-        left: 0;
-        height: 100vh;
-        width: var(--sidebar-width);
-        background: linear-gradient(180deg, var(--primary-purple), var(--dark-purple));
-        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-        z-index: 1000;
-        overflow-y: auto;
-    }
-
-    .sidebar::-webkit-scrollbar {
-        width: 6px;
-    }
-
-    .sidebar::-webkit-scrollbar-thumb {
-        background: rgba(255, 255, 255, 0.3);
-        border-radius: 3px;
-    }
-
-    .sidebar-brand {
-        padding: 25px 20px;
-        text-align: center;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .sidebar-brand h4 {
+    .pagination a:hover i {
         color: white;
-        margin: 0;
-        font-weight: 700;
-        font-size: 20px;
     }
 
-    .sidebar-brand p {
-        color: rgba(255, 255, 255, 0.7);
-        margin: 5px 0 0;
-        font-size: 12px;
-    }
-
-    .sidebar-menu {
-        padding: 20px 0;
-    }
-
-    .menu-title {
-        color: rgba(255, 255, 255, 0.5);
-        font-size: 11px;
-        text-transform: uppercase;
-        font-weight: 600;
-        padding: 10px 20px;
-        letter-spacing: 1px;
-    }
-
-    .menu-item {
-        padding: 12px 20px;
-        color: rgba(255, 255, 255, 0.8);
-        text-decoration: none;
+    .pagination {
         display: flex;
         align-items: center;
-        transition: all 0.3s;
-        border-left: 3px solid transparent;
-    }
-
-    .menu-item i {
-        width: 30px;
-        font-size: 16px;
-    }
-
-    .menu-item:hover {
-        background: rgba(255, 255, 255, 0.1);
-        color: white;
-    }
-
-    .menu-item.active {
-        background: rgba(255, 255, 255, 0.15);
-        color: white;
-        border-left-color: var(--primary-gold);
-    }
-
-    /* Main Content */
-    .main-content {
-        margin-left: var(--sidebar-width);
-        min-height: 100vh;
-    }
-
-    /* Top Navbar */
-    .top-navbar {
-        background: white;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        padding: 15px 30px;
-        position: sticky;
-        top: 0;
-        z-index: 999;
-    }
-
-    .page-header {
-        padding: 30px;
-        background: white;
-        margin-bottom: 30px;
-        border-bottom: 1px solid #e0e0e0;
-    }
-
-    .page-header h1 {
-        margin: 0;
-        font-size: 28px;
-        font-weight: 700;
-        color: #333;
-    }
-
-    .page-header .breadcrumb {
-        margin: 10px 0 0;
-        background: none;
+        list-style: none;
+        gap: 6px;
         padding: 0;
     }
 
-    /* Content Area */
-    .content-area {
-        padding: 30px;
+    .pagination li {
+        display: inline-flex;
     }
 
-    /* Cards */
-    .card {
-        border: none;
-        border-radius: 12px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        margin-bottom: 30px;
-    }
-
-    .card-header {
-        background: white;
-        border-bottom: 1px solid #e0e0e0;
-        padding: 20px;
-        font-weight: 600;
-        color: #333;
-    }
-
-    .stat-card {
-        border-left: 4px solid;
-        transition: all 0.3s;
-    }
-
-    .stat-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-    }
-
-    .stat-card.primary {
-        border-left-color: var(--primary-purple);
-    }
-
-    .stat-card.success {
-        border-left-color: #28a745;
-    }
-
-    .stat-card.warning {
-        border-left-color: #ffc107;
-    }
-
-    .stat-card.info {
-        border-left-color: #17a2b8;
-    }
-
-    .stat-card.danger {
-        border-left-color: #dc3545;
-    }
-
-    /* Buttons */
-    .btn-primary {
-        background: var(--primary-purple);
-        border-color: var(--primary-purple);
-    }
-
-    .btn-primary:hover {
-        background: var(--dark-purple);
-        border-color: var(--dark-purple);
-    }
-
-    /* Tables */
-    .table {
-        background: white;
-    }
-
-    .table thead th {
-        background-color: #f8f9fa;
-        border-bottom: 2px solid var(--primary-purple);
-        color: #333;
-        font-weight: 600;
-    }
-
-    /* Badges */
-    .badge {
-        padding: 6px 12px;
-        font-weight: 500;
-    }
-
-    /* User Dropdown */
-    .user-dropdown {
-        cursor: pointer;
-    }
-
-    .user-avatar {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        background: var(--primary-purple);
-        color: white;
+    .pagination a,
+    .pagination span {
         display: flex;
         align-items: center;
         justify-content: center;
+        width: 32px;
+        /* Kurangi dari 12px ke 6px untuk sangat kecil */
+        height: 32px;
+        border-radius: 50%;
+        background: #f5f3ff;
+        color: #5b21b6;
+        font-size: 1.0rem;
+        /* Kurangi font-size teks juga */
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .pagination a:hover {
+        background: #6d28d9;
+        color: white;
+    }
+
+    .pagination .active span {
+        background: #6d28d9;
+        color: white;
         font-weight: 600;
     }
+
+    .pagination .disabled span {
+        background: #ede9fe;
+        color: #9ca3af;
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+
+        @yield('styles')
     </style>
-
-    @stack('styles')
 </head>
-
 <body>
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <div class="sidebar-brand">
-            <i class="fas fa-graduation-cap fa-2x text-white mb-2"></i>
-            <h4>KIM Eduverse</h4>
-            <p>{{ auth()->user()->role->display_name ?? 'Admin' }}</p>
-        </div>
-
-        <!-- In your main layout file, e.g., resources/views/layouts/admin.blade.php -->
-
-        <div class="sidebar-menu">
-            <!-- Dashboard (Visible to all logged-in admins) -->
-            <a href="{{ route('admin.super-admin.dashboard') }}"
-                class="menu-item {{ request()->routeIs('admin.super-admin.dashboard') ? 'active' : '' }}">
-                <i class="fas fa-tachometer-alt"></i>
-                <span>Dashboard</span>
-            </a>
-
-            {{-- SUPER ADMIN TOOLS --}}
-            @if(auth()->user()->hasRole('super_admin'))
-            <div class="menu-section">
-                <div class="menu-title">Super Admin Tools</div>
-                <a href="{{ route('admin.super-admin.users') }}"
-                    class="menu-item {{ request()->routeIs('admin.super-admin.users*') ? 'active' : '' }}">
-                    <i class="fas fa-users-cog"></i>
-                    <span>User Management</span>
-                </a>
-                <a href="{{ route('admin.super-admin.instructors') }}" class="menu-item">
-                    <i class="fas fa-chalkboard-teacher"></i><span>Instructors Management</span>
-                </a>
-                <a href="{{ route('admin.super-admin.settings') }}"
-                    class="menu-item {{ request()->routeIs('admin.super-admin.settings') ? 'active' : '' }}">
-                    <i class="fas fa-cogs"></i>
-                    <span>Global Settings</span>
-                </a>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>
+                    <i class="fas fa-shield-alt"></i>
+                    Admin Panel
+                </h2>
             </div>
-            @endif
 
-            {{-- EDUTECH SYSTEM --}}
-            {{-- CORRECTED: Using hasAnyRole for an array --}}
-            @if(auth()->user()->hasAnyRole(['super_admin', 'edutech_admin']))
-            <div class="menu-section">
-                <div class="menu-title">Edutech System</div>
-                <a href="{{ route('edutech.admin.dashboard') }}"
-                    class="menu-item {{ request()->routeIs('edutech.admin.dashboard') ? 'active' : '' }}">
-                    <i class="fas fa-graduation-cap"></i>
-                    <span>Edutech Dashboard</span>
+            <nav class="sidebar-menu">
+                <a href="{{ route('edutech.admin.dashboard') }}" class="menu-item {{ request()->routeIs('edutech.admin.dashboard') ? 'active' : '' }}">
+                    <i class="fas fa-home"></i>
+                    Dashboard
                 </a>
-                <a href="{{ route('edutech.admin.users') }}"
-                    class="menu-item {{ request()->routeIs('edutech.admin.users*') ? 'active' : '' }}">
+                <a href="{{ route('edutech.profile.index') }}" class="menu-item {{ request()->routeIs('edutech.profile.index') ? 'active' : '' }}">
+                    <i class="fas fa-user"></i>
+                    Profile Saya
+                </a>
+                <a href="{{ route('edutech.admin.users') }}" class="menu-item {{ request()->routeIs('edutech.admin.users*') ? 'active' : '' }}">
                     <i class="fas fa-users"></i>
-                    <span>Users</span>
+                    Users Management
                 </a>
-                <a href="{{ route('edutech.admin.courses') }}"
-                    class="menu-item {{ request()->routeIs('edutech.admin.courses*') ? 'active' : '' }}">
+                <a href="{{ route('edutech.admin.courses') }}" class="menu-item {{ request()->routeIs('edutech.admin.courses*') ? 'active' : '' }}">
                     <i class="fas fa-book"></i>
-                    <span>Courses</span>
+                    Courses Management
                 </a>
-                <a href="{{ route('edutech.admin.enrollments') }}"
-                    class="menu-item {{ request()->routeIs('edutech.admin.enrollments*') ? 'active' : '' }}">
-                    <i class="fas fa-user-check"></i>
-                    <span>Enrollments</span>
+                <a href="{{ route('edutech.admin.enrollments') }}" class="menu-item {{ request()->routeIs('edutech.admin.enrollments*') ? 'active' : '' }}">
+                    <i class="fas fa-graduation-cap"></i>
+                    Enrollments
                 </a>
-                <a href="{{ route('edutech.admin.certificates') }}"
-                    class="menu-item {{ request()->routeIs('edutech.admin.certificates*') ? 'active' : '' }}">
+                <a href="{{ route('edutech.admin.certificates') }}" class="menu-item {{ request()->routeIs('edutech.admin.certificates*') ? 'active' : '' }}">
                     <i class="fas fa-certificate"></i>
-                    <span>Certificates</span>
+                    Certificates
                 </a>
-            </div>
-            @endif
 
-            {{-- KIM DIGITAL SYSTEM --}}
-            {{-- CORRECTED: Using hasAnyRole for an array --}}
-            @if(auth()->user()->hasAnyRole(['super_admin', 'digital_admin']))
-            <div class="menu-section">
-                <div class="menu-title">Kim Digital System</div>
-                <a href="{{ route('admin.digital.dashboard') }}"
-                    class="menu-item {{ request()->routeIs('admin.digital.dashboard') ? 'active' : '' }}">
-                    <i class="fas fa-chart-line"></i>
-                    <span>Digital Dashboard</span>
-                </a>
-                <a href="{{ route('admin.digital.products.index') }}"
-                    class="menu-item {{ request()->routeIs('admin.digital.products*') ? 'active' : '' }}">
-                    <i class="fas fa-box"></i>
-                    <span>Products</span>
-                </a>
-                <a href="{{ route('admin.digital.categories.index') }}"
-                    class="menu-item {{ request()->routeIs('admin.digital.categories*') ? 'active' : '' }}">
-                    <i class="fas fa-folder"></i>
-                    <span>Categories</span>
-                </a>
-                <a href="{{ route('admin.digital.orders.index') }}"
-                    class="menu-item {{ request()->routeIs('admin.digital.orders*') ? 'active' : '' }}">
-                    <i class="fas fa-shopping-cart"></i>
-                    <span>Orders</span>
-                </a>
-                <a href="{{ route('admin.digital.questionnaires.index') }}"
-                    class="menu-item {{ request()->routeIs('admin.digital.questionnaires*') ? 'active' : '' }}">
-                    <i class="fas fa-clipboard-list"></i>
-                    <span>Questionnaires</span>
-                </a>
-            </div>
-            @endif
+                <div class="menu-divider"></div>
 
-            {{-- BLOG SYSTEM --}}
-            {{-- CORRECTED: Using hasAnyRole for an array --}}
-            @if(auth()->user()->hasAnyRole(['super_admin', 'admin_blog']))
-            <div class="menu-section">
-                <div class="menu-title">Blog System</div>
-                <a href="{{ route('admin.articles.index') }}"
-                    class="menu-item {{ request()->routeIs('admin.articles*') ? 'active' : '' }}">
-                    <i class="fas fa-newspaper"></i>
-                    <span>Manage Articles</span>
+                <a href="{{ route('edutech.admin.settings') }}" class="menu-item {{ request()->routeIs('edutech.admin.settings') ? 'active' : '' }}">
+                    <i class="fas fa-cog"></i>
+                    Settings
                 </a>
-                <a href="{{ route('blog.index') }}" class="menu-item" target="_blank">
-                    <i class="fas fa-external-link-alt"></i>
-                    <span>View Blog</span>
+                <a href="{{ route('edutech.landing') }}" class="menu-item">
+                    <i class="fas fa-globe"></i>
+                    View Website
                 </a>
-            </div>
-            @endif
 
-            {{-- FINANCE (BENDAHARA) --}}
-            {{-- CORRECTED: Using hasAnyRole for an array --}}
-            @if(auth()->user()->hasAnyRole(['bendahara']))
-            <div class="menu-section">
-                <div class="menu-title">Finance</div>
-                <a href="{{ route('admin.bendahara.dashboard') }}" class="menu-item">
-                    <i class="fas fa-tachometer-alt"></i><span>Dashboard</span>
-                </a>
-                <a href="{{ route('admin.bendahara.revenue') }}" class="menu-item active">
-                    <i class="fas fa-chart-line"></i><span>Revenue</span>
-                </a>
-                <a href="{{ route('admin.bendahara.instructor-earnings') }}" class="menu-item">
-                    <i class="fas fa-users"></i><span>Instructor Earnings</span>
-                </a>
-                <a href="{{ route('admin.bendahara.withdrawals') }}" class="menu-item">
-                    <i class="fas fa-money-bill-wave"></i><span>Withdrawals</span>
-                </a>
-                <a href="{{ route('admin.bendahara.reports') }}" class="menu-item">
-                    <i class="fas fa-file-alt"></i><span>Reports</span>
-                </a>
-            </div>
-            @elseif(auth()->user()->hasAnyRole(['super_admin']))
-            <div class="menu-section">
-                <div class="menu-title">Finance</div>
-                <a href="{{ route('admin.super-admin.revenue') }}"
-                    class="menu-item {{ request()->routeIs('admin.super-admin.revenue') ? 'active' : '' }}">
-                    <i class="fas fa-chart-pie"></i>
-                    <span>Revenue</span>
-                </a>
-                <a href="{{ route('admin.super-admin.withdrawals') }}"
-                    class="menu-item {{ request()->routeIs('admin.super-admin.withdrawals*') ? 'active' : '' }}">
-                    <i class="fas fa-money-bill-wave"></i>
-                    <span>Withdrawals</span>
-                </a>
-            </div>
-            @endif
 
-            {{-- INSTRUCTOR --}}
-            {{-- CORRECTED: Using hasAnyRole for an array --}}
-            @if(auth()->user()->hasAnyRole(['super_admin', 'instructor']))
-            <div class="menu-section">
-                <div class="menu-title">Instructor Panel</div>
-                <a href="{{ route('instructor.dashboard') }}"
-                    class="menu-item {{ request()->routeIs('instructor.dashboard') ? 'active' : '' }}">
-                    <i class="fas fa-chalkboard-teacher"></i>
-                    <span>My Dashboard</span>
-                </a>
-                <a href="{{ route('instructor.courses') }}"
-                    class="menu-item {{ request()->routeIs('instructor.courses') ? 'active' : '' }}">
-                    <i class="fas fa-book-open"></i>
-                    <span>My Courses</span>
-                </a>
-                <a href="{{ route('instructor.earnings') }}"
-                    class="menu-item {{ request()->routeIs('instructor.earnings') ? 'active' : '' }}">
-                    <i class="fas fa-wallet"></i>
-                    <span>My Earnings</span>
-                </a>
+            </nav>
+
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="content-wrapper">
+
+                @yield('content')
             </div>
-            @endif
-        </div>
+        </main>
     </div>
 
-    <!-- Main Content -->
-    <div class="main-content">
-        <!-- Top Navbar -->
-        <nav class="top-navbar">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <span class="text-muted">
-                        <i class="far fa-calendar-alt me-2"></i>
-                        {{ now()->isoFormat('dddd, D MMMM Y') }}
-                    </span>
-                </div>
-
-                <div class="dropdown user-dropdown">
-                    <div class="d-flex align-items-center" data-bs-toggle="dropdown">
-                        <div class="user-avatar me-2">
-                            {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
-                        </div>
-                        <div class="me-2">
-                            <div class="fw-bold">{{ auth()->user()->name }}</div>
-                            <small class="text-muted">{{ auth()->user()->email }}</small>
-                        </div>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li>
-                            <a class="dropdown-item" href="#">
-                                <i class="fas fa-user me-2"></i>Profile
-                            </a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" href="#">
-                                <i class="fas fa-cog me-2"></i>Settings
-                            </a>
-                        </li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li>
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-                                <button type="submit" class="dropdown-item text-danger">
-                                    <i class="fas fa-sign-out-alt me-2"></i>Logout
-                                </button>
-                            </form>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-
-        <!-- Page Header -->
-        <div class="page-header">
-            <h1>@yield('page-title')</h1>
-            @yield('breadcrumb')
-        </div>
-
-        <!-- Content Area -->
-        <div class="content-area">
-            @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show">
-                <i class="fas fa-check-circle me-2"></i>
-                {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-            @endif
-
-            @if (session('error'))
-            <div class="alert alert-danger alert-dismissible fade show">
-                <i class="fas fa-exclamation-circle me-2"></i>
-                {{ session('error') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-            @endif
-
-            @yield('content')
-        </div>
-    </div>
-
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- DataTables -->
-    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
-
-    <script>
-    // Initialize DataTables
-    $(document).ready(function() {
-        $('.datatable').DataTable({
-            language: {
-                url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/id.json'
-            }
-        });
-    });
-    </script>
-
-    @stack('scripts')
+    @yield('scripts')
 </body>
-
 </html>

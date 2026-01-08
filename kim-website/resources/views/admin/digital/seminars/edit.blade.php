@@ -1,4 +1,6 @@
+{{-- File: resources/views/admin/digital/seminars/edit.blade.php --}}
 @extends('layouts.admin-digital')
+
 @section('title', 'Edit Seminar')
 @section('page-title', 'Edit Seminar')
 

@@ -1,4 +1,5 @@
 @extends('layouts.admin-digital')
+
 @section('title', isset($product) ? 'Edit Product' : 'Create Product')
 
 @section('content')

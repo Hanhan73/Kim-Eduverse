@@ -12,6 +12,8 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\Admin\ArticleController as AdminArticleController;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 
+
+
 // Landing Page
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -52,7 +54,9 @@ use App\Http\Controllers\Edutech\AuthController as EdutechAuthController;
 use App\Http\Controllers\Edutech\LandingController as EdutechLandingController;
 use App\Http\Controllers\Edutech\CourseController as EdutechCourseController;
 use App\Http\Controllers\Edutech\ProfileController;
+
 use App\Http\Controllers\Edutech\Admin\DashboardController as EdutechAdminController;
+
 use App\Http\Controllers\Edutech\Instructor\DashboardController as InstructorDashboardController;
 use App\Http\Controllers\Edutech\Instructor\CourseManagementController;
 use App\Http\Controllers\Edutech\Instructor\QuizManagementController;
@@ -60,6 +64,7 @@ use App\Http\Controllers\Edutech\Instructor\LiveMeetingController;
 use App\Http\Controllers\Edutech\Instructor\StudentManagementController;
 use App\Http\Controllers\Edutech\Instructor\BatchManagementController;
 use App\Http\Controllers\Edutech\Instructor\AttendanceController;
+
 use App\Http\Controllers\Edutech\Student\DashboardController as StudentDashboardController;
 use App\Http\Controllers\Edutech\Student\MyCourseController as StudentMyCourseController;
 use App\Http\Controllers\Edutech\Student\CertificateController as StudentCertificateController;
@@ -124,7 +129,7 @@ Route::prefix('edutech')->name('edutech.')->middleware('edutech.auth')->group(fu
 // ========================================
 // STUDENT DASHBOARD ROUTES
 // ========================================
-Route::prefix('edutech/student')->name('edutech.student.')->middleware('role:student')->group(function () {
+Route::prefix('edutech/student')->name('edutech.student.')->middleware('edutech.student')->group(function () {
     Route::get('/dashboard', [StudentDashboardController::class, 'index'])->name('dashboard');
     Route::get('/my-courses', [StudentMyCourseController::class, 'index'])->name('my-courses');
     Route::get('/certificates', [StudentCertificateController::class, 'index'])->name('certificates');
@@ -142,7 +147,8 @@ Route::prefix('edutech/student')->name('edutech.student.')->middleware('role:stu
 // ========================================
 // INSTRUCTOR DASHBOARD ROUTES
 // ========================================
-Route::prefix('edutech/instructor')->name('edutech.instructor.')->middleware('role:instructor')->group(function () {
+Route::prefix('edutech/instructor')->name('edutech.instructor.')->middleware('edutech.instructor')->group(function () {
+
     // Dashboard
     Route::get('/dashboard', [InstructorDashboardController::class, 'index'])->name('dashboard');
 
@@ -191,6 +197,7 @@ Route::prefix('edutech/instructor')->name('edutech.instructor.')->middleware('ro
     Route::get('/students/course/{course}/attendance/{batch}/report', [StudentManagementController::class, 'attendanceReport'])->name('students.attendance.report');
     Route::get('/students/course/{course}/attendance/{batch}/download/{meeting?}', [StudentManagementController::class, 'downloadAttendanceReport'])->name('students.attendance.download');
 
+
     // Batch Management
     Route::get('/courses/{course}/batches', [BatchManagementController::class, 'index'])->name('batches.index');
     Route::get('/courses/{course}/batches/create', [BatchManagementController::class, 'create'])->name('batches.create');
@@ -235,10 +242,10 @@ use App\Http\Controllers\Edutech\Admin\CertificatesController;
 use App\Http\Controllers\Edutech\Admin\SettingsController;
 
 // ========================================
-// EDUTECH ADMIN DASHBOARD ROUTES
+// ADMIN DASHBOARD ROUTES
 // ========================================
-// <-- MODIFIED: Added 'role:super_admin' to middleware
-Route::prefix('edutech/admin')->name('edutech.admin.')->middleware(['role:edutech_admin,super_admin'])->group(function () {
+Route::prefix('edutech/admin')->name('edutech.admin.')->middleware('edutech.admin')->group(function () {
+
     // ===== DASHBOARD =====
     Route::get('/dashboard', [EdutechAdminController::class, 'index'])->name('dashboard');
 
@@ -281,6 +288,8 @@ Route::prefix('edutech/admin')->name('edutech.admin.')->middleware(['role:edutec
     Route::post('/settings/maintenance', [SettingsController::class, 'maintenance'])->name('settings.maintenance');
 });
 
+
+
 // ========================================
 // BLOG ADMIN SYSTEM
 // ========================================
@@ -292,8 +301,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::post('/register', [AdminAuthController::class, 'register'])->name('register.post');
 });
 
-// <-- MODIFIED: Added 'role:super_admin' to middleware
-Route::prefix('admin')->name('admin.')->middleware(['role:blog_admin, super_admin'])->group(function () {
+Route::prefix('admin')->name('admin.')->middleware('admin.auth')->group(function () {
     Route::get('/articles', [AdminArticleController::class, 'index'])->name('articles.index');
     Route::get('/articles/create', [AdminArticleController::class, 'create'])->name('articles.create');
     Route::post('/articles', [AdminArticleController::class, 'store'])->name('articles.store');
@@ -303,9 +311,11 @@ Route::prefix('admin')->name('admin.')->middleware(['role:blog_admin, super_admi
     Route::post('/articles/{article}/toggle-publish', [AdminArticleController::class, 'togglePublish'])->name('articles.toggle-publish');
 });
 
+
 // ========================================
-// PAYMENT ROUTES
+// PAYMENT ROUTES (Add this to routes/web.php)
 // ========================================
+
 use App\Http\Controllers\Edutech\PaymentController;
 
 Route::prefix('edutech')->name('edutech.')->middleware('edutech.auth')->group(function () {
@@ -320,6 +330,7 @@ Route::prefix('edutech')->name('edutech.')->middleware('edutech.auth')->group(fu
 // Midtrans Webhook (No auth - untuk menerima notifikasi dari Midtrans)
 Route::post('/edutech/payment/notification', [PaymentController::class, 'notification'])->name('edutech.payment.notification');
 
+
 use App\Http\Controllers\DigitalController;
 use App\Http\Controllers\DigitalPaymentController;
 use App\Http\Controllers\QuestionnaireController;
@@ -329,7 +340,9 @@ use App\Http\Controllers\Admin\SeminarController as AdminSeminarController;
 // ========================================
 // KIM DIGITAL - PUBLIC ROUTES
 // ========================================
+
 Route::prefix('produk/digital')->name('digital.')->group(function () {
+
     // Landing Page
     Route::get('/', [DigitalController::class, 'index'])->name('index');
 
@@ -386,9 +399,11 @@ Route::prefix('produk/digital')->name('digital.')->group(function () {
         ->name('invoice.download');
 });
 
+
 use App\Http\Controllers\LandingPageController;
 
 Route::get('/promo/{slug}', [\App\Http\Controllers\LandingPageController::class, 'show'])->name('digital.landing');
+
 
 use App\Http\Controllers\Admin\DigitalDashboardController as DashboardController;
 use App\Http\Controllers\Admin\ProductController;
@@ -409,8 +424,9 @@ Route::prefix('admin/digital')->name('admin.digital.')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
 
-// <-- MODIFIED: Added 'role:super_admin' to middleware
-Route::prefix('admin/digital')->name('admin.digital.')->middleware(['role:digital_admin,super_admin'])->group(function () {
+// Admin Routes - Protected by admin middleware
+Route::prefix('admin/digital')->name('admin.digital.')->middleware(['admin'])->group(function () {
+
     // Dashboard
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
@@ -471,6 +487,7 @@ Route::prefix('admin/digital')->name('admin.digital.')->middleware(['role:digita
     Route::get('/orders/{id}/invoice', [OrderController::class, 'downloadInvoice'])->name('orders.invoice');
     Route::post('/orders/{id}/status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
 
+
     // Regenerate AI Analysis untuk response tertentu
     Route::post('responses/{id}/regenerate-ai', [QuestionnaireResponseController::class, 'regenerateAI'])
         ->name('responses.regenerate-ai');
@@ -484,7 +501,7 @@ Route::prefix('admin/digital')->name('admin.digital.')->middleware(['role:digita
         ->name('responses.preview-ai');
 
     // Test AI configuration
-    Route::post('questionnaires/{id}/test-ai', [QuestionController::class, 'testAI'])
+    Route::post('questionnaires/{id}/test-ai', [QuestionnaireController::class, 'testAI'])
         ->name('questionnaires.test-ai');
 
     // Route untuk mengelola Quiz
@@ -530,6 +547,7 @@ Route::prefix('admin/digital')->name('admin.digital.')->middleware(['role:digita
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
 
+
 use App\Http\Controllers\TestClaudeController;
 
 Route::prefix('test-claude')->name('test.claude.')->group(function () {
@@ -549,8 +567,8 @@ use App\Http\Controllers\Instructor\InstructorController;
 |--------------------------------------------------------------------------
 */
 
-// <-- MODIFIED: Added middleware for Super Admin
-Route::prefix('admin/super-admin')->name('admin.super-admin.')->middleware(['auth', 'role:super_admin'])->group(function () {
+// Super Admin Routes
+Route::prefix('admin/super-admin')->name('admin.super-admin.')->group(function () {
     Route::get('/dashboard', [SuperAdminController::class, 'dashboard'])->name('dashboard');
 
     // User Management
@@ -575,8 +593,8 @@ Route::prefix('admin/super-admin')->name('admin.super-admin.')->middleware(['aut
     Route::get('/settings', [SuperAdminController::class, 'settings'])->name('settings');
 });
 
-// <-- MODIFIED: Added middleware for Bendahara & Super Admin
-Route::prefix('admin/bendahara')->name('admin.bendahara.')->middleware(['auth','role:bendahara,super_admin'])->group(function () {
+// Bendahara Routes
+Route::prefix('admin/bendahara')->name('admin.bendahara.')->group(function () {
     Route::get('/dashboard', [BendaharaController::class, 'dashboard'])->name('dashboard');
 
     // Revenue / Pemasukan
@@ -597,8 +615,8 @@ Route::prefix('admin/bendahara')->name('admin.bendahara.')->middleware(['auth','
     Route::get('/reports', [BendaharaController::class, 'reports'])->name('reports');
 });
 
-// <-- MODIFIED: Added middleware for Instructor & Super Admin
-Route::prefix('instructor')->name('instructor.')->middleware(['auth', 'role:instruktor', 'role:super_admin'])->group(function () {
+// Instructor Routes
+Route::prefix('instructor')->name('instructor.')->group(function () {
     Route::get('/dashboard', [InstructorController::class, 'dashboard'])->name('dashboard');
 
     // Earnings
@@ -640,12 +658,13 @@ Route::get('/admin', function () {
     }
 
     if ($user->isAdminBlog()) {
-        return redirect()->route('admin.articles.index'); // Adjusted to a valid route
+        return redirect()->route('admin.blog.dashboard');
     }
 
     // Default untuk student atau role lain
     return redirect()->route('home');
 })->middleware('auth')->name('admin');
+
 
 use App\Http\Controllers\Auth\UnifiedLoginController;
 

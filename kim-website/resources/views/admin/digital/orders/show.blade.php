@@ -1,4 +1,5 @@
 @extends('layouts.admin-digital')
+
 @section('title', 'Order Detail - ' . $order->order_number)
 
 @section('content')

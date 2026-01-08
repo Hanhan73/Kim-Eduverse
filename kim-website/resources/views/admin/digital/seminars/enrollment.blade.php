@@ -1,4 +1,5 @@
 @extends('layouts.admin-digital')
+
 @section('title', 'Peserta Seminar')
 @section('page-title', 'Peserta - ' . $seminar->title)
 

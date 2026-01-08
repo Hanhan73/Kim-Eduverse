@@ -1,4 +1,5 @@
 @extends('layouts.admin-digital')
+
 @section('title', 'Daftar Angket - Admin Digital')
 @section('page-title', 'Daftar Angket')
 

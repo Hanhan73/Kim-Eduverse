@@ -1,4 +1,6 @@
+{{-- File: resources/views/admin/digital/seminars/create.blade.php --}}
 @extends('layouts.admin-digital')
+
 @section('title', 'Tambah Seminar')
 @section('page-title', 'Tambah Seminar')
 

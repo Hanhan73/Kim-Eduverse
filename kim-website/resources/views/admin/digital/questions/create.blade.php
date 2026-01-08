@@ -1,4 +1,5 @@
 @extends('layouts.admin-digital')
+
 @section('title', 'Tambah Pertanyaan - Admin Digital')
 @section('page-title', 'Tambah Pertanyaan Baru')
 

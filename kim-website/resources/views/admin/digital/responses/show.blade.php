@@ -1,4 +1,5 @@
 @extends('layouts.admin-digital')
+
 @section('title', 'Detail Respons - Admin Digital')
 @section('page-title', 'Detail Respons')
 

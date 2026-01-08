@@ -1,4 +1,5 @@
 @extends('layouts.admin-digital')
+
 @section('title', 'Seminar On Demand')
 @section('page-title', 'Seminar On Demand')
 

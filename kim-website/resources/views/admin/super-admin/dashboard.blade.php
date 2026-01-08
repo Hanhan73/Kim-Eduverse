@@ -2,16 +2,6 @@
 
 @section('title', 'Super Admin Dashboard')
 
-@section('page-title', 'Dashboard')
-
-@section('breadcrumb')
-<nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item active">Dashboard</li>
-    </ol>
-</nav>
-@endsection
-
 @section('content')
 <div class="container-fluid">
     <!-- Header -->
@@ -234,7 +224,8 @@
                         <div class="col-md-3 text-center border-right">
                             <div class="text-xs font-weight-bold text-uppercase mb-1">Total Revenue</div>
                             <div class="h5 mb-0 font-weight-bold">Rp
-                                {{ number_format($revenueStats['total_revenue'], 0, ',', '.') }}</div>
+                                {{ number_format($revenueStats['total_revenue'], 0, ',', '.') }}
+                            </div>
                         </div>
                         <div class="col-md-3 text-center border-right">
                             <div class="text-xs font-weight-bold text-uppercase mb-1">Sales Count</div>
@@ -243,7 +234,8 @@
                         <div class="col-md-3 text-center border-right">
                             <div class="text-xs font-weight-bold text-uppercase mb-1">Average Sale</div>
                             <div class="h5 mb-0 font-weight-bold">Rp
-                                {{ number_format($revenueStats['average_sale'], 0, ',', '.') }}</div>
+                                {{ number_format($revenueStats['average_sale'], 0, ',', '.') }}
+                            </div>
                         </div>
                         <div class="col-md-3 text-center">
                             <div class="text-xs font-weight-bold text-uppercase mb-1">Split</div>

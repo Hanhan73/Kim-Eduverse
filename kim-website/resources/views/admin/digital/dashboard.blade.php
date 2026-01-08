@@ -1,4 +1,5 @@
 @extends('layouts.admin-digital')
+
 @section('title', 'Dashboard - Admin Digital')
 @section('page-title', 'Dashboard')
 
@@ -92,8 +93,7 @@
                         @foreach($recentOrders as $order)
                         <tr>
                             <td>
-                                <a href="{{ route('admin.digital.orders.show', $order->id) }}"
-                                    style="color: var(--primary); text-decoration: none; font-weight: 600;">
+                                <a href="{{ route('admin.digital.orders.show', $order->id) }}" style="color: var(--primary); text-decoration: none; font-weight: 600;">
                                     {{ $order->order_number }}
                                 </a>
                             </td>
@@ -101,11 +101,11 @@
                             <td>Rp {{ number_format($order->total, 0, ',', '.') }}</td>
                             <td>
                                 @if($order->payment_status === 'paid')
-                                <span class="badge badge-success">Paid</span>
+                                    <span class="badge badge-success">Paid</span>
                                 @elseif($order->payment_status === 'pending')
-                                <span class="badge badge-warning">Pending</span>
+                                    <span class="badge badge-warning">Pending</span>
                                 @else
-                                <span class="badge badge-danger">{{ ucfirst($order->payment_status) }}</span>
+                                    <span class="badge badge-danger">{{ ucfirst($order->payment_status) }}</span>
                                 @endif
                             </td>
                             <td>{{ $order->created_at->format('d M Y') }}</td>
@@ -130,29 +130,26 @@
         </div>
         <div class="card-body">
             @if($responsesByQuestionnaire->count() > 0)
-            @foreach($responsesByQuestionnaire as $questionnaire)
-            <div style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #edf2f7;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                    <span
-                        style="font-weight: 600; color: var(--dark);">{{ Str::limit($questionnaire->name, 25) }}</span>
-                    <span style="color: var(--gray); font-size: 0.85rem;">
-                        {{ $questionnaire->completed_count }} selesai
-                    </span>
-                </div>
-                <div style="background: #edf2f7; border-radius: 10px; height: 8px; overflow: hidden;">
-                    @php
-                    $total = $questionnaire->completed_count + $questionnaire->pending_count;
-                    $percentage = $total > 0 ? ($questionnaire->completed_count / $total) * 100 : 0;
-                    @endphp
-                    <div
-                        style="background: linear-gradient(135deg, var(--primary), var(--secondary)); height: 100%; width: {{ $percentage }}%; border-radius: 10px;">
+                @foreach($responsesByQuestionnaire as $questionnaire)
+                <div style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #edf2f7;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <span style="font-weight: 600; color: var(--dark);">{{ Str::limit($questionnaire->name, 25) }}</span>
+                        <span style="color: var(--gray); font-size: 0.85rem;">
+                            {{ $questionnaire->completed_count }} selesai
+                        </span>
                     </div>
+                    <div style="background: #edf2f7; border-radius: 10px; height: 8px; overflow: hidden;">
+                        @php
+                            $total = $questionnaire->completed_count + $questionnaire->pending_count;
+                            $percentage = $total > 0 ? ($questionnaire->completed_count / $total) * 100 : 0;
+                        @endphp
+                        <div style="background: linear-gradient(135deg, var(--primary), var(--secondary)); height: 100%; width: {{ $percentage }}%; border-radius: 10px;"></div>
+                    </div>
+                    @if($questionnaire->pending_count > 0)
+                    <small style="color: var(--warning);">{{ $questionnaire->pending_count }} pending</small>
+                    @endif
                 </div>
-                @if($questionnaire->pending_count > 0)
-                <small style="color: var(--warning);">{{ $questionnaire->pending_count }} pending</small>
-                @endif
-            </div>
-            @endforeach
+                @endforeach
             @else
             <div class="empty-state" style="padding: 30px;">
                 <i class="fas fa-clipboard-list" style="font-size: 2rem;"></i>
@@ -196,21 +193,20 @@
                         <td>{{ $response->order->order_number ?? '-' }}</td>
                         <td>
                             @if($response->scores)
-                            @php $scores = is_array($response->scores) ? $response->scores :
-                            json_decode($response->scores, true); @endphp
-                            @foreach($scores as $key => $score)
-                            <span class="badge badge-info" style="margin-right: 3px;">{{ $score }}</span>
-                            @endforeach
+                                @php $scores = is_array($response->scores) ? $response->scores : json_decode($response->scores, true); @endphp
+                                @foreach($scores as $key => $score)
+                                    <span class="badge badge-info" style="margin-right: 3px;">{{ $score }}</span>
+                                @endforeach
                             @else
-                            -
+                                -
                             @endif
                         </td>
                         <td>{{ $response->completed_at ? $response->completed_at->format('d M Y H:i') : '-' }}</td>
                         <td>
                             @if($response->result_sent)
-                            <span class="badge badge-success">Terkirim</span>
+                                <span class="badge badge-success">Terkirim</span>
                             @else
-                            <span class="badge badge-warning">Belum</span>
+                                <span class="badge badge-warning">Belum</span>
                             @endif
                         </td>
                     </tr>

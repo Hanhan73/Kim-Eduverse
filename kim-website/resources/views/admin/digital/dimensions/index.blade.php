@@ -1,4 +1,5 @@
 @extends('layouts.admin-digital')
+
 @section('title', 'Dimensi Angket - Admin Digital')
 @section('page-title', 'Dimensi Angket')
 

@@ -1,4 +1,5 @@
 @extends('layouts.admin-digital')
+
 @section('title', 'Manage Products - Admin KIM Digital')
 
 @section('content')

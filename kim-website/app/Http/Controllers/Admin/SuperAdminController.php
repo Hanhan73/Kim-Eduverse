@@ -14,20 +14,19 @@ use Illuminate\Support\Facades\Hash;
 
 class SuperAdminController extends Controller
 {
-    // protected $revenueService;
+    protected $revenueService;
 
-    // public function __construct(RevenueService $revenueService)
-    // {
-    //     // $this->middleware(['auth', 'role:super_admin']);
-    //     $this->revenueService = $revenueService;
-    // }
+    public function __construct(RevenueService $revenueService)
+    {
+        $this->middleware(['auth', 'role:super_admin']);
+        $this->revenueService = $revenueService;
+    }
 
     /**
      * Dashboard super admin
      */
-    public function dashboard(RevenueService $revenueService)
+    public function dashboard()
     {
-        $revenueStats = $revenueService->getRevenueStatistics('month');
         $stats = [
             'total_users' => User::count(),
             'total_instructors' => User::instructors()->count(),
@@ -40,8 +39,8 @@ class SuperAdminController extends Controller
             'pending_withdrawal_amount' => WithdrawalRequest::pending()->sum('amount'),
         ];
 
-        $revenueStats = $revenueService->getRevenueStatistics('month');
-        $topInstructors = $revenueService->getTopInstructors(5);
+        $revenueStats = $this->revenueService->getRevenueStatistics('month');
+        $topInstructors = $this->revenueService->getTopInstructors(5);
         $recentRevenues = RevenueShare::with(['instructor', 'user'])
             ->completed()
             ->latest('paid_at')
@@ -139,12 +138,12 @@ class SuperAdminController extends Controller
     /**
      * Revenue Overview
      */
-    public function revenue(Request $request, RevenueService $revenueService)
+    public function revenue(Request $request)
     {
         $period = $request->get('period', 'month');
 
-        $stats = $revenueService->getRevenueStatistics($period);
-        $breakdown = $revenueService->getRevenueBreakdown($period);
+        $stats = $this->revenueService->getRevenueStatistics($period);
+        $breakdown = $this->revenueService->getRevenueBreakdown($period);
 
         $revenues = RevenueShare::with(['instructor', 'user'])
             ->completed()
