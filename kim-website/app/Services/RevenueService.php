@@ -18,9 +18,12 @@ class RevenueService
         string $courseType,
         int $courseId,
         float $totalAmount,
-        string $transactionCode = null
+        string $transactionCode = null,
+        ?float $instructorPercentage = null
     ): RevenueShare {
-        $shares = RevenueShare::calculateShares($totalAmount);
+        // If instructor id is falsy and no percentage provided, give company full share
+        $defaultPercentage = $instructorId ? 70.00 : 0.00;
+        $shares = RevenueShare::calculateShares($totalAmount, $instructorPercentage ?? $defaultPercentage);
 
         return RevenueShare::create([
             'transaction_code' => $transactionCode ?? RevenueShare::generateTransactionCode(),
@@ -176,5 +179,60 @@ class RevenueService
         }
 
         return $query->sum('company_share');
+    }
+
+    /**
+     * Handle payment/order model that has just been paid.
+     * Supports App\Models\Payment (edutech) and App\Models\DigitalOrder (digital).
+     */
+    public function handlePaidPayment($payment)
+    {
+        if ($payment instanceof \App\Models\Payment) {
+            $userId = $payment->user_id;
+            $instructorId = $payment->course && $payment->course->instructor_id ? $payment->course->instructor_id : null;
+            $courseType = 'edutech';
+            $courseId = $payment->course_id;
+            $total = (float) $payment->amount;
+            $transactionCode = $payment->transaction_id;
+        } elseif ($payment instanceof \App\Models\DigitalOrder) {
+            $user = \App\Models\User::where('email', $payment->customer_email)->first();
+            $userId = $user ? $user->id : null;
+            $instructorId = null;
+            $courseType = 'kim_digital';
+            $courseId = $payment->items->first()?->product_id ?? null;
+            $total = (float) $payment->total;
+            $transactionCode = $payment->midtrans_transaction_id ?? $payment->order_number;
+        } else {
+            throw new \InvalidArgumentException('Unsupported payment type: ' . get_class($payment));
+        }
+
+        if (empty($transactionCode)) {
+            $transactionCode = RevenueShare::generateTransactionCode();
+        }
+
+        // idempotent: if exists, complete if needed
+        $existing = RevenueShare::where('transaction_code', $transactionCode)->first();
+        if ($existing) {
+            if ($existing->status !== 'completed') {
+                $this->completeRevenueShare($existing);
+            }
+
+            return $existing;
+        }
+
+        // create with proper share calculations
+        $revenue = $this->createRevenueShare(
+            (int) ($userId ?? 0),
+            $instructorId ? (int) $instructorId : 0,
+            $courseType,
+            $courseId ?? 0,
+            (float) $total,
+            $transactionCode,
+            $instructorId ? 70.00 : 0.00
+        );
+
+        $this->completeRevenueShare($revenue);
+
+        return $revenue;
     }
 }

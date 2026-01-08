@@ -4,492 +4,217 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Edutech')</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>@yield('title') - Instructor Portal</title>
 
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- DataTables -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css">
+
+    <style>
         :root {
-            --primary: #667eea;
-            --secondary: #764ba2;
-            --success: #48bb78;
-            --warning: #ed8936;
-            --danger: #f56565;
-            --info: #4299e1;
-            --dark: #2d3748;
-            --gray: #718096;
-            --light: #f7fafc;
+            --primary-color: #17a2b8;
+            --primary-dark: #117a8b;
+            --sidebar-width: 260px;
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #f8f9fa;
-            color: var(--dark);
         }
 
-        /* === LAYOUT === */
+        /* Sidebar */
         .sidebar {
-            width: 260px;
-            background: linear-gradient(180deg, #2d3748 0%, #1a202c 100%);
             position: fixed;
-            left: 0;
             top: 0;
+            left: 0;
             height: 100vh;
+            width: var(--sidebar-width);
+            background: linear-gradient(180deg, var(--primary-color) 0%, var(--primary-dark) 100%);
             overflow-y: auto;
             z-index: 1000;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
         }
 
         .sidebar-header {
-            padding: 30px 25px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.1);
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .sidebar-header h2 {
+        .sidebar-brand {
             color: white;
-            font-size: 1.5rem;
+            font-size: 20px;
+            font-weight: 700;
+            text-decoration: none;
             display: flex;
             align-items: center;
-            gap: 12px;
-            margin: 0;
+            gap: 10px;
         }
 
-        .sidebar-menu {
-            padding: 20px 0;
+        .sidebar-brand i {
+            font-size: 24px;
+        }
+
+        .menu-title {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 11px;
+            text-transform: uppercase;
+            font-weight: 600;
+            padding: 20px 20px 10px 20px;
+            letter-spacing: 1px;
         }
 
         .menu-item {
             display: flex;
             align-items: center;
-            padding: 15px 25px;
-            color: rgba(255, 255, 255, 0.7);
+            padding: 12px 20px;
+            color: rgba(255, 255, 255, 0.9);
             text-decoration: none;
-            transition: all 0.3s ease;
-            font-weight: 500;
-            border-left: 4px solid transparent;
+            transition: all 0.3s;
+            gap: 12px;
+            font-size: 14px;
+        }
+
+        .menu-item i {
+            width: 20px;
+            text-align: center;
         }
 
         .menu-item:hover {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.1);
             color: white;
         }
 
         .menu-item.active {
-            background: rgba(255, 255, 255, 0.1);
-            border-left-color: white;
+            background: rgba(255, 255, 255, 0.2);
             color: white;
+            font-weight: 600;
+            border-left: 3px solid #FFD700;
         }
 
-        .menu-item i {
-            width: 25px;
-            margin-right: 12px;
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 0;
+            min-height: 100vh;
         }
 
-        .menu-divider {
-            margin: 20px 25px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        /* === TOP BAR === */
-        .top-bar {
+        /* Top Navbar */
+        .top-navbar {
             background: white;
-            padding: 25px 30px;
-            border-radius: 12px;
-            margin-bottom: 30px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            padding: 15px 30px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            border-bottom: 1px solid #e0e0e0;
         }
 
-        .top-bar h1 {
-            font-size: 1.8rem;
-            color: var(--dark);
+        .page-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin: 0;
         }
 
-        .user-info {
+        .user-dropdown {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 10px;
+            cursor: pointer;
         }
 
         .user-avatar {
-            width: 45px;
-            height: 45px;
+            width: 35px;
+            height: 35px;
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 700;
-            color: white;
-        }
-
-        .btn-logout {
-            padding: 10px 20px;
-            background: #fee;
-            color: var(--danger);
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
             font-weight: 600;
-            transition: all 0.3s ease;
+            font-size: 14px;
         }
 
-        .btn-logout:hover {
-            background: var(--danger);
-            color: white;
+        /* Content Area */
+        .content-area {
+            padding: 30px;
         }
 
-        /* === STATS GRID === */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
+        /* Cards */
         .stat-card {
-            background: white;
-            padding: 25px;
+            border: none;
             border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin-bottom: 20px;
         }
 
         .stat-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
         }
 
-        .stat-icon {
-            width: 65px;
-            height: 65px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8rem;
-            color: white;
+        .stat-card.primary {
+            border-left: 4px solid var(--primary-color);
         }
 
-        .stat-icon.orange {
-            background: linear-gradient(135deg, #ed8936, #dd6b20);
+        .stat-card.success {
+            border-left: 4px solid #28a745;
         }
 
-        .stat-icon.success {
-            background: linear-gradient(135deg, var(--success), #38a169);
+        .stat-card.warning {
+            border-left: 4px solid #ffc107;
         }
 
-        .stat-icon.info {
-            background: linear-gradient(135deg, var(--info), #3182ce);
+        .stat-card.info {
+            border-left: 4px solid #17a2b8;
         }
 
-        .stat-icon.purple {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        .stat-card.danger {
+            border-left: 4px solid #dc3545;
         }
 
-        .stat-icon.pink {
-            background: linear-gradient(135deg, #ed64a6, #d53f8c);
-        }
-
-        .stat-icon.teal {
-            background: linear-gradient(135deg, #38b2ac, #319795);
-        }
-
-        .stat-icon.yellow {
-            background: linear-gradient(135deg, #ecc94b, #d69e2e);
-        }
-
-        .stat-icon.red {
-            background: linear-gradient(135deg, #fc8181, #f56565);
-        }
-
-        .stat-content h3 {
-            font-size: 2rem;
-            color: var(--dark);
-            font-weight: 800;
-            margin-bottom: 5px;
-        }
-
-        .stat-content p {
-            color: var(--gray);
-            font-size: 0.95rem;
-        }
-
-        .stat-content small {
-            display: block;
-            font-size: 0.8rem;
-            color: var(--gray);
-            margin-top: 3px;
-        }
-        .main-content {
-            margin-left: 260px;
-            padding: 30px 40px;
-            min-height: 100vh;
-            width: calc(100% - 260px);
-            position: relative;
-            z-index: 1;
-        }
-        /* === CONTENT SECTIONS === */
-        .content-section {
+        /* Table */
+        .table {
             background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            margin-bottom: 25px;
-
         }
 
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid var(--light);
-        }
-
-        .section-header h2 {
-            font-size: 1.5rem;
-            color: var(--dark);
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #ed8936, #dd6b20);
-            color: white;
-            padding: 12px 24px;
-            border-radius: 8px;
-            text-decoration: none;
+        .table thead th {
+            background: #f8f9fa;
+            color: #495057;
             font-weight: 600;
-            transition: all 0.3s ease;
-            display: inline-block;
+            font-size: 13px;
+            text-transform: uppercase;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        /* Breadcrumb */
+        .breadcrumb {
+            background: transparent;
+            padding: 0;
+            margin: 10px 0 0 0;
+        }
+
+        .breadcrumb-item a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .breadcrumb-item.active {
+            color: #6c757d;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background: var(--primary-color);
             border: none;
-            cursor: pointer;
         }
 
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(237, 137, 54, 0.3);
-        }
-
-        .btn-secondary {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            display: inline-block;
-            font-size: 0.9rem;
-        }
-
-        .btn-secondary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
-        }
-
-        /* === TABLE === */
-        .table-responsive {
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        thead {
-            background: var(--light);
-        }
-
-        th {
-            padding: 15px;
-            text-align: left;
-            font-weight: 600;
-            color: var(--dark);
-            border-bottom: 2px solid #e2e8f0;
-        }
-
-        td {
-            padding: 15px;
-            border-bottom: 1px solid var(--light);
-            color: var(--gray);
-        }
-
-        tr:hover {
-            background: #fafafa;
-        }
-
-        .badge {
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .badge.published {
-            background: #c6f6d5;
-            color: #22543d;
-        }
-
-        .badge.draft {
-            background: #fed7d7;
-            color: #742a2a;
-        }
-
-        .badge.success {
-            background: #c6f6d5;
-            color: #22543d;
-        }
-
-        .badge.warning {
-            background: #feebc8;
-            color: #7c2d12;
-        }
-
-        .badge.info {
-            background: #bee3f8;
-            color: #2c5282;
-        }
-
-        .btn-action {
-            padding: 6px 12px;
-            border-radius: 6px;
-            text-decoration: none;
-            font-size: 0.85rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            display: inline-block;
-            margin-right: 5px;
-        }
-
-        .btn-edit {
-            background: #bee3f8;
-            color: #2c5282;
-        }
-
-        .btn-edit:hover {
-            background: #90cdf4;
-        }
-
-        .btn-delete {
-            background: #fed7d7;
-            color: #742a2a;
-        }
-
-        .btn-delete:hover {
-            background: #fc8181;
-        }
-
-        /* === QUIZ SECTION === */
-        .quiz-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-        }
-
-        .quiz-card {
-            background: white;
-            border: 2px solid var(--light);
-            border-radius: 12px;
-            padding: 20px;
-            transition: all 0.3s ease;
-        }
-
-        .quiz-card:hover {
-            border-color: var(--primary);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .quiz-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 15px;
-        }
-
-        .quiz-title {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--dark);
-            margin-bottom: 5px;
-        }
-
-        .quiz-meta {
-            display: flex;
-            gap: 15px;
-            color: var(--gray);
-            font-size: 0.85rem;
-            margin-bottom: 15px;
-        }
-
-        .quiz-stats {
-            display: flex;
-            justify-content: space-between;
-            padding-top: 15px;
-            border-top: 1px solid var(--light);
-        }
-
-        .quiz-stat-item {
-            text-align: center;
-        }
-
-        .quiz-stat-value {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: var(--dark);
-        }
-
-        .quiz-stat-label {
-            font-size: 0.75rem;
-            color: var(--gray);
-        }
-
-        /* === EMPTY STATE === */
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: var(--gray);
-        }
-
-        .empty-state i {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            opacity: 0.3;
-        }
-
-        .empty-state h3 {
-            font-size: 1.3rem;
-            margin-bottom: 10px;
-            color: var(--dark);
-        }
-
-        .empty-state p {
-            margin-bottom: 20px;
-        }
-
-        /* === RESPONSIVE === */
-        @media (max-width: 968px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-
-            .main-content {
-                margin-left: 0;
-                width: 100%;
-            }
-
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
+            background: var(--primary-dark);
         }
     </style>
 
@@ -498,45 +223,154 @@
 
 <body>
     <!-- Sidebar -->
-    <aside class="sidebar">
+    <div class="sidebar">
         <div class="sidebar-header">
-            <h2>
+            <a href="{{ route('instructor.dashboard') }}" class="sidebar-brand">
                 <i class="fas fa-chalkboard-teacher"></i>
-                Instructor Panel
-            </h2>
+                <span>Instructor Portal</span>
+            </a>
         </div>
 
-        <nav class="sidebar-menu">
-            <a href="{{ route('edutech.instructor.dashboard') }}"
-                class="menu-item {{ request()->routeIs('edutech.instructor.dashboard') ? 'active' : '' }}">
-                <i class="fas fa-home"></i>
-                Dashboard
-            </a>
-            <a href="{{ route('edutech.profile.index') }}"
-                class="menu-item {{request()->routeIs('edutech.profile.index') ? 'active' : '' }}">
-                <i class="fas fa-user"></i>
-                Profile Saya
-            </a>
-            <a href="{{ route('edutech.instructor.courses') }}"
-                class="menu-item {{ request()->routeIs('edutech.instructor.courses') ? 'active' : '' }}">
-                <i class="fas fa-book"></i>
-                My Courses
-            </a>
-            <a href="{{ route('edutech.instructor.live-meetings.index') }}"
-                class="menu-item {{ request()->routeIs('edutech.instructor.live-meetings.index') ? 'active' : '' }}">
-                <i class="fas fa-video"></i>
-                Live Meeting
-            </a>
+        <div class="menu-title">Menu Utama</div>
+        <a href="{{ route('instructor.dashboard') }}"
+            class="menu-item {{ request()->routeIs('instructor.dashboard') ? 'active' : '' }}">
+            <i class="fas fa-tachometer-alt"></i><span>Dashboard</span>
+        </a>
+        <a href="{{ route('instructor.earnings') }}"
+            class="menu-item {{ request()->routeIs('instructor.earnings') ? 'active' : '' }}">
+            <i class="fas fa-chart-line"></i><span>My Earnings</span>
+        </a>
+        <a href="{{ route('instructor.withdrawals') }}"
+            class="menu-item {{ request()->routeIs('instructor.withdrawals') ? 'active' : '' }}">
+            <i class="fas fa-money-bill-wave"></i><span>Withdrawals</span>
+        </a>
+        <a href="{{ route('instructor.bank-accounts') }}"
+            class="menu-item {{ request()->routeIs('instructor.bank-accounts') ? 'active' : '' }}">
+            <i class="fas fa-university"></i><span>Bank Accounts</span>
+        </a>
+        <a href="{{ route('instructor.courses') }}"
+            class="menu-item {{ request()->routeIs('instructor.courses') ? 'active' : '' }}">
+            <i class="fas fa-book"></i><span>My Courses</span>
+        </a>
+        <a href="{{ route('edutech.instructor.dashboard') }}"
+            class="menu-item {{ request()->routeIs('edutech.instructor.dashboard') ? 'active' : '' }}">
+            <i class="fas fa-home"></i>
+            Dashboard
+        </a>
+        <a href="{{ route('edutech.profile.index') }}"
+            class="menu-item {{request()->routeIs('edutech.profile.index') ? 'active' : '' }}">
+            <i class="fas fa-user"></i>
+            Profile Saya
+        </a>
+        <a href="{{ route('edutech.instructor.courses') }}"
+            class="menu-item {{ request()->routeIs('edutech.instructor.courses') ? 'active' : '' }}">
+            <i class="fas fa-book"></i>
+            My Courses
+        </a>
+        <a href="{{ route('edutech.instructor.live-meetings.index') }}"
+            class="menu-item {{ request()->routeIs('edutech.instructor.live-meetings.index') ? 'active' : '' }}">
+            <i class="fas fa-video"></i>
+            Live Meeting
+        </a>
 
-            <a href="{{ route('edutech.instructor.students') }}"
-                class="menu-item {{ request()->routeIs('edutech.instructor.students') ? 'active' : '' }}">
-                <i class="fas fa-users"></i>
-                Students
-            </a>
-        </nav>
+        <a href="{{ route('edutech.instructor.students') }}"
+            class="menu-item {{ request()->routeIs('edutech.instructor.students') ? 'active' : '' }}">
+            <i class="fas fa-users"></i>
+            Students
+        </a>
+    </div>
 
-    </aside>
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Navbar -->
+        <div class="top-navbar">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="page-title">@yield('page-title')</h1>
+                    @yield('breadcrumb')
+                </div>
+                <div class="dropdown">
+                    <div class="user-dropdown" data-bs-toggle="dropdown">
+                        <div class="user-avatar">
+                            {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                        </div>
+                        <div>
+                            <div style="font-weight: 600; font-size: 14px;">{{ auth()->user()->name }}</div>
+                            <div style="font-size: 12px; color: #6c757d;">Instructor</div>
+                        </div>
+                        <i class="fas fa-chevron-down" style="font-size: 12px; color: #6c757d;"></i>
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="{{ route('instructor.dashboard') }}"><i
+                                    class="fas fa-user me-2"></i>Profile</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="dropdown-item text-danger">
+                                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
 
-    <main>
-        @yield('content')
-    </main>
+        <!-- Content Area -->
+        <div class="content-area">
+            <!-- Alerts -->
+            @if(session('success'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle me-2"></i>
+                {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            @endif
+
+            @if(session('error'))
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-circle me-2"></i>
+                {{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            @endif
+
+            @if($errors->any())
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-circle me-2"></i>
+                <ul class="mb-0">
+                    @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            @endif
+
+            <!-- Main Content -->
+            @yield('content')
+        </div>
+    </div>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <!-- Bootstrap 5 -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- DataTables -->
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            // DataTables initialization - Manual per page
+            // Tidak auto-init di sini, biar di masing-masing page
+        });
+    </script>
+
+    @stack('scripts')
+</body>
+
+</html>

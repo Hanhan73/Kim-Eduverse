@@ -17,7 +17,7 @@ class InstructorController extends Controller
 
     public function __construct(WithdrawalService $withdrawalService, RevenueService $revenueService)
     {
-        $this->middleware(['auth', 'role:instruktor']);
+        // $this->middleware(['auth', 'role:instruktor']);
         $this->withdrawalService = $withdrawalService;
         $this->revenueService = $revenueService;
     }

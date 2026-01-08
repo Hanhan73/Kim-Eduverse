@@ -8,6 +8,7 @@ use App\Models\Payment;
 use App\Models\Course;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 
 class PaymentController extends Controller
 {
@@ -86,13 +87,13 @@ class PaymentController extends Controller
      */
     public function notification(Request $request)
     {
-        \Log::info('Midtrans Notification:', $request->all());
+        Log::info('Midtrans Notification:', $request->all());
 
         $serverKey = config('services.midtrans.server_key');
         $hashed = hash('sha512', $request->order_id . $request->status_code . $request->gross_amount . $serverKey);
 
         if ($hashed !== $request->signature_key) {
-            \Log::error('Invalid Midtrans signature');
+            Log::error('Invalid Midtrans signature');
             return response()->json(['message' => 'Invalid signature'], 403);
         }
 
@@ -104,11 +105,11 @@ class PaymentController extends Controller
         $payment = Payment::where('transaction_id', $transactionId)->first();
 
         if (!$payment) {
-            \Log::error('Payment not found: ' . $transactionId);
+            Log::error('Payment not found: ' . $transactionId);
             return response()->json(['message' => 'Payment not found'], 404);
         }
 
-        \Log::info('Processing payment status: ' . $transactionStatus . ' for ' . $transactionId);
+        Log::info('Processing payment status: ' . $transactionStatus . ' for ' . $transactionId);
 
         // Update payment method
         if ($paymentType) {
@@ -121,18 +122,30 @@ class PaymentController extends Controller
         if ($transactionStatus == 'capture') {
             if ($fraudStatus == 'accept') {
                 $payment->markAsPaid();
-                \Log::info('Payment marked as paid (capture): ' . $transactionId);
+                Log::info('Payment marked as paid (capture): ' . $transactionId);
+                try {
+                    app(\App\Services\RevenueService::class)->handlePaidPayment($payment);
+                    Log::info('Revenue share created for Edutech payment: ' . $transactionId);
+                } catch (\Exception $e) {
+                    Log::error('Failed to create revenue share for Edutech payment: ' . $transactionId . ' Error: ' . $e->getMessage());
+                }
             }
         } elseif ($transactionStatus == 'settlement') {
             $payment->markAsPaid();
-            \Log::info('Payment marked as paid (settlement): ' . $transactionId);
+            Log::info('Payment marked as paid (settlement): ' . $transactionId);
+            try {
+                app(\App\Services\RevenueService::class)->handlePaidPayment($payment);
+                Log::info('Revenue share created for Edutech payment: ' . $transactionId);
+            } catch (\Exception $e) {
+                Log::error('Failed to create revenue share for Edutech payment: ' . $transactionId . ' Error: ' . $e->getMessage());
+            }
         } elseif ($transactionStatus == 'pending') {
-            \Log::info('Payment still pending: ' . $transactionId);
+            Log::info('Payment still pending: ' . $transactionId);
         } elseif (in_array($transactionStatus, ['deny', 'expire', 'cancel'])) {
             if ($payment->status !== 'failed') {
                 $payment->markAsFailed();
             }
-            \Log::info('Payment marked as failed: ' . $transactionId);
+            Log::info('Payment marked as failed: ' . $transactionId);
         }
 
         // Update metadata
@@ -152,10 +165,10 @@ class PaymentController extends Controller
     public function success($enrollmentId)
     {
         $enrollment = Enrollment::with('course')->findOrFail($enrollmentId);
-        
+
         // Pastikan payment terupdate
         $payment = Payment::where('enrollment_id', $enrollment->id)->latest()->first();
-        
+
         if ($payment && $payment->status === 'pending') {
             // Check status dari Midtrans
             $this->checkMidtransStatus($payment);
@@ -170,20 +183,20 @@ class PaymentController extends Controller
     public function failed($enrollmentId)
     {
         $enrollment = Enrollment::with('course')->findOrFail($enrollmentId);
-        
+
         // Update payment terakhir jadi failed
         $payment = Payment::where('enrollment_id', $enrollment->id)
             ->where('status', 'pending')
             ->orderBy('created_at', 'desc')
             ->first();
-        
+
         if ($payment) {
             $payment->markAsFailed();
-        return view('edutech.payment.failed', [
-            'enrollment' => $enrollment,
-            'payment' => $payment ?? new \App\Models\Payment(),
-        ]);
-    }
+            return view('edutech.payment.failed', [
+                'enrollment' => $enrollment,
+                'payment' => $payment ?? new \App\Models\Payment(),
+            ]);
+        }
         return view('edutech.payment.failed', compact('enrollment', 'payment'));
     }
 
@@ -282,13 +295,15 @@ class PaymentController extends Controller
 
             $status = \Midtrans\Transaction::status($payment->transaction_id);
 
-            if ($status->transaction_status == 'settlement' || 
-                ($status->transaction_status == 'capture' && $status->fraud_status == 'accept')) {
-                
+            if (
+                $status->transaction_status == 'settlement' ||
+                ($status->transaction_status == 'capture' && $status->fraud_status == 'accept')
+            ) {
+
                 $payment->update([
                     'payment_method' => $this->formatPaymentMethod($status->payment_type ?? null),
                 ]);
-                
+
                 $payment->markAsPaid();
             }
 
