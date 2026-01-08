@@ -1,5 +1,4 @@
 @extends('layouts.admin-digital')
-
 @section('title', 'Edit Quiz - ' . $quiz->title)
 @section('page-title', 'Edit Quiz')
 

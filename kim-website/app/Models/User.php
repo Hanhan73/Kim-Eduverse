@@ -69,71 +69,75 @@ class User extends Authenticatable
         return $this->hasMany(Course::class, 'instructor_id');
     }
 
-    // Role checking methods - FIXED with proper null checking
-    public function hasRole(string $roleName): bool
-    {
-        // Load role if not loaded
-        if (!$this->relationLoaded('role')) {
-            $this->load('role');
-        }
+public function hasRole(string $roleName): bool
+{
+    // Use relationLoaded() to check, and getRelation() to get the object
+    // This avoids the conflict with the 'role' column
+    $role = $this->relationLoaded('role') ? $this->getRelation('role') : $this->role()->first();
 
-        return $this->role && is_object($this->role) && $this->role->name === $roleName;
+    return $role && $role->name === $roleName;
+}
+
+public function hasAnyRole(array $roleNames): bool
+{
+    // Use relationLoaded() to check, and getRelation() to get the object
+    // This avoids the conflict with the 'role' column
+    $role = $this->relationLoaded('role') ? $this->getRelation('role') : $this->role()->first();
+
+    return $role && in_array($role->name, $roleNames);
+}
+
+public function hasPermission(string $permission): bool
+{
+    // Apply the same fix here for consistency
+    $role = $this->relationLoaded('role') ? $this->getRelation('role') : $this->role()->first();
+
+    return $role && $role->hasPermission($permission);
+}
+
+public function hasAnyPermission(array $permissions): bool
+{
+    // And here as well
+    $role = $this->relationLoaded('role') ? $this->getRelation('role') : $this->role()->first();
+
+    return $role && $role->hasAnyPermission($permissions);
+}
+
+public function isSuperAdmin(): bool
+{
+    return $this->hasRole('super_admin');
+}
+
+public function isBendahara(): bool
+{
+    return $this->hasRole('bendahara');
+}
+
+public function isInstruktor(): bool
+{
+    return $this->hasRole('instruktor');
+}
+
+public function isStudent(): bool
+{
+    return $this->hasRole('student');
+}
+
+public function isAdminBlog(): bool
+{
+    return $this->hasRole('blog_admin');
+}
+
+    public function isAdminDigital(): bool
+    {
+        return $this->hasRole('digital_admin');
     }
 
-    public function hasAnyRole(array $roleNames): bool
+    public function isAdminEdutech(): bool
     {
-        // Load role if not loaded
-        if (!$this->relationLoaded('role')) {
-            $this->load('role');
-        }
-
-        return $this->role && is_object($this->role) && in_array($this->role->name, $roleNames);
+        return $this->hasRole('edutech_admin');
     }
 
-    public function hasPermission(string $permission): bool
-    {
-        // Load role if not loaded
-        if (!$this->relationLoaded('role')) {
-            $this->load('role');
-        }
-
-        return $this->role && is_object($this->role) && $this->role->hasPermission($permission);
-    }
-
-    public function hasAnyPermission(array $permissions): bool
-    {
-        // Load role if not loaded
-        if (!$this->relationLoaded('role')) {
-            $this->load('role');
-        }
-
-        return $this->role && is_object($this->role) && $this->role->hasAnyPermission($permissions);
-    }
-
-    public function isSuperAdmin(): bool
-    {
-        return $this->hasRole('super_admin');
-    }
-
-    public function isBendahara(): bool
-    {
-        return $this->hasRole('bendahara');
-    }
-
-    public function isInstruktor(): bool
-    {
-        return $this->hasRole('instruktor');
-    }
-
-    public function isStudent(): bool
-    {
-        return $this->hasRole('student');
-    }
-
-    public function isAdminBlog(): bool
-    {
-        return $this->hasRole('admin_blog');
-    }
 
     // Helper untuk mendapatkan atau create instructor earning
     public function getOrCreateEarning(): InstructorEarning
@@ -168,7 +172,7 @@ class User extends Authenticatable
 
     public function scopeInstructors($query)
     {
-        return $query->byRole('instruktor');
+        return $query->byRole('instructor');
     }
 
     public function scopeBendaharas($query)
