@@ -4,605 +4,605 @@
 
 @section('content')
 <style>
-    /* Animated Background */
-    .animated-bg {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: -1;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-        background-size: 200% 200%;
-        animation: gradientShift 15s ease infinite;
+/* Animated Background */
+.animated-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    background-size: 200% 200%;
+    animation: gradientShift 15s ease infinite;
+}
+
+@keyframes gradientShift {
+
+    0%,
+    100% {
+        background-position: 0% 50%;
     }
 
-    @keyframes gradientShift {
+    50% {
+        background-position: 100% 50%;
+    }
+}
 
-        0%,
-        100% {
-            background-position: 0% 50%;
-        }
+/* Header */
+.team-header {
+    background: transparent;
+    color: white;
+    padding: 120px 0 80px;
+    text-align: center;
+}
 
-        50% {
-            background-position: 100% 50%;
-        }
+.page-title {
+    font-size: 4rem;
+    font-weight: 900;
+    margin-bottom: 20px;
+    text-shadow: 2px 4px 8px rgba(0, 0, 0, 0.2);
+    animation: fadeInDown 1s ease;
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
     }
 
-    /* Header */
-    .team-header {
-        background: transparent;
-        color: white;
-        padding: 120px 0 80px;
-        text-align: center;
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.page-subtitle {
+    font-size: 1.4rem;
+    opacity: 0.95;
+    font-weight: 300;
+    animation: fadeIn 1.5s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
     }
 
-    .page-title {
-        font-size: 4rem;
-        font-weight: 900;
-        margin-bottom: 20px;
-        text-shadow: 2px 4px 8px rgba(0, 0, 0, 0.2);
-        animation: fadeInDown 1s ease;
+    to {
+        opacity: 1;
+    }
+}
+
+/* Section */
+.section {
+    padding: 80px 0;
+}
+
+.section-bg-white {
+    background: white;
+    border-radius: 40px;
+    padding: 80px 40px;
+    margin: 0 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 70px;
+}
+
+.section-badge {
+    display: inline-block;
+    padding: 10px 28px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border-radius: 50px;
+    font-size: 0.875rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+}
+
+.section-title {
+    font-size: 3rem;
+    font-weight: 900;
+    color: #2d3748;
+    margin-bottom: 15px;
+}
+
+.section-subtitle {
+    font-size: 1.2rem;
+    color: #718096;
+    font-weight: 300;
+}
+
+/* Owner Card - REDESIGN LEBIH KEREN */
+.owner-section {
+    max-width: 1000px;
+    margin: 0 auto 80px;
+}
+
+.owner-card {
+    background: white;
+    border-radius: 30px;
+    padding: 0;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    position: relative;
+    transition: transform 0.3s ease;
+}
+
+.owner-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.12);
+}
+
+.owner-card-inner {
+    display: grid;
+    grid-template-columns: 400px 1fr;
+    gap: 0;
+    min-height: 350px;
+}
+
+.owner-photo-section {
+    position: relative;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.owner-photo-section::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+    animation: rotate 20s linear infinite;
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
     }
 
-    @keyframes fadeInDown {
-        from {
-            opacity: 0;
-            transform: translateY(-30px);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+    to {
+        transform: rotate(360deg);
     }
+}
 
-    .page-subtitle {
-        font-size: 1.4rem;
-        opacity: 0.95;
-        font-weight: 300;
-        animation: fadeIn 1.5s ease;
-    }
+.owner-photo-wrapper {
+    position: relative;
+    z-index: 2;
+}
 
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-        }
+.owner-photo-wrapper img {
+    width: 300px;
+    height: 300px;
+    border-radius: 20px;
+    object-fit: cover;
+    background: white;
+    border: 4px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    transition: transform 0.5s ease;
+}
 
-        to {
-            opacity: 1;
-        }
-    }
+.owner-card:hover .owner-photo-wrapper img {
+    transform: scale(1.05) rotate(2deg);
+}
 
-    /* Section */
-    .section {
-        padding: 80px 0;
-    }
+.owner-info-section {
+    padding: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    background: linear-gradient(135deg, #ffffff 0%, #f7fafc 100%);
+}
 
-    .section-bg-white {
-        background: white;
-        border-radius: 40px;
-        padding: 80px 40px;
-        margin: 0 20px;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
-    }
+.owner-badge {
+    display: inline-block;
+    padding: 8px 20px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+    width: fit-content;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
 
-    .section-header {
-        text-align: center;
-        margin-bottom: 70px;
-    }
+.owner-info-section h3 {
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: #2d3748;
+    margin-bottom: 15px;
+    line-height: 1.2;
+}
 
-    .section-badge {
-        display: inline-block;
-        padding: 10px 28px;
-        background: linear-gradient(135deg, #667eea, #764ba2);
-        color: white;
-        border-radius: 50px;
-        font-size: 0.875rem;
-        font-weight: 700;
-        margin-bottom: 20px;
-        text-transform: uppercase;
-        letter-spacing: 1.5px;
-        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
-    }
+.owner-icon {
+    position: absolute;
+    bottom: 30px;
+    right: 30px;
+    font-size: 5rem;
+    color: #667eea;
+    opacity: 0.08;
+}
 
-    .section-title {
-        font-size: 3rem;
-        font-weight: 900;
-        color: #2d3748;
-        margin-bottom: 15px;
-    }
+/* C-Level - REDESIGN DENGAN FOTO BESAR */
+.c-level-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 40px;
+    margin-bottom: 60px;
+}
 
-    .section-subtitle {
-        font-size: 1.2rem;
-        color: #718096;
-        font-weight: 300;
-    }
+.executive-card {
+    background: white;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+    transition: all 0.4s ease;
+    position: relative;
+}
 
-    /* Owner Card - REDESIGN LEBIH KEREN */
-    .owner-section {
-        max-width: 1000px;
-        margin: 0 auto 80px;
-    }
+.executive-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.1);
+}
 
-    .owner-card {
-        background: white;
-        border-radius: 30px;
-        padding: 0;
-        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
-        overflow: hidden;
-        position: relative;
-        transition: transform 0.3s ease;
-    }
+.exec-photo {
+    position: relative;
+    height: 320px;
+    overflow: hidden;
+    background: white;
+    padding: 15px;
+}
 
-    .owner-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.12);
-    }
+.exec-photo::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.2));
+    z-index: 2;
+    pointer-events: none;
+}
 
+.exec-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+    transition: transform 0.5s ease;
+}
+
+.executive-card:hover .exec-photo img {
+    transform: scale(1.1);
+}
+
+.exec-badge {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 3;
+    padding: 8px 20px;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: white;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.exec-badge.ceo {
+    background: rgba(72, 187, 120, 0.9);
+}
+
+.exec-badge.coo {
+    background: rgba(49, 130, 206, 0.9);
+}
+
+.exec-badge.cmo {
+    background: rgba(214, 158, 46, 0.9);
+}
+
+.exec-badge.cto {
+    background: rgba(159, 122, 234, 0.9);
+}
+
+.exec-info {
+    padding: 30px;
+    background: linear-gradient(to bottom, #ffffff, #f7fafc);
+}
+
+.exec-info h4 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 8px;
+}
+
+.exec-title {
+    color: #718096;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.single-executive {
+    max-width: 100%;
+    margin: 0 auto 70px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 40px;
+}
+
+/* Department Cards - REDESIGN HORIZONTAL */
+.department-heads-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    margin-bottom: 70px;
+}
+
+.dept-head-card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+    transition: all 0.4s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.dept-head-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.dept-header {
+    padding: 25px 25px 20px;
+    text-align: center;
+    background: linear-gradient(135deg, #f7fafc, #e6f7ff);
+}
+
+.dept-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 15px;
+    color: white;
+    font-size: 1.5rem;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.dept-name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #2d3748;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dept-photo-section {
+    position: relative;
+    height: 200px;
+    overflow: hidden;
+    background: white;
+    padding: 12px;
+}
+
+.dept-photo-section img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+    transition: transform 0.5s ease;
+}
+
+.dept-head-card:hover .dept-photo-section img {
+    transform: scale(1.15);
+}
+
+.dept-info {
+    padding: 20px;
+    text-align: center;
+    background: linear-gradient(to bottom, #ffffff, #f7fafc);
+}
+
+.head-name {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #2d3748;
+}
+
+/* Junior Staff - REDESIGN DENGAN CARD BESAR */
+.junior-staff-section {
+    background: linear-gradient(135deg, #f7fafc 0%, #e6f7ff 100%);
+    border-radius: 30px;
+    padding: 60px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+}
+
+.staff-section-title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #2d3748;
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.junior-staff-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+}
+
+.junior-card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
+    transition: all 0.4s ease;
+}
+
+.junior-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.junior-photo {
+    position: relative;
+    height: 280px;
+    overflow: hidden;
+    background: white;
+    padding: 12px;
+}
+
+.junior-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+    transition: transform 0.5s ease;
+}
+
+.junior-card:hover .junior-photo img {
+    transform: scale(1.1);
+}
+
+.junior-info {
+    padding: 25px;
+    text-align: center;
+    background: linear-gradient(to bottom, #ffffff, #f7fafc);
+}
+
+.junior-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #2d3748;
+}
+
+/* Expert Cards - REDESIGN LEBIH BESAR */
+.expert-staff-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 35px;
+}
+
+.expert-card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+    transition: all 0.4s ease;
+}
+
+.expert-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.expert-photo {
+    position: relative;
+    height: 280px;
+    overflow: hidden;
+    background: white;
+    padding: 12px;
+}
+
+.expert-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+    transition: transform 0.5s ease;
+}
+
+.expert-card:hover .expert-photo img {
+    transform: scale(1.1);
+}
+
+.expert-content {
+    padding: 30px 25px;
+    text-align: center;
+    background: linear-gradient(to bottom, #ffffff, #f7fafc);
+}
+
+.expert-content h4 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 12px;
+    line-height: 1.4;
+}
+
+.expert-expertise {
+    font-size: 0.9rem;
+    color: #718096;
+    line-height: 1.6;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
     .owner-card-inner {
-        display: grid;
-        grid-template-columns: 400px 1fr;
-        gap: 0;
-        min-height: 350px;
+        grid-template-columns: 1fr;
     }
 
     .owner-photo-section {
-        position: relative;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        padding: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        overflow: hidden;
+        padding: 60px 40px;
     }
 
-    .owner-photo-section::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        left: -50%;
-        width: 200%;
-        height: 200%;
-        background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-        animation: rotate 20s linear infinite;
+    .c-level-grid,
+    .single-executive,
+    .department-heads-grid,
+    .junior-staff-grid,
+    .expert-staff-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .page-title {
+        font-size: 2.5rem;
     }
 
-    @keyframes rotate {
-        from {
-            transform: rotate(0deg);
-        }
-
-        to {
-            transform: rotate(360deg);
-        }
-    }
-
-    .owner-photo-wrapper {
-        position: relative;
-        z-index: 2;
+    .section-title {
+        font-size: 2rem;
     }
 
     .owner-photo-wrapper img {
-        width: 300px;
-        height: 300px;
-        border-radius: 20px;
-        object-fit: cover;
-        background: white;
-        border: 4px solid rgba(255, 255, 255, 0.8);
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-        transition: transform 0.5s ease;
+        width: 250px;
+        height: 250px;
     }
 
-    .owner-card:hover .owner-photo-wrapper img {
-        transform: scale(1.05) rotate(2deg);
-    }
-
-    .owner-info-section {
-        padding: 50px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        position: relative;
-        background: linear-gradient(135deg, #ffffff 0%, #f7fafc 100%);
-    }
-
-    .owner-badge {
-        display: inline-block;
-        padding: 8px 20px;
-        background: linear-gradient(135deg, #667eea, #764ba2);
-        color: white;
-        border-radius: 50px;
-        font-size: 0.75rem;
-        font-weight: 800;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        margin-bottom: 20px;
-        width: fit-content;
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-    }
-
-    .owner-info-section h3 {
-        font-size: 2.5rem;
-        font-weight: 900;
-        color: #2d3748;
-        margin-bottom: 15px;
-        line-height: 1.2;
-    }
-
-    .owner-icon {
-        position: absolute;
-        bottom: 30px;
-        right: 30px;
-        font-size: 5rem;
-        color: #667eea;
-        opacity: 0.08;
-    }
-
-    /* C-Level - REDESIGN DENGAN FOTO BESAR */
-    .c-level-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 40px;
-        margin-bottom: 60px;
-    }
-
-    .executive-card {
-        background: white;
-        border-radius: 24px;
-        overflow: hidden;
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
-        transition: all 0.4s ease;
-        position: relative;
-    }
-
-    .executive-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.1);
-    }
-
-    .exec-photo {
-        position: relative;
-        height: 320px;
-        overflow: hidden;
-        background: white;
-        padding: 15px;
-    }
-
-    .exec-photo::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.2));
-        z-index: 2;
-        pointer-events: none;
-    }
-
-    .exec-photo img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        border-radius: 12px;
-        transition: transform 0.5s ease;
-    }
-
-    .executive-card:hover .exec-photo img {
-        transform: scale(1.1);
-    }
-
-    .exec-badge {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        z-index: 3;
-        padding: 8px 20px;
-        border-radius: 50px;
-        font-size: 0.75rem;
-        font-weight: 800;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        color: white;
-        backdrop-filter: blur(10px);
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    }
-
-    .exec-badge.ceo {
-        background: rgba(72, 187, 120, 0.9);
-    }
-
-    .exec-badge.coo {
-        background: rgba(49, 130, 206, 0.9);
-    }
-
-    .exec-badge.cmo {
-        background: rgba(214, 158, 46, 0.9);
-    }
-
-    .exec-badge.cto {
-        background: rgba(159, 122, 234, 0.9);
-    }
-
-    .exec-info {
-        padding: 30px;
-        background: linear-gradient(to bottom, #ffffff, #f7fafc);
-    }
-
-    .exec-info h4 {
-        font-size: 1.4rem;
-        font-weight: 700;
-        color: #2d3748;
-        margin-bottom: 8px;
-    }
-
-    .exec-title {
-        color: #718096;
-        font-size: 1rem;
-        font-weight: 500;
-    }
-
-    .single-executive {
-        max-width: 100%;
-        margin: 0 auto 70px;
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 40px;
-    }
-
-    /* Department Cards - REDESIGN HORIZONTAL */
-    .department-heads-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 30px;
-        margin-bottom: 70px;
-    }
-
-    .dept-head-card {
-        background: white;
-        border-radius: 20px;
-        overflow: hidden;
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
-        transition: all 0.4s ease;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .dept-head-card:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    }
-
-    .dept-header {
-        padding: 25px 25px 20px;
-        text-align: center;
-        background: linear-gradient(135deg, #f7fafc, #e6f7ff);
-    }
-
-    .dept-icon {
-        width: 60px;
-        height: 60px;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 15px;
-        color: white;
-        font-size: 1.5rem;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-    }
-
-    .dept-name {
-        font-size: 1rem;
-        font-weight: 700;
-        color: #2d3748;
-        min-height: 48px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .dept-photo-section {
-        position: relative;
-        height: 200px;
-        overflow: hidden;
-        background: white;
-        padding: 12px;
-    }
-
-    .dept-photo-section img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        border-radius: 10px;
-        transition: transform 0.5s ease;
-    }
-
-    .dept-head-card:hover .dept-photo-section img {
-        transform: scale(1.15);
-    }
-
-    .dept-info {
-        padding: 20px;
-        text-align: center;
-        background: linear-gradient(to bottom, #ffffff, #f7fafc);
-    }
-
-    .head-name {
-        font-size: 1.05rem;
-        font-weight: 600;
-        color: #2d3748;
-    }
-
-    /* Junior Staff - REDESIGN DENGAN CARD BESAR */
-    .junior-staff-section {
-        background: linear-gradient(135deg, #f7fafc 0%, #e6f7ff 100%);
-        border-radius: 30px;
-        padding: 60px;
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
-    }
-
-    .staff-section-title {
-        font-size: 2rem;
-        font-weight: 800;
-        color: #2d3748;
-        text-align: center;
-        margin-bottom: 50px;
-    }
-
-    .junior-staff-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 30px;
-    }
-
-    .junior-card {
-        background: white;
-        border-radius: 20px;
-        overflow: hidden;
-        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
-        transition: all 0.4s ease;
-    }
-
-    .junior-card:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    }
-
-    .junior-photo {
-        position: relative;
-        height: 280px;
-        overflow: hidden;
-        background: white;
-        padding: 12px;
-    }
-
-    .junior-photo img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        border-radius: 12px;
-        transition: transform 0.5s ease;
-    }
-
-    .junior-card:hover .junior-photo img {
-        transform: scale(1.1);
-    }
-
-    .junior-info {
-        padding: 25px;
-        text-align: center;
-        background: linear-gradient(to bottom, #ffffff, #f7fafc);
-    }
-
-    .junior-name {
-        font-size: 1.1rem;
-        font-weight: 700;
-        color: #2d3748;
-    }
-
-    /* Expert Cards - REDESIGN LEBIH BESAR */
+    .c-level-grid,
+    .single-executive,
+    .department-heads-grid,
+    .junior-staff-grid,
     .expert-staff-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 35px;
+        grid-template-columns: 1fr;
     }
-
-    .expert-card {
-        background: white;
-        border-radius: 20px;
-        overflow: hidden;
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
-        transition: all 0.4s ease;
-    }
-
-    .expert-card:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    }
-
-    .expert-photo {
-        position: relative;
-        height: 280px;
-        overflow: hidden;
-        background: white;
-        padding: 12px;
-    }
-
-    .expert-photo img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        border-radius: 12px;
-        transition: transform 0.5s ease;
-    }
-
-    .expert-card:hover .expert-photo img {
-        transform: scale(1.1);
-    }
-
-    .expert-content {
-        padding: 30px 25px;
-        text-align: center;
-        background: linear-gradient(to bottom, #ffffff, #f7fafc);
-    }
-
-    .expert-content h4 {
-        font-size: 1.1rem;
-        font-weight: 700;
-        color: #2d3748;
-        margin-bottom: 12px;
-        line-height: 1.4;
-    }
-
-    .expert-expertise {
-        font-size: 0.9rem;
-        color: #718096;
-        line-height: 1.6;
-    }
-
-    /* Responsive */
-    @media (max-width: 992px) {
-        .owner-card-inner {
-            grid-template-columns: 1fr;
-        }
-
-        .owner-photo-section {
-            padding: 60px 40px;
-        }
-
-        .c-level-grid,
-        .single-executive,
-        .department-heads-grid,
-        .junior-staff-grid,
-        .expert-staff-grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
-    }
-
-    @media (max-width: 768px) {
-        .page-title {
-            font-size: 2.5rem;
-        }
-
-        .section-title {
-            font-size: 2rem;
-        }
-
-        .owner-photo-wrapper img {
-            width: 250px;
-            height: 250px;
-        }
-
-        .c-level-grid,
-        .single-executive,
-        .department-heads-grid,
-        .junior-staff-grid,
-        .expert-staff-grid {
-            grid-template-columns: 1fr;
-        }
-    }
+}
 </style>
 
 <div class="animated-bg"></div>
@@ -631,7 +631,7 @@
                     <div class="owner-card-inner">
                         <div class="owner-photo-section">
                             <div class="owner-photo-wrapper">
-                                <img src="{{ asset('storage/images/team/prof-edi.png') }}"
+                                <img src="{{ asset('storage/images/team/prof-edy.png') }}"
                                     alt="Prof. Dr. H. Edi Suryadi"
                                     onerror="this.src='https://ui-avatars.com/api/?name=Prof+Edi+Suryadi&size=500&background=667eea&color=fff&bold=true&font-size=0.3'">
                             </div>
@@ -834,7 +834,7 @@
             <div class="expert-staff-grid">
                 <div class="expert-card">
                     <div class="expert-photo">
-                        <img src="{{ asset('storage/images/team/prof-edi.png') }}" alt="Prof. Dr. H. Edi Suryadi"
+                        <img src="{{ asset('storage/images/team/prof-edy.png') }}" alt="Prof. Dr. H. Edi Suryadi"
                             onerror="this.src='https://ui-avatars.com/api/?name=Prof+Edi+Suryadi&size=500&background=667eea&color=fff&bold=true&font-size=0.3'">
                     </div>
                     <div class="expert-content">

@@ -28,6 +28,7 @@ class Seminar extends Model
         'is_featured',
         'sold_count',
         'order',
+        'created_by',
     ];
 
     protected $casts = [
@@ -48,7 +49,10 @@ class Seminar extends Model
     }
 
 
-
+    public function creator() {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+    
     public function enrollments()
     {
         return $this->hasMany(SeminarEnrollment::class);

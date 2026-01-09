@@ -23,6 +23,7 @@ class Questionnaire extends Model
         'ai_enabled',
         'ai_context',
         'ai_persona',
+        'created_by'
     ];
 
     protected $casts = [
@@ -44,6 +45,11 @@ class Questionnaire extends Model
                 $questionnaire->slug = Str::slug($questionnaire->name);
             }
         });
+    }
+
+
+    public function creator() {
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     /**

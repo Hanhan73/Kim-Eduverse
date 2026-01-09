@@ -11,6 +11,7 @@ class DigitalProduct extends Model
     use HasFactory;
 
     protected $fillable = [
+        'collaborator_id', // NEW
         'category_id',
         'name',
         'slug',
@@ -50,6 +51,14 @@ class DigitalProduct extends Model
     }
 
     /**
+     * Get the collaborator (creator) of the product.
+     */
+    public function collaborator()
+    {
+        return $this->belongsTo(User::class, 'collaborator_id');
+    }
+
+    /**
      * Get the category that owns the product.
      */
     public function category()
@@ -71,6 +80,14 @@ class DigitalProduct extends Model
     public function orderItems()
     {
         return $this->hasMany(DigitalOrderItem::class, 'product_id');
+    }
+
+    /**
+     * Get collaborator revenues for this product
+     */
+    public function collaboratorRevenues()
+    {
+        return $this->hasMany(CollaboratorRevenue::class, 'product_id');
     }
 
     /**
@@ -96,8 +113,6 @@ class DigitalProduct extends Model
     {
         return $this->type === 'questionnaire';
     }
-    
-
 
     public function isSeminar()
     {
@@ -109,30 +124,30 @@ class DigitalProduct extends Model
         return $this->hasOne(\App\Models\Seminar::class, 'product_id');
     }
 
-/**
- * Relasi ke Landing Page
- */
-public function landingPage()
-{
-    return $this->hasOne(\App\Models\ProductLandingPage::class, 'product_id');
-}
-
-/**
- * Check apakah produk punya landing page yang aktif
- */
-public function hasLandingPage()
-{
-    return $this->landingPage && $this->landingPage->is_active;
-}
-
-/**
- * Get URL landing page (jika ada)
- */
-public function getLandingPageUrlAttribute()
-{
-    if ($this->hasLandingPage()) {
-        return route('digital.landing', $this->slug);
+    /**
+     * Relasi ke Landing Page
+     */
+    public function landingPage()
+    {
+        return $this->hasOne(\App\Models\ProductLandingPage::class, 'product_id');
     }
-    return null;
-}
+
+    /**
+     * Check apakah produk punya landing page yang aktif
+     */
+    public function hasLandingPage()
+    {
+        return $this->landingPage && $this->landingPage->is_active;
+    }
+
+    /**
+     * Get URL landing page (jika ada)
+     */
+    public function getLandingPageUrlAttribute()
+    {
+        if ($this->hasLandingPage()) {
+            return route('digital.landing', $this->slug);
+        }
+        return null;
+    }
 }

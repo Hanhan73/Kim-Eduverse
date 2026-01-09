@@ -287,6 +287,7 @@ class PaymentController extends Controller
                 
                 $payment->update([
                     'payment_method' => $this->formatPaymentMethod($status->payment_type ?? null),
+                
                 ]);
                 
                 $payment->markAsPaid();

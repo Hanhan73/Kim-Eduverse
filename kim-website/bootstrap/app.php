@@ -21,6 +21,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'edutech.instructor' => \App\Http\Middleware\EdutechInstructor::class,
             'edutech.student' => \App\Http\Middleware\EdutechStudent::class,
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
+            'check.role' => \App\Http\Middleware\CheckRole::class,
+            'digital.auth' => \App\Http\Middleware\DigitalAuth::class,
+            'check.digital.role' => \App\Http\Middleware\CheckDigitalRole::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

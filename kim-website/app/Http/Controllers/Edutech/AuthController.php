@@ -167,6 +167,9 @@ class AuthController extends Controller
             case 'instructor':
                 return redirect()->route('edutech.instructor.dashboard');
             case 'student':
+                return redirect()->route('edutech.student.dashboard');
+            case 'bendahara_edutech':
+                return redirect()->route('edutech.bendahara.withdrawals.index');
             default:
                 return redirect()->route('edutech.student.dashboard');
         }

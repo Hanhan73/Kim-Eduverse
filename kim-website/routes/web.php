@@ -64,6 +64,9 @@ use App\Http\Controllers\Edutech\Instructor\LiveMeetingController;
 use App\Http\Controllers\Edutech\Instructor\StudentManagementController;
 use App\Http\Controllers\Edutech\Instructor\BatchManagementController;
 use App\Http\Controllers\Edutech\Instructor\AttendanceController;
+use App\Http\Controllers\Edutech\Instructor\InstructorRevenueController;
+use App\Http\Controllers\Edutech\Bendahara\BendaharaWithdrawalController;
+
 
 use App\Http\Controllers\Edutech\Student\DashboardController as StudentDashboardController;
 use App\Http\Controllers\Edutech\Student\MyCourseController as StudentMyCourseController;
@@ -233,6 +236,11 @@ Route::prefix('edutech/instructor')->name('edutech.instructor.')->middleware('ed
     Route::get('/live-meetings/{session}/edit', [LiveMeetingController::class, 'edit'])->name('live-meetings.edit');
     Route::put('/live-meetings/{session}', [LiveMeetingController::class, 'update'])->name('live-meetings.update');
     Route::delete('/live-meetings/{session}', [LiveMeetingController::class, 'destroy'])->name('live-meetings.destroy');
+
+
+    Route::get('/revenue', [InstructorRevenueController::class, 'index'])->name('revenue.index');
+    Route::get('/revenue/withdrawal', [InstructorRevenueController::class, 'createWithdrawal'])->name('revenue.withdrawal');
+    Route::post('/revenue/withdrawal', [InstructorRevenueController::class, 'storeWithdrawal'])->name('revenue.withdrawal.store');
 });
 
 use App\Http\Controllers\Edutech\Admin\UsersController;
@@ -415,6 +423,9 @@ use App\Http\Controllers\Admin\QuestionnaireResponseController;
 use App\Http\Controllers\Admin\QuestionController;
 use App\Http\Controllers\Admin\QuizController;
 use App\Http\Controllers\Admin\LandingPageController as DigitalLandingPageController;
+use App\Http\Controllers\Digital\Collaborator\CollaboratorProductController;
+use App\Http\Controllers\Digital\Collaborator\CollaboratorProfileController;
+use App\Http\Controllers\Admin\Digital\UserManagementController;
 
 // Admin Auth Routes (No middleware)
 Route::prefix('admin/digital')->name('admin.digital.')->group(function () {
@@ -424,7 +435,7 @@ Route::prefix('admin/digital')->name('admin.digital.')->group(function () {
 });
 
 // Admin Routes - Protected by admin middleware
-Route::prefix('admin/digital')->name('admin.digital.')->middleware(['admin'])->group(function () {
+Route::prefix('admin/digital')->name('admin.digital.')->middleware(['digital_auth'])->group(function () {
 
     // Dashboard
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
@@ -542,6 +553,11 @@ Route::prefix('admin/digital')->name('admin.digital.')->middleware(['admin'])->g
         Route::delete('/{product}', [DigitalLandingPageController::class, 'destroy'])->name('destroy');
         Route::get('/{product}/preview', [DigitalLandingPageController::class, 'preview'])->name('preview');
     });
+
+            // User Management (Collaborator & Bendahara)
+        Route::resource('users', UserManagementController::class);
+        Route::post('users/{user}/toggle', [UserManagementController::class, 'toggleStatus'])
+            ->name('users.toggle');
 });
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
@@ -554,4 +570,160 @@ Route::prefix('test-claude')->name('test.claude.')->group(function () {
     Route::get('/simple', [TestClaudeController::class, 'testSimpleCall'])->name('simple');
     Route::get('/analysis', [TestClaudeController::class, 'testFullAnalysis'])->name('analysis');
     Route::get('/logs', [TestClaudeController::class, 'viewLogs'])->name('logs');
+});
+
+
+use App\Http\Controllers\Edutech\Bendahara\BendaharaDashboardController;
+use App\Http\Controllers\Edutech\Bendahara\BendaharaRevenueController;
+use App\Http\Controllers\Edutech\Bendahara\BendaharaInstructorController;
+
+// Bendahara Routes
+Route::middleware(['edutech.auth'])
+    ->prefix('edutech/bendahara')
+    ->name('edutech.bendahara.')
+    ->group(function () {
+// Dashboard
+        Route::get('/dashboard', [BendaharaDashboardController::class, 'index'])->name('dashboard');
+        
+        // Withdrawals Management
+        Route::get('/withdrawals', [BendaharaWithdrawalController::class, 'index'])->name('withdrawals.index');
+        Route::get('/withdrawals/{withdrawal}', [BendaharaWithdrawalController::class, 'show'])->name('withdrawals.show');
+        Route::post('/withdrawals/{withdrawal}/approve', [BendaharaWithdrawalController::class, 'approve'])->name('withdrawals.approve');
+        Route::post('/withdrawals/{withdrawal}/reject', [BendaharaWithdrawalController::class, 'reject'])->name('withdrawals.reject');
+        
+        // Revenue Report
+        Route::get('/revenues', [BendaharaRevenueController::class, 'index'])->name('revenues.index');
+        
+        // Instructor Management
+        Route::get('/instructors', [BendaharaInstructorController::class, 'index'])->name('instructors.index');
+        Route::get('/instructors/{instructor}', [BendaharaInstructorController::class, 'show'])->name('instructors.show');
+   
+    });
+
+
+    use App\Http\Controllers\Digital\Collaborator\CollaboratorDashboardController;
+use App\Http\Controllers\Digital\Collaborator\CollaboratorRevenueController;
+use App\Http\Controllers\Digital\Bendahara\BendaharaDigitalDashboardController;
+use App\Http\Controllers\Digital\Bendahara\BendaharaDigitalWithdrawalController;
+use App\Http\Controllers\Digital\Bendahara\BendaharaDigitalRevenueController;
+use App\Http\Controllers\Digital\Bendahara\BendaharaDigitalCollaboratorController;
+use App\Http\Controllers\Digital\Collaborator\CollaboratorQuestionnaireController;
+use App\Http\Controllers\Digital\Collaborator\CollaboratorSeminarController;
+
+/*
+|--------------------------------------------------------------------------
+| KIM DIGITAL - COLLABORATOR & BENDAHARA ROUTES
+|--------------------------------------------------------------------------
+*/
+
+// Collaborator Routes (untuk creator produk digital)
+Route::middleware(['digital.auth', 'check.digital.role:collaborator'])
+    ->prefix('digital/collaborator')
+    ->name('digital.collaborator.')
+    ->group(function () {
+        
+        // Dashboard
+        Route::get('/dashboard', [CollaboratorDashboardController::class, 'index'])->name('dashboard');
+        
+        // Revenue & Withdrawal
+        Route::get('/revenue', [CollaboratorRevenueController::class, 'index'])->name('revenue.index');
+        Route::get('/revenue/withdrawal', [CollaboratorRevenueController::class, 'createWithdrawal'])->name('revenue.withdrawal');
+        Route::post('/revenue/withdrawal', [CollaboratorRevenueController::class, 'storeWithdrawal'])->name('revenue.withdrawal.store');
+        
+        // Profile Management
+        Route::get('profile', [CollaboratorProfileController::class, 'index'])->name('profile');
+        Route::put('profile', [CollaboratorProfileController::class, 'update'])->name('profile.update');
+        Route::put('profile/password', [CollaboratorProfileController::class, 'updatePassword'])
+            ->name('profile.password');
+
+             // ============================================
+        // QUESTIONNAIRES - FULL CRUD
+        // ============================================
+        Route::prefix('questionnaires')->name('questionnaires.')->group(function () {
+            Route::get('/', [CollaboratorQuestionnaireController::class, 'index'])->name('index');
+            Route::get('/create', [CollaboratorQuestionnaireController::class, 'create'])->name('create');
+            Route::post('/', [CollaboratorQuestionnaireController::class, 'store'])->name('store');
+            Route::get('/{questionnaire}/builder', [CollaboratorQuestionnaireController::class, 'builder'])->name('builder');
+            Route::put('/{questionnaire}', [CollaboratorQuestionnaireController::class, 'update'])->name('update');
+            Route::delete('/{questionnaire}', [CollaboratorQuestionnaireController::class, 'destroy'])->name('destroy');
+            
+            // Dimensions Management
+            Route::post('/{questionnaire}/dimensions', [CollaboratorQuestionnaireController::class, 'storeDimension'])->name('dimensions.store');
+            Route::delete('/dimensions/{dimension}', [CollaboratorQuestionnaireController::class, 'deleteDimension'])->name('dimensions.destroy');
+            
+            // Questions Management
+            Route::post('/{questionnaire}/questions', [CollaboratorQuestionnaireController::class, 'storeQuestion'])->name('questions.store');
+            Route::delete('/questions/{question}', [CollaboratorQuestionnaireController::class, 'deleteQuestion'])->name('questions.destroy');
+        });
+        
+        // ============================================
+        // SEMINARS - FULL CRUD
+        // ============================================
+        Route::prefix('seminars')->name('seminars.')->group(function () {
+            Route::get('/', [CollaboratorSeminarController::class, 'index'])->name('index');
+            Route::get('/create', [CollaboratorSeminarController::class, 'create'])->name('create');
+            Route::post('/', [CollaboratorSeminarController::class, 'store'])->name('store');
+            Route::get('/{seminar}', [CollaboratorSeminarController::class, 'show'])->name('show');
+            Route::get('/{seminar}/edit', [CollaboratorSeminarController::class, 'edit'])->name('edit');
+            Route::put('/{seminar}', [CollaboratorSeminarController::class, 'update'])->name('update');
+            Route::delete('/{seminar}', [CollaboratorSeminarController::class, 'destroy'])->name('destroy');
+            Route::patch('/{seminar}/toggle-active', [CollaboratorSeminarController::class, 'toggleActive'])->name('toggle-active');
+            Route::get('quizzes/{quiz}/edit', [CollaboratorSeminarController::class, 'edit'])->name('quizzes.edit');
+            Route::put('quizzes/{quiz}', [CollaboratorSeminarController::class, 'update'])->name('quizzes.update');
+                    Route::post('/quizzes', [CollaboratorSeminarController::class, 'storeQuiz'])->name('quizzes.store');
+
+        });
+
+
+    
+        
+        // ============================================
+        // SIMPLE PRODUCTS - Ebook, Video, Template, Module
+        // ============================================
+        Route::get('/products/create-simple', [CollaboratorProductController::class, 'createSimple'])->name('products.create-simple');
+        Route::post('/products/store-simple', [CollaboratorProductController::class, 'storeSimple'])->name('products.store-simple');
+        
+        // ============================================
+        // EXISTING ROUTES (Already created before)
+        // ============================================
+        // Products CRUD
+        Route::get('/products', [CollaboratorProductController::class, 'index'])->name('products.index');
+        Route::get('/products/create', [CollaboratorProductController::class, 'create'])->name('products.create');
+        Route::post('/products', [CollaboratorProductController::class, 'store'])->name('products.store');
+        Route::get('/products/{product}/edit', [CollaboratorProductController::class, 'edit'])->name('products.edit');
+        Route::put('/products/{product}', [CollaboratorProductController::class, 'update'])->name('products.update');
+        Route::delete('/products/{product}', [CollaboratorProductController::class, 'destroy'])->name('products.destroy');
+        Route::post('/products/{product}/toggle', [CollaboratorProductController::class, 'toggleStatus'])->name('products.toggle');
+    
+    });
+
+// Bendahara Digital Routes (finance officer untuk KIM Digital)
+Route::middleware(['digital.auth', 'check.digital.role:bendahara_digital'])
+    ->prefix('digital/bendahara')
+    ->name('digital.bendahara.')
+    ->group(function () {
+        
+        // Dashboard
+        Route::get('/dashboard', [BendaharaDigitalDashboardController::class, 'index'])->name('dashboard');
+        
+        // Withdrawals Management
+        Route::get('/withdrawals', [BendaharaDigitalWithdrawalController::class, 'index'])->name('withdrawals.index');
+        Route::get('/withdrawals/{withdrawal}', [BendaharaDigitalWithdrawalController::class, 'show'])->name('withdrawals.show');
+        Route::post('/withdrawals/{withdrawal}/approve', [BendaharaDigitalWithdrawalController::class, 'approve'])->name('withdrawals.approve');
+        Route::post('/withdrawals/{withdrawal}/reject', [BendaharaDigitalWithdrawalController::class, 'reject'])->name('withdrawals.reject');
+        
+        // Revenue Report
+        Route::get('/revenues', [BendaharaDigitalRevenueController::class, 'index'])->name('revenues.index');
+        
+        // Collaborator Management
+        Route::get('/collaborators', [BendaharaDigitalCollaboratorController::class, 'index'])->name('collaborators.index');
+        Route::get('/collaborators/{collaborator}', [BendaharaDigitalCollaboratorController::class, 'show'])->name('collaborators.show');
+    });
+
+
+// Digital Login Routes (NO MIDDLEWARE)
+Route::prefix('digital/auth')->name('admin.digital.')->group(function () {
+    Route::get('/login', [DigitalAuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [DigitalAuthController::class, 'login'])->name('login.post');
+    Route::post('/logout', [DigitalAuthController::class, 'logout'])->name('logout');
 });

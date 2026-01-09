@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
             ModuleLessonSeeder::class,
             QuestionnaireAISeeder::class,
             QuizSeeder::class,
+            DigitalCollaboratorSeeder::class,
         ]);
     }
 }

@@ -5,425 +5,396 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\User;
 use App\Models\Course;
-use App\Models\Enrollment;  // ← TAMBAHKAN INI
-use App\Models\Certificate; // ← DAN INI
+use App\Models\Enrollment;
+use App\Models\Payment;
+use App\Models\InstructorRevenue;
+use App\Models\InstructorWithdrawal;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class EdutechSeeder extends Seeder
 {
     public function run(): void
     {
+        echo "=== EduTech Complete System Seeder ===\n\n";
+
         // ========================================
         // 1. CREATE USERS
         // ========================================
+        
+        echo "📝 Creating users...\n";
 
         // Admin
-        $admin = User::create([
-            'name' => 'Admin Edutech',
-            'email' => 'admin@edutech.com',
-            'password' => Hash::make('password'),
-            'role' => 'admin',
-            'phone' => '081234567890',
-            'bio' => 'Administrator KIM Edutech Platform',
-            'is_active' => true,
-        ]);
+        $admin = User::firstOrCreate(
+            ['email' => 'admin@edutech.com'],
+            [
+                'name' => 'Admin Edutech',
+                'password' => Hash::make('password'),
+                'role' => 'admin',
+                'phone' => '081234567890',
+                'bio' => 'Administrator KIM Edutech Platform',
+                'is_active' => true,
+                'email_verified_at' => now(),
+            ]
+        );
+
+        // Bendahara
+        $bendahara = User::firstOrCreate(
+            ['email' => 'bendahara.edutech@kim.com'],
+            [
+                'name' => 'Bendahara EduTech',
+                'password' => Hash::make('password'),
+                'role' => 'bendahara_edutech',
+                'email_verified_at' => now(),
+            ]
+        );
 
         // Instructors
-        $instructor1 = User::create([
-            'name' => 'Dr. Ahmad Rizki, M.Pd',
-            'email' => 'ahmad@edutech.com',
-            'password' => Hash::make('password'),
-            'role' => 'instructor',
-            'phone' => '081234567891',
-            'bio' => 'Expert in Education Technology with 10+ years experience',
-            'is_active' => true,
-        ]);
+        $instructor1 = User::firstOrCreate(
+            ['email' => 'ahmad@edutech.com'],
+            [
+                'name' => 'Dr. Ahmad Rizki, M.Pd',
+                'password' => Hash::make('password'),
+                'role' => 'instructor',
+                'phone' => '081234567891',
+                'bio' => 'Expert in Education Technology with 10+ years experience',
+                'is_active' => true,
+                'email_verified_at' => now(),
+            ]
+        );
 
-        $instructor2 = User::create([
-            'name' => 'Siti Nurhaliza, M.Pd',
-            'email' => 'siti@edutech.com',
-            'password' => Hash::make('password'),
-            'role' => 'instructor',
-            'phone' => '081234567892',
-            'bio' => 'Language Expert specializing in English and Arabic',
-            'is_active' => true,
-        ]);
+        $instructor2 = User::firstOrCreate(
+            ['email' => 'siti@edutech.com'],
+            [
+                'name' => 'Siti Nurhaliza, M.Pd',
+                'password' => Hash::make('password'),
+                'role' => 'instructor',
+                'phone' => '081234567892',
+                'bio' => 'Language Expert specializing in English and Arabic',
+                'is_active' => true,
+                'email_verified_at' => now(),
+            ]
+        );
 
-        $instructor3 = User::create([
-            'name' => 'Budi Santoso, S.Kom, M.T',
-            'email' => 'budi@edutech.com',
-            'password' => Hash::make('password'),
-            'role' => 'instructor',
-            'phone' => '081234567893',
-            'bio' => 'Software Engineer & IT Specialist',
-            'is_active' => true,
-        ]);
-
-        $instructor4 = User::create([
-            'name' => 'Rina Wijaya, S.Ds',
-            'email' => 'rina@edutech.com',
-            'password' => Hash::make('password'),
-            'role' => 'instructor',
-            'phone' => '081234567894',
-            'bio' => 'Professional Designer with 8+ years experience',
-            'is_active' => true,
-        ]);
-
-        $instructor5 = User::create([
-            'name' => 'Ir. Bambang Suryanto, M.M',
-            'email' => 'bambang@edutech.com',
-            'password' => Hash::make('password'),
-            'role' => 'instructor',
-            'phone' => '081234567895',
-            'bio' => 'Industrial Management & Quality Expert',
-            'is_active' => true,
-        ]);
+        $instructor3 = User::firstOrCreate(
+            ['email' => 'budi@edutech.com'],
+            [
+                'name' => 'Budi Santoso, S.Kom, M.T',
+                'password' => Hash::make('password'),
+                'role' => 'instructor',
+                'phone' => '081234567893',
+                'bio' => 'Software Engineer & IT Specialist',
+                'is_active' => true,
+                'email_verified_at' => now(),
+            ]
+        );
 
         // Students
+        $students = [];
         for ($i = 1; $i <= 10; $i++) {
-            User::create([
-                'name' => "Student {$i}",
-                'email' => "student{$i}@edutech.com",
-                'password' => Hash::make('password'),
-                'role' => 'student',
-                'phone' => '0812345678' . str_pad($i, 2, '0', STR_PAD_LEFT),
-                'is_active' => true,
-            ]);
+            $students[] = User::firstOrCreate(
+                ['email' => "student{$i}@edutech.com"],
+                [
+                    'name' => "Student {$i}",
+                    'password' => Hash::make('password'),
+                    'role' => 'student',
+                    'phone' => '0812345678' . str_pad($i, 2, '0', STR_PAD_LEFT),
+                    'is_active' => true,
+                    'email_verified_at' => now(),
+                ]
+            );
         }
+
+        echo "✓ Users created: Admin, Bendahara, 3 Instructors, 10 Students\n\n";
 
         // ========================================
         // 2. CREATE COURSES
         // ========================================
+        
+        echo "📚 Creating courses...\n";
 
-        // KATEGORI: EDUCATION
-        Course::create([
-            'instructor_id' => $instructor1->id,
-            'title' => 'CBTS - Classroom Based Training System',
-            'slug' => 'cbts-classroom-training-system',
-            'description' => 'Pelajari metodologi CBTS untuk meningkatkan efektivitas pembelajaran di kelas. Course ini mencakup teori dan praktik langsung yang dapat diterapkan di institusi pendidikan Anda.',
-            'category' => 'Education',
-            'level' => 'intermediate',
-            'price' => 500000,
-            'duration_hours' => 20,
-            'max_students' => 30,
-            'is_published' => true,
-            'is_featured' => true,
-            'passing_score' => 70,
-        ]);
+        $coursesData = [
+            // Instructor 1 - Ahmad (Education)
+            [
+                'instructor' => $instructor1,
+                'title' => 'CBTS - Classroom Based Training System',
+                'slug' => 'cbts-classroom-training-system',
+                'description' => 'Pelajari metodologi CBTS untuk meningkatkan efektivitas pembelajaran di kelas.',
+                'category' => 'Education',
+                'level' => 'intermediate',
+                'price' => 500000,
+                'duration_hours' => 20,
+            ],
+            [
+                'instructor' => $instructor1,
+                'title' => 'AI untuk Pendidikan - ChatGPT & Tools AI',
+                'slug' => 'ai-untuk-pendidikan',
+                'description' => 'Manfaatkan kekuatan AI untuk meningkatkan kualitas pembelajaran.',
+                'category' => 'Education',
+                'level' => 'beginner',
+                'price' => 0, // FREE
+                'duration_hours' => 12,
+            ],
+            
+            // Instructor 2 - Siti (Language)
+            [
+                'instructor' => $instructor2,
+                'title' => 'English for Business Communication',
+                'slug' => 'english-business-communication',
+                'description' => 'Master English communication skills untuk dunia profesional.',
+                'category' => 'Language',
+                'level' => 'beginner',
+                'price' => 0, // FREE
+                'duration_hours' => 15,
+            ],
+            [
+                'instructor' => $instructor2,
+                'title' => 'Bahasa Arab untuk Pemula',
+                'slug' => 'bahasa-arab-pemula',
+                'description' => 'Belajar Bahasa Arab dari nol hingga mahir.',
+                'category' => 'Language',
+                'level' => 'beginner',
+                'price' => 450000,
+                'duration_hours' => 30,
+            ],
+            
+            // Instructor 3 - Budi (IT)
+            [
+                'instructor' => $instructor3,
+                'title' => 'Web Development dengan Laravel',
+                'slug' => 'web-development-laravel-fullstack',
+                'description' => 'Belajar coding Laravel dari dasar hingga mahir.',
+                'category' => 'Teknologi Informasi',
+                'level' => 'intermediate',
+                'price' => 1200000,
+                'duration_hours' => 50,
+            ],
+            [
+                'instructor' => $instructor3,
+                'title' => 'Python Programming - Zero to Hero',
+                'slug' => 'python-programming-zero-to-hero',
+                'description' => 'Belajar Python dari nol untuk pemula.',
+                'category' => 'Teknologi Informasi',
+                'level' => 'beginner',
+                'price' => 800000,
+                'duration_hours' => 35,
+            ],
+        ];
 
-        Course::create([
-            'instructor_id' => $instructor1->id,
-            'title' => 'Teknik Alba - Metode Pembelajaran Modern',
-            'slug' => 'teknik-alba-metode-pembelajaran',
-            'description' => 'Memahami dan menerapkan Teknik Alba dalam pembelajaran modern. Metode yang telah terbukti meningkatkan engagement siswa hingga 80%.',
-            'category' => 'Education',
-            'level' => 'intermediate',
-            'price' => 750000,
-            'duration_hours' => 25,
-            'max_students' => 25,
-            'is_published' => true,
-            'is_featured' => true,
-            'passing_score' => 70,
-        ]);
+        $courses = [];
+        foreach ($coursesData as $data) {
+            $courses[] = Course::firstOrCreate(
+                ['slug' => $data['slug']],
+                [
+                    'instructor_id' => $data['instructor']->id,
+                    'title' => $data['title'],
+                    'description' => $data['description'],
+                    'category' => $data['category'],
+                    'level' => $data['level'],
+                    'price' => $data['price'],
+                    'duration_hours' => $data['duration_hours'],
+                    'max_students' => 50,
+                    'is_published' => true,
+                    'is_featured' => $data['price'] > 0,
+                    'passing_score' => 70,
+                ]
+            );
+        }
 
-        Course::create([
-            'instructor_id' => $instructor1->id,
-            'title' => 'Media Pembelajaran Digital Interaktif',
-            'slug' => 'media-pembelajaran-digital',
-            'description' => 'Belajar membuat media pembelajaran digital yang menarik dan interaktif menggunakan berbagai tools modern seperti Canva, PowerPoint, dan aplikasi multimedia lainnya.',
-            'category' => 'Education',
-            'level' => 'beginner',
-            'price' => 400000,
-            'duration_hours' => 18,
-            'max_students' => 40,
-            'is_published' => true,
-            'is_featured' => false,
-            'passing_score' => 65,
-        ]);
-
-        Course::create([
-            'instructor_id' => $instructor1->id,
-            'title' => 'AI untuk Pendidikan - ChatGPT & Tools AI',
-            'slug' => 'ai-untuk-pendidikan',
-            'description' => 'Manfaatkan kekuatan AI untuk meningkatkan kualitas pembelajaran. Dari ChatGPT hingga AI image generators untuk materi ajar yang lebih menarik.',
-            'category' => 'Education',
-            'level' => 'beginner',
-            'price' => 0, // GRATIS
-            'duration_hours' => 12,
-            'max_students' => 100,
-            'is_published' => true,
-            'is_featured' => true,
-            'passing_score' => 60,
-        ]);
-
-        // KATEGORI: LANGUAGE
-        Course::create([
-            'instructor_id' => $instructor2->id,
-            'title' => 'English for Business Communication',
-            'slug' => 'english-business-communication',
-            'description' => 'Master English communication skills untuk dunia profesional. Dari email writing hingga presentation skills, semua ada di course ini.',
-            'category' => 'Language',
-            'level' => 'beginner',
-            'price' => 0, // GRATIS
-            'duration_hours' => 15,
-            'max_students' => 50,
-            'is_published' => true,
-            'is_featured' => true,
-            'passing_score' => 60,
-        ]);
-
-        Course::create([
-            'instructor_id' => $instructor2->id,
-            'title' => 'Bahasa Arab untuk Pemula - Al-Quran & Conversation',
-            'slug' => 'bahasa-arab-pemula',
-            'description' => 'Belajar Bahasa Arab dari nol hingga mahir. Fokus pada pembacaan Al-Quran dan conversation sehari-hari.',
-            'category' => 'Language',
-            'level' => 'beginner',
-            'price' => 450000,
-            'duration_hours' => 30,
-            'max_students' => 30,
-            'is_published' => true,
-            'is_featured' => true,
-            'passing_score' => 65,
-        ]);
-
-        // KATEGORI: TEKNOLOGI INFORMASI
-        Course::create([
-            'instructor_id' => $instructor3->id,
-            'title' => 'Office Computer - Excel, Word, PowerPoint Mahir',
-            'slug' => 'office-computer-excel-word-powerpoint',
-            'description' => 'Kuasai Microsoft Office dari basic hingga advanced. Excel formulas, Word professional documents, dan PowerPoint presentations yang WOW!',
-            'category' => 'Teknologi Informasi',
-            'level' => 'beginner',
-            'price' => 350000,
-            'duration_hours' => 20,
-            'max_students' => 50,
-            'is_published' => true,
-            'is_featured' => false,
-            'passing_score' => 70,
-        ]);
-
-        Course::create([
-            'instructor_id' => $instructor3->id,
-            'title' => 'Web Development dengan Laravel - Full Stack',
-            'slug' => 'web-development-laravel-fullstack',
-            'description' => 'Belajar coding Laravel dari dasar hingga mahir. Dari routing, database, authentication, hingga deployment. Build real projects!',
-            'category' => 'Teknologi Informasi',
-            'level' => 'intermediate',
-            'price' => 1200000,
-            'duration_hours' => 50,
-            'max_students' => 25,
-            'is_published' => true,
-            'is_featured' => true,
-            'passing_score' => 75,
-        ]);
-
-        Course::create([
-            'instructor_id' => $instructor3->id,
-            'title' => 'Python Programming - From Zero to Hero',
-            'slug' => 'python-programming-zero-to-hero',
-            'description' => 'Belajar Python dari nol. Perfect untuk pemula yang ingin masuk ke dunia programming atau data science.',
-            'category' => 'Teknologi Informasi',
-            'level' => 'beginner',
-            'price' => 800000,
-            'duration_hours' => 35,
-            'max_students' => 40,
-            'is_published' => true,
-            'is_featured' => true,
-            'passing_score' => 70,
-        ]);
-
-        // KATEGORI: DESAIN
-        Course::create([
-            'instructor_id' => $instructor4->id,
-            'title' => 'Desain Interior - Dari Konsep hingga Realisasi',
-            'slug' => 'desain-interior-konsep-realisasi',
-            'description' => 'Belajar desain interior dari konsep, space planning, material selection, hingga rendering 3D dengan SketchUp dan 3ds Max.',
-            'category' => 'Desain',
-            'level' => 'intermediate',
-            'price' => 950000,
-            'duration_hours' => 40,
-            'max_students' => 20,
-            'is_published' => true,
-            'is_featured' => true,
-            'passing_score' => 70,
-        ]);
-
-        Course::create([
-            'instructor_id' => $instructor4->id,
-            'title' => 'DKV - Desain Grafis dengan Adobe Creative Suite',
-            'slug' => 'dkv-desain-grafis-adobe',
-            'description' => 'Kuasai Adobe Illustrator, Photoshop, dan InDesign untuk membuat desain grafis profesional. Dari logo design hingga branding.',
-            'category' => 'Desain',
-            'level' => 'beginner',
-            'price' => 600000,
-            'duration_hours' => 30,
-            'max_students' => 35,
-            'is_published' => true,
-            'is_featured' => true,
-            'passing_score' => 70,
-        ]);
-
-        Course::create([
-            'instructor_id' => $instructor4->id,
-            'title' => 'UI/UX Design - Mobile & Web Apps',
-            'slug' => 'uiux-design-mobile-web',
-            'description' => 'Belajar UI/UX Design dengan Figma. Dari wireframing, prototyping, hingga user testing. Build portfolio-ready projects!',
-            'category' => 'Desain',
-            'level' => 'intermediate',
-            'price' => 850000,
-            'duration_hours' => 28,
-            'max_students' => 30,
-            'is_published' => true,
-            'is_featured' => false,
-            'passing_score' => 70,
-        ]);
-
-        // KATEGORI: MANAJEMEN DAN TEKNIK INDUSTRI
-        Course::create([
-            'instructor_id' => $instructor5->id,
-            'title' => 'ISO 9001:2015 Quality Management System',
-            'slug' => 'iso-9001-2015-quality-management',
-            'description' => 'Pelajari standar ISO 9001:2015 dan cara implementasinya di organisasi Anda. Dari dokumentasi hingga audit internal.',
-            'category' => 'Manajemen dan Teknik Industri',
-            'level' => 'advanced',
-            'price' => 1500000,
-            'duration_hours' => 35,
-            'max_students' => 20,
-            'is_published' => true,
-            'is_featured' => true,
-            'passing_score' => 80,
-        ]);
-
-        Course::create([
-            'instructor_id' => $instructor5->id,
-            'title' => '7 Tools Quality Control - Statistical Process Control',
-            'slug' => '7-tools-quality-control',
-            'description' => 'Kuasai 7 Tools QC untuk problem solving dan quality improvement: Check Sheet, Histogram, Pareto, Fishbone, Scatter Diagram, Control Chart, Stratification.',
-            'category' => 'Manajemen dan Teknik Industri',
-            'level' => 'intermediate',
-            'price' => 700000,
-            'duration_hours' => 24,
-            'max_students' => 30,
-            'is_published' => true,
-            'is_featured' => true,
-            'passing_score' => 75,
-        ]);
-
-        Course::create([
-            'instructor_id' => $instructor5->id,
-            'title' => 'New 7 Tools - Management & Planning Tools',
-            'slug' => 'new-7-tools-management-planning',
-            'description' => 'Pelajari New 7 Tools untuk management dan planning: Affinity Diagram, Relations Diagram, Tree Diagram, Matrix Diagram, PDPC, Arrow Diagram, Matrix Data Analysis.',
-            'category' => 'Manajemen dan Teknik Industri',
-            'level' => 'advanced',
-            'price' => 850000,
-            'duration_hours' => 28,
-            'max_students' => 25,
-            'is_published' => true,
-            'is_featured' => false,
-            'passing_score' => 75,
-        ]);
-
-        Course::create([
-            'instructor_id' => $instructor5->id,
-            'title' => 'Quality Management - Six Sigma & Lean Manufacturing',
-            'slug' => 'quality-management-six-sigma-lean',
-            'description' => 'Comprehensive quality management course covering Six Sigma DMAIC methodology dan Lean Manufacturing principles untuk continuous improvement.',
-            'category' => 'Manajemen dan Teknik Industri',
-            'level' => 'advanced',
-            'price' => 1800000,
-            'duration_hours' => 45,
-            'max_students' => 20,
-            'is_published' => true,
-            'is_featured' => true,
-            'passing_score' => 80,
-        ]);
-
-        echo "✅ Edutech Seeder completed successfully!\n\n";
-        echo "📧 Test Credentials:\n";
-        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
-        echo "Admin      : admin@edutech.com / password\n";
-        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
-        echo "Instructor 1: ahmad@edutech.com / password (Education)\n";
-        echo "Instructor 2: siti@edutech.com / password (Language)\n";
-        echo "Instructor 3: budi@edutech.com / password (IT)\n";
-        echo "Instructor 4: rina@edutech.com / password (Design)\n";
-        echo "Instructor 5: bambang@edutech.com / password (Management)\n";
-        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
-        echo "Students   : student1@edutech.com s/d student10@edutech.com\n";
-        echo "Password   : password (semua student)\n";
-        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n";
-        echo "🎓 Created Courses:\n";
-        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
-        echo "📖 Education (4 courses)\n";
-        echo "   - CBTS\n";
-        echo "   - Teknik Alba\n";
-        echo "   - Media Pembelajaran\n";
-        echo "   - AI untuk Pendidikan (FREE)\n";
-        echo "\n";
-        echo "🗣️  Language (2 courses)\n";
-        echo "   - English for Business (FREE)\n";
-        echo "   - Bahasa Arab\n";
-        echo "\n";
-        echo "💻 Teknologi Informasi (3 courses)\n";
-        echo "   - Office Computer\n";
-        echo "   - Web Development Laravel\n";
-        echo "   - Python Programming\n";
-        echo "\n";
-        echo "🎨 Desain (3 courses)\n";
-        echo "   - Desain Interior\n";
-        echo "   - DKV Adobe Creative Suite\n";
-        echo "   - UI/UX Design\n";
-        echo "\n";
-        echo "📊 Manajemen & Teknik Industri (4 courses)\n";
-        echo "   - ISO 9001:2015\n";
-        echo "   - 7 Tools Quality Control\n";
-        echo "   - New 7 Tools\n";
-        echo "   - Quality Management Six Sigma\n";
-        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
-        echo "✨ Total: 16 courses created!\n";
-        echo "💰 Including 2 FREE courses\n";
-
+        echo "✓ Courses created: 6 courses (2 FREE, 4 PAID)\n\n";
 
         // ========================================
-// 3. CREATE ENROLLMENTS (Sample)
-// ========================================
+        // 3. CREATE ENROLLMENTS & PAYMENTS
+        // ========================================
+        
+        echo "💳 Creating enrollments with payments...\n";
 
-$students = User::where('role', 'student')->get();
-$courses = Course::where('is_published', true)->get();
-
-// Enroll beberapa student ke courses
-foreach ($students->take(5) as $index => $student) {
-    // Setiap student enroll ke 2-3 courses
-    $enrolledCourses = $courses->random(rand(2, 3));
-    
-    foreach ($enrolledCourses as $course) {
-        $enrollment = Enrollment::create([
-            'student_id' => $student->id,
-            'course_id' => $course->id,
-            'status' => rand(0, 1) ? 'active' : 'completed',
-            'progress_percentage' => rand(30, 100),
-            'enrolled_at' => now()->subDays(rand(1, 30)),
-            'completed_at' => rand(0, 1) ? now()->subDays(rand(1, 10)) : null,
-            'payment_status' => 'paid',
-            'payment_amount' => $course->price,
-        ]); 
-
-        // Issue certificate for completed courses
-        if ($enrollment->status === 'completed') {
-            $enrollment->update([
-                'progress_percentage' => 100,
-            ]);
+        // Simulate berbagai skenario enrollment
+        $enrollmentScenarios = [
+            // Student 1 - 3 paid courses
+            ['student_idx' => 0, 'course_idx' => 0, 'days_ago' => 25, 'status' => 'active', 'progress' => 60],
+            ['student_idx' => 0, 'course_idx' => 3, 'days_ago' => 20, 'status' => 'completed', 'progress' => 100],
+            ['student_idx' => 0, 'course_idx' => 4, 'days_ago' => 15, 'status' => 'active', 'progress' => 40],
             
-            $enrollment->issueCertificate();
+            // Student 2 - 2 paid courses
+            ['student_idx' => 1, 'course_idx' => 0, 'days_ago' => 30, 'status' => 'completed', 'progress' => 100],
+            ['student_idx' => 1, 'course_idx' => 5, 'days_ago' => 18, 'status' => 'active', 'progress' => 55],
+            
+            // Student 3-5 - berbagai courses
+            ['student_idx' => 2, 'course_idx' => 3, 'days_ago' => 22, 'status' => 'active', 'progress' => 75],
+            ['student_idx' => 2, 'course_idx' => 4, 'days_ago' => 12, 'status' => 'active', 'progress' => 30],
+            ['student_idx' => 3, 'course_idx' => 0, 'days_ago' => 28, 'status' => 'completed', 'progress' => 100],
+            ['student_idx' => 3, 'course_idx' => 5, 'days_ago' => 10, 'status' => 'active', 'progress' => 20],
+            ['student_idx' => 4, 'course_idx' => 3, 'days_ago' => 19, 'status' => 'active', 'progress' => 65],
+            ['student_idx' => 4, 'course_idx' => 4, 'days_ago' => 8, 'status' => 'active', 'progress' => 15],
+        ];
+
+        $totalRevenue = 0;
+        foreach ($enrollmentScenarios as $scenario) {
+            $student = $students[$scenario['student_idx']];
+            $course = $courses[$scenario['course_idx']];
+            
+            // Skip free courses untuk payment
+            if ($course->price == 0) continue;
+
+            $transactionId = 'TRX-' . strtoupper(Str::random(12)) . '-' . time();
+            $enrollDate = now()->subDays($scenario['days_ago']);
+            
+            // Create Enrollment
+            $enrollment = Enrollment::create([
+                'student_id' => $student->id,
+                'course_id' => $course->id,
+                'status' => $scenario['status'],
+                'progress_percentage' => $scenario['progress'],
+                'enrolled_at' => $enrollDate,
+                'completed_at' => $scenario['status'] === 'completed' ? $enrollDate->addDays(rand(5, 15)) : null,
+                'payment_status' => 'paid',
+                'payment_amount' => $course->price,
+            ]);
+
+            // Create Payment
+            $payment = Payment::create([
+                'user_id' => $student->id,
+                'course_id' => $course->id,
+                'enrollment_id' => $enrollment->id,
+                'transaction_id' => $transactionId,
+                'amount' => $course->price,
+                'payment_method' => ['bank_transfer', 'gopay', 'qris'][rand(0, 2)],
+                'status' => 'success',
+                'paid_at' => $enrollDate,
+                'created_at' => $enrollDate,
+            ]);
+
+            // Create Instructor Revenue (70%)
+            $instructorShare = $course->price * 0.70;
+            $platformShare = $course->price * 0.30;
+            
+            InstructorRevenue::create([
+                'instructor_id' => $course->instructor_id,
+                'payment_id' => $payment->id,
+                'course_id' => $course->id,
+                'course_price' => $course->price,
+                'instructor_share' => $instructorShare,
+                'platform_share' => $platformShare,
+                'status' => 'available',
+                'created_at' => $enrollDate,
+            ]);
+
+            $totalRevenue += $instructorShare;
         }
+
+        echo "✓ Created " . count($enrollmentScenarios) . " enrollments with payments & revenues\n";
+        echo "  Total instructor revenue generated: Rp " . number_format($totalRevenue, 0, ',', '.') . "\n\n";
+
+        // ========================================
+        // 4. CREATE SAMPLE WITHDRAWALS
+        // ========================================
+        
+        echo "💰 Creating sample withdrawals...\n";
+
+        // Ahmad (instructor1) - Pending withdrawal
+        $ahmad_revenue = InstructorRevenue::where('instructor_id', $instructor1->id)
+            ->where('status', 'available')
+            ->sum('instructor_share');
+        
+        if ($ahmad_revenue >= 500000) {
+            InstructorWithdrawal::create([
+                'instructor_id' => $instructor1->id,
+                'amount' => 500000,
+                'status' => 'pending',
+                'bank_name' => 'BCA',
+                'account_number' => '1234567890',
+                'account_name' => 'Dr. Ahmad Rizki',
+                'notes' => 'Penarikan rutin bulanan',
+                'created_at' => now()->subDays(2),
+            ]);
+            echo "✓ Pending withdrawal: Ahmad (Rp 500.000)\n";
+        }
+
+        // Siti (instructor2) - Approved withdrawal
+        $siti_revenues = InstructorRevenue::where('instructor_id', $instructor2->id)
+            ->where('status', 'available')
+            ->orderBy('created_at', 'asc')
+            ->limit(2)
+            ->get();
+        
+        if ($siti_revenues->sum('instructor_share') >= 200000) {
+            $withdrawal = InstructorWithdrawal::create([
+                'instructor_id' => $instructor2->id,
+                'amount' => 200000,
+                'status' => 'approved',
+                'bank_name' => 'Mandiri',
+                'account_number' => '9876543210',
+                'account_name' => 'Siti Nurhaliza',
+                'notes' => 'Kebutuhan pribadi',
+                'approved_by' => $bendahara->id,
+                'approved_at' => now()->subDays(5),
+                'created_at' => now()->subDays(7),
+            ]);
+
+            // Mark revenues as withdrawn
+            $remainingAmount = 200000;
+            foreach ($siti_revenues as $revenue) {
+                if ($remainingAmount <= 0) break;
+                
+                if ($revenue->instructor_share <= $remainingAmount) {
+                    $revenue->update([
+                        'status' => 'withdrawn',
+                        'withdrawal_id' => $withdrawal->id
+                    ]);
+                    $remainingAmount -= $revenue->instructor_share;
+                }
+            }
+            echo "✓ Approved withdrawal: Siti (Rp 200.000)\n";
+        }
+
+        echo "\n";
+
+        // ========================================
+        // 5. SUMMARY
+        // ========================================
+        
+        echo "=== SUMMARY ===\n";
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
+        echo "👥 USERS:\n";
+        echo "   • 1 Admin\n";
+        echo "   • 1 Bendahara\n";
+        echo "   • 3 Instructors\n";
+        echo "   • 10 Students\n";
+        echo "\n";
+        echo "📚 COURSES:\n";
+        echo "   • Education: 2 courses (1 free)\n";
+        echo "   • Language: 2 courses (1 free)\n";
+        echo "   • IT: 2 courses (all paid)\n";
+        echo "\n";
+        echo "💰 REVENUE STATUS:\n";
+        
+        foreach ([$instructor1, $instructor2, $instructor3] as $instructor) {
+            $available = InstructorRevenue::where('instructor_id', $instructor->id)
+                ->where('status', 'available')
+                ->sum('instructor_share');
+            $withdrawn = InstructorRevenue::where('instructor_id', $instructor->id)
+                ->where('status', 'withdrawn')
+                ->sum('instructor_share');
+            
+            echo "   • {$instructor->name}:\n";
+            echo "     Available: Rp " . number_format($available, 0, ',', '.') . "\n";
+            echo "     Withdrawn: Rp " . number_format($withdrawn, 0, ',', '.') . "\n";
+        }
+        
+        echo "\n";
+        echo "🔐 LOGIN CREDENTIALS:\n";
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
+        echo "Admin:      admin@edutech.com / password\n";
+        echo "Bendahara:  bendahara.edutech@kim.com / password\n";
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
+        echo "Instructor: ahmad@edutech.com / password (Education)\n";
+        echo "            siti@edutech.com / password (Language)\n";
+        echo "            budi@edutech.com / password (IT)\n";
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
+        echo "Students:   student1@edutech.com s/d student10@edutech.com\n";
+        echo "            password (all students)\n";
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
+        echo "\n✨ Seeder completed successfully!\n";
     }
-}
-
-echo "✅ Created enrollments and certificates!\n";
-    }
-
-
-    
 }

@@ -67,6 +67,11 @@ class DigitalOrder extends Model
         return $this->hasMany(SeminarEnrollment::class, 'order_id');
     }
 
+    public function collaboratorRevenues()
+    {
+        return $this->hasMany(CollaboratorRevenue::class, 'order_id');
+    }
+
     /**
      * Mark order as paid.
      */
@@ -82,6 +87,64 @@ class DigitalOrder extends Model
         // Increment sold count for each product
         foreach ($this->items as $item) {
             $item->product->incrementSoldCount();
+        }
+
+        // Create Collaborator Revenue (70/30 split) - NEW!
+        $this->createCollaboratorRevenues();
+    }
+
+    /**
+     * Create collaborator revenues after successful payment
+     */
+    private function createCollaboratorRevenues()
+    {
+        // Skip jika sudah ada revenue untuk order ini
+        if ($this->collaboratorRevenues()->exists()) {
+            \Log::info('CollaboratorRevenue already exists for order: ' . $this->id);
+            return;
+        }
+
+        foreach ($this->items as $item) {
+            // Skip jika product gratis
+            if ($item->price <= 0) {
+                continue;
+            }
+
+            $product = $item->product;
+            if (!$product) {
+                \Log::error('Product not found for order item: ' . $item->id);
+                continue;
+            }
+
+            // Skip jika product tidak punya collaborator
+            if (!$product->collaborator_id) {
+                \Log::info('Product has no collaborator, skipping revenue: ' . $product->id);
+                continue;
+            }
+
+            // Calculate revenue split (70% collaborator, 30% platform)
+            $collaboratorShare = $item->subtotal * 0.70;
+            $platformShare = $item->subtotal * 0.30;
+
+            // Create revenue record
+            $revenue = CollaboratorRevenue::create([
+                'collaborator_id' => $product->collaborator_id,
+                'order_id' => $this->id,
+                'product_id' => $product->id,
+                'product_price' => $item->subtotal,
+                'collaborator_share' => $collaboratorShare,
+                'platform_share' => $platformShare,
+                'status' => 'available',
+            ]);
+
+            \Log::info('CollaboratorRevenue created', [
+                'order_id' => $this->id,
+                'revenue_id' => $revenue->id,
+                'collaborator_id' => $product->collaborator_id,
+                'product_price' => $item->subtotal,
+                'collaborator_share' => $collaboratorShare,
+                'platform_share' => $platformShare,
+            ]);
         }
     }
 
