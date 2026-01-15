@@ -132,7 +132,7 @@
     </a>
     <div>
         <a href="{{ route('admin.digital.questionnaires.show', $dimension->questionnaire_id) }}" class="btn btn-info">
-            <i class="fas fa-clipboard-list"></i> Lihat Angket
+            <i class="fas fa-clipboard-list"></i> Lihat CEKMA
         </a>
     </div>
 </div>
@@ -150,7 +150,7 @@
                     @method('PUT')
 
                     <div class="form-group">
-                        <label for="questionnaire_id">Angket <span style="color: var(--danger);">*</span></label>
+                        <label for="questionnaire_id">CEKMA <span style="color: var(--danger);">*</span></label>
                         <select name="questionnaire_id" id="questionnaire_id" class="form-control" required>
                             @foreach($questionnaires as $questionnaire)
                                 <option value="{{ $questionnaire->id }}" {{ old('questionnaire_id', $dimension->questionnaire_id) == $questionnaire->id ? 'selected' : '' }}>

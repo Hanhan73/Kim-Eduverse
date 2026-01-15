@@ -1,7 +1,7 @@
 @extends('layouts.collaborator')
 
-@section('title', 'Detail Angket - Collaborator Digital')
-@section('page-title', 'Detail Angket')
+@section('title', 'Detail CEKMA - Collaborator Digital')
+@section('page-title', 'Detail CEKMA')
 
 @section('styles')
 <style>
@@ -70,7 +70,7 @@
     </a>
     <div style="display: flex; gap: 10px;">
         <a href="{{ route('digital.collaborator.questionnaires.edit', $questionnaire->id) }}" class="btn btn-primary">
-            <i class="fas fa-edit"></i> Edit Angket
+            <i class="fas fa-edit"></i> Edit CEKMA
         </a>
     </div>
 </div>
@@ -124,7 +124,7 @@
         <!-- Basic Info -->
         <div class="card" style="margin-bottom: 25px;">
             <div class="card-header">
-                <h3><i class="fas fa-clipboard-list"></i> Informasi Angket</h3>
+                <h3><i class="fas fa-clipboard-list"></i> Informasi CEKMA</h3>
                 <span class="badge {{ $questionnaire->is_active ? 'badge-success' : 'badge-danger' }}">
                     {{ $questionnaire->is_active ? 'Aktif' : 'Nonaktif' }}
                 </span>
@@ -271,7 +271,7 @@
                 <div class="empty-state" style="padding: 40px;">
                     <i class="fas fa-question-circle" style="font-size: 2rem;"></i>
                     <h3>Belum Ada Pertanyaan</h3>
-                    <p>Tambahkan pertanyaan untuk angket ini</p>
+                    <p>Tambahkan pertanyaan untuk cekma ini</p>
                 </div>
                 @endif
             </div>
@@ -417,7 +417,7 @@
                 <div class="form-group">
                     <label>Pertanyaan <span style="color: var(--danger);">*</span></label>
                     <textarea name="question_text" class="form-control" rows="3" required
-                        placeholder="Tulis pertanyaan angket..."></textarea>
+                        placeholder="Tulis pertanyaan cekma..."></textarea>
                 </div>
                 <div class="form-group">
                     <div class="form-check">

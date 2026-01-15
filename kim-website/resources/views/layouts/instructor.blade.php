@@ -446,50 +446,52 @@
 </head>
 
 <body>
+    <!-- Sidebar -->
     <aside class="sidebar">
         <div class="sidebar-header">
-            <h2><i class="fas fa-laptop-code"></i> Collaborator Panel</h2>
-            <span class="role-badge">DIGITAL CREATOR</span>
+            <h2>
+                <i class="fas fa-chalkboard-teacher"></i>
+                Instructor Panel
+            </h2>
         </div>
+
         <nav class="sidebar-menu">
-            <a href="{{ route('digital.collaborator.dashboard') }}"
-                class="menu-item {{ request()->routeIs('digital.collaborator.dashboard') ? 'active' : '' }}">
-                <i class="fas fa-home"></i> Dashboard
+            <a href="{{ route('edutech.instructor.dashboard') }}"
+                class="menu-item {{ request()->routeIs('edutech.instructor.dashboard') ? 'active' : '' }}">
+                <i class="fas fa-home"></i>
+                Dashboard
             </a>
-            <a href="{{ route('digital.collaborator.revenue.index') }}"
-                class="menu-item {{ request()->routeIs('digital.collaborator.revenue.*') ? 'active' : '' }}">
-                <i class="fas fa-wallet"></i> Revenue & Withdrawal
+            <a href="{{ route('edutech.profile.index') }}"
+                class="menu-item {{request()->routeIs('edutech.profile.index') ? 'active' : '' }}">
+                <i class="fas fa-user"></i>
+                Profile Saya
             </a>
-            <a href="{{ route('digital.collaborator.products.index') }}"
-                class="menu-item {{ request()->routeIs('digital.collaborator.products.*') ? 'active' : '' }}">
-                <i class="fas fa-box"></i> My Products
+            <a href="{{ route('edutech.instructor.courses') }}"
+                class="menu-item {{ request()->routeIs('edutech.instructor.courses') ? 'active' : '' }}">
+                <i class="fas fa-book"></i>
+                My Courses
             </a>
-            <a href="{{ route('digital.collaborator.questionnaires.index') }}"
-                class="menu-item {{ request()->routeIs('digital.collaborator.questionnaires.*') ? 'active' : '' }}">
-                <i class="fas fa-clipboard-list"></i> My Questionnaires
+            <a href="{{ route('edutech.instructor.live-meetings.index') }}"
+                class="menu-item {{ request()->routeIs('edutech.instructor.live-meetings.index') ? 'active' : '' }}">
+                <i class="fas fa-video"></i>
+                Live Meeting
             </a>
-            <a href="{{ route('digital.collaborator.seminars.index') }}"
-                class="menu-item {{ request()->routeIs('digital.collaborator.seminars.*') ? 'active' : '' }}">
-                <i class="fas fa-chalkboard-teacher"></i> My Seminars
+
+            <a href="{{ route('edutech.instructor.students') }}"
+                class="menu-item {{ request()->routeIs('edutech.instructor.students') ? 'active' : '' }}">
+                <i class="fas fa-users"></i>
+                Students
             </a>
-            <div class="menu-divider"></div>
-            <a href="{{ route('digital.collaborator.profile.index') }}"
-                class="menu-item {{ request()->routeIs('digital.collaborator.profile.*') ? 'active' : '' }}">
-                <i class="fas fa-user-circle"></i> Profile
+
+            <a href="{{ route('edutech.instructor.revenue.index') }}"
+                class="menu-item {{ request()->routeIs('edutech.instructor.revenue.*') ? 'active' : '' }}">
+                <i class="fas fa-wallet"></i>
+                Revenue
             </a>
-            <form action="{{ route('digital.auth.logout') }}" method="POST" style="margin: 0;">
-                @csrf
-                <button type="submit" class="menu-item"
-                    style="width: 100%; background: none; border: none; text-align: left; cursor: pointer;">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                </button>
-            </form>
         </nav>
+
     </aside>
+
     <main>
         @yield('content')
     </main>
-    @stack('scripts')
-</body>
-
-</html>

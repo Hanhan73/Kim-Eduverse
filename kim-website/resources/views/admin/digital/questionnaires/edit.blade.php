@@ -1,7 +1,7 @@
 @extends('layouts.admin-digital')
 
-@section('title', 'Edit Angket - ' . $questionnaire->name)
-@section('page-title', 'Edit Angket')
+@section('title', 'Edit CEKMA - ' . $questionnaire->name)
+@section('page-title', 'Edit CEKMA')
 
 @section('styles')
 <style>
@@ -191,7 +191,7 @@
             <ol class="breadcrumb mb-0" style="display: flex; gap: 8px; list-style: none; padding: 0;">
                 <li class="breadcrumb-item"><a href="{{ route('admin.digital.dashboard') }}">Dashboard</a></li>
                 <li class="breadcrumb-item" style="color: var(--gray);">/</li>
-                <li class="breadcrumb-item"><a href="{{ route('admin.digital.questionnaires.index') }}">Angket</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('admin.digital.questionnaires.index') }}">CEKMA</a></li>
                 <li class="breadcrumb-item" style="color: var(--gray);">/</li>
                 <li class="breadcrumb-item active" style="color: var(--gray);">Edit</li>
             </ol>
@@ -216,7 +216,7 @@
                 </div>
                 <div class="card-body">
                     <div class="form-group">
-                        <label class="form-label">Nama Angket <span class="text-danger">*</span></label>
+                        <label class="form-label">Nama CEKMA <span class="text-danger">*</span></label>
                         <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" 
                                value="{{ old('name', $questionnaire->name) }}" required>
                         @error('name')
@@ -255,7 +255,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label class="form-label">Tipe Angket</label>
+                                <label class="form-label">Tipe CEKMA</label>
                                 <select name="type" class="form-select @error('type') is-invalid @enderror">
                                     <option value="burnout" {{ old('type', $questionnaire->type) == 'burnout' ? 'selected' : '' }}>Burnout</option>
                                     <option value="stress" {{ old('type', $questionnaire->type) == 'stress' ? 'selected' : '' }}>Stress</option>
@@ -285,7 +285,7 @@
                         <input type="checkbox" name="has_dimensions" value="1" class="form-check-input" id="hasDimensions"
                                {{ old('has_dimensions', $questionnaire->has_dimensions) ? 'checked' : '' }}>
                         <label class="form-check-label" for="hasDimensions">
-                            Angket memiliki dimensi/subskala
+                            CEKMA memiliki dimensi/subskala
                         </label>
                     </div>
                 </div>
@@ -299,7 +299,7 @@
                 <div class="card-body">
                     <div class="alert alert-info">
                         <i class="fas fa-info-circle me-2"></i>
-                        AI Analysis menggunakan Claude AI untuk memberikan interpretasi mendalam, rekomendasi personal, dan rencana aksi berdasarkan hasil angket.
+                        AI Analysis menggunakan Claude AI untuk memberikan interpretasi mendalam, rekomendasi personal, dan rencana aksi berdasarkan hasil cekma.
                     </div>
 
                     <div class="form-check form-switch mb-4" style="display: flex; align-items: flex-start; gap: 15px;">
@@ -308,7 +308,7 @@
                                {{ old('ai_enabled', $questionnaire->ai_enabled ?? true) ? 'checked' : '' }}>
                         <label class="form-check-label" for="aiEnabled" style="flex: 1;">
                             <strong>Aktifkan AI Analysis</strong>
-                            <br><small class="text-muted">Hasil angket akan dianalisis oleh AI untuk memberikan interpretasi yang lebih personal</small>
+                            <br><small class="text-muted">Hasil cekma akan dianalisis oleh AI untuk memberikan interpretasi yang lebih personal</small>
                         </label>
                     </div>
 
@@ -374,7 +374,7 @@
                                {{ old('is_active', $questionnaire->is_active) ? 'checked' : '' }}>
                         <label class="form-check-label" for="isActive">Aktif</label>
                     </div>
-                    <small class="text-muted" style="display: block; margin-top: 10px;">Angket yang tidak aktif tidak akan muncul di katalog</small>
+                    <small class="text-muted" style="display: block; margin-top: 10px;">CEKMA yang tidak aktif tidak akan muncul di katalog</small>
                 </div>
             </div>
 

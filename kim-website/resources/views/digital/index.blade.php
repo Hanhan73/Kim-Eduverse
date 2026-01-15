@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'KIM Digital - Produk Digital & Angket Psikologi')
+@section('title', 'KIM Digital - Produk Digital')
 
 @push('styles')
 <style>
@@ -392,7 +392,7 @@
         <span class="hero-badge">🎯 Produk Digital Berkualitas</span>
         <h1 class="hero-title">Temukan Produk Digital Terbaik untuk Kebutuhan Anda</h1>
         <p class="hero-subtitle">
-            Dari angket psikologi profesional hingga bahan pembelajaran interaktif - 
+            Dari cekma psikologi profesional hingga bahan pembelajaran interaktif - 
             semua produk digital yang Anda butuhkan ada di sini
         </p>
         <div class="hero-buttons">
@@ -506,8 +506,8 @@
 
         <div class="step-card">
             <div class="step-number">3</div>
-            <h3>Isi Angket</h3>
-            <p>Untuk produk angket, isi pertanyaan dengan jujur</p>
+            <h3>Isi CEKMA</h3>
+            <p>Untuk produk cekma, isi pertanyaan dengan jujur</p>
         </div>
 
         <div class="step-card">

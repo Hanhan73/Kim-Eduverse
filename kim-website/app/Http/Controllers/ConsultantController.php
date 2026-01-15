@@ -119,24 +119,35 @@ class ConsultantController extends Controller
     }
 
     public function submitInquiry(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'nama' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'perusahaan' => 'nullable|string|max:255',
-            'telepon' => 'nullable|string|max:20',
-            'kategori' => 'required|string',
-            'pesan' => 'nullable|string|max:1000'
-        ]);
+{
+    $validator = Validator::make($request->all(), [
+        'nama' => 'required|string|max:255',
+        'email' => 'required|email|max:255',
+        'perusahaan' => 'nullable|string|max:255',
+        'telepon' => 'nullable|string|max:20',
+        'kategori' => 'required|string',
+        'pesan' => 'nullable|string|max:1000'
+    ]);
 
-        if ($validator->fails()) {
-            return back()->withErrors($validator)->withInput();
-        }
-
-        // Simpan ke database (buat tabel inquiries nanti)
-        // Atau kirim email langsung
-
-        // Untuk demo, kita return success
-        return back()->with('success', 'Terima kasih! Tim kami akan segera menghubungi Anda melalui email atau WhatsApp.');
+    if ($validator->fails()) {
+        return back()->withErrors($validator)->withInput();
     }
+
+    $data = $validator->validated();
+
+    try {
+        Mail::send('emails.consultant-inquiry', $data, function ($message) use ($data) {
+            $message->to(config('mail.from.address')) // email admin
+                ->subject('Inquiry Konsultasi - ' . ucfirst(str_replace('-', ' ', $data['kategori'])))
+                ->replyTo($data['email'], $data['nama']);
+        });
+
+        return back()->with('success', 'Terima kasih! Tim kami akan segera menghubungi Anda melalui email atau WhatsApp.');
+
+    } catch (\Exception $e) {
+        \Log::error('Failed to send consultant inquiry email: ' . $e->getMessage());
+
+        return back()->with('error', 'Terjadi kesalahan saat mengirim inquiry. Silakan coba lagi.');
+    }
+}
 }

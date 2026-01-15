@@ -23,7 +23,8 @@ Route::prefix('produk')->group(function () {
     Route::get('/consultant/{category}', [ConsultantController::class, 'show'])->name('consultant.show');
     Route::post('/consultant/inquiry', [ConsultantController::class, 'submitInquiry'])->name('consultant.inquiry');
     Route::get('/developer', [DeveloperController::class, 'index'])->name('developer.index');
-    Route::get('/developer/detail', [DeveloperController::class, 'show'])->name('developer.show');
+    Route::get('/developer/{category}', [DeveloperController::class, 'show'])->name('developer.show');
+    Route::post('/developer/request', [DeveloperController::class, 'store'])->name('developer.store');
     Route::get('/edutech', [EdutechController::class, 'index'])->name('edutech.index');
 });
 
@@ -73,6 +74,7 @@ use App\Http\Controllers\Edutech\Student\MyCourseController as StudentMyCourseCo
 use App\Http\Controllers\Edutech\Student\CertificateController as StudentCertificateController;
 use App\Http\Controllers\Edutech\Student\LearningController;
 use App\Http\Controllers\Edutech\Student\StudentQuizController;
+use App\Http\Controllers\Edutech\CourseController;
 
 // ========================================
 // EDUTECH AUTH ROUTES (Public - No Auth Required)
@@ -145,6 +147,9 @@ Route::prefix('edutech/student')->name('edutech.student.')->middleware('edutech.
     // Quiz Routes (Update)
     Route::post('/quiz/{quiz}/start', [StudentQuizController::class, 'start'])->name('quiz.start');
     Route::post('/quiz/{quiz}/submit', [StudentQuizController::class, 'submit'])->name('quiz.submit');
+
+      Route::get('/my-enrollments', [CourseController::class, 'myEnrollments'])
+       ->name('my-enrollments');
 });
 
 // ========================================

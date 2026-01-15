@@ -23,9 +23,9 @@ class AIGuruSeminarSeeder extends Seeder
             'category_id' => $categoryId,
             'name' => 'AI untuk Guru: Panduan Praktis',
             'slug' => 'ai-untuk-guru',
-            'description' => 'Seminar on-demand untuk guru dalam memanfaatkan AI seperti ChatGPT, Gemini, dan Copilot dalam pembelajaran.',
+            'description' => 'On-demand seminar untuk guru dalam memanfaatkan AI seperti ChatGPT, Gemini, dan Copilot dalam pembelajaran.',
             'features' => [
-                'Seminar on-demand durasi 90 menit',
+                'On-demand seminar durasi 90 menit',
                 'Tutorial penggunaan ChatGPT, Gemini, Copilot',
                 'Contoh prompt engineering untuk guru',
                 'Sertifikat penyelesaian',
@@ -46,7 +46,7 @@ class AIGuruSeminarSeeder extends Seeder
         $seminar = Seminar::create([
             'title' => 'AI untuk Guru: Panduan Praktis Mengintegrasikan Kecerdasan Buatan dalam Pembelajaran',
             'slug' => 'ai-untuk-guru',
-            'description' => 'Seminar on-demand komprehensif yang dirancang khusus untuk para pendidik yang ingin memahami dan memanfaatkan teknologi Artificial Intelligence (AI) dalam praktik pembelajaran sehari-hari. Materi mencakup pengenalan platform AI populer seperti ChatGPT, Google Gemini, dan Microsoft Copilot, serta teknik prompt engineering untuk menghasilkan konten pembelajaran berkualitas.',
+            'description' => 'On-demand seminar komprehensif yang dirancang khusus untuk para pendidik yang ingin memahami dan memanfaatkan teknologi Artificial Intelligence (AI) dalam praktik pembelajaran sehari-hari. Materi mencakup pengenalan platform AI populer seperti ChatGPT, Google Gemini, dan Microsoft Copilot, serta teknik prompt engineering untuk menghasilkan konten pembelajaran berkualitas.',
             'instructor_name' => 'Tim Pengembang KIM Eduverse',
             'instructor_bio' => 'Tim ahli teknologi pendidikan yang berpengalaman dalam pengembangan solusi pembelajaran digital dan integrasi AI dalam dunia pendidikan Indonesia.',
             'material_pdf_path' => 'https://drive.google.com/file/d/1DIkvS2cj8e3L9jHvkyv4dM1Cz9RylUw_/view?usp=sharing',

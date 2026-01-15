@@ -203,7 +203,7 @@
         <!-- Questionnaire Info -->
         <div class="card" style="margin-bottom: 20px;">
             <div class="card-header">
-                <h3><i class="fas fa-clipboard-list"></i> Angket</h3>
+                <h3><i class="fas fa-clipboard-list"></i> CEKMA</h3>
             </div>
             <div class="card-body">
                 <h4 style="margin-bottom: 10px; color: var(--dark);">{{ $response->questionnaire->name }}</h4>
@@ -212,7 +212,7 @@
                     {{ Str::limit($response->questionnaire->description, 100) }}
                 </p>
                 <a href="{{ route('admin.digital.questionnaires.show', $response->questionnaire_id) }}" style="color: var(--primary);">
-                    Lihat Detail Angket →
+                    Lihat Detail CEKMA →
                 </a>
             </div>
         </div>

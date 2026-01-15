@@ -68,7 +68,7 @@
                         style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 1rem;"
                         required>
                         <option value="questionnaire"
-                            {{ old('type', $product->type) == 'questionnaire' ? 'selected' : '' }}>Angket/Questionnaire
+                            {{ old('type', $product->type) == 'questionnaire' ? 'selected' : '' }}>CEKMA/Questionnaire
                         </option>
                         <option value="ebook" {{ old('type', $product->type) == 'ebook' ? 'selected' : '' }}>E-Book
                             (PDF)</option>
@@ -131,11 +131,11 @@
             <!-- Questionnaire Field -->
             <div id="questionnaireField" style="margin-bottom: 20px; display: none;">
                 <label style="display: block; font-weight: 600; margin-bottom: 8px; color: var(--dark);">
-                    Pilih Angket
+                    Pilih CEKMA
                 </label>
                 <select name="questionnaire_id"
                     style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 1rem;">
-                    <option value="">Pilih Angket (Opsional)</option>
+                    <option value="">Pilih CEKMA (Opsional)</option>
                     @foreach($questionnaires as $questionnaire)
                     <option value="{{ $questionnaire->id }}"
                         {{ old('questionnaire_id', $product->questionnaire_id) == $questionnaire->id ? 'selected' : '' }}>

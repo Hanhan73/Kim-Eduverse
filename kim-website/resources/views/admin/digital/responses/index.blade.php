@@ -1,7 +1,7 @@
 @extends('layouts.admin-digital')
 
 @section('title', 'Hasil Respons - Admin Digital')
-@section('page-title', 'Hasil Respons Angket')
+@section('page-title', 'Hasil Respons CEKMA')
 
 @section('content')
 <!-- Stats -->
@@ -64,9 +64,9 @@
                     <input type="text" name="search" class="form-control" placeholder="Nama atau email..." value="{{ request('search') }}">
                 </div>
                 <div class="filter-group">
-                    <label>Angket</label>
+                    <label>CEKMA</label>
                     <select name="questionnaire_id" class="form-control">
-                        <option value="">Semua Angket</option>
+                        <option value="">Semua CEKMA</option>
                         @foreach($questionnaires as $questionnaire)
                             <option value="{{ $questionnaire->id }}" {{ request('questionnaire_id') == $questionnaire->id ? 'selected' : '' }}>
                                 {{ $questionnaire->name }}
@@ -110,7 +110,7 @@
                 <thead>
                     <tr>
                         <th>Responden</th>
-                        <th>Angket</th>
+                        <th>CEKMA</th>
                         <th>Order</th>
                         <th>Skor</th>
                         <th>Status</th>
@@ -214,7 +214,7 @@
         <div class="empty-state">
             <i class="fas fa-chart-bar"></i>
             <h3>Belum Ada Respons</h3>
-            <p>Respons akan muncul setelah pengguna mengisi angket</p>
+            <p>Respons akan muncul setelah pengguna mengisi cekma</p>
         </div>
         @endif
     </div>

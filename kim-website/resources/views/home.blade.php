@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'PT KIM - Center of Excellent Competency')
+@section('title', 'KIM EDUVERSE - Center of Excellent Competency')
 
 @section('content')
 <!-- Hero Section -->
@@ -14,7 +14,7 @@
                 <span class="gradient-text">Dimulai dari Sini</span>
             </h1>
             <p class="hero-subtitle animate-fade-in-delay">
-                Pelatihan, Konsultasi, Sertifikasi, dan Pengembangan Teknologi untuk 
+                Pelatihan, Konsultasi, Sertifikasi, dan Pengembangan Teknologi untuk
                 Meningkatkan Kompetensi Organisasi Anda
             </p>
             <div class="hero-stats animate-fade-in-delay">
@@ -42,7 +42,7 @@
         </div>
         <div class="hero-image animate-float">
             <div class="hero-image-wrapper">
-                <img src="https://via.placeholder.com/600x600/667eea/ffffff?text=PT+KIM" alt="PT KIM">
+                <img src="{{ asset('storage/images/building.jpg') }}" alt="KIM EDUVERSE">
             </div>
         </div>
     </div>
@@ -75,7 +75,7 @@
                 </div>
                 <h3 class="product-title">KIM Consultant</h3>
                 <p class="product-description">
-                    Konsultasi bisnis profesional di berbagai bidang: Pendidikan, Manajemen, 
+                    Konsultasi bisnis profesional di berbagai bidang: Pendidikan, Manajemen,
                     Teknik Industri, TIK, Pertanian, Pariwisata, dan Desain
                 </p>
                 <ul class="product-features">
@@ -99,7 +99,7 @@
                 </div>
                 <h3 class="product-title">KIM Developer</h3>
                 <p class="product-description">
-                    Pengembangan aplikasi dan sistem informasi dengan teknologi 
+                    Pengembangan aplikasi dan sistem informasi dengan teknologi
                     terkini untuk solusi digital bisnis Anda
                 </p>
                 <ul class="product-features">
@@ -123,7 +123,7 @@
                 </div>
                 <h3 class="product-title">KIM Edutech</h3>
                 <p class="product-description">
-                    Platform pembelajaran digital dan solusi edutech untuk transformasi 
+                    Platform pembelajaran digital dan solusi edutech untuk transformasi
                     pendidikan modern di era digital
                 </p>
                 <ul class="product-features">
@@ -275,7 +275,7 @@
                     <i class="fas fa-star"></i>
                 </div>
                 <p class="testimonial-text">
-                    "PT KIM membantu kami dalam transformasi digital dengan sangat profesional. 
+                    "PT KIM membantu kami dalam transformasi digital dengan sangat profesional.
                     Sistem yang mereka kembangkan sangat sesuai dengan kebutuhan kami."
                 </p>
                 <div class="testimonial-author">
@@ -298,7 +298,7 @@
                     <i class="fas fa-star"></i>
                 </div>
                 <p class="testimonial-text">
-                    "Konsultasi manajemen dari PT KIM sangat membantu meningkatkan efisiensi 
+                    "Konsultasi manajemen dari PT KIM sangat membantu meningkatkan efisiensi
                     operasional perusahaan kami hingga 40%. Sangat direkomendasikan!"
                 </p>
                 <div class="testimonial-author">
@@ -321,7 +321,7 @@
                     <i class="fas fa-star"></i>
                 </div>
                 <p class="testimonial-text">
-                    "Platform edutech dari PT KIM sangat mudah digunakan dan memudahkan kami 
+                    "Platform edutech dari PT KIM sangat mudah digunakan dan memudahkan kami
                     dalam mengelola pembelajaran online. Fiturnya lengkap dan dukungannya responsif."
                 </p>
                 <div class="testimonial-author">
@@ -361,8 +361,10 @@
                         <span><i class="fas fa-user"></i> Admin</span>
                     </div>
                     <h3>Transformasi Digital untuk UMKM di Era Modern</h3>
-                    <p>Panduan lengkap bagaimana UMKM dapat memanfaatkan teknologi digital untuk meningkatkan bisnis...</p>
-                    <a href="{{ route('blog.index') }}" class="blog-link">Baca Selengkapnya <i class="fas fa-arrow-right"></i></a>
+                    <p>Panduan lengkap bagaimana UMKM dapat memanfaatkan teknologi digital untuk meningkatkan bisnis...
+                    </p>
+                    <a href="{{ route('blog.index') }}" class="blog-link">Baca Selengkapnya <i
+                            class="fas fa-arrow-right"></i></a>
                 </div>
             </div>
 
@@ -377,8 +379,10 @@
                         <span><i class="fas fa-user"></i> Admin</span>
                     </div>
                     <h3>5 Strategi Meningkatkan Produktivitas Tim</h3>
-                    <p>Tips dan trik untuk meningkatkan produktivitas tim Anda secara efektif dengan metode yang terbukti...</p>
-                    <a href="{{ route('blog.index') }}" class="blog-link">Baca Selengkapnya <i class="fas fa-arrow-right"></i></a>
+                    <p>Tips dan trik untuk meningkatkan produktivitas tim Anda secara efektif dengan metode yang
+                        terbukti...</p>
+                    <a href="{{ route('blog.index') }}" class="blog-link">Baca Selengkapnya <i
+                            class="fas fa-arrow-right"></i></a>
                 </div>
             </div>
 
@@ -394,7 +398,8 @@
                     </div>
                     <h3>E-Learning: Masa Depan Pendidikan Indonesia</h3>
                     <p>Bagaimana e-learning mengubah landscape pendidikan di Indonesia dan peluang yang ada...</p>
-                    <a href="{{ route('blog.index') }}" class="blog-link">Baca Selengkapnya <i class="fas fa-arrow-right"></i></a>
+                    <a href="{{ route('blog.index') }}" class="blog-link">Baca Selengkapnya <i
+                            class="fas fa-arrow-right"></i></a>
                 </div>
             </div>
         </div>
@@ -488,7 +493,7 @@
 }
 
 .gradient-text {
-    background: linear-gradient(to right, #ffd89b, #19547b);
+    background: linear-gradient(to right, #faa825ff, #e9c870ff);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -586,8 +591,15 @@
 }
 
 @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-20px); }
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-20px);
+    }
 }
 
 .scroll-indicator {
@@ -602,8 +614,15 @@
 }
 
 @keyframes bounce {
-    0%, 100% { transform: translate(-50%, 0); }
-    50% { transform: translate(-50%, 10px); }
+
+    0%,
+    100% {
+        transform: translate(-50%, 0);
+    }
+
+    50% {
+        transform: translate(-50%, 10px);
+    }
 }
 
 /* Products Section */
@@ -1138,19 +1157,19 @@
         grid-template-columns: 1fr;
         text-align: center;
     }
-    
+
     .hero-title {
         font-size: 3rem;
     }
-    
+
     .hero-stats {
         justify-content: center;
     }
-    
+
     .hero-buttons {
         justify-content: center;
     }
-    
+
     .products-grid,
     .why-grid,
     .steps-grid,
@@ -1164,15 +1183,177 @@
     .hero-title {
         font-size: 2.5rem;
     }
-    
+
     .section-title {
         font-size: 2rem;
     }
-    
+
     .hero-stats {
         flex-direction: column;
         gap: 20px;
     }
+}
+
+p,
+span,
+li,
+small {
+    opacity: 1 !important;
+}
+
+/* ================= HERO SECTION ================= */
+
+.hero-subtitle {
+    opacity: 1 !important;
+    color: #ffffff !important;
+    font-weight: 500;
+}
+
+.hero-badge {
+    background: rgba(255, 255, 255, 0.35) !important;
+    color: #ffffff !important;
+    font-weight: 700;
+}
+
+/* HERO STATS */
+.stat-number {
+    opacity: 1 !important;
+    color: #ffffff !important;
+    font-weight: 900;
+}
+
+.stat-label {
+    opacity: 1 !important;
+    color: #ffffff !important;
+    font-weight: 600;
+}
+
+/* ================= SECTION HEADER ================= */
+
+.section-title {
+    color: #1a202c !important;
+    font-weight: 800;
+}
+
+.section-subtitle {
+    color: #2d3748 !important;
+    opacity: 1 !important;
+    font-weight: 500;
+}
+
+/* ================= PRODUCT CARDS ================= */
+
+.product-title {
+    color: #1a202c !important;
+    font-weight: 700;
+}
+
+.product-description {
+    color: #2d3748 !important;
+    opacity: 1 !important;
+    font-weight: 500;
+}
+
+.product-features li {
+    color: #1a202c !important;
+    font-weight: 500;
+}
+
+/* Angka besar 01 02 03 */
+.product-number {
+    color: #667eea !important;
+    opacity: 1 !important;
+    font-weight: 900;
+}
+
+/* ================= WHY CHOOSE US ================= */
+
+.why-card h3 {
+    color: #1a202c !important;
+    font-weight: 700;
+}
+
+.why-card p {
+    color: #2d3748 !important;
+    opacity: 1 !important;
+    font-weight: 500;
+}
+
+/* ================= HOW IT WORKS ================= */
+
+.step-card h3 {
+    color: #1a202c !important;
+    font-weight: 700;
+}
+
+.step-card p {
+    color: #2d3748 !important;
+    opacity: 1 !important;
+    font-weight: 500;
+}
+
+.step-number {
+    font-weight: 900;
+}
+
+/* ================= TESTIMONIALS ================= */
+
+.testimonial-text {
+    color: #1a202c !important;
+    opacity: 1 !important;
+    font-style: normal;
+    font-weight: 500;
+}
+
+.author-info h4 {
+    color: #1a202c !important;
+    font-weight: 700;
+}
+
+.author-info p {
+    color: #2d3748 !important;
+    opacity: 1 !important;
+}
+
+/* ================= BLOG SECTION ================= */
+
+.blog-content h3 {
+    color: #1a202c !important;
+    font-weight: 700;
+}
+
+.blog-content p {
+    color: #2d3748 !important;
+    opacity: 1 !important;
+    font-weight: 500;
+}
+
+.blog-meta {
+    color: #1a202c !important;
+    font-weight: 500;
+}
+
+/* ================= CTA SECTION ================= */
+
+.cta-content h2 {
+    color: #ffffff !important;
+    font-weight: 900;
+}
+
+.cta-content p,
+.cta-tagline {
+    color: #ffffff !important;
+    opacity: 1 !important;
+    font-weight: 600;
+}
+
+/* ================= BUTTON TEXT ================= */
+
+.btn,
+.btn span,
+.btn i {
+    opacity: 1 !important;
+    font-weight: 600;
 }
 </style>
 @endpush

@@ -23,25 +23,6 @@
             <p>Klik kategori di bawah untuk informasi lebih detail dan form pengembangan</p>
         </div>
 
-        <!-- Main Categories -->
-        <div class="categories-grid">
-            @foreach($mainCategories as $key => $category)
-            @if($key !== 'aplikasi')
-            <a href="{{ route('developer.show', $key) }}" class="category-card"
-                style="--card-color: {{ $category['color'] }}">
-                <div class="category-icon">
-                    <i class="fas {{ $category['icon'] }}"></i>
-                </div>
-                <h3 class="category-title">{{ $category['title'] }}</h3>
-                <p class="category-description">{{ $category['description'] }}</p>
-                <div class="category-arrow">
-                    <i class="fas fa-arrow-right"></i>
-                </div>
-            </a>
-            @endif
-            @endforeach
-        </div>
-
         <!-- Application Special Section -->
         <div class="application-section">
             <div class="application-header">

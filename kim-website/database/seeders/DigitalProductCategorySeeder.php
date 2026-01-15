@@ -13,18 +13,18 @@ class DigitalProductCategorySeeder extends Seeder
     public function run(): void
     {
         DigitalProductCategory::create([
-            'name' => 'Angket Psikologi',
-            'slug' => 'angket-psikologi', // boleh dihapus karena MODEL auto slug, tapi tetap aku ikutkan biar konsisten
-            'description' => 'Angket dan tes psikologi untuk mengukur berbagai aspek psikologis',
+            'name' => 'CEKMA (Cek Mandiri Langkah Anda)',
+            'slug' => 'cekma', // boleh dihapus karena MODEL auto slug, tapi tetap aku ikutkan biar konsisten
+            'description' => 'CEKMA dan tes psikologi untuk mengukur berbagai aspek psikologis',
             'icon' => 'fa-brain',
             'order' => 1,
             'is_active' => true,
         ]);
 
         DigitalProductCategory::create([
-            'name' => 'Seminar on-demand',
+            'name' => 'On-demand seminar',
             'slug' => 'seminar-on-demand',
-            'description' => 'Kumpulan seminar on-demand dari berbagai topik edukasi',
+            'description' => 'Kumpulan On-demand seminar dari berbagai topik edukasi',
             'icon' => 'fa-chalkboard-teacher',
             'order' => 2,
             'is_active' => true,

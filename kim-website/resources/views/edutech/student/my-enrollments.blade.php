@@ -14,11 +14,11 @@
     </div>
 </section>
 
-<!-- Main Content -->
+<!-- Main Content dengan spacing yang lebih baik -->
 <section class="my-courses-content">
     <div class="container">
 
-        <!-- Pending Payments Alert -->
+        <!-- Pending Payments Alert dengan margin bawah yang lebih konsisten -->
         @if($pendingPayments->count() > 0)
         <div class="pending-payments-alert">
             <div class="alert-header">
@@ -72,7 +72,7 @@
         </div>
         @endif
 
-        <!-- Tabs Container -->
+        <!-- Tabs Container dengan margin atas yang konsisten -->
         <div class="tabs-container">
             <div class="tabs-nav">
                 <button class="tab-btn active" onclick="switchTab('active')">
@@ -267,10 +267,14 @@
 
 @push('styles')
 <style>
+/* Page Header dengan padding yang lebih proporsional */
 .page-header-my-courses {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    padding: 80px 0 60px;
+    padding: 60px 0;
+    /* Dikurangi sedikit untuk keseimbangan */
     color: white;
+    margin-bottom: 40px;
+    /* Tambahkan margin bawah */
 }
 
 .page-header-my-courses .header-content {
@@ -288,16 +292,16 @@
 }
 
 .my-courses-content {
-    padding: 60px 0;
     background: #f7fafc;
 }
 
-/* Pending Payments Alert */
+/* Pending Payments Alert dengan margin yang lebih baik */
 .pending-payments-alert {
     background: white;
     border-radius: 16px;
     padding: 30px;
     margin-bottom: 40px;
+    /* Jarak ke bawah yang konsisten */
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     border-left: 5px solid #ff9800;
 }
@@ -460,12 +464,13 @@
     color: white;
 }
 
-/* Tabs */
+/* Tabs dengan shadow yang lebih halus */
 .tabs-container {
     background: white;
     border-radius: 16px;
     overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    /* Shadow lebih halus */
 }
 
 .tabs-nav {
@@ -531,11 +536,12 @@
     display: block;
 }
 
-/* Active Courses Grid */
+/* Active Courses Grid dengan gap yang sedikit lebih besar */
 .active-courses-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 25px;
+    gap: 30px;
+    /* Gap diperbesar untuk lebih bernapas */
 }
 
 .active-course-card {
@@ -548,7 +554,8 @@
 
 .active-course-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    /* Shadow lebih halus */
 }
 
 .course-thumbnail-wrapper {

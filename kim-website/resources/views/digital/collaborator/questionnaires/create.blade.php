@@ -2,7 +2,7 @@
 @section('content')
 <div class="main-content">
     <div class="top-bar">
-        <h1>Tambah Angket Baru</h1>
+        <h1>Tambah CEKMA Baru</h1>
         <a href="{{ route('digital.collaborator.questionnaires.index') }}" class="btn-secondary"><i
                 class="fas fa-arrow-left"></i> Kembali</a>
     </div>
@@ -12,14 +12,14 @@
             <form action="{{ route('digital.collaborator.questionnaires.store') }}" method="POST">
                 @csrf
                 <div class="form-group">
-                    <label>Nama Angket *</label>
+                    <label>Nama CEKMA *</label>
                     <input type="text" name="name" class="form-control" required
                         placeholder="Contoh: Indeks Burnout Akademik">
                 </div>
                 <div class="form-group">
                     <label>Deskripsi *</label>
                     <textarea name="description" class="form-control" rows="4" required
-                        placeholder="Jelaskan tujuan angket..."></textarea>
+                        placeholder="Jelaskan tujuan cekma..."></textarea>
                 </div>
                 <div class="form-group">
                     <label>Petunjuk Pengisian</label>
@@ -28,7 +28,7 @@
                 </div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                     <div class="form-group">
-                        <label>Tipe Angket *</label>
+                        <label>Tipe CEKMA *</label>
                         <select name="type" class="form-control" required>
                             <option value="">Pilih Tipe</option>
                             @foreach($types as $value => $label)
@@ -49,7 +49,7 @@
                     style="background: #ebf8ff; border: 1px solid #90cdf4; border-radius: 10px; padding: 20px; margin: 20px 0;">
                     <h4 style="color: #2b6cb0; margin-bottom: 10px;"><i class="fas fa-info-circle"></i> Langkah
                         Selanjutnya</h4>
-                    <p style="color: #2c5282; margin: 0;">Setelah membuat angket, Anda akan masuk ke Builder untuk
+                    <p style="color: #2c5282; margin: 0;">Setelah membuat cekma, Anda akan masuk ke Builder untuk
                         menambahkan dimensi dan pertanyaan.</p>
                 </div>
                 <div style="display: flex; gap: 15px;">

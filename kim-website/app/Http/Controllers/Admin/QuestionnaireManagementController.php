@@ -98,7 +98,7 @@ class QuestionnaireManagementController extends Controller
 
         return redirect()
             ->route('admin.digital.questionnaires.show', $questionnaire->id)
-            ->with('success', 'Angket berhasil dibuat! Sekarang tambahkan dimensi dan pertanyaan.');
+            ->with('success', 'CEKMA berhasil dibuat! Sekarang tambahkan dimensi dan pertanyaan.');
     }
 
     /**
@@ -182,7 +182,7 @@ class QuestionnaireManagementController extends Controller
 
         return redirect()
             ->route('admin.digital.questionnaires.show', $questionnaire->id)
-            ->with('success', 'Angket berhasil diperbarui!');
+            ->with('success', 'CEKMA berhasil diperbarui!');
     }
 
     /**
@@ -196,21 +196,21 @@ class QuestionnaireManagementController extends Controller
         if ($questionnaire->responses()->where('is_completed', true)->exists()) {
             return redirect()
                 ->back()
-                ->with('error', 'Tidak dapat menghapus angket yang sudah memiliki respons!');
+                ->with('error', 'Tidak dapat menghapus CEKMA yang sudah memiliki respons!');
         }
 
         // Check if used by products
         if (DigitalProduct::where('questionnaire_id', $questionnaire->id)->exists()) {
             return redirect()
                 ->back()
-                ->with('error', 'Tidak dapat menghapus angket yang sedang digunakan oleh produk!');
+                ->with('error', 'Tidak dapat menghapus CEKMA yang sedang digunakan oleh produk!');
         }
 
         $questionnaire->delete();
 
         return redirect()
             ->route('admin.digital.questionnaires.index')
-            ->with('success', 'Angket berhasil dihapus!');
+            ->with('success', 'CEKMA berhasil dihapus!');
     }
 
     // ========================================

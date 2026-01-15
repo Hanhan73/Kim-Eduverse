@@ -60,9 +60,9 @@
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;">
                 <div class="form-group">
-                    <label for="questionnaire_id">Angket <span style="color: var(--danger);">*</span></label>
+                    <label for="questionnaire_id">CEKMA <span style="color: var(--danger);">*</span></label>
                     <select name="questionnaire_id" id="questionnaire_id" class="form-control" required>
-                        <option value="">Pilih Angket</option>
+                        <option value="">Pilih CEKMA</option>
                         @foreach($questionnaires as $questionnaire)
                             <option value="{{ $questionnaire->id }}" {{ (old('questionnaire_id') ?? $selectedQuestionnaireId) == $questionnaire->id ? 'selected' : '' }}>
                                 {{ $questionnaire->name }}
@@ -110,7 +110,7 @@
                 <i class="fas fa-chart-pie"></i> Interpretasi Skor
             </h4>
             <p style="color: var(--gray); margin-bottom: 20px;">
-                Atur interpretasi untuk setiap tingkat skor. Interpretasi akan ditampilkan pada hasil angket.
+                Atur interpretasi untuk setiap tingkat skor. Interpretasi akan ditampilkan pada hasil cekma.
             </p>
 
             <!-- Low -->

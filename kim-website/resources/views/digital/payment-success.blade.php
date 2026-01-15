@@ -549,7 +549,7 @@
             <!-- Success Header for Completed Questionnaire -->
             <div class="success-header">
                 <div class="success-icon">✓</div>
-                <h1>Angket Telah Berhasil Diisi!</h1>
+                <h1>CEKMA Telah Berhasil Diisi!</h1>
                 <p>Terima kasih atas pembelian Anda</p>
             </div>
             @else
@@ -667,12 +667,12 @@
                     ======================================== --}}
                 @if($hasQuestionnaire && $incompleteQuestionnaires->count() > 0)
                 <div class="action-section questionnaire">
-                    <h3><i class="fas fa-clipboard-list" style="color: #d97706;"></i> Isi Angket</h3>
-                    <p>Anda memiliki {{ $incompleteQuestionnaires->count() }} angket yang perlu diisi. Hasil analisis
+                    <h3><i class="fas fa-clipboard-list" style="color: #d97706;"></i> Isi CEKMA</h3>
+                    <p>Anda memiliki {{ $incompleteQuestionnaires->count() }} cekma yang perlu diisi. Hasil analisis
                         akan dikirim ke email Anda setelah selesai mengisi.</p>
 
                     <a href="{{ route('digital.questionnaire.show', $order->order_number) }}" class="btn btn-warning">
-                        <i class="fas fa-pencil-alt"></i> Isi Angket Sekarang
+                        <i class="fas fa-pencil-alt"></i> Isi CEKMA Sekarang
                     </a>
                 </div>
                 @endif
@@ -682,7 +682,7 @@
                     ======================================== --}}
                 @if($hasQuestionnaire && $order->responses->where('is_completed', true)->count() > 0)
                 <div class="action-section" style="background: #f0fff4; border-color: #9ae6b4;">
-                    <h3><i class="fas fa-check-circle" style="color: #22543d;"></i> Angket Selesai</h3>
+                    <h3><i class="fas fa-check-circle" style="color: #22543d;"></i> CEKMA Selesai</h3>
                     <p>Hasil analisis telah dikirim ke email Anda.</p>
 
                     @foreach($order->responses->where('is_completed', true) as $response)
@@ -693,7 +693,7 @@
                                 <i class="fas fa-file-pdf"></i>
                             </div>
                             <span
-                                class="download-item-name">{{ $response->questionnaire->name ?? 'Hasil Angket' }}</span>
+                                class="download-item-name">{{ $response->questionnaire->name ?? 'Hasil CEKMA' }}</span>
                         </div>
                         @if($response->result_pdf_path)
                         <a href="{{ route('digital.questionnaire.download', $response->id) }}"
@@ -774,7 +774,7 @@
 
     <!-- Footer -->
     <div class="page-footer">
-        <p>&copy; {{ date('Y') }} PT KIM Eduverse. All Rights Reserved.</p>
+        <p>&copy; {{ date('Y') }} KIM Eduverse. All Rights Reserved.</p>
         <p>
             <a href="{{ route('digital.catalog') }}">Katalog Produk</a> ·
             <a href="/cdn-cgi/l/email-protection#a6d5d3d6d6c9d4d2e6cdcfcb88c5c988cfc2">Hubungi Kami</a>

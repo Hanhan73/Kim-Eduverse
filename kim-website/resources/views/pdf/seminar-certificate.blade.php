@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Sertifikat Seminar</title>
+
     <style>
     @page {
         size: A4 landscape;
@@ -13,253 +14,261 @@
     body {
         margin: 0;
         padding: 0;
-        background: #f9fafb;
-        font-family: 'Times New Roman', serif;
+        font-family: "Times New Roman", serif;
+        background: #ffffff;
     }
 
-    .certificate {
-        background: #fff;
-        border: 10px double #667eea;
-        padding: 30px 50px;
+    .page {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        padding: 60px 80px;
         box-sizing: border-box;
-        position: relative;
-        margin: 15mm auto;
     }
 
-    .certificate-inner {
-        border: 2px solid #d4af37;
-        padding: 25px;
-        text-align: center;
-        position: relative;
-    }
-
-    .logo {
-        font-size: 42px;
-        color: #667eea;
-        margin-bottom: 8px;
-    }
-
-    .company-name {
-        font-size: 16px;
+    /* Header */
+    .brand {
+        text-align: right;
+        font-size: 18px;
         font-weight: bold;
-        color: #1e293b;
-        letter-spacing: 2px;
-        text-transform: uppercase;
-        margin-bottom: 5px;
+        color: #1f2937;
     }
 
     .title {
-        font-size: 40px;
-        color: #1F2937;
-        font-weight: bold;
-        text-transform: uppercase;
-        letter-spacing: 3px;
-        margin-bottom: 8px;
+        text-align: center;
+        margin-top: 20px;
     }
 
-    .subtitle {
-        font-size: 14px;
-        color: #6B7280;
-        margin-bottom: 20px;
-        font-style: italic;
-    }
-
-    .presented-text {
-        font-size: 12px;
-        color: #64748b;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        margin-bottom: 8px;
-    }
-
-    .name {
+    .title h1 {
         font-size: 32px;
-        color: #667eea;
-        font-weight: bold;
-        border-bottom: 3px solid #667eea;
-        display: inline-block;
-        padding: 5px 30px 8px;
-        margin: 8px 0 20px;
-    }
-
-    .completion-text {
-        font-size: 14px;
-        color: #4B5563;
-        margin-bottom: 8px;
-    }
-
-    .course-name {
-        font-size: 18px;
-        color: #1e293b;
-        font-weight: bold;
+        margin: 0;
         font-style: italic;
-        margin: 15px 40px;
     }
 
-    .details {
-        display: inline-block;
-        margin-bottom: 20px;
-        text-align: left;
+    .cert-number {
+        text-align: center;
+        margin-top: 6px;
+        font-size: 14px;
     }
 
-    .detail-row {
-        font-size: 12px;
-        color: #374151;
-        margin-bottom: 5px;
-        padding: 3px 0;
+    /* Content */
+    .content {
+        margin-top: 40px;
+        text-align: center;
+        font-size: 16px;
+        line-height: 1.6;
     }
 
-    .detail-label {
+    .participant-name {
+        margin: 20px 0;
+        font-size: 26px;
         font-weight: bold;
-        color: #6B7280;
-        display: inline-block;
-        width: 130px;
     }
 
-    .detail-value {
-        display: inline-block;
-        color: #1e293b;
-        font-weight: 600;
+    .seminar-title {
+        font-weight: bold;
     }
 
-    .signatures {
-        margin-top: 30px;
-        padding: 0 40px;
+    .italic {
+        font-style: italic;
     }
 
-    .signature-table {
+    /* Footer */
+    .footer {
+        position: absolute;
+        bottom: 80px;
+        width: calc(100% - 160px);
+        text-align: center;
+    }
+
+    .director-title {
+        margin-bottom: 60px;
+    }
+
+    .director-name {
+        font-weight: bold;
+        text-decoration: underline;
+    }
+
+    /* Decorative corners (optional, simple) */
+    .corner {
+        position: absolute;
+        width: 120px;
+        height: 120px;
+        border: 8px solid #0f766e;
+    }
+
+    .corner.top-left {
+        top: 0;
+        left: 0;
+        border-right: none;
+        border-bottom: none;
+    }
+
+    .corner.bottom-right {
+        bottom: 0;
+        right: 0;
+        border-left: none;
+        border-top: none;
+    }
+
+    .page-2 {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        padding: 60px 80px;
+        box-sizing: border-box;
+        font-family: "Times New Roman", serif;
+    }
+
+    .page-2 h2 {
+        text-align: center;
+        font-size: 22px;
+        margin-bottom: 10px;
+    }
+
+    .page-2 h3 {
+        text-align: center;
+        font-size: 18px;
+        margin-bottom: 30px;
+        font-weight: bold;
+    }
+
+    table.materi-table {
         width: 100%;
         border-collapse: collapse;
-    }
-
-    .signature-table td {
-        text-align: center;
-        vertical-align: top;
-        width: 50%;
-        padding: 0 20px;
-    }
-
-    .signature-line {
-        border-top: 2px solid #1F2937;
-        width: 180px;
-        margin: 0 auto 8px;
-    }
-
-    .signature-name {
         font-size: 14px;
-        font-weight: bold;
-        color: #1F2937;
-        margin-bottom: 3px;
     }
 
-    .signature-title {
-        font-size: 11px;
-        color: #6B7280;
-        font-style: italic;
+    table.materi-table th,
+    table.materi-table td {
+        border: 1px solid #000;
+        padding: 8px;
     }
 
-    .certificate-number {
-        position: absolute;
-        bottom: 15px;
-        left: 50%;
-        transform: translateX(-50%);
-        font-size: 10px;
-        color: #9CA3AF;
-        font-family: 'Courier New', monospace;
-    }
-
-    .seal {
-        position: absolute;
-        top: 50%;
-        right: 40px;
-        transform: translateY(-50%);
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        border: 3px solid #667eea;
-        color: #667eea;
-        font-weight: bold;
+    table.materi-table th {
         text-align: center;
-        font-size: 11px;
-        padding-top: 42px;
-        box-sizing: border-box;
-        line-height: 1.2;
+        font-weight: bold;
     }
 
-    .watermark {
+    table.materi-table td:nth-child(1),
+    table.materi-table td:nth-child(3) {
+        text-align: center;
+        width: 60px;
+    }
+
+    .footer-2 {
         position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%) rotate(-45deg);
-        font-size: 90px;
-        color: rgba(102, 126, 234, 0.12);
+        bottom: 80px;
+        width: calc(100% - 160px);
+        text-align: center;
+    }
+
+    .footer-2 .director-name {
         font-weight: bold;
-        letter-spacing: 8px;
-        z-index: 0;
+        text-decoration: underline;
     }
     </style>
 </head>
 
 <body>
-    <div class="certificate">
-        <div class="certificate-inner">
-            <div class="watermark">CERTIFIED</div>
+    <div class="page">
+        <!-- Decorative Corners -->
+        <div class="corner top-left"></div>
+        <div class="corner bottom-right"></div>
 
-            <div class="company-name">PT KIM</div>
+        <!-- Header -->
+        <div class="brand">
+            KIM Eduvers
+        </div>
 
-            <div class="title">SERTIFIKAT</div>
-            <div class="subtitle">Bukti Keikutsertaan dan Kelulusan</div>
+        <div class="title">
+            <h1>Sertifikat Seminar</h1>
+            <div class="cert-number">
+                Nomor: {{ $enrollment->certificate_number }}
+            </div>
+        </div>
 
-            <div class="presented-text">Diberikan Kepada</div>
-            <div class="name">{{ $enrollment->participant_name ?? $enrollment->customer_email }}</div>
+        <!-- Main Content -->
+        <div class="content">
+            <p>Diberikan kepada:</p>
 
-            <div class="completion-text">Telah berhasil menyelesaikan seminar</div>
-
-            <div class="course-name">"{{ $seminar->title }}"</div>
-
-            <div class="details">
-                <div class="detail-row">
-                    <span class="detail-label">Tanggal Selesai:</span>
-                    <span class="detail-value">{{ $enrollment->completed_at->format('d F Y') }}</span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Instruktur:</span>
-                    <span class="detail-value">{{ $seminar->instructor_name }}</span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Skor Pre-Test:</span>
-                    <span class="detail-value">{{ round($enrollment->pre_test_score) }}%</span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Skor Post-Test:</span>
-                    <span class="detail-value">{{ round($enrollment->post_test_score) }}%</span>
-                </div>
+            <div class="participant-name">
+                {{ $enrollment->participant_name }}
             </div>
 
-            <div class="signatures">
-                <table class="signature-table" cellpadding="0" cellspacing="0">
-                    <tr>
-                        <td>
-                            <div class="signature-line"></div>
-                            <div class="signature-name">{{ $seminar->instructor_name }}</div>
-                            <div class="signature-title">Instruktur Seminar</div>
-                        </td>
-                        <td>
-                            <div class="signature-line"></div>
-                            <div class="signature-name">Direktur</div>
-                            <div class="signature-title">PT KIM</div>
-                        </td>
-                    </tr>
-                </table>
-            </div>
+            <p>
+                sebagai peserta dalam kegiatan
+                <span class="italic">On-Demand Seminar</span>
+                <span class="seminar-title">
+                    “{{ strtoupper($seminar->title) }}”
+                </span>,
+                yang diselenggarakan oleh
+                <strong>PT Kompetensi Mandiri Indonesia</strong>.
+            </p>
 
-            <div class="seal">VERIFIED<br>CERTIFICATE</div>
+            <p>
+                Dilaksanakan secara <span class="italic">online</span>
+                selama {{ $seminar->total_jp ?? 6 }} Jam Pelajaran (JP)
+                pada tanggal
+                {{ $enrollment->completed_at?->format('d F Y') }}.
+            </p>
+        </div>
 
-            <div class="certificate-number">
-                Nomor Sertifikat: {{ $enrollment->certificate_number }}
+        <!-- Footer -->
+        <div class="footer">
+            <div class="director-title">Direktur,</div>
+
+            <div class="director-name">
+                Yosep Hernawan, S.T., M.M., IPM.
             </div>
         </div>
     </div>
+
+    <div style="page-break-after: always;"></div>
+
+    <div class="page-2">
+
+        <h2>MATERI <i>ON-DEMAND SEMINAR</i></h2>
+        <h3>{{ strtoupper($seminar->title) }}</h3>
+
+        <table class="materi-table">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Materi</th>
+                    <th>JP</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($seminar->materials as $index => $material)
+                <tr>
+                    <td>{{ $index + 1 }}</td>
+                    <td>{{ $material->title }}</td>
+
+                    @if ($index === 0)
+                    <td rowspan="{{ $seminar->materials->count() }}" style="vertical-align: middle; font-weight: bold;">
+                        6
+                    </td>
+                    @endif
+                </tr>
+                @endforeach
+            </tbody>
+
+        </table>
+
+        <div class="footer-2">
+            <div>Direktur,</div>
+            <br><br>
+            <div class="director-name">
+                Yosep Hernawan, S.T., M.M., IPM
+            </div>
+        </div>
+
+    </div>
+
+
+
 </body>
 
 </html>

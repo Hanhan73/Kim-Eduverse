@@ -700,11 +700,11 @@
                 <i class="fas fa-bullhorn"></i> Landing Pages
             </a>
 
-            <div class="menu-section">Angket</div>
+            <div class="menu-section">CEKMA</div>
 
             <a href="{{ route('admin.digital.questionnaires.index') }}"
                 class="menu-item {{ request()->routeIs('admin.digital.questionnaires.*') ? 'active' : '' }}">
-                <i class="fas fa-clipboard-check"></i> Daftar Angket
+                <i class="fas fa-clipboard-check"></i> Daftar CEKMA
             </a>
 
             <a href="{{ route('admin.digital.dimensions.index') }}"
@@ -730,7 +730,7 @@
                 <i class="fas fa-shopping-cart"></i> Orders
             </a>
 
-            <div class="menu-section">Seminar On-Demand</div>
+            <div class="menu-section">On-demand seminar</div>
 
             <a href="{{ route('admin.digital.seminars.index') }}"
                 class="menu-item {{ request()->routeIs('admin.digital.seminars.*') ? 'active' : '' }}">

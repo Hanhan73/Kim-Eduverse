@@ -18,9 +18,9 @@
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
                 <div class="form-group">
-                    <label for="questionnaire_id">Angket <span style="color: var(--danger);">*</span></label>
+                    <label for="questionnaire_id">CEKMA <span style="color: var(--danger);">*</span></label>
                     <select name="questionnaire_id" id="questionnaire_id" class="form-control" required onchange="loadDimensions()">
-                        <option value="">Pilih Angket</option>
+                        <option value="">Pilih CEKMA</option>
                         @foreach($questionnaires as $questionnaire)
                             <option value="{{ $questionnaire->id }}" data-has-dimensions="{{ $questionnaire->has_dimensions ? '1' : '0' }}" {{ (old('questionnaire_id') ?? $selectedQuestionnaireId) == $questionnaire->id ? 'selected' : '' }}>
                                 {{ $questionnaire->name }}
@@ -50,7 +50,7 @@
 
             <div class="form-group">
                 <label for="question_text">Teks Pertanyaan <span style="color: var(--danger);">*</span></label>
-                <textarea name="question_text" id="question_text" class="form-control" rows="3" required placeholder="Tulis pertanyaan angket...">{{ old('question_text') }}</textarea>
+                <textarea name="question_text" id="question_text" class="form-control" rows="3" required placeholder="Tulis pertanyaan cekma...">{{ old('question_text') }}</textarea>
                 @error('question_text')
                     <small style="color: var(--danger);">{{ $message }}</small>
                 @enderror

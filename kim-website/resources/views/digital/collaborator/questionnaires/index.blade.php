@@ -4,7 +4,7 @@
     <div class="top-bar">
         <h1>My Questionnaires</h1>
         <a href="{{ route('digital.collaborator.questionnaires.create') }}" class="btn-primary">
-            <i class="fas fa-plus"></i> Tambah Angket
+            <i class="fas fa-plus"></i> Tambah CEKMA
         </a>
     </div>
 
@@ -17,7 +17,7 @@
             <div class="stat-icon primary"><i class="fas fa-clipboard-list"></i></div>
             <div class="stat-content">
                 <h4>{{ $stats['total'] }}</h4>
-                <p>Total Angket</p>
+                <p>Total CEKMA</p>
             </div>
         </div>
         <div class="stat-card">
@@ -38,7 +38,7 @@
 
     <div class="content-section">
         <div class="section-header">
-            <h2>Daftar Angket</h2>
+            <h2>Daftar CEKMA</h2>
         </div>
         @if($questionnaires->count() > 0)
         <table>
@@ -83,10 +83,10 @@
         @else
         <div class="empty-state">
             <i class="fas fa-clipboard-list"></i>
-            <h3>Belum Ada Angket</h3>
-            <p>Mulai dengan membuat angket pertama Anda</p>
+            <h3>Belum Ada CEKMA</h3>
+            <p>Mulai dengan membuat cekma pertama Anda</p>
             <a href="{{ route('digital.collaborator.questionnaires.create') }}" class="btn-primary"><i
-                    class="fas fa-plus"></i> Tambah Angket</a>
+                    class="fas fa-plus"></i> Tambah CEKMA</a>
         </div>
         @endif
     </div>

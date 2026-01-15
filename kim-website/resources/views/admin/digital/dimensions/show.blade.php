@@ -118,13 +118,13 @@
         <!-- Questionnaire Info -->
         <div class="card" style="margin-bottom: 20px;">
             <div class="card-header">
-                <h3><i class="fas fa-clipboard-list"></i> Angket</h3>
+                <h3><i class="fas fa-clipboard-list"></i> CEKMA</h3>
             </div>
             <div class="card-body">
                 <h4 style="margin-bottom: 10px; color: var(--dark);">{{ $dimension->questionnaire->name }}</h4>
                 <span class="badge badge-info">{{ ucfirst($dimension->questionnaire->type) }}</span>
                 <a href="{{ route('admin.digital.questionnaires.show', $dimension->questionnaire_id) }}" style="display: block; margin-top: 15px; color: var(--primary);">
-                    Lihat Detail Angket →
+                    Lihat Detail CEKMA →
                 </a>
             </div>
         </div>

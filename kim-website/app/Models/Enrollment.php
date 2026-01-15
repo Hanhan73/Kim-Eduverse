@@ -19,6 +19,7 @@ class Enrollment extends Model
         'certificate_issued_at',
         'payment_status',
         'payment_amount',
+        'certified_number',
     ];
 
     protected $casts = [
@@ -27,6 +28,7 @@ class Enrollment extends Model
         'certificate_issued_at' => 'datetime',
         'progress_percentage' => 'integer',
         'payment_amount' => 'decimal:2',
+
     ];
 
     // Relationships
@@ -46,6 +48,34 @@ class Enrollment extends Model
             ->where('course_id', $this->course_id);
     }
 
+    /**
+     * ✅ TAMBAHAN BARU: Relasi ke Payment
+     * Enrollment bisa punya banyak payment attempts (jika gagal bisa retry)
+     * Tapi biasanya kita ambil yang latest
+     */
+    public function payments()
+    {
+        return $this->hasMany(Payment::class, 'enrollment_id');
+    }
+
+    /**
+     * Get latest payment untuk enrollment ini
+     */
+    public function payment()
+    {
+        return $this->hasOne(Payment::class, 'enrollment_id')->latestOfMany();
+    }
+
+    /**
+     * Get successful payment (yang sudah berhasil)
+     */
+    public function successfulPayment()
+    {
+        return $this->hasOne(Payment::class, 'enrollment_id')
+            ->where('status', 'success')
+            ->latest();
+    }
+
     // Scopes
     public function scopeActive($query)
     {
@@ -57,9 +87,19 @@ class Enrollment extends Model
         return $query->where('status', 'completed');
     }
 
+    public function scopePaid($query)
+    {
+        return $query->where('payment_status', 'paid');
+    }
+
+    public function scopePending($query)
+    {
+        return $query->where('payment_status', 'pending');
+    }
+
     /**
      * ============================================================
-     * NEW SYSTEM: ACCESS CONTROL METHODS
+     * ACCESS CONTROL METHODS
      * ============================================================
      */
 
@@ -83,280 +123,137 @@ class Enrollment extends Model
         }
         
         // Check if user has passed pre-test
-        $preTestPassed = \App\Models\QuizAttempt::where('user_id', $this->student_id)
-            ->where('quiz_id', $preTest->id)
-            ->where('is_passed', true)
-            ->exists();
+        $passedAttempt = $preTest->getPassedAttempt($this->student_id);
         
-        return $preTestPassed;
+        return $passedAttempt !== null;
     }
 
     /**
      * Check if user can access specific module
-     * RULE: Previous module must be completed (all lessons + quiz if exists)
+     * RULE: Must complete previous modules first (sequential learning)
      */
     public function canAccessModule($moduleId)
     {
-        $module = \App\Models\Module::findOrFail($moduleId);
+        $module = Module::findOrFail($moduleId);
         
-        // Module pertama selalu bisa diakses (jika pre-test sudah lulus)
-        if ($module->order === 1) {
-            return $this->canAccessMaterials();
-        }
-        
-        // Cek module sebelumnya
-        $previousModule = \App\Models\Module::where('course_id', $module->course_id)
-            ->where('order', '<', $module->order)
-            ->orderBy('order', 'desc')
-            ->first();
-            
-        if (!$previousModule) {
-            return true; // Tidak ada module sebelumnya
-        }
-        
-        // 1. Cek apakah semua lessons di module sebelumnya sudah completed
-        $totalLessons = $previousModule->lessons()->count();
-        $completedLessons = \App\Models\LessonCompletion::where('user_id', $this->student_id)
-            ->whereIn('lesson_id', $previousModule->lessons()->pluck('id'))
-            ->where('is_completed', true)
-            ->count();
-            
-        if ($totalLessons !== $completedLessons) {
-            return false; // Lessons belum selesai
-        }
-        
-        // 2. Cek apakah ada quiz di module sebelumnya
-        $previousModuleQuiz = \App\Models\Quiz::where('module_id', $previousModule->id)
-            ->where('type', 'module_quiz')
-            ->where('is_active', true)
-            ->first();
-            
-        if ($previousModuleQuiz) {
-            // Harus lulus quiz module sebelumnya
-            $passedQuiz = \App\Models\QuizAttempt::where('user_id', $this->student_id)
-                ->where('quiz_id', $previousModuleQuiz->id)
-                ->where('is_passed', true)
-                ->exists();
-                
-            return $passedQuiz;
-        }
-        
-        return true; // Tidak ada quiz, bisa lanjut
-    }
-
-    /**
-     * Check if user can access post-test
-     * RULE: ALL modules must be completed (all lessons + all module quizzes)
-     */
-    public function canAccessPostTest()
-    {
-        $course = $this->course()->with(['modules.lessons'])->first();
-        
-        // Check if post-test exists
-        $postTest = $course->quizzes()
-            ->where('type', 'post_test')
-            ->where('is_active', true)
-            ->first();
-        
-        if (!$postTest) {
-            return false; // Tidak ada post-test
-        }
-        
-        // 1. Hitung total lessons di course
-        $totalLessons = 0;
-        foreach ($course->modules as $module) {
-            $totalLessons += $module->lessons()->count();
-        }
-        
-        // 2. Hitung completed lessons
-        $completedLessons = \App\Models\LessonCompletion::where('user_id', $this->student_id)
-            ->whereHas('lesson.module', function($query) use ($course) {
-                $query->where('course_id', $course->id);
-            })
-            ->where('is_completed', true)
-            ->count();
-            
-        // Jika lessons belum 100%, tidak bisa post-test
-        if ($totalLessons !== $completedLessons) {
+        // Check if module belongs to this course
+        if ($module->course_id !== $this->course_id) {
             return false;
         }
         
-        // 3. Cek semua quiz module harus lulus
-        $moduleQuizzes = \App\Models\Quiz::where('course_id', $course->id)
-            ->where('type', 'module_quiz')
-            ->where('is_active', true)
+        // Get previous modules
+        $previousModules = Module::where('course_id', $this->course_id)
+            ->where('order', '<', $module->order)
+            ->where('is_published', true)
             ->get();
-            
-        foreach ($moduleQuizzes as $quiz) {
-            $passed = \App\Models\QuizAttempt::where('user_id', $this->student_id)
-                ->where('quiz_id', $quiz->id)
-                ->where('is_passed', true)
-                ->exists();
-                
-            if (!$passed) {
-                return false; // Ada quiz module yang belum lulus
-            }
+        
+        // If no previous modules, allow access
+        if ($previousModules->isEmpty()) {
+            return true;
         }
         
-        return true; // Semua syarat terpenuhi
-    }
-
-    /**
-     * ============================================================
-     * PROGRESS CALCULATION - NEW SYSTEM
-     * ============================================================
-     * Calculate based on: Lessons + Quizzes (Pre-test, Module Quizzes, Post-test)
-     */
-    public function calculateProgress()
-    {
-        $course = $this->course()->with(['modules.lessons', 'quizzes'])->first();
-        
-        // Count total items (lessons + quizzes)
-        $totalItems = 0;
-        $completedItems = 0;
-        
-        // 1. PRE-TEST (jika ada dan active)
-        $preTest = $course->quizzes()
-            ->where('type', 'pre_test')
-            ->where('is_active', true)
-            ->first();
-            
-        if ($preTest) {
-            $totalItems++;
-            
-            $preTestPassed = \App\Models\QuizAttempt::where('user_id', $this->student_id)
-                ->where('quiz_id', $preTest->id)
-                ->where('is_passed', true)
-                ->exists();
-                
-            if ($preTestPassed) {
-                $completedItems++;
-            }
-        }
-        
-        // 2. MODULES (lessons + module quizzes)
-        foreach ($course->modules as $module) {
-            // Count lessons
-            $totalLessons = $module->lessons()->count();
-            
-            if ($totalLessons > 0) {
-                $totalItems += $totalLessons;
-                
-                $completedLessons = \App\Models\LessonCompletion::where('user_id', $this->student_id)
-                    ->whereIn('lesson_id', $module->lessons->pluck('id'))
-                    ->where('is_completed', true)
-                    ->count();
-                
-                $completedItems += $completedLessons;
-            }
-            
-            // Count module quiz (jika ada)
-            $moduleQuiz = \App\Models\Quiz::where('module_id', $module->id)
-                ->where('type', 'module_quiz')
-                ->where('is_active', true)
+        // Check if all previous modules are completed
+        foreach ($previousModules as $prevModule) {
+            $moduleProgress = ModuleProgress::where('enrollment_id', $this->id)
+                ->where('module_id', $prevModule->id)
                 ->first();
-                
-            if ($moduleQuiz) {
-                $totalItems++;
-                
-                $moduleQuizPassed = \App\Models\QuizAttempt::where('user_id', $this->student_id)
-                    ->where('quiz_id', $moduleQuiz->id)
-                    ->where('is_passed', true)
-                    ->exists();
-                    
-                if ($moduleQuizPassed) {
-                    $completedItems++;
-                }
+            
+            if (!$moduleProgress || $moduleProgress->status !== 'completed') {
+                return false;
             }
         }
         
-        // 3. POST-TEST (jika ada dan active)
-        $postTest = $course->quizzes()
-            ->where('type', 'post_test')
-            ->where('is_active', true)
-            ->first();
-            
-        if ($postTest) {
-            $totalItems++;
-            
-            $postTestPassed = \App\Models\QuizAttempt::where('user_id', $this->student_id)
-                ->where('quiz_id', $postTest->id)
-                ->where('is_passed', true)
-                ->exists();
-                
-            if ($postTestPassed) {
-                $completedItems++;
-            }
-        }
-        
-        // Calculate percentage
-        if ($totalItems > 0) {
-            $progressPercentage = ($completedItems / $totalItems) * 100;
-        } else {
-            $progressPercentage = 0;
-        }
-        
-        return round($progressPercentage, 2);
+        return true;
     }
 
     /**
-     * Update progress and save to database
+     * Check if user can take post-test
+     * RULE: Must complete all modules first
+     */
+    public function canTakePostTest()
+    {
+        $course = $this->course()->with('modules')->first();
+        
+        // Check if all modules are completed
+        foreach ($course->modules as $module) {
+            $moduleProgress = ModuleProgress::where('enrollment_id', $this->id)
+                ->where('module_id', $module->id)
+                ->first();
+            
+            if (!$moduleProgress || $moduleProgress->status !== 'completed') {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+
+    /**
+     * Get enrollment progress data
+     */
+    public function getProgressData()
+    {
+        $course = $this->course()->with(['modules.lessons'])->first();
+        
+        $totalLessons = 0;
+        $completedLessons = 0;
+        
+        foreach ($course->modules as $module) {
+            $totalLessons += $module->lessons->count();
+            
+            $completedCount = LessonProgress::where('enrollment_id', $this->id)
+                ->whereIn('lesson_id', $module->lessons->pluck('id'))
+                ->where('is_completed', true)
+                ->count();
+            
+            $completedLessons += $completedCount;
+        }
+        
+        return [
+            'total_lessons' => $totalLessons,
+            'completed_lessons' => $completedLessons,
+            'progress_percentage' => $totalLessons > 0 
+                ? round(($completedLessons / $totalLessons) * 100) 
+                : 0,
+        ];
+    }
+
+    /**
+     * Update progress percentage
      */
     public function updateProgress()
     {
-        $newProgress = $this->calculateProgress();
+        $data = $this->getProgressData();
         
         $this->update([
-            'progress_percentage' => $newProgress,
+            'progress_percentage' => $data['progress_percentage'],
         ]);
         
-        // Auto complete if 100%
-        if ($newProgress >= 100 && $this->status !== 'completed') {
+        // Check if completed
+        if ($data['progress_percentage'] >= 100) {
             $this->markAsCompleted();
         }
-        
-        return $newProgress;
     }
 
     /**
-     * ============================================================
-     * HELPERS
-     * ============================================================
+     * Mark enrollment as completed
      */
-
     public function markAsCompleted()
     {
         $this->update([
             'status' => 'completed',
             'completed_at' => now(),
             'progress_percentage' => 100,
+            'certificate_issued_at' => now(),
+            'certified_number' => $this->generateCertifiedNumber(),
         ]);
-
-        // Auto issue certificate if passing score met
-        $this->issueCertificate();
     }
 
-    public function issueCertificate()
+    /**
+     * Generate certified number
+     */
+    protected function generateCertifiedNumber()
     {
-        // Check if certificate already exists
-        if ($this->certificate()->exists()) {
-            return;
-        }
-
-        // Create certificate
-        $certificate = Certificate::create([
-            'user_id' => $this->student_id,
-            'course_id' => $this->course_id,
-            'certificate_number' => Certificate::generateCertificateNumber(),
-            'file_path' => 'certificates/temp.pdf',
-            'issued_at' => now(),
-        ]);
-
-        // Update enrollment
-        $this->update([
-            'certificate_issued_at' => now(),
-        ]);
-
-        return $certificate;
+        return 'CERT-' . strtoupper(uniqid());
     }
 }

@@ -167,8 +167,8 @@
     </div>
 
     <div class="footer">
-        <p style="margin: 0 0 10px 0;"><strong>PT KIM Eduverse</strong></p>
-        <p style="margin: 0;">© {{ date('Y') }} PT KIM Eduverse. All rights reserved.</p>
+        <p style="margin: 0 0 10px 0;"><strong>KIM Eduverse</strong></p>
+        <p style="margin: 0;">© {{ date('Y') }} KIM Eduverse. All rights reserved.</p>
         <p style="margin: 10px 0 0 0; font-size: 12px;">
             Email ini dikirim secara otomatis, mohon tidak membalas email ini.
         </p>

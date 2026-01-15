@@ -19,7 +19,7 @@
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
                 <div class="form-group">
-                    <label for="questionnaire_id">Angket <span style="color: var(--danger);">*</span></label>
+                    <label for="questionnaire_id">CEKMA <span style="color: var(--danger);">*</span></label>
                     <select name="questionnaire_id" id="questionnaire_id" class="form-control" required onchange="loadDimensions()">
                         @foreach($questionnaires as $questionnaire)
                             <option value="{{ $questionnaire->id }}" data-has-dimensions="{{ $questionnaire->has_dimensions ? '1' : '0' }}" {{ old('questionnaire_id', $question->questionnaire_id) == $questionnaire->id ? 'selected' : '' }}>
@@ -127,7 +127,7 @@
                 <div>{{ $question->updated_at->format('d M Y H:i') }}</div>
             </div>
             <div>
-                <small style="color: var(--gray);">Angket</small>
+                <small style="color: var(--gray);">CEKMA</small>
                 <div>
                     <a href="{{ route('admin.digital.questionnaires.show', $question->questionnaire_id) }}" style="color: var(--primary);">
                         {{ $question->questionnaire->name ?? '-' }}

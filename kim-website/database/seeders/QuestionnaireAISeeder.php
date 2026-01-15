@@ -21,7 +21,7 @@ class QuestionnaireAISeeder extends Seeder
             ['slug' => 'indeks-burnout-akademik'],
             [
                 'name' => 'Indeks Burnout Akademik (IBA)',
-                'description' => 'Angket ini mengukur tingkat kelelahan akademik (burnout) yang Anda alami dalam kegiatan belajar. Burnout akademik terdiri dari tiga dimensi: Kelelahan Emosional, Sinisme, dan Penurunan Efikasi Akademik.',
+                'description' => 'CEKMA ini mengukur tingkat kelelahan akademik (burnout) yang Anda alami dalam kegiatan belajar. Burnout akademik terdiri dari tiga dimensi: Kelelahan Emosional, Sinisme, dan Penurunan Efikasi Akademik.',
                 'instructions' => 'Bacalah setiap pernyataan dengan seksama. Pilih jawaban yang paling sesuai dengan kondisi Anda dalam 2 minggu terakhir. Tidak ada jawaban benar atau salah.',
                 'type' => 'burnout',
                 'duration_minutes' => 15,

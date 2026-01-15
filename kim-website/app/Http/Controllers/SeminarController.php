@@ -175,11 +175,19 @@ class SeminarController extends Controller
             $quiz = $seminar->postTest;
         }
 
-        // Acak urutan pertanyaan
-        $shuffledQuestions = $quiz->questions->shuffle();
-        
-        // Simpan ID pertanyaan dalam urutan acak untuk digunakan saat submit
-        $questionOrder = $shuffledQuestions->pluck('id')->toArray();
+        // Ambil semua pertanyaan
+        $questions = $quiz->questions;
+
+        // Jika PRE-TEST → ambil 5 soal acak
+        if ($quizType === 'pre') {
+            $selectedQuestions = $questions->shuffle()->take(5);
+        } else {
+            // POST-TEST → pakai semua
+            $selectedQuestions = $questions->shuffle();
+        }
+
+        // Simpan urutan ID soal
+        $questionOrder = $selectedQuestions->pluck('id')->toArray();
 
         // Create quiz attempt
         $attempt = QuizAttempt::create([
@@ -187,7 +195,7 @@ class SeminarController extends Controller
             'user_email' => $order->customer_email,
             'started_at' => now(),
             'answers' => [],
-            'question_order' => json_encode($questionOrder), // Tambahkan kolom ini di database
+            'question_order' => json_encode($questionOrder),
         ]);
 
         return redirect()->route('digital.seminar.learn', $orderNumber);
@@ -245,8 +253,11 @@ class SeminarController extends Controller
             }
         }
 
-        $percentage = ($correctCount / $quiz->questions->count()) * 100;
-        $isPassed = $percentage >= $quiz->passing_score;
+    $totalQuestions = count($orderedQuestions);
+    $percentage = $totalQuestions > 0
+        ? ($correctCount / $totalQuestions) * 100
+        : 0;        
+    $isPassed = $percentage >= $quiz->passing_score;
 
         // Update attempt
         $attempt->update([

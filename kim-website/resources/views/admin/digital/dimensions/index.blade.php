@@ -1,7 +1,7 @@
 @extends('layouts.admin-digital')
 
-@section('title', 'Dimensi Angket - Admin Digital')
-@section('page-title', 'Dimensi Angket')
+@section('title', 'Dimensi CEKMA - Admin Digital')
+@section('page-title', 'Dimensi CEKMA')
 
 @section('content')
 <div class="card">
@@ -21,9 +21,9 @@
                     <input type="text" name="search" class="form-control" placeholder="Nama atau kode..." value="{{ request('search') }}">
                 </div>
                 <div class="filter-group">
-                    <label>Angket</label>
+                    <label>CEKMA</label>
                     <select name="questionnaire_id" class="form-control">
-                        <option value="">Semua Angket</option>
+                        <option value="">Semua CEKMA</option>
                         @foreach($questionnaires as $questionnaire)
                             <option value="{{ $questionnaire->id }}" {{ request('questionnaire_id') == $questionnaire->id ? 'selected' : '' }}>
                                 {{ $questionnaire->name }}
@@ -53,7 +53,7 @@
                         <th>Urutan</th>
                         <th>Nama Dimensi</th>
                         <th>Kode</th>
-                        <th>Angket</th>
+                        <th>CEKMA</th>
                         <th>Pertanyaan</th>
                         <th>Aksi</th>
                     </tr>
@@ -115,7 +115,7 @@
         <div class="empty-state">
             <i class="fas fa-layer-group"></i>
             <h3>Belum Ada Dimensi</h3>
-            <p>Dimensi digunakan untuk mengelompokkan pertanyaan dalam angket</p>
+            <p>Dimensi digunakan untuk mengelompokkan pertanyaan dalam cekma</p>
             <a href="{{ route('admin.digital.dimensions.create') }}" class="btn btn-primary">
                 <i class="fas fa-plus"></i> Tambah Dimensi
             </a>

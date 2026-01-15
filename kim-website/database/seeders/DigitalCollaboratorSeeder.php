@@ -57,8 +57,8 @@ class DigitalCollaboratorSeeder extends Seeder
         // 3. Create Categories if not exist
         $categories = [
             [
-                'name' => 'Angket Psikologi',
-                'slug' => 'angket-psikologi',
+                'name' => 'CEKMA (Cek Mandiri Langkah Anda)',
+                'slug' => 'cekma',
                 'icon' => 'fa-brain',
                 'order' => 1,
             ],
@@ -82,12 +82,12 @@ class DigitalCollaboratorSeeder extends Seeder
         $products = [
             [
                 'collaborator' => $collab1,
-                'name' => 'Angket Minat Bakat Siswa',
-                'slug' => 'angket-minat-bakat',
+                'name' => 'Cekma Minat Bakat Siswa',
+                'slug' => 'cekma-minat-bakat',
                 'category_id' => 1,
                 'type' => 'questionnaire',
                 'price' => 150000,
-                'description' => 'Angket untuk mengukur minat dan bakat siswa',
+                'description' => 'Cekma untuk mengukur minat dan bakat siswa',
                 'sales' => 8,
             ],
             [
@@ -112,12 +112,12 @@ class DigitalCollaboratorSeeder extends Seeder
             ],
             [
                 'collaborator' => $collab2,
-                'name' => 'Angket Kepribadian MBTI',
-                'slug' => 'angket-mbti',
+                'name' => 'CEKMA Kepribadian MBTI',
+                'slug' => 'cekma-mbti',
                 'category_id' => 1,
                 'type' => 'questionnaire',
                 'price' => 120000,
-                'description' => 'Angket untuk mengukur tipe kepribadian MBTI',
+                'description' => 'CEKMA untuk mengukur tipe kepribadian MBTI',
                 'sales' => 10,
             ],
         ];

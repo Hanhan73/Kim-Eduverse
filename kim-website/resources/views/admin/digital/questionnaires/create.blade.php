@@ -1,12 +1,12 @@
 @extends('layouts.admin-digital')
 
-@section('title', 'Tambah Angket - Admin Digital')
-@section('page-title', 'Tambah Angket Baru')
+@section('title', 'Tambah CEKMA - Admin Digital')
+@section('page-title', 'Tambah CEKMA Baru')
 
 @section('content')
 <div class="card">
     <div class="card-header">
-        <h3><i class="fas fa-plus-circle"></i> Buat Angket Baru</h3>
+        <h3><i class="fas fa-plus-circle"></i> Buat CEKMA Baru</h3>
         <a href="{{ route('admin.digital.questionnaires.index') }}" class="btn btn-secondary">
             <i class="fas fa-arrow-left"></i> Kembali
         </a>
@@ -20,7 +20,7 @@
                 <!-- Left Column -->
                 <div>
                     <div class="form-group">
-                        <label for="name">Nama Angket <span style="color: var(--danger);">*</span></label>
+                        <label for="name">Nama CEKMA <span style="color: var(--danger);">*</span></label>
                         <input type="text" name="name" id="name" class="form-control" value="{{ old('name') }}" required placeholder="Contoh: Indeks Burnout Akademik">
                         @error('name')
                             <small style="color: var(--danger);">{{ $message }}</small>
@@ -29,7 +29,7 @@
 
                     <div class="form-group">
                         <label for="description">Deskripsi <span style="color: var(--danger);">*</span></label>
-                        <textarea name="description" id="description" class="form-control" rows="4" required placeholder="Jelaskan tujuan dan manfaat angket ini...">{{ old('description') }}</textarea>
+                        <textarea name="description" id="description" class="form-control" rows="4" required placeholder="Jelaskan tujuan dan manfaat cekma ini...">{{ old('description') }}</textarea>
                         @error('description')
                             <small style="color: var(--danger);">{{ $message }}</small>
                         @enderror
@@ -37,7 +37,7 @@
 
                     <div class="form-group">
                         <label for="instructions">Petunjuk Pengisian</label>
-                        <textarea name="instructions" id="instructions" class="form-control" rows="3" placeholder="Berikan petunjuk kepada responden tentang cara mengisi angket...">{{ old('instructions') }}</textarea>
+                        <textarea name="instructions" id="instructions" class="form-control" rows="3" placeholder="Berikan petunjuk kepada responden tentang cara mengisi cekma...">{{ old('instructions') }}</textarea>
                         @error('instructions')
                             <small style="color: var(--danger);">{{ $message }}</small>
                         @enderror
@@ -47,7 +47,7 @@
                 <!-- Right Column -->
                 <div>
                     <div class="form-group">
-                        <label for="type">Tipe Angket <span style="color: var(--danger);">*</span></label>
+                        <label for="type">Tipe CEKMA <span style="color: var(--danger);">*</span></label>
                         <select name="type" id="type" class="form-control" required>
                             <option value="">Pilih Tipe</option>
                             @foreach($types as $value => $label)
@@ -72,7 +72,7 @@
                             <input type="checkbox" name="has_dimensions" id="has_dimensions" value="1" {{ old('has_dimensions') ? 'checked' : '' }}>
                             <label for="has_dimensions">Memiliki Dimensi Pengukuran</label>
                         </div>
-                        <small style="color: var(--gray);">Centang jika angket memiliki beberapa dimensi/aspek yang diukur terpisah</small>
+                        <small style="color: var(--gray);">Centang jika cekma memiliki beberapa dimensi/aspek yang diukur terpisah</small>
                     </div>
 
                     <div class="form-group">
@@ -80,7 +80,7 @@
                             <input type="checkbox" name="is_active" id="is_active" value="1" {{ old('is_active', true) ? 'checked' : '' }}>
                             <label for="is_active">Aktif</label>
                         </div>
-                        <small style="color: var(--gray);">Angket aktif dapat diakses oleh pengguna</small>
+                        <small style="color: var(--gray);">CEKMA aktif dapat diakses oleh pengguna</small>
                     </div>
                 </div>
             </div>
@@ -91,7 +91,7 @@
                     <i class="fas fa-info-circle"></i> Langkah Selanjutnya
                 </h4>
                 <p style="color: #2c5282; margin: 0;">
-                    Setelah membuat angket, Anda akan diarahkan ke halaman detail untuk:
+                    Setelah membuat cekma, Anda akan diarahkan ke halaman detail untuk:
                 </p>
                 <ul style="color: #2c5282; margin: 10px 0 0 20px;">
                     <li>Menambahkan <strong>Dimensi</strong> (jika diperlukan)</li>

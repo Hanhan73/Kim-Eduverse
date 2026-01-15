@@ -37,7 +37,7 @@
                 </label>
                 <input type="text" name="name"
                     style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 1rem;"
-                    placeholder="Contoh: Angket Minat Bakat Siswa" value="{{ old('name') }}" required>
+                    placeholder="Contoh: CEKMA Minat Bakat Siswa" value="{{ old('name') }}" required>
             </div>
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
@@ -66,12 +66,12 @@
                         required>
                         <option value="">Pilih Tipe</option>
                         <option value="questionnaire" {{ old('type') == 'questionnaire' ? 'selected' : '' }}>
-                            Angket/Questionnaire</option>
+                            CEKMA/Questionnaire</option>
                         <option value="ebook" {{ old('type') == 'ebook' ? 'selected' : '' }}>E-Book (PDF)</option>
                         <option value="video" {{ old('type') == 'video' ? 'selected' : '' }}>Video</option>
                         <option value="template" {{ old('type') == 'template' ? 'selected' : '' }}>Template</option>
                         <option value="module" {{ old('type') == 'module' ? 'selected' : '' }}>Modul</option>
-                        <option value="seminar" {{ old('type') == 'seminar' ? 'selected' : '' }}>Seminar On-Demand
+                        <option value="seminar" {{ old('type') == 'seminar' ? 'selected' : '' }}>On-demand seminar
                         </option>
                         <option value="other" {{ old('type') == 'other' ? 'selected' : '' }}>Lainnya</option>
                     </select>
@@ -131,11 +131,11 @@
             <!-- Questionnaire Field (conditional) -->
             <div id="questionnaireField" style="margin-bottom: 20px; display: none;">
                 <label style="display: block; font-weight: 600; margin-bottom: 8px; color: var(--dark);">
-                    Pilih Angket
+                    Pilih CEKMA
                 </label>
                 <select name="questionnaire_id"
                     style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 1rem;">
-                    <option value="">Pilih Angket (Opsional)</option>
+                    <option value="">Pilih CEKMA (Opsional)</option>
                     @foreach($questionnaires as $questionnaire)
                     <option value="{{ $questionnaire->id }}"
                         {{ old('questionnaire_id') == $questionnaire->id ? 'selected' : '' }}>
@@ -144,7 +144,7 @@
                     @endforeach
                 </select>
                 <small style="color: var(--gray); display: block; margin-top: 5px;">
-                    Hubungkan produk dengan angket yang sudah ada
+                    Hubungkan produk dengan cekma yang sudah ada
                 </small>
             </div>
 

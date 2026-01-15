@@ -1,7 +1,7 @@
 @extends('layouts.admin-digital')
 
-@section('title', 'Pertanyaan Angket - Admin Digital')
-@section('page-title', 'Pertanyaan Angket')
+@section('title', 'Pertanyaan CEKMA - Admin Digital')
+@section('page-title', 'Pertanyaan CEKMA')
 
 @section('content')
 <div class="card">
@@ -21,9 +21,9 @@
                     <input type="text" name="search" class="form-control" placeholder="Teks pertanyaan..." value="{{ request('search') }}">
                 </div>
                 <div class="filter-group">
-                    <label>Angket</label>
+                    <label>CEKMA</label>
                     <select name="questionnaire_id" id="questionnaire_filter" class="form-control" onchange="loadDimensions()">
-                        <option value="">Semua Angket</option>
+                        <option value="">Semua CEKMA</option>
                         @foreach($questionnaires as $questionnaire)
                             <option value="{{ $questionnaire->id }}" {{ request('questionnaire_id') == $questionnaire->id ? 'selected' : '' }}>
                                 {{ $questionnaire->name }}
@@ -63,7 +63,7 @@
                     <tr>
                         <th style="width: 60px;">No</th>
                         <th>Pertanyaan</th>
-                        <th>Angket</th>
+                        <th>CEKMA</th>
                         <th>Dimensi</th>
                         <th>Reverse</th>
                         <th style="width: 120px;">Aksi</th>
@@ -127,7 +127,7 @@
         <div class="empty-state">
             <i class="fas fa-question-circle"></i>
             <h3>Belum Ada Pertanyaan</h3>
-            <p>Mulai dengan menambahkan pertanyaan untuk angket Anda</p>
+            <p>Mulai dengan menambahkan pertanyaan untuk cekma Anda</p>
             <a href="{{ route('admin.digital.questions.create', request()->only(['questionnaire_id', 'dimension_id'])) }}" class="btn btn-primary">
                 <i class="fas fa-plus"></i> Tambah Pertanyaan
             </a>
@@ -147,9 +147,9 @@
             @csrf
             <div class="modal-body">
                 <div class="form-group">
-                    <label>Angket</label>
+                    <label>CEKMA</label>
                     <select name="questionnaire_id" class="form-control" required>
-                        <option value="">Pilih Angket</option>
+                        <option value="">Pilih CEKMA</option>
                         @foreach($questionnaires as $questionnaire)
                             <option value="{{ $questionnaire->id }}" {{ request('questionnaire_id') == $questionnaire->id ? 'selected' : '' }}>
                                 {{ $questionnaire->name }}

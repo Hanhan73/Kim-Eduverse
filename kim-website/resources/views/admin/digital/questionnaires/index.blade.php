@@ -1,7 +1,7 @@
 @extends('layouts.admin-digital')
 
-@section('title', 'Daftar Angket - Admin Digital')
-@section('page-title', 'Daftar Angket')
+@section('title', 'Daftar CEKMA - Admin Digital')
+@section('page-title', 'Daftar CEKMA')
 
 @section('content')
 <!-- Stats -->
@@ -12,7 +12,7 @@
         </div>
         <div class="stat-content">
             <h4>{{ $stats['total'] }}</h4>
-            <p>Total Angket</p>
+            <p>Total CEKMA</p>
         </div>
     </div>
 
@@ -49,9 +49,9 @@
 
 <div class="card">
     <div class="card-header">
-        <h3><i class="fas fa-clipboard-list"></i> Daftar Angket</h3>
+        <h3><i class="fas fa-clipboard-list"></i> Daftar CEKMA</h3>
         <a href="{{ route('admin.digital.questionnaires.create') }}" class="btn btn-primary">
-            <i class="fas fa-plus"></i> Tambah Angket
+            <i class="fas fa-plus"></i> Tambah CEKMA
         </a>
     </div>
 
@@ -101,7 +101,7 @@
             <table>
                 <thead>
                     <tr>
-                        <th>Nama Angket</th>
+                        <th>Nama CEKMA</th>
                         <th>Tipe</th>
                         <th>Dimensi</th>
                         <th>Pertanyaan</th>
@@ -151,7 +151,7 @@
                                 <a href="{{ route('admin.digital.questionnaires.edit', $questionnaire->id) }}" class="btn btn-sm btn-icon btn-primary" title="Edit">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <form action="{{ route('admin.digital.questionnaires.destroy', $questionnaire->id) }}" method="POST" style="display: inline;" onsubmit="return confirmDelete('Hapus angket ini?')">
+                                <form action="{{ route('admin.digital.questionnaires.destroy', $questionnaire->id) }}" method="POST" style="display: inline;" onsubmit="return confirmDelete('Hapus cekma ini?')">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-sm btn-icon btn-danger" title="Hapus">
@@ -173,10 +173,10 @@
         @else
         <div class="empty-state">
             <i class="fas fa-clipboard-list"></i>
-            <h3>Belum Ada Angket</h3>
-            <p>Mulai dengan membuat angket pertama Anda</p>
+            <h3>Belum Ada CEKMA</h3>
+            <p>Mulai dengan membuat cekma pertama Anda</p>
             <a href="{{ route('admin.digital.questionnaires.create') }}" class="btn btn-primary">
-                <i class="fas fa-plus"></i> Tambah Angket
+                <i class="fas fa-plus"></i> Tambah CEKMA
             </a>
         </div>
         @endif

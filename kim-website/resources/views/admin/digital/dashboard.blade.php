@@ -22,7 +22,7 @@
         </div>
         <div class="stat-content">
             <h4>{{ $stats['total_questionnaires'] }}</h4>
-            <p>Total Angket</p>
+            <p>Total CEKMA</p>
         </div>
     </div>
 
@@ -126,7 +126,7 @@
     <!-- Questionnaire Stats -->
     <div class="card">
         <div class="card-header">
-            <h3><i class="fas fa-chart-pie"></i> Respons per Angket</h3>
+            <h3><i class="fas fa-chart-pie"></i> Respons per CEKMA</h3>
         </div>
         <div class="card-body">
             @if($responsesByQuestionnaire->count() > 0)
@@ -153,7 +153,7 @@
             @else
             <div class="empty-state" style="padding: 30px;">
                 <i class="fas fa-clipboard-list" style="font-size: 2rem;"></i>
-                <p>Belum ada angket</p>
+                <p>Belum ada cekma</p>
             </div>
             @endif
         </div>
@@ -172,7 +172,7 @@
                 <thead>
                     <tr>
                         <th>Responden</th>
-                        <th>Angket</th>
+                        <th>CEKMA</th>
                         <th>Order</th>
                         <th>Skor</th>
                         <th>Selesai</th>

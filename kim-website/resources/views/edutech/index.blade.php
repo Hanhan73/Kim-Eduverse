@@ -14,7 +14,7 @@
                     <span class="gradient-text">KIM Edutech</span>
                 </h1>
                 <p class="hero-subtitle">
-                    Platform Learning Management System terlengkap untuk pengembangan kompetensi 
+                    Platform Learning Management System terlengkap untuk pengembangan kompetensi
                     dan skill profesional Anda. Belajar kapan saja, di mana saja.
                 </p>
                 <div class="hero-buttons">
@@ -25,7 +25,7 @@
                         <i class="fas fa-user-plus"></i> Daftar Gratis
                     </a>
                 </div>
-                
+
                 <!-- Quick Stats -->
                 <div class="hero-stats">
                     <div class="stat-item">
@@ -42,7 +42,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="hero-image">
                 <img src="https://via.placeholder.com/600x500/667eea/ffffff?text=Learning+Platform" alt="KIM Edutech">
             </div>
@@ -247,7 +247,7 @@
                     <i class="fas fa-quote-left"></i>
                 </div>
                 <p class="testimonial-text">
-                    "Platform yang sangat membantu! Materi mudah dipahami dan instruktur sangat responsif. 
+                    "Platform yang sangat membantu! Materi mudah dipahami dan instruktur sangat responsif.
                     Saya berhasil meningkatkan skill programming saya dalam 3 bulan."
                 </p>
                 <div class="testimonial-author">
@@ -271,7 +271,7 @@
                     <i class="fas fa-quote-left"></i>
                 </div>
                 <p class="testimonial-text">
-                    "Sertifikat dari KIM Edutech sangat membantu karir saya. Sekarang saya sudah bekerja 
+                    "Sertifikat dari KIM Edutech sangat membantu karir saya. Sekarang saya sudah bekerja
                     di perusahaan IT ternama berkat kursus yang saya ambil di sini."
                 </p>
                 <div class="testimonial-author">
@@ -295,7 +295,7 @@
                     <i class="fas fa-quote-left"></i>
                 </div>
                 <p class="testimonial-text">
-                    "Fleksibilitas belajar yang ditawarkan sangat cocok untuk saya yang bekerja. 
+                    "Fleksibilitas belajar yang ditawarkan sangat cocok untuk saya yang bekerja.
                     Bisa belajar kapan saja dan materi bisa diakses berkali-kali."
                 </p>
                 <div class="testimonial-author">
@@ -459,7 +459,19 @@
 
 .stat-label {
     font-size: 0.9rem;
-    opacity: 0.9;
+}
+
+/* HERO STATS */
+.stat-number {
+    opacity: 1 !important;
+    color: #ffffff !important;
+    font-weight: 900;
+}
+
+.stat-label {
+    opacity: 1 !important;
+    color: #ffffff !important;
+    font-weight: 600;
 }
 
 .hero-image img {

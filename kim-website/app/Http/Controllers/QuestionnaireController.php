@@ -39,7 +39,7 @@ class QuestionnaireController extends Controller
 
         if ($incompleteResponses->isEmpty()) {
             return redirect()->route('digital.payment.success', $orderNumber)
-                ->with('info', 'Semua angket sudah selesai diisi');
+                ->with('info', 'Semua CEKMA sudah selesai diisi');
         }
 
         // Get first incomplete response
@@ -129,11 +129,11 @@ class QuestionnaireController extends Controller
 
         if ($remainingResponses > 0) {
             return redirect()->route('digital.questionnaire.show', $order->order_number)
-                ->with('success', 'Angket berhasil diisi! Silakan isi angket berikutnya.');
+                ->with('success', 'CEKMA berhasil diisi! Silakan isi CEKMA berikutnya.');
         }
 
         return redirect()->route('digital.payment.success', $order->order_number)
-            ->with('success', 'Semua angket berhasil diisi! Hasil telah dikirim ke email Anda.');
+            ->with('success', 'Semua CEKMA berhasil diisi! Hasil telah dikirim ke email Anda.');
     }
 
     /**
@@ -239,7 +239,7 @@ class QuestionnaireController extends Controller
         // Set paper size
         $pdf->setPaper('A4', 'portrait');
         
-        $fileName = 'hasil_angket_' . $response->id . '_' . time() . '.pdf';
+        $fileName = 'hasil_cekma_' . $response->id . '_' . time() . '.pdf';
         $filePath = 'questionnaire_results/' . $fileName;
         
         \Storage::disk('public')->put($filePath, $pdf->output());

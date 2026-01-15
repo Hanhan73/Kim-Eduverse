@@ -6,55 +6,67 @@ use Illuminate\Http\Request;
 
 class DeveloperController extends Controller
 {
-    public function index()
+    private function categories()
     {
-        // Define main categories (excluding 'aplikasi' for now, as per user request)
-        $mainCategories = [
-            // Add other categories here if needed in the future
-            // Example:
-            // 'web' => [
-            //     'title' => 'Pengembangan Web',
-            //     'description' => 'Solusi pengembangan website dan aplikasi web',
-            //     'icon' => 'fa-globe',
-            //     'color' => '#FF6B6B'
-            // ],
-        ];
-
-        // Define application categories (subtypes of 'aplikasi')
-        $applicationCategories = [
+        return [
             'mobile' => [
                 'title' => 'Aplikasi Mobile',
-                'description' => 'Pengembangan aplikasi untuk Android dan iOS',
+                'description' => 'Android & iOS',
                 'icon' => 'fa-mobile-alt',
                 'color' => '#4ECDC4'
             ],
             'web' => [
                 'title' => 'Aplikasi Web',
-                'description' => 'Pengembangan aplikasi berbasis web',
+                'description' => 'Berbasis browser & cloud',
                 'icon' => 'fa-globe',
                 'color' => '#45B7D1'
             ],
             'desktop' => [
                 'title' => 'Aplikasi Desktop',
-                'description' => 'Pengembangan aplikasi untuk desktop',
+                'description' => 'Windows / Mac / Linux',
                 'icon' => 'fa-desktop',
                 'color' => '#FFA07A'
             ],
             'enterprise' => [
                 'title' => 'Aplikasi Enterprise',
-                'description' => 'Solusi aplikasi untuk bisnis skala besar',
+                'description' => 'Sistem skala besar',
                 'icon' => 'fa-building',
                 'color' => '#98D8C8'
             ],
         ];
+    }
 
-        return view('developer.index', compact('mainCategories', 'applicationCategories'));
+    public function index()
+    {
+        return view('developer.index', [
+            'applicationCategories' => $this->categories()
+        ]);
     }
 
     public function show($category)
     {
-        // Logic to show details of a specific category
-        // For now, just return a view with the category key
-        return view('developer.show', compact('category'));
+        $categories = $this->categories();
+
+        abort_if(!isset($categories[$category]), 404);
+
+        return view('developer.show', [
+            'categoryKey' => $category,
+            'category' => $categories[$category],
+        ]);
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'category' => 'required',
+            'name' => 'required',
+            'whatsapp' => 'required',
+            'description' => 'required',
+        ]);
+
+        // sementara: kirim ke email / log
+        // nanti bisa simpan DB
+
+        return redirect()->back()->with('success', 'Permintaan berhasil dikirim');
     }
 }

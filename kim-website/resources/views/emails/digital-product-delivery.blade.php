@@ -99,14 +99,14 @@
                             @if($hasQuestionnaire)
                             <div style="background: #fef3c7; border: 2px solid #fcd34d; border-radius: 12px; padding: 25px; margin-bottom: 25px;">
                                 <h3 style="margin: 0 0 15px; color: #92400e; font-size: 18px;">
-                                    📋 Angket Menunggu Anda
+                                    📋 CEKMA Menunggu Anda
                                 </h3>
                                 <p style="margin: 0 0 20px; color: #92400e; font-size: 14px; line-height: 1.6;">
-                                    Anda juga memiliki angket yang perlu diisi. Hasil analisis akan dikirim ke email Anda setelah selesai.
+                                    Anda juga memiliki cekma yang perlu diisi. Hasil analisis akan dikirim ke email Anda setelah selesai.
                                 </p>
                                 <a href="{{ route('digital.questionnaire.show', $order->order_number) }}" 
                                    style="display: inline-block; background: linear-gradient(135deg, #f59e0b, #d97706); color: #ffffff; text-decoration: none; padding: 14px 30px; border-radius: 8px; font-weight: 600; font-size: 15px;">
-                                    📝 Isi Angket Sekarang
+                                    📝 Isi CEKMA Sekarang
                                 </a>
                             </div>
                             @endif

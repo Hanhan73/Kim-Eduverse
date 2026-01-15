@@ -76,14 +76,14 @@ class CollaboratorQuestionnaireController extends Controller
         $questionnaire = Questionnaire::create($validated);
 
         return redirect()->route('digital.collaborator.questionnaires.builder', $questionnaire)
-            ->with('success', 'Angket berhasil dibuat! Sekarang tambahkan pertanyaan.');
+            ->with('success', 'CEKMA berhasil dibuat! Sekarang tambahkan pertanyaan.');
     }
 
     public function builder(Questionnaire $questionnaire)
     {
         $userId = $this->checkAuth();
         if ($questionnaire->created_by !== $userId) {
-            abort(403, 'Anda tidak memiliki akses ke angket ini');
+            abort(403, 'Anda tidak memiliki akses ke CEKMA ini');
         }
 
         $questionnaire->load(['dimensions' => function($q) {
@@ -114,7 +114,7 @@ class CollaboratorQuestionnaireController extends Controller
         $validated['is_active'] = $request->has('is_active');
         $questionnaire->update($validated);
 
-        return back()->with('success', 'Angket berhasil diupdate!');
+        return back()->with('success', 'CEKMA berhasil diupdate!');
     }
 
     public function destroy(Questionnaire $questionnaire)
@@ -125,12 +125,12 @@ class CollaboratorQuestionnaireController extends Controller
         }
 
         if ($questionnaire->responses()->where('is_completed', true)->exists()) {
-            return back()->with('error', 'Tidak dapat menghapus angket yang sudah memiliki respons!');
+            return back()->with('error', 'Tidak dapat menghapus CEKMA yang sudah memiliki respons!');
         }
 
         $questionnaire->delete();
         return redirect()->route('digital.collaborator.questionnaires.index')
-            ->with('success', 'Angket berhasil dihapus!');
+            ->with('success', 'CEKMA berhasil dihapus!');
     }
 
     // === DIMENSION MANAGEMENT ===

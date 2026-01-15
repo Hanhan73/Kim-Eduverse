@@ -89,7 +89,7 @@ class ClaudeAIService
         }
         
         // Questionnaire info
-        $context .= "=== TENTANG ANGKET INI ===\n";
+        $context .= "=== TENTANG CEKMA INI ===\n";
         $context .= "Nama: {$questionnaire->name}\n";
         $context .= "Deskripsi: {$questionnaire->description}\n";
         $context .= "Tipe: {$questionnaire->type}\n\n";
@@ -173,7 +173,7 @@ class ClaudeAIService
         $context .= "FORMAT JSON YANG DIHARAPKAN:\n";
         $context .= "```json\n";
         $context .= "{\n";
-        $context .= '  "overall_summary": "Berdasarkan hasil angket yang kamu isi... (lanjutkan dengan 2-3 paragraf natural)",'."\n";
+        $context .= '  "overall_summary": "Berdasarkan hasil CEKMA yang kamu isi... (lanjutkan dengan 2-3 paragraf natural)",'."\n";
         $context .= '  "dimension_analyses": {'."\n";
         
         // List dimension codes with explicit mention of using the codes from the scores section
@@ -449,7 +449,7 @@ class ClaudeAIService
             $overallSummary = $this->stripEmojis($overallSummary);
             if (empty(trim($overallSummary))) {
                 Log::warning('AI missing overall_summary, using fallback');
-                $overallSummary = "Terima kasih sudah mengisi angket ini. Hasil yang kamu dapatkan memberikan gambaran tentang kondisimu saat ini di berbagai aspek yang diukur.\n\nSetiap dimensi memiliki interpretasi dan saran yang bisa kamu baca di bawah ini. Gunakan insight ini untuk terus berkembang dan menjadi versi terbaik dari dirimu.";
+                $overallSummary = "Terima kasih sudah mengisi CEKMA ini. Hasil yang kamu dapatkan memberikan gambaran tentang kondisimu saat ini di berbagai aspek yang diukur.\n\nSetiap dimensi memiliki interpretasi dan saran yang bisa kamu baca di bawah ini. Gunakan insight ini untuk terus berkembang dan menjadi versi terbaik dari dirimu.";
             }
             
             $motivationalMessage = $aiAnalysis['motivational_message'] ?? '';
@@ -539,7 +539,7 @@ class ClaudeAIService
         
         return [
             'dimension_results' => $enhancedSummary,
-            'overall_summary' => "Halo! Terima kasih sudah meluangkan waktu untuk mengisi angket ini. Hasil yang kamu dapatkan memberikan gambaran tentang kondisimu saat ini di beberapa aspek yang diukur.\n\nSetiap orang memiliki perjalanan dan tantangan masing-masing, dan tidak ada hasil yang 'salah' dalam asesmen ini. Yang penting adalah bagaimana kamu menggunakan insight ini untuk terus berkembang dan menjadi versi terbaik dari dirimu.\n\nSilakan baca interpretasi setiap dimensi di bawah ini untuk memahami lebih dalam tentang kondisimu, beserta saran-saran praktis yang bisa langsung kamu coba.",
+            'overall_summary' => "Terima kasih sudah meluangkan waktu untuk mengisi CEKMA ini. Hasil yang kamu dapatkan memberikan gambaran tentang kondisimu saat ini di beberapa aspek yang diukur.\n\nSetiap orang memiliki perjalanan dan tantangan masing-masing, dan tidak ada hasil yang 'salah' dalam asesmen ini. Yang penting adalah bagaimana kamu menggunakan insight ini untuk terus berkembang dan menjadi versi terbaik dari dirimu.\n\nSilakan baca interpretasi setiap dimensi di bawah ini untuk memahami lebih dalam tentang kondisimu, beserta saran-saran praktis yang bisa langsung kamu coba.",
             'professional_note' => 'Hasil ini bersifat informatif dan edukatif. Jika kamu merasa membutuhkan dukungan lebih lanjut, jangan ragu untuk berkonsultasi dengan psikolog atau konselor profesional.',
             'motivational_message' => "Ingat bahwa mengambil langkah untuk memahami diri sendiri sudah merupakan tanda keberanian. Apapun hasilnya, kamu punya kemampuan untuk terus tumbuh dan berkembang. Semangat!",
             'ai_generated' => false,

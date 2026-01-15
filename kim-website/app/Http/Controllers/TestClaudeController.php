@@ -350,7 +350,7 @@ class TestClaudeController extends Controller
         
         $prompt .= "=== DATA RESPONDEN ===\n";
         $prompt .= "Nama: {$mockData['respondent_name']}\n";
-        $prompt .= "Angket: {$mockData['questionnaire_name']}\n\n";
+        $prompt .= "CEKMA: {$mockData['questionnaire_name']}\n\n";
         
         $prompt .= "=== HASIL SKOR ===\n";
         foreach ($mockData['dimensions'] as $code => $dim) {

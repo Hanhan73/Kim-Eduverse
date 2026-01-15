@@ -75,15 +75,15 @@
                         style="text-decoration: none; padding: 20px; border: 2px solid #e2e8f0; border-radius: 10px; text-align: center; transition: all 0.3s; display: block;">
                         <i class="fas fa-clipboard-list"
                             style="font-size: 2.5rem; color: #667eea; margin-bottom: 10px;"></i>
-                        <h3 style="margin: 0; font-size: 1rem; color: var(--dark);">Angket/Questionnaire</h3>
-                        <p style="margin: 5px 0 0; font-size: 0.85rem; color: var(--gray);">Buat angket psikologi</p>
+                        <h3 style="margin: 0; font-size: 1rem; color: var(--dark);">CEKMA/Questionnaire</h3>
+                        <p style="margin: 5px 0 0; font-size: 0.85rem; color: var(--gray);">Buat cekma psikologi</p>
                     </a>
 
                     <a href="{{ route('digital.collaborator.seminars.create') }}"
                         style="text-decoration: none; padding: 20px; border: 2px solid #e2e8f0; border-radius: 10px; text-align: center; transition: all 0.3s; display: block;">
                         <i class="fas fa-chalkboard-teacher"
                             style="font-size: 2.5rem; color: #667eea; margin-bottom: 10px;"></i>
-                        <h3 style="margin: 0; font-size: 1rem; color: var(--dark);">Seminar On-Demand</h3>
+                        <h3 style="margin: 0; font-size: 1rem; color: var(--dark);">On-demand seminar</h3>
                         <p style="margin: 5px 0 0; font-size: 0.85rem; color: var(--gray);">Seminar + Pre/Post Test</p>
                     </a>
 

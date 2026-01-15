@@ -23,19 +23,19 @@ class CourseController extends Controller
         // Check if user already enrolled
         $isEnrolled = false;
         $enrollment = null;
+        $hasPendingPayment = false;
 
         if (session()->has('edutech_user_id')) {
             $enrollment = Enrollment::where('student_id', session('edutech_user_id'))
                 ->where('course_id', $course->id)
                 ->first();
             
-            $isEnrolled = Enrollment::where('student_id', session('edutech_user_id'))
-                ->where('course_id', $course->id)
-                ->where('payment_status', 'paid')
-                ->exists();
-
+            if ($enrollment) {
+                // User sudah pernah enroll
+                $isEnrolled = $enrollment->payment_status === 'paid';
+                $hasPendingPayment = $enrollment->payment_status === 'pending';
+            }
         }
-
 
         // Get related courses
         $relatedCourses = Course::where('category', $course->category)
@@ -45,17 +45,24 @@ class CourseController extends Controller
             ->take(3)
             ->get();
 
+        $isInstructor = false;
+        if (session()->has('edutech_user_id')) {
+            $userId = session('edutech_user_id');
+            $isInstructor = ($course->instructor_id == $userId);
+        }
 
-            $isInstructor = false;
-            if (session()->has('edutech_user_id')) {
-                $userId = session('edutech_user_id');
-                $isInstructor = ($course->instructor_id == $userId);
-            }
-        return view('edutech.courses.detail', compact('course', 'isEnrolled', 'enrollment', 'relatedCourses', 'isInstructor'));
+        return view('edutech.courses.detail', compact(
+            'course', 
+            'isEnrolled', 
+            'enrollment', 
+            'hasPendingPayment',
+            'relatedCourses', 
+            'isInstructor'
+        ));
     }
 
     /**
-     * Enroll to course - UPDATED: Menggunakan SLUG bukan ID
+     * Enroll to course
      */
     public function enroll(Request $request, $slug)
     {
@@ -68,7 +75,7 @@ class CourseController extends Controller
 
         $studentId = session('edutech_user_id');
         
-        // Find course by SLUG (bukan ID)
+        // Find course by SLUG
         $course = Course::where('slug', $slug)
             ->where('is_published', true)
             ->firstOrFail();
@@ -79,13 +86,22 @@ class CourseController extends Controller
             ->first();
 
         if ($existingEnrollment) {
-            // Redirect ke learning page dengan route name yang benar
-            return redirect()
-                ->route('edutech.courses.learn', $course->slug)
-                ->with('info', 'Anda sudah terdaftar di course ini');
+            // Jika sudah paid, redirect ke learning
+            if ($existingEnrollment->payment_status === 'paid') {
+                return redirect()
+                    ->route('edutech.courses.learn', $course->slug)
+                    ->with('info', 'Anda sudah terdaftar di course ini');
+            }
+            
+            // Jika masih pending, redirect ke payment
+            if ($existingEnrollment->payment_status === 'pending') {
+                return redirect()
+                    ->route('edutech.payment.show', $existingEnrollment->id)
+                    ->with('info', 'Lanjutkan pembayaran untuk mengakses course');
+            }
         }
 
-        // Create enrollment
+        // Create new enrollment
         $enrollment = Enrollment::create([
             'student_id' => $studentId,
             'course_id' => $course->id,
@@ -143,7 +159,7 @@ class CourseController extends Controller
         // Check payment status for paid courses
         if ($course->price > 0 && $enrollment->payment_status !== 'paid') {
             return redirect()
-                ->route('edutech.courses.payment', $enrollment->id)
+                ->route('edutech.payment.show', $enrollment->id)
                 ->with('error', 'Silakan selesaikan pembayaran terlebih dahulu');
         }
 
@@ -163,5 +179,41 @@ class CourseController extends Controller
         }
 
         return view('edutech.courses.learn', compact('course', 'enrollment', 'currentLesson'));
+    }
+
+    /**
+     * Show user's enrollments (My Courses) - UPDATED dengan Active & Completed
+     */
+    public function myEnrollments()
+    {
+        if (!session()->has('edutech_user_id')) {
+            return redirect()
+                ->route('edutech.login')
+                ->with('error', 'Silakan login terlebih dahulu');
+        }
+
+        $studentId = session('edutech_user_id');
+
+        // Get all enrollments
+        $enrollments = Enrollment::where('student_id', $studentId)
+            ->with(['course.instructor'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        // Separate by payment status
+        $pendingPayments = $enrollments->where('payment_status', 'pending');
+        
+        // Separate by completion status (hanya yang sudah paid)
+        $paidEnrollments = $enrollments->where('payment_status', 'paid');
+        
+        $activeCourses = $paidEnrollments->where('status', '!=', 'completed');
+        $completedCourses = $paidEnrollments->where('status', 'completed');
+
+        return view('edutech.student.my-courses', compact(
+            'enrollments',
+            'pendingPayments',
+            'activeCourses', 
+            'completedCourses'
+        ));
     }
 }
