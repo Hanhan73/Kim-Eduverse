@@ -430,7 +430,6 @@ use App\Http\Controllers\Admin\QuizController;
 use App\Http\Controllers\Admin\LandingPageController as DigitalLandingPageController;
 use App\Http\Controllers\Digital\Collaborator\CollaboratorProductController;
 use App\Http\Controllers\Digital\Collaborator\CollaboratorProfileController;
-use App\Http\Controllers\Admin\Digital\UserManagementController;
 
 // Admin Auth Routes (No middleware)
 Route::prefix('admin/digital')->name('admin.digital.')->group(function () {
@@ -559,10 +558,6 @@ Route::prefix('admin/digital')->name('admin.digital.')->middleware(['digital_aut
         Route::get('/{product}/preview', [DigitalLandingPageController::class, 'preview'])->name('preview');
     });
 
-            // User Management (Collaborator & Bendahara)
-        Route::resource('users', UserManagementController::class);
-        Route::post('users/{user}/toggle', [UserManagementController::class, 'toggleStatus'])
-            ->name('users.toggle');
 });
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
@@ -622,7 +617,7 @@ use App\Http\Controllers\Digital\Collaborator\CollaboratorSeminarController;
 */
 
 // Collaborator Routes (untuk creator produk digital)
-Route::middleware(['digital.auth', 'check.digital.role:collaborator'])
+Route::middleware(['check.digital.role:collaborator'])
     ->prefix('digital/collaborator')
     ->name('digital.collaborator.')
     ->group(function () {
@@ -703,7 +698,7 @@ Route::middleware(['digital.auth', 'check.digital.role:collaborator'])
     });
 
 // Bendahara Digital Routes (finance officer untuk KIM Digital)
-Route::middleware(['digital.auth', 'check.digital.role:bendahara_digital'])
+Route::middleware(['check.digital.role:bendahara_digital'])
     ->prefix('digital/bendahara')
     ->name('digital.bendahara.')
     ->group(function () {
@@ -724,11 +719,3 @@ Route::middleware(['digital.auth', 'check.digital.role:bendahara_digital'])
         Route::get('/collaborators', [BendaharaDigitalCollaboratorController::class, 'index'])->name('collaborators.index');
         Route::get('/collaborators/{collaborator}', [BendaharaDigitalCollaboratorController::class, 'show'])->name('collaborators.show');
     });
-
-
-// Digital Login Routes (NO MIDDLEWARE)
-Route::prefix('digital/auth')->name('admin.digital.')->group(function () {
-    Route::get('/login', [DigitalAuthController::class, 'showLogin'])->name('login');
-    Route::post('/login', [DigitalAuthController::class, 'login'])->name('login.post');
-    Route::post('/logout', [DigitalAuthController::class, 'logout'])->name('logout');
-});
