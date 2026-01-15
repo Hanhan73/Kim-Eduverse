@@ -743,11 +743,6 @@
                 <i class="fas fa-arrow-left"></i> Kembali ke Blog Admin
             </a>
 
-            <div class="menu-section">User</div>
-
-            <a href="{{ route('admin.digital.users.index') }}" class="menu-item">
-                <i class="fas fa-users-cog"></i> User Management
-            </a>
 
             <form action="{{ route('admin.digital.logout') }}" method="POST" style="margin: 0;">
                 @csrf
