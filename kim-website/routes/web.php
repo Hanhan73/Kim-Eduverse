@@ -439,7 +439,7 @@ Route::prefix('admin/digital')->name('admin.digital.')->group(function () {
 });
 
 // Admin Routes - Protected by admin middleware
-Route::prefix('admin/digital')->name('admin.digital.')->middleware(['digital_auth'])->group(function () {
+Route::prefix('admin/digital')->name('admin.digital.')->middleware(['check.digital.role:collaborator'])->group(function () {
 
     // Dashboard
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
