@@ -61,14 +61,13 @@ class QuestionnaireManagementController extends Controller
     public function create()
     {
         $types = [
-            'burnout' => 'Burnout',
-            'stress' => 'Stress',
-            'anxiety' => 'Anxiety',
-            'depression' => 'Depression',
-            'motivation' => 'Motivation',
-            'satisfaction' => 'Satisfaction',
-            'personality' => 'Personality',
-            'procrastination' => 'Procrastination',
+            'siswa' => 'Siswa',
+            'mahasiswa' => 'Mahasiswa',
+            'fresh_graduate' => 'Fresh Graduate',
+            'pegawai' => 'Pegawai',
+            'guru_dosen' => 'Guru & Dosen',
+            'orang_tua' => 'Orang Tua',
+            'calon_asn' => 'Calon ASN',
             'other' => 'Lainnya',
         ];
 
@@ -143,14 +142,13 @@ class QuestionnaireManagementController extends Controller
         $questionnaire = Questionnaire::with(['dimensions', 'questions.dimension'])->findOrFail($id);
 
         $types = [
-            'burnout' => 'Burnout',
-            'stress' => 'Stress',
-            'anxiety' => 'Anxiety',
-            'depression' => 'Depression',
-            'motivation' => 'Motivation',
-            'satisfaction' => 'Satisfaction',
-            'personality' => 'Personality',
-            'procrastination' => 'Procrastination',
+            'siswa' => 'Siswa',
+            'mahasiswa' => 'Mahasiswa',
+            'fresh_graduate' => 'Fresh Graduate',
+            'pegawai' => 'Pegawai',
+            'guru_dosen' => 'Guru & Dosen',
+            'orang_tua' => 'Orang Tua',
+            'calon_asn' => 'Calon ASN',
             'other' => 'Lainnya',
         ];
 

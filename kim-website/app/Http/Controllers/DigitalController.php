@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\DigitalProduct;
 use App\Models\DigitalProductCategory;
+use App\Models\Questionnaire;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -53,6 +54,12 @@ class DigitalController extends Controller
             });
         }
 
+        if ($request->filled('cekma_type')) {
+            $query->whereHas('questionnaire', function ($q) use ($request) {
+                $q->where('type', $request->cekma_type);
+            });
+        }
+
         // Sorting
         switch ($request->get('sort', 'popular')) {
             case 'newest':
@@ -69,10 +76,20 @@ class DigitalController extends Controller
                 break;
         }
 
+        $cekmaStats = Questionnaire::select('questionnaires.type')
+            ->selectRaw('COUNT(DISTINCT digital_products.id) as total')
+            ->join('digital_products', 'digital_products.questionnaire_id', '=', 'questionnaires.id')
+            ->where('digital_products.is_active', true)
+            ->groupBy('questionnaires.type')
+            ->get()
+            ->keyBy('type');
+
+        $totalCekma = $cekmaStats->sum('total');
+
         $products = $query->paginate(12)->withQueryString();
         $categories = DigitalProductCategory::all();
 
-        return view('digital.catalog', compact('products', 'categories'));
+        return view('digital.catalog', compact('products', 'categories', 'cekmaStats', 'totalCekma'));
     }
 
     /**

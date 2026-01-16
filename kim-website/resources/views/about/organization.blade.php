@@ -581,27 +581,162 @@
     }
 }
 
+/* =========================
+   MOBILE & TABLET OPTIMIZATION
+========================= */
+
+/* General Mobile */
 @media (max-width: 768px) {
-    .page-title {
-        font-size: 2.5rem;
+
+    body {
+        overflow-x: hidden;
     }
 
+    .section {
+        padding: 60px 0;
+    }
+
+    .section-bg-white {
+        padding: 40px 20px;
+        margin: 0 10px;
+        border-radius: 24px;
+    }
+
+    /* Header */
+    .team-header {
+        padding: 90px 0 60px;
+    }
+
+    .page-title {
+        font-size: 2.2rem;
+        line-height: 1.2;
+    }
+
+    .page-subtitle {
+        font-size: 1rem;
+    }
+
+    /* Section Titles */
     .section-title {
-        font-size: 2rem;
+        font-size: 1.8rem;
+    }
+
+    .section-subtitle {
+        font-size: 0.95rem;
+    }
+
+    /* OWNER CARD */
+    .owner-card-inner {
+        grid-template-columns: 1fr;
+    }
+
+    .owner-photo-section {
+        padding: 40px 20px;
     }
 
     .owner-photo-wrapper img {
-        width: 250px;
-        height: 250px;
+        width: 220px;
+        height: 220px;
     }
 
+    .owner-info-section {
+        padding: 35px 25px;
+        text-align: center;
+    }
+
+    .owner-info-section h3 {
+        font-size: 1.8rem;
+    }
+
+    .owner-icon {
+        display: none;
+    }
+
+    /* C-LEVEL */
     .c-level-grid,
-    .single-executive,
-    .department-heads-grid,
+    .single-executive {
+        grid-template-columns: 1fr;
+        gap: 25px;
+    }
+
+    .exec-photo {
+        height: 260px;
+    }
+
+    .exec-info {
+        padding: 22px;
+        text-align: center;
+    }
+
+    .exec-info h4 {
+        font-size: 1.2rem;
+    }
+
+    /* DEPARTMENT HEADS
+       Horizontal scroll = UX modern di mobile */
+    .department-heads-grid {
+        display: flex;
+        overflow-x: auto;
+        gap: 20px;
+        padding-bottom: 10px;
+        scroll-snap-type: x mandatory;
+    }
+
+    .dept-head-card {
+        min-width: 260px;
+        scroll-snap-align: start;
+    }
+
+    /* JUNIOR STAFF */
+    .junior-staff-section {
+        padding: 40px 25px;
+    }
+
+    .junior-staff-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+
+    .junior-photo {
+        height: 220px;
+    }
+
+    /* EXPERT STAFF */
+    .expert-staff-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+
+    .expert-photo {
+        height: 220px;
+    }
+
+    .expert-content {
+        padding: 20px;
+    }
+
+}
+
+/* Extra Small Devices */
+@media (max-width: 480px) {
+
+    .page-title {
+        font-size: 1.9rem;
+    }
+
+    .section-title {
+        font-size: 1.6rem;
+    }
+
     .junior-staff-grid,
     .expert-staff-grid {
         grid-template-columns: 1fr;
     }
+
+    .dept-head-card {
+        min-width: 240px;
+    }
+
 }
 </style>
 
@@ -631,8 +766,7 @@
                     <div class="owner-card-inner">
                         <div class="owner-photo-section">
                             <div class="owner-photo-wrapper">
-                                <img src="{{ asset('storage/images/team/prof-edy.png') }}"
-                                    alt="Prof. Dr. H. Edi Suryadi"
+                                <img src="{{ asset('images/team/prof-edy.png') }}" alt="Prof. Dr. H. Edi Suryadi"
                                     onerror="this.src='https://ui-avatars.com/api/?name=Prof+Edi+Suryadi&size=500&background=667eea&color=fff&bold=true&font-size=0.3'">
                             </div>
                         </div>
@@ -649,7 +783,7 @@
             <div class="c-level-grid">
                 <div class="executive-card">
                     <div class="exec-photo">
-                        <img src="{{ asset('storage/images/team/yosep.png') }}" alt="Yosep Hernawan"
+                        <img src="{{ asset('images/team/yosep.png') }}" alt="Yosep Hernawan"
                             onerror="this.src='https://ui-avatars.com/api/?name=Yosep+Hernawan&size=600&background=48bb78&color=fff&bold=true&font-size=0.3'">
                         <div class="exec-badge ceo">CEO</div>
                     </div>
@@ -661,7 +795,7 @@
 
                 <div class="executive-card">
                     <div class="exec-photo">
-                        <img src="{{ asset('storage/images/team/rasto.png') }}" alt="Dr. Rasto"
+                        <img src="{{ asset('images/team/rasto.png') }}" alt="Dr. Rasto"
                             onerror="this.src='https://ui-avatars.com/api/?name=Dr+Rasto&size=600&background=3182ce&color=fff&bold=true&font-size=0.3'">
                         <div class="exec-badge coo">COO</div>
                     </div>
@@ -676,7 +810,7 @@
             <div class="single-executive">
                 <div class="executive-card">
                     <div class="exec-photo">
-                        <img src="{{ asset('storage/images/team/gilang.png') }}" alt="Gilang Garnadi"
+                        <img src="{{ asset('images/team/gilang.png') }}" alt="Gilang Garnadi"
                             onerror="this.src='https://ui-avatars.com/api/?name=Gilang+Garnadi&size=600&background=d69e2e&color=fff&bold=true&font-size=0.3'">
                         <div class="exec-badge cmo">CMO</div>
                     </div>
@@ -687,7 +821,7 @@
                 </div>
                 <div class="executive-card">
                     <div class="exec-photo">
-                        <img src="{{ asset('storage/images/team/farhan.png') }}" alt="Farhan Muzhaffar"
+                        <img src="{{ asset('images/team/farhan.png') }}" alt="Farhan Muzhaffar"
                             onerror="this.src='https://ui-avatars.com/api/?name=Farhan+Muzhaffar&size=600&background=9f7aea&color=fff&bold=true&font-size=0.3'">
                         <div class="exec-badge cto">CTO</div>
                     </div>
@@ -708,7 +842,7 @@
                         <h5 class="dept-name">Information & Technology</h5>
                     </div>
                     <div class="dept-photo-section">
-                        <img src="{{ asset('storage/images/team/anjar.png') }}" alt="Anjar Suprayogi"
+                        <img src="{{ asset('images/team/anjar.png') }}" alt="Anjar Suprayogi"
                             onerror="this.src='https://ui-avatars.com/api/?name=Anjar+Suprayogi&size=400&background=805ad5&color=fff&bold=true&font-size=0.3'">
                     </div>
                     <div class="dept-info">
@@ -724,7 +858,7 @@
                         <h5 class="dept-name">Financial & Accounting</h5>
                     </div>
                     <div class="dept-photo-section">
-                        <img src="{{ asset('storage/images/team/yosan.png') }}" alt="Yosan Krisna"
+                        <img src="{{ asset('images/team/yosan.png') }}" alt="Yosan Krisna"
                             onerror="this.src='https://ui-avatars.com/api/?name=Yosan+Krisna&size=400&background=e53e3e&color=fff&bold=true&font-size=0.3'">
                     </div>
                     <div class="dept-info">
@@ -740,7 +874,7 @@
                         <h5 class="dept-name">Human Resources Dept</h5>
                     </div>
                     <div class="dept-photo-section">
-                        <img src="{{ asset('storage/images/team/neneng.png') }}" alt="Neneng Isti"
+                        <img src="{{ asset('images/team/neneng.png') }}" alt="Neneng Isti"
                             onerror="this.src='https://ui-avatars.com/api/?name=Neneng+Isti&size=400&background=38b2ac&color=fff&bold=true&font-size=0.3'">
                     </div>
                     <div class="dept-info">
@@ -758,7 +892,7 @@
                 <div class="junior-staff-grid">
                     <div class="junior-card">
                         <div class="junior-photo">
-                            <img src="{{ asset('storage/images/team/fahlevi.png') }}" alt="Fahlevi Permana"
+                            <img src="{{ asset('images/team/fahlevi.png') }}" alt="Fahlevi Permana"
                                 onerror="this.src='https://ui-avatars.com/api/?name=Fahlevi+Permana&size=500&background=667eea&color=fff&bold=true&font-size=0.3'">
                         </div>
                         <div class="junior-info">
@@ -768,7 +902,7 @@
 
                     <div class="junior-card">
                         <div class="junior-photo">
-                            <img src="{{ asset('storage/images/team/hilma.png') }}" alt="Hilma Habibah"
+                            <img src="{{ asset('images/team/hilma.png') }}" alt="Hilma Habibah"
                                 onerror="this.src='https://ui-avatars.com/api/?name=Hilma+Habibah&size=500&background=764ba2&color=fff&bold=true&font-size=0.3'">
                         </div>
                         <div class="junior-info">
@@ -778,7 +912,7 @@
 
                     <div class="junior-card">
                         <div class="junior-photo">
-                            <img src="{{ asset('storage/images/team/tessa.png') }}" alt="Tessa Ismi"
+                            <img src="{{ asset('images/team/tessa.png') }}" alt="Tessa Ismi"
                                 onerror="this.src='https://ui-avatars.com/api/?name=Tessa+Ismi&size=500&background=48bb78&color=fff&bold=true&font-size=0.3'">
                         </div>
                         <div class="junior-info">
@@ -788,7 +922,7 @@
 
                     <div class="junior-card">
                         <div class="junior-photo">
-                            <img src="{{ asset('storage/images/team/nabila.png') }}" alt="Nabila Syahtani"
+                            <img src="{{ asset('images/team/nabila.png') }}" alt="Nabila Syahtani"
                                 onerror="this.src='https://ui-avatars.com/api/?name=Nabila+Syahtani&size=500&background=3182ce&color=fff&bold=true&font-size=0.3'">
                         </div>
                         <div class="junior-info">
@@ -798,7 +932,7 @@
 
                     <div class="junior-card">
                         <div class="junior-photo">
-                            <img src="{{ asset('storage/images/team/sefty.png') }}" alt="Sefty Mustika"
+                            <img src="{{ asset('images/team/sefty.png') }}" alt="Sefty Mustika"
                                 onerror="this.src='https://ui-avatars.com/api/?name=Sefty+Mustika&size=500&background=d69e2e&color=fff&bold=true&font-size=0.3'">
                         </div>
                         <div class="junior-info">
@@ -808,7 +942,7 @@
 
                     <div class="junior-card">
                         <div class="junior-photo">
-                            <img src="{{ asset('storage/images/team/doni.png') }}" alt="Doni Hamdani"
+                            <img src="{{ asset('images/team/doni.png') }}" alt="Doni Hamdani"
                                 onerror="this.src='https://ui-avatars.com/api/?name=Doni+Hamdani&size=500&background=805ad5&color=fff&bold=true&font-size=0.3'">
                         </div>
                         <div class="junior-info">
@@ -834,7 +968,7 @@
             <div class="expert-staff-grid">
                 <div class="expert-card">
                     <div class="expert-photo">
-                        <img src="{{ asset('storage/images/team/prof-edy.png') }}" alt="Prof. Dr. H. Edi Suryadi"
+                        <img src="{{ asset('images/team/prof-edy.png') }}" alt="Prof. Dr. H. Edi Suryadi"
                             onerror="this.src='https://ui-avatars.com/api/?name=Prof+Edi+Suryadi&size=500&background=667eea&color=fff&bold=true&font-size=0.3'">
                     </div>
                     <div class="expert-content">
@@ -845,7 +979,7 @@
 
                 <div class="expert-card">
                     <div class="expert-photo">
-                        <img src="{{ asset('storage/images/team/prof-nugraha.png') }}" alt="Prof. Dr. H. Nugraha"
+                        <img src="{{ asset('images/team/prof-nugraha.png') }}" alt="Prof. Dr. H. Nugraha"
                             onerror="this.src='https://ui-avatars.com/api/?name=Prof+Nugraha&size=500&background=764ba2&color=fff&bold=true&font-size=0.3'">
                     </div>
                     <div class="expert-content">
@@ -856,7 +990,7 @@
 
                 <div class="expert-card">
                     <div class="expert-photo">
-                        <img src="{{ asset('storage/images/team/dr-toni.png') }}" alt="Dr. Toni"
+                        <img src="{{ asset('images/team/dr-toni.png') }}" alt="Dr. Toni"
                             onerror="this.src='https://ui-avatars.com/api/?name=Dr+Toni+Heryana&size=500&background=48bb78&color=fff&bold=true&font-size=0.3'">
                     </div>
                     <div class="expert-content">
@@ -867,7 +1001,7 @@
 
                 <div class="expert-card">
                     <div class="expert-photo">
-                        <img src="{{ asset('storage/images/team/dr-baban.png') }}" alt="Dr. Baban"
+                        <img src="{{ asset('images/team/dr-baban.png') }}" alt="Dr. Baban"
                             onerror="this.src='https://ui-avatars.com/api/?name=Dr+Baban+Sobandi&size=500&background=3182ce&color=fff&bold=true&font-size=0.3'">
                     </div>
                     <div class="expert-content">
@@ -878,7 +1012,7 @@
 
                 <div class="expert-card">
                     <div class="expert-photo">
-                        <img src="{{ asset('storage/images/team/dr-joni.png') }}" alt="Dr. Joni"
+                        <img src="{{ asset('images/team/dr-joni.png') }}" alt="Dr. Joni"
                             onerror="this.src='https://ui-avatars.com/api/?name=Dr+Joni+Dawud&size=500&background=d69e2e&color=fff&bold=true&font-size=0.3'">
                     </div>
                     <div class="expert-content">
@@ -889,7 +1023,7 @@
 
                 <div class="expert-card">
                     <div class="expert-photo">
-                        <img src="{{ asset('storage/images/team/rasto.png') }}" alt="Dr. Rasto"
+                        <img src="{{ asset('images/team/rasto.png') }}" alt="Dr. Rasto"
                             onerror="this.src='https://ui-avatars.com/api/?name=Dr+Rasto&size=600&background=805ad5&color=fff&bold=true&font-size=0.3'">
                     </div>
                     <div class="expert-content">
@@ -900,7 +1034,7 @@
 
                 <div class="expert-card">
                     <div class="expert-photo">
-                        <img src="{{ asset('storage/images/team/agus.png') }}" alt="Agus Rakhmat"
+                        <img src="{{ asset('images/team/agus.png') }}" alt="Agus Rakhmat"
                             onerror="this.src='https://ui-avatars.com/api/?name=Agus+Rakhmat&size=500&background=38b2ac&color=fff&bold=true&font-size=0.3'">
                     </div>
                     <div class="expert-content">
@@ -911,7 +1045,7 @@
 
                 <div class="expert-card">
                     <div class="expert-photo">
-                        <img src="{{ asset('storage/images/team/rakhmat.png') }}" alt="Rakhmat Supriatna"
+                        <img src="{{ asset('images/team/rakhmat.png') }}" alt="Rakhmat Supriatna"
                             onerror="this.src='https://ui-avatars.com/api/?name=Rakhmat+Supriatna&size=500&background=e53e3e&color=fff&bold=true&font-size=0.3'">
                     </div>
                     <div class="expert-content">
@@ -922,7 +1056,7 @@
 
                 <div class="expert-card">
                     <div class="expert-photo">
-                        <img src="{{ asset('storage/images/team/bambang.png') }}" alt="Bambang Yanudi"
+                        <img src="{{ asset('images/team/bambang.png') }}" alt="Bambang Yanudi"
                             onerror="this.src='https://ui-avatars.com/api/?name=Bambang+Yanudi&size=500&background=dd6b20&color=fff&bold=true&font-size=0.3'">
                     </div>
                     <div class="expert-content">
@@ -933,7 +1067,7 @@
 
                 <div class="expert-card">
                     <div class="expert-photo">
-                        <img src="{{ asset('storage/images/team/hadiat.png') }}" alt="Hadiat Supriatna"
+                        <img src="{{ asset('images/team/hadiat.png') }}" alt="Hadiat Supriatna"
                             onerror="this.src='https://ui-avatars.com/api/?name=Hadiat+Supriatna&size=500&background=667eea&color=fff&bold=true&font-size=0.3'">
                     </div>
                     <div class="expert-content">
@@ -944,7 +1078,7 @@
 
                 <div class="expert-card">
                     <div class="expert-photo">
-                        <img src="{{ asset('storage/images/team/yosep.png') }}" alt="Yosep Hernawan"
+                        <img src="{{ asset('images/team/yosep.png') }}" alt="Yosep Hernawan"
                             onerror="this.src='https://ui-avatars.com/api/?name=Yosep+Hernawan&size=600&background=48bb78&color=fff&bold=true&font-size=0.3'">
                     </div>
                     <div class="expert-content">
@@ -955,7 +1089,7 @@
 
                 <div class="expert-card">
                     <div class="expert-photo">
-                        <img src="{{ asset('storage/images/team/anjar.png') }}" alt="Anjar Suprayogi"
+                        <img src="{{ asset('images/team/anjar.png') }}" alt="Anjar Suprayogi"
                             onerror="this.src='https://ui-avatars.com/api/?name=Anjar+Suprayogi&size=500&background=9f7aea&color=fff&bold=true&font-size=0.3'">
                     </div>
                     <div class="expert-content">

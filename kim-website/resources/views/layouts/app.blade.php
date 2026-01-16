@@ -517,6 +517,23 @@
                 </button>
 
                 <ul class="nav-menu" id="navMenu">
+
+
+                    <!-- Tentang Kami Dropdown -->
+                    <li class="nav-item dropdown">
+                        <a href="#" class="nav-link">
+                            Tentang Kami <i class="fas fa-chevron-down" style="font-size: 0.8rem;"></i>
+                        </a>
+                        <div class="dropdown-menu">
+                            <a href="{{ route('about.profile') }}" class="dropdown-item">
+                                <i class="fas fa-building"></i> Profil Perusahaan
+                            </a>
+                            <a href="{{ route('about.organization') }}" class="dropdown-item">
+                                <i class="fas fa-sitemap"></i> Tim Kami
+                            </a>
+                        </div>
+                    </li>
+
                     <!-- Produk Dropdown -->
                     <li class="nav-item dropdown">
                         <a href="#" class="nav-link">
@@ -538,20 +555,7 @@
                         </div>
                     </li>
 
-                    <!-- Tentang Kami Dropdown -->
-                    <li class="nav-item dropdown">
-                        <a href="#" class="nav-link">
-                            Tentang Kami <i class="fas fa-chevron-down" style="font-size: 0.8rem;"></i>
-                        </a>
-                        <div class="dropdown-menu">
-                            <a href="{{ route('about.profile') }}" class="dropdown-item">
-                                <i class="fas fa-building"></i> Profil Perusahaan
-                            </a>
-                            <a href="{{ route('about.organization') }}" class="dropdown-item">
-                                <i class="fas fa-sitemap"></i> Tim Kami
-                            </a>
-                        </div>
-                    </li>
+
 
                     <!-- Blog -->
                     <li class="nav-item">
@@ -591,7 +595,7 @@
                     <div class="social-links">
                         <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
                         <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-tiktok"></i></a>
                     </div>
                 </div>
 
@@ -637,7 +641,9 @@
 
     <!-- Scripts -->
     <script>
-    // Mobile Menu Toggle
+    /* =========================
+   MOBILE MENU TOGGLE
+========================= */
     const menuToggle = document.getElementById('menuToggle');
     const navMenu = document.getElementById('navMenu');
 
@@ -648,28 +654,30 @@
         icon.classList.toggle('fa-times');
     });
 
-    // Mobile Dropdown
-    const dropdowns = document.querySelectorAll('.dropdown');
-    dropdowns.forEach(dropdown => {
-        dropdown.addEventListener('click', (e) => {
+    /* =========================
+       MOBILE DROPDOWN FIX
+    ========================= */
+    document.querySelectorAll('.nav-item.dropdown > .nav-link').forEach(link => {
+        link.addEventListener('click', function(e) {
             if (window.innerWidth <= 968) {
-                e.preventDefault();
-                dropdown.classList.toggle('active');
+                e.preventDefault(); // hanya untuk parent menu
+                const parent = this.parentElement;
+                parent.classList.toggle('active');
             }
         });
     });
 
-    // Navbar scroll effect
+    /* =========================
+       NAVBAR SCROLL EFFECT
+    ========================= */
     window.addEventListener('scroll', () => {
         const navbar = document.querySelector('.navbar');
-        if (window.scrollY > 50) {
-            navbar.classList.add('scrolled');
-        } else {
-            navbar.classList.remove('scrolled');
-        }
+        navbar.classList.toggle('scrolled', window.scrollY > 50);
     });
 
-    // Active link highlighting
+    /* =========================
+       ACTIVE LINK HIGHLIGHT
+    ========================= */
     const currentPath = window.location.pathname;
     document.querySelectorAll('.nav-link, .dropdown-item').forEach(link => {
         if (link.getAttribute('href') === currentPath) {
