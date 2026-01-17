@@ -168,7 +168,7 @@
 
         <!-- Pagination -->
         <div style="padding: 20px;">
-            {{ $questionnaires->withQueryString()->links() }}
+            {{ $questionnaires->withQueryString()->links('vendor.pagination.admin') }}
         </div>
         @else
         <div class="empty-state">

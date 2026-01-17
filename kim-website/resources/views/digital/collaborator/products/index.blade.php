@@ -201,7 +201,7 @@
             </table>
         </div>
         <div style="margin-top: 20px;">
-            {{ $products->links() }}
+            {{ $products->links('vendor.pagination.admin') }}
         </div>
         @else
         <div class="empty-state">

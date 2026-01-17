@@ -545,7 +545,7 @@
 
                 <!-- Pagination -->
                 <div class="pagination">
-                    {{ $articles->links() }}
+                    {{ $articles->links('vendor.pagination.admin') }}
                 </div>
             </div>
         </main>

@@ -116,7 +116,7 @@
 
         <!-- Pagination -->
         <div style="margin-top: 20px;">
-            {{ $students->links() }}
+            {{ $students->links('vendor.pagination.admin') }}
         </div>
         @else
         <div class="empty-state">

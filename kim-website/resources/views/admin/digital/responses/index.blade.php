@@ -208,7 +208,7 @@
 
         <!-- Pagination -->
         <div style="padding: 20px;">
-            {{ $responses->withQueryString()->links() }}
+            {{ $responses->withQueryString()->links('vendor.pagination.admin') }}
         </div>
         @else
         <div class="empty-state">

@@ -104,7 +104,7 @@
 
         <!-- Pagination -->
         <div class="pagination-wrapper">
-            {{ $orders->links() }}
+            {{ $orders->links('vendor.pagination.admin') }}
         </div>
     </div>
 </div>

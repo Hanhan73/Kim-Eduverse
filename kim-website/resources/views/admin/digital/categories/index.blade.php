@@ -96,7 +96,7 @@
 
         <!-- Pagination -->
         <div class="pagination-wrapper">
-            {{ $categories->links() }}
+            {{ $categories->links('vendor.pagination.admin') }}
         </div>
     </div>
 </div>

@@ -84,7 +84,7 @@
 
                 <!-- Pagination -->
                 <div class="pagination-wrapper">
-                    {{ $articles->appends(request()->query())->links() }}
+                    {{ $articles->appends(request()->query())->links('vendor.pagination.admin') }}
                 </div>
                 @else
                 <div class="no-articles">

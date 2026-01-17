@@ -77,29 +77,38 @@
 
         <!-- Filter Section -->
         <form method="GET" action="{{ route('edutech.admin.users') }}">
-            <div style="padding: 20px 30px; background: #f7fafc; border-bottom: 1px solid #e2e8f0; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+            <div
+                style="padding: 20px 30px; background: #f7fafc; border-bottom: 1px solid #e2e8f0; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
                 <div>
-                    <label style="display: block; margin-bottom: 8px; color: var(--dark); font-weight: 500; font-size: 0.9rem;">Search</label>
-                    <input type="text" name="search" class="filter-input" placeholder="Name or email..." value="{{ request('search') }}"
+                    <label
+                        style="display: block; margin-bottom: 8px; color: var(--dark); font-weight: 500; font-size: 0.9rem;">Search</label>
+                    <input type="text" name="search" class="filter-input" placeholder="Name or email..."
+                        value="{{ request('search') }}"
                         style="width: 100%; padding: 10px 15px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 0.95rem;">
                 </div>
-                
+
                 <div>
-                    <label style="display: block; margin-bottom: 8px; color: var(--dark); font-weight: 500; font-size: 0.9rem;">Role</label>
-                    <select name="role" class="filter-select" style="width: 100%; padding: 10px 15px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 0.95rem;">
+                    <label
+                        style="display: block; margin-bottom: 8px; color: var(--dark); font-weight: 500; font-size: 0.9rem;">Role</label>
+                    <select name="role" class="filter-select"
+                        style="width: 100%; padding: 10px 15px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 0.95rem;">
                         <option value="">All Roles</option>
                         <option value="admin" {{ request('role') == 'admin' ? 'selected' : '' }}>Admin</option>
-                        <option value="instructor" {{ request('role') == 'instructor' ? 'selected' : '' }}>Instructor</option>
+                        <option value="instructor" {{ request('role') == 'instructor' ? 'selected' : '' }}>Instructor
+                        </option>
                         <option value="student" {{ request('role') == 'student' ? 'selected' : '' }}>Student</option>
                     </select>
                 </div>
 
                 <div>
-                    <label style="display: block; margin-bottom: 8px; color: var(--dark); font-weight: 500; font-size: 0.9rem;">Status</label>
-                    <select name="status" class="filter-select" style="width: 100%; padding: 10px 15px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 0.95rem;">
+                    <label
+                        style="display: block; margin-bottom: 8px; color: var(--dark); font-weight: 500; font-size: 0.9rem;">Status</label>
+                    <select name="status" class="filter-select"
+                        style="width: 100%; padding: 10px 15px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 0.95rem;">
                         <option value="">All Status</option>
                         <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Active</option>
-                        <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
+                        <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Inactive
+                        </option>
                     </select>
                 </div>
 
@@ -107,7 +116,8 @@
                     <button type="submit" class="btn-primary" style="padding: 10px 20px; white-space: nowrap;">
                         <i class="fas fa-filter"></i> Filter
                     </button>
-                    <a href="{{ route('edutech.admin.users') }}" class="btn" style="background: var(--gray); color: white; padding: 10px 20px; text-decoration: none; border-radius: 8px;">
+                    <a href="{{ route('edutech.admin.users') }}" class="btn"
+                        style="background: var(--gray); color: white; padding: 10px 20px; text-decoration: none; border-radius: 8px;">
                         <i class="fas fa-redo"></i> Reset
                     </a>
                 </div>
@@ -131,11 +141,13 @@
                     <tr>
                         <td>
                             <div style="display: flex; align-items: center; gap: 12px;">
-                                <div style="width: 45px; height: 45px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--secondary)); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">
+                                <div
+                                    style="width: 45px; height: 45px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--secondary)); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">
                                     {{ strtoupper(substr($user->name, 0, 1)) }}
                                 </div>
                                 <div>
-                                    <h4 style="color: var(--dark); font-weight: 600; margin-bottom: 3px;">{{ $user->name }}</h4>
+                                    <h4 style="color: var(--dark); font-weight: 600; margin-bottom: 3px;">
+                                        {{ $user->name }}</h4>
                                     <p style="font-size: 0.85rem; color: var(--gray);">{{ $user->email }}</p>
                                 </div>
                             </div>
@@ -153,20 +165,22 @@
                         <td>{{ $user->created_at->format('d M Y') }}</td>
                         <td>
                             <div style="display: flex; gap: 5px; flex-wrap: wrap;">
-                                <a href="{{ route('edutech.admin.users.show', $user->id) }}" 
+                                <a href="{{ route('edutech.admin.users.show', $user->id) }}"
                                     style="background: #bee3f8; color: #2c5282; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 0.85rem; font-weight: 500;">
                                     <i class="fas fa-eye"></i> View
                                 </a>
-                                <a href="{{ route('edutech.admin.users.edit', $user->id) }}" 
+                                <a href="{{ route('edutech.admin.users.edit', $user->id) }}"
                                     style="background: #c6f6d5; color: #22543d; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 0.85rem; font-weight: 500;">
                                     <i class="fas fa-edit"></i> Edit
                                 </a>
                                 @if($user->id != auth()->id())
-                                <form action="{{ route('edutech.admin.users.toggle', $user->id) }}" method="POST" style="display: inline;">
+                                <form action="{{ route('edutech.admin.users.toggle', $user->id) }}" method="POST"
+                                    style="display: inline;">
                                     @csrf
-                                    <button type="submit" onclick="return confirm('{{ $user->is_active ? 'Deactivate' : 'Activate' }} this user?')"
+                                    <button type="submit"
+                                        onclick="return confirm('{{ $user->is_active ? 'Deactivate' : 'Activate' }} this user?')"
                                         style="background: {{ $user->is_active ? '#fed7d7' : '#c6f6d5' }}; color: {{ $user->is_active ? '#742a2a' : '#22543d' }}; padding: 6px 12px; border-radius: 6px; border: none; font-size: 0.85rem; font-weight: 500; cursor: pointer;">
-                                        <i class="fas fa-{{ $user->is_active ? 'ban' : 'check' }}"></i> 
+                                        <i class="fas fa-{{ $user->is_active ? 'ban' : 'check' }}"></i>
                                         {{ $user->is_active ? 'Deactivate' : 'Activate' }}
                                     </button>
                                 </form>
@@ -177,7 +191,8 @@
                     @empty
                     <tr>
                         <td colspan="5" style="text-align: center; padding: 40px;">
-                            <i class="fas fa-users" style="font-size: 3rem; color: var(--gray); opacity: 0.3; margin-bottom: 15px; display: block;"></i>
+                            <i class="fas fa-users"
+                                style="font-size: 3rem; color: var(--gray); opacity: 0.3; margin-bottom: 15px; display: block;"></i>
                             <p style="color: var(--gray);">No users found</p>
                         </td>
                     </tr>
@@ -187,13 +202,14 @@
         </div>
 
         <!-- Pagination -->
-        <div style="padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #e2e8f0;">
+        <div
+            style="padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #e2e8f0;">
             <div style="color: var(--gray);">
                 Showing {{ $users->firstItem() ?? 0 }} to {{ $users->lastItem() ?? 0 }} of {{ $users->total() }} users
             </div>
-                <div class="pagination-wrapper">
-                    {{ $users->links('vendor.pagination.default') }}
-                </div>
+            <div class="pagination-wrapper">
+                {{ $users->links('vendor.pagination.admin') }}
+            </div>
         </div>
     </div>
 </div>

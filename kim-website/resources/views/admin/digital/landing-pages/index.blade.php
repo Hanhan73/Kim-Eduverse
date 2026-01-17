@@ -108,7 +108,7 @@
                 @endforelse
             </tbody>
         </table>
-        <div class="pagination-wrapper">{{ $products->links() }}</div>
+        <div class="pagination-wrapper">{{ $products->links('vendor.pagination.admin') }}</div>
     </div>
 </div>
 

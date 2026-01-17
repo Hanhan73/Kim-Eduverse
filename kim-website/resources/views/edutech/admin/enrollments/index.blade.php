@@ -195,7 +195,7 @@
                 Showing {{ $enrollments->firstItem() ?? 0 }} to {{ $enrollments->lastItem() ?? 0 }} of {{ $enrollments->total() }} enrollments
             </div>
             <div>
-                {{ $enrollments->links() }}
+                {{ $enrollments->links('vendor.pagination.admin') }}
             </div>
         </div>
     </div>

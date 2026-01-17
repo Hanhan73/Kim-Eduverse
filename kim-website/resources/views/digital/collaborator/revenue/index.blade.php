@@ -266,7 +266,7 @@
         </table>
     </div>
     <div style="margin-top: 20px;">
-        {{ $revenues->appends(request()->query())->links() }}
+        {{ $revenues->appends(request()->query())->links('vendor.pagination.admin') }}
     </div>
     @else
     <div class="empty-state">
@@ -328,7 +328,7 @@
         </table>
     </div>
     <div style="margin-top: 20px;">
-        {{ $withdrawals->links() }}
+        {{ $withdrawals->links('vendor.pagination.admin') }}
     </div>
     @else
     <div class="empty-state">

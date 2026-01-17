@@ -147,7 +147,7 @@
 
         <!-- Pagination -->
         <div class="pagination-wrapper">
-            {{ $users->appends(request()->query())->links() }}
+            {{ $users->appends(request()->query())->links('vendor.pagination.admin') }}
         </div>
     </div>
 </div>

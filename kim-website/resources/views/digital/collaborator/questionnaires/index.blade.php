@@ -79,7 +79,7 @@
                 @endforeach
             </tbody>
         </table>
-        <div style="padding: 20px;">{{ $questionnaires->links() }}</div>
+        <div style="padding: 20px;">{{ $questionnaires->links('vendor.pagination.admin') }}</div>
         @else
         <div class="empty-state">
             <i class="fas fa-clipboard-list"></i>

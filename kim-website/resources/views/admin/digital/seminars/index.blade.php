@@ -195,7 +195,7 @@
         </div>
 
         <div style="padding: 20px;">
-            {{ $seminars->links() }}
+            {{ $seminars->links('vendor.pagination.admin') }}
         </div>
         @else
         <div class="empty-state">

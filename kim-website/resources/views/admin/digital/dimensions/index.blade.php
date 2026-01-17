@@ -109,7 +109,7 @@
 
         <!-- Pagination -->
         <div style="padding: 20px;">
-            {{ $dimensions->withQueryString()->links() }}
+            {{ $dimensions->withQueryString()->links('vendor.pagination.admin') }}
         </div>
         @else
         <div class="empty-state">

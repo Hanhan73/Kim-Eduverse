@@ -1014,7 +1014,7 @@
             <!-- Pagination -->
             @if($products->hasPages())
             <div class="pagination-wrapper">
-                {{ $products->appends(request()->query())->links() }}
+                {{ $products->appends(request()->query())->links('vendor.pagination.admin') }}
             </div>
             @endif
         </div>

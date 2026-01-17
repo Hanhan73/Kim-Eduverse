@@ -129,7 +129,7 @@
             </table>
         </div>
         <div style="margin-top: 20px;">
-            {{ $withdrawals->links() }}
+            {{ $withdrawals->links('vendor.pagination.admin') }}
         </div>
         @else
         <div class="empty-state">

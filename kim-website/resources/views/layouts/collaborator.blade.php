@@ -382,109 +382,48 @@
         }
     }
 
-    .pagination-wrapper {
+    .admin-pagination {
         display: flex;
-        justify-content: center;
-        margin-top: 40px;
-    }
-
-    .pagination {
-        display: flex;
-        align-items: center;
         gap: 8px;
-        list-style: none;
-        padding: 0;
-        margin: 0;
+        justify-content: center;
+        align-items: center;
+        margin-top: 20px;
+        flex-wrap: wrap;
     }
 
-    .pagination .page-item {
-        margin: 0;
-    }
-
-    .pagination .page-link {
-        display: flex;
+    .page-btn {
+        min-width: 36px;
+        height: 36px;
+        padding: 0 12px;
+        display: inline-flex;
         align-items: center;
         justify-content: center;
-        min-width: 40px;
-        height: 40px;
-        padding: 8px 12px;
-        border: 2px solid #e2e8f0;
         border-radius: 8px;
-        color: #4a5568;
-        text-decoration: none;
+        background: #edf2f7;
+        color: var(--dark);
         font-weight: 600;
-        font-size: 0.95rem;
-        transition: all 0.3s ease;
-        background: white;
+        text-decoration: none;
+        transition: all 0.2s ease;
     }
 
-    .pagination .page-link:hover {
-        background: #f7fafc;
-        border-color: #667eea;
-        color: #667eea;
-        transform: translateY(-2px);
-    }
-
-    .pagination .page-item.active .page-link {
-        background: linear-gradient(135deg, #667eea, #764ba2);
+    .page-btn:hover {
+        background: var(--primary);
         color: white;
-        border-color: #667eea;
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
     }
 
-    .pagination .page-item.disabled .page-link {
-        opacity: 0.5;
+    .page-btn.active {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+    }
+
+    .page-btn.disabled {
+        opacity: 0.4;
         cursor: not-allowed;
-        background: #f7fafc;
-        color: #a0aec0;
     }
 
-    .pagination .page-item.disabled .page-link:hover {
-        transform: none;
-        border-color: #e2e8f0;
-    }
-
-    /* Previous & Next buttons */
-    .pagination .page-item:first-child .page-link,
-    .pagination .page-item:last-child .page-link {
-        padding: 8px 16px;
-        font-weight: 700;
-    }
-
-    /* Icon sizing untuk Previous/Next */
-    .pagination .page-link svg {
-        width: 16px !important;
-        height: 16px !important;
-    }
-
-    /* Dots (...) styling */
-    .pagination .page-item .page-link[aria-disabled="true"] {
-        border: none;
-        background: transparent;
-        cursor: default;
-    }
-
-    .pagination .page-item .page-link[aria-disabled="true"]:hover {
-        transform: none;
-    }
-
-    /* Mobile responsive */
-    @media (max-width: 600px) {
-        .pagination .page-link {
-            min-width: 36px;
-            height: 36px;
-            padding: 6px 10px;
-            font-size: 0.85rem;
-        }
-
-        .pagination {
-            gap: 5px;
-        }
-
-        /* Hide some page numbers on mobile */
-        .pagination .page-item:not(.active):not(:first-child):not(:last-child):not(:nth-child(2)):not(:nth-last-child(2)) {
-            display: none;
-        }
+    .page-dots {
+        padding: 0 6px;
+        color: var(--gray);
     }
     </style>
 

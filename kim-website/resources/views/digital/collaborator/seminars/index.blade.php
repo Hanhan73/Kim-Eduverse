@@ -93,7 +93,7 @@
                 @endforeach
             </tbody>
         </table>
-        <div style="padding: 20px;">{{ $seminars->links() }}</div>
+        <div style="padding: 20px;">{{ $seminars->links('vendor.pagination.admin') }}</div>
         @else
         <div class="empty-state">
             <i class="fas fa-chalkboard-teacher"></i>

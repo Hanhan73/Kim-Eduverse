@@ -245,7 +245,7 @@
         </div>
 
         <div style="padding: 20px;">
-            {{ $enrollments->links() }}
+            {{ $enrollments->links('vendor.pagination.admin') }}
         </div>
         @else
         <div class="empty-state">

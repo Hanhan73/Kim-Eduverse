@@ -175,7 +175,7 @@
                 Showing {{ $certificates->firstItem() ?? 0 }} to {{ $certificates->lastItem() ?? 0 }} of {{ $certificates->total() }} certificates
             </div>
             <div>
-                {{ $certificates->links() }}
+                {{ $certificates->links('vendor.pagination.admin') }}
             </div>
         </div>
     </div>

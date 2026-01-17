@@ -198,7 +198,7 @@
                 Showing {{ $courses->firstItem() ?? 0 }} to {{ $courses->lastItem() ?? 0 }} of {{ $courses->total() }} courses
             </div>
             <div>
-                {{ $courses->links() }}
+                {{ $courses->links('vendor.pagination.admin') }}
             </div>
         </div>
         @else
