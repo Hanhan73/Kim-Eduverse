@@ -657,7 +657,7 @@
     .pagination {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 4px;
         list-style: none;
         padding: 0;
         margin: 0;
@@ -673,15 +673,17 @@
         justify-content: center;
         min-width: 40px;
         height: 40px;
-        padding: 8px 12px;
+        padding: 6px 10px;
         border: 2px solid #e2e8f0;
         border-radius: 8px;
         color: #4a5568;
         text-decoration: none;
         font-weight: 600;
-        font-size: 0.95rem;
+        font-size: 0.875rem;
         transition: all 0.3s ease;
         background: white;
+        line-height: 1.2;
+
     }
 
     .pagination .page-link:hover {
@@ -696,6 +698,7 @@
         color: white;
         border-color: #667eea;
         box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        font-weight: 600;
     }
 
     .pagination .page-item.disabled .page-link {
@@ -719,8 +722,8 @@
 
     /* Icon sizing untuk Previous/Next */
     .pagination .page-link svg {
-        width: 16px !important;
-        height: 16px !important;
+        width: 14px !important;
+        height: 14px !important;
     }
 
     /* Dots (...) styling */
