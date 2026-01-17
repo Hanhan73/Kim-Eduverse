@@ -66,9 +66,8 @@ class ProductController extends Controller
         ]);
 
         // Set default values for checkboxes
-        $validated['is_active'] = $request->has('is_active') ? true : false;
-        $validated['is_featured'] = $request->has('is_featured') ? true : false;
-
+        $validated['is_active'] = $request->input('is_active') == '1' ? true : false;
+        $validated['is_featured'] = $request->input('is_featured') == '1' ? true : false;
         // Generate slug
         if (empty($validated['slug'])) {
             $validated['slug'] = Str::slug($validated['name']);
@@ -126,8 +125,8 @@ class ProductController extends Controller
             'is_featured' => 'boolean',
         ]);
 
-        $validated['is_active'] = $request->has('is_active') ? true : false;
-        $validated['is_featured'] = $request->has('is_featured') ? true : false;
+        $validated['is_active'] = $request->input('is_active') == '1' ? true : false;
+        $validated['is_featured'] = $request->input('is_featured') == '1' ? true : false;
     
         // Handle thumbnail upload
         if ($request->hasFile('thumbnail')) {

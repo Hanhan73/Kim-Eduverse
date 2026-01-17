@@ -390,7 +390,7 @@
 }
 
 .btn-view {
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #8397f0ff, #764ba2);
     color: white;
     padding: 10px 20px;
     border-radius: 50px;
@@ -404,6 +404,28 @@
 }
 
 .btn-view:hover {
+    transform: translateX(5px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+.btn-detail {
+    background: linear-gradient(135deg, #4f6ceeff, #764ba2);
+    color: rgba(255, 255, 255, 1);
+    padding: 10px 20px;
+    margin: auto;
+    border-bottom-left-radius: 30px;
+    border-top-right-radius: 40px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    width: 77%;
+    gap: 8px;
+}
+
+.btn-detail:hover {
     transform: translateX(5px);
     box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
 }
@@ -865,11 +887,11 @@
 
                         <div class="product-footer">
                             <div class="product-price">{{ $product->formatted_price }}</div>
-                            <a href="{{ route('digital.show', $product->slug) }}" class="btn-view"
-                                onclick="event.stopPropagation()">
-                                Lihat Detail <i class="fas fa-arrow-right"></i>
-                            </a>
                         </div>
+                        <a href="{{ route('digital.show', $product->slug) }}" class="btn-detail"
+                            onclick="event.stopPropagation()">
+                            Lihat Detail <i class="fas fa-arrow-right"></i>
+                        </a>
                     </div>
                 </div>
                 @empty
