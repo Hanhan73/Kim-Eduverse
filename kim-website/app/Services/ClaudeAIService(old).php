@@ -100,62 +100,27 @@ class ClaudeAIService
         $context .= "=== RESPONDEN ===\n";
         $context .= "Nama: {$response->respondent_name}\n\n";
         
-// Scores and results
-$context .= "=== HASIL SKOR PER DIMENSI ===\n";
-
-foreach ($resultSummary as $dimensionCode => $result) {
-    $context .= "\n{$result['dimension_name']}\n";
-    $context .= "   Kode Dimensi: {$dimensionCode}\n";
-    $context .= "   Skor: {$result['score']} poin\n";
-    
-    // Get interpretation data (includes score range info)
-    $interpretation = $result['interpretation'] ?? [];
-    $context .= "   Level: " . ($interpretation['level'] ?? 'Sedang') . "\n";
-    
-    // TAMBAHAN: Include score range boundaries
-    if (isset($interpretation['min_score']) && isset($interpretation['max_score'])) {
-        $context .= "   Range level ini: {$interpretation['min_score']} - {$interpretation['max_score']} poin\n";
-    }
-    
-    // TAMBAHAN: Include category
-    if (isset($interpretation['category'])) {
-        $context .= "   Kategori: {$interpretation['category']}\n";
-    }
-    
-    // TAMBAHAN: Include interpretation description from score range
-    if (!empty($interpretation['description'])) {
-        $context .= "   Interpretasi standar: {$interpretation['description']}\n";
-    }
-    
-    // TAMBAHAN: Include suggestions from score range
-    if (!empty($interpretation['suggestions']) && is_array($interpretation['suggestions'])) {
-        $context .= "   Saran dari sistem:\n";
-        foreach ($interpretation['suggestions'] as $idx => $suggestion) {
-            $context .= "      " . ($idx + 1) . ". {$suggestion}\n";
-        }
-    }
-    
-    if ($questionnaire->has_dimensions) {
-        $dimension = $questionnaire->dimensions->where('code', $dimensionCode)->first();
-        if ($dimension) {
-            $context .= "   Tentang dimensi ini: {$dimension->description}\n";
+        // Scores and results
+        $context .= "=== HASIL SKOR PER DIMENSI ===\n";
+        
+        foreach ($resultSummary as $dimensionCode => $result) {
+            $context .= "\n{$result['dimension_name']}\n";
+            $context .= "   Kode Dimensi: {$dimensionCode}\n";  // Tambahkan kode dimensi
+            $context .= "   Skor: {$result['score']} poin\n";
+            $context .= "   Level: " . ($result['interpretation']['level'] ?? 'Sedang') . "\n";
             
-            $questionCount = $dimension->questions->count();
-            $minScore = $questionCount * 1;
-            $maxScore = $questionCount * 5;
-            $context .= "   Range skor total dimensi: {$minScore} - {$maxScore} (dari {$questionCount} pertanyaan)\n";
-            
-            // TAMBAHAN: Show all available score ranges for this dimension
-            $scoreRanges = $dimension->scoreRanges;
-            if ($scoreRanges && $scoreRanges->count() > 0) {
-                $context .= "   Pembagian level untuk dimensi ini:\n";
-                foreach ($scoreRanges as $range) {
-                    $context .= "      • {$range->level}: {$range->min_score}-{$range->max_score} poin - {$range->description}\n";
+            if ($questionnaire->has_dimensions) {
+                $dimension = $questionnaire->dimensions->where('code', $dimensionCode)->first();
+                if ($dimension) {
+                    $context .= "   Tentang dimensi ini: {$dimension->description}\n";
+                    
+                    $questionCount = $dimension->questions->count();
+                    $minScore = $questionCount * 1;
+                    $maxScore = $questionCount * 5;
+                    $context .= "   Range skor: {$minScore} - {$maxScore} (dari {$questionCount} pertanyaan)\n";
                 }
             }
         }
-    }
-}
         
         // Include individual answers for deeper analysis
         $context .= "\n=== JAWABAN DETAIL ===\n";
@@ -235,12 +200,6 @@ foreach ($resultSummary as $dimensionCode => $result) {
         $context .= "- Interpretasi harus PANJANG dan BERMAKNA, bukan template singkat\n";
         $context .= "- Saran harus SPESIFIK dan BISA DILAKUKAN, minimal 3-5 per dimensi\n";
         $context .= "- Output HANYA JSON valid, tanpa teks lain di luar JSON\n";
-
-        $context .= "PENTING TENTANG INTERPRETASI:\n";
-        $context .= "- Gunakan informasi 'Interpretasi standar' dan 'Saran dari sistem' sebagai REFERENSI\n";
-        $context .= "- Jangan bertentangan dengan interpretasi standar yang sudah diberikan\n";
-        $context .= "- Kembangkan interpretasi standar menjadi lebih personal dan mendalam\n";
-        $context .= "- Saran yang kamu berikan harus sejalan dengan (tapi lebih spesifik dari) 'Saran dari sistem'\n\n";
         
         $context .= "\n=== CRITICAL JSON FORMAT RULES ===\n";
         $context .= "- Output HANYA JSON valid, tanpa teks tambahan apapun\n";

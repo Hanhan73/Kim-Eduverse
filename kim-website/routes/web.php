@@ -429,6 +429,7 @@ use App\Http\Controllers\Admin\LandingPageController as DigitalLandingPageContro
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\Digital\Collaborator\CollaboratorProductController;
 use App\Http\Controllers\Digital\Collaborator\CollaboratorProfileController;
+use App\Http\Controllers\Admin\UserController;
 
 Route::get('/promo/{slug}', [LandingPageController::class, 'show'])->name('digital.landing');
 // Admin Auth Routes (No middleware)
@@ -558,6 +559,10 @@ Route::prefix('admin/digital')->name('admin.digital.')->middleware(['check.digit
         Route::get('/{product}/preview', [DigitalLandingPageController::class, 'preview'])->name('preview');
     });
 
+    // User Management
+    Route::resource('users', UserController::class);
+    Route::post('users/{id}/toggle-status', [UserController::class, 'toggleStatus'])
+        ->name('users.toggle-status');
 });
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');

@@ -89,7 +89,6 @@ class DigitalProduct extends Model
     {
         return $this->hasMany(CollaboratorRevenue::class, 'product_id');
     }
-
     /**
      * Increment sold count.
      */

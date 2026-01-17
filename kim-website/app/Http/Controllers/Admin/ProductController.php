@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\DigitalProduct;
 use App\Models\DigitalProductCategory;
 use App\Models\Questionnaire;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -41,8 +42,9 @@ class ProductController extends Controller
     {
         $categories = DigitalProductCategory::where('is_active', true)->get();
         $questionnaires = Questionnaire::all();
+        $collaborators = User::where('is_active', true)->where('role', 'collaborator')->get();
 
-        return view('admin.digital.products.create', compact('categories', 'questionnaires'));
+        return view('admin.digital.products.create', compact('categories', 'questionnaires', 'collaborators'));
     }
 
     public function store(Request $request)
@@ -54,6 +56,7 @@ class ProductController extends Controller
             'short_description' => 'nullable|string|max:500',
             'type' => 'required|in:questionnaire,module,template,ebook,video,seminar,other',
             'category_id' => 'required|exists:digital_product_categories,id',
+            'collaborator_id' => 'nullable|exists:users,id',
             'price' => 'required|numeric|min:0',
             'questionnaire_id' => 'nullable|exists:questionnaires,id',
             'file_url' => 'nullable|url',
@@ -61,6 +64,10 @@ class ProductController extends Controller
             'is_active' => 'boolean',
             'is_featured' => 'boolean',
         ]);
+
+        // Set default values for checkboxes
+        $validated['is_active'] = $request->has('is_active') ? true : false;
+        $validated['is_featured'] = $request->has('is_featured') ? true : false;
 
         // Generate slug
         if (empty($validated['slug'])) {
@@ -94,8 +101,9 @@ class ProductController extends Controller
         $product = DigitalProduct::findOrFail($id);
         $categories = DigitalProductCategory::where('is_active', true)->get();
         $questionnaires = Questionnaire::all();
+        $collaborators = User::where('is_active', true)->where('role', 'collaborator')->get();
 
-        return view('admin.digital.products.edit', compact('product', 'categories', 'questionnaires'));
+        return view('admin.digital.products.edit', compact('product', 'categories', 'questionnaires', 'collaborators'));
     }
 
     public function update(Request $request, $id)
@@ -109,6 +117,7 @@ class ProductController extends Controller
             'short_description' => 'nullable|string|max:500',
             'type' => 'required|in:questionnaire,module,template,ebook,video,other',
             'category_id' => 'required|exists:digital_product_categories,id',
+            'collaborator_id' => 'nullable|exists:users,id',
             'price' => 'required|numeric|min:0',
             'questionnaire_id' => 'nullable|exists:questionnaires,id',
             'file_url' => 'nullable|url',
@@ -117,6 +126,9 @@ class ProductController extends Controller
             'is_featured' => 'boolean',
         ]);
 
+        $validated['is_active'] = $request->has('is_active') ? true : false;
+        $validated['is_featured'] = $request->has('is_featured') ? true : false;
+    
         // Handle thumbnail upload
         if ($request->hasFile('thumbnail')) {
             // Delete old thumbnail

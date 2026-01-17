@@ -4,11 +4,11 @@
 <div class="main-content">
     <div class="top-bar">
         <h1>My Products</h1>
-        <div class="user-info">
+        <!-- <div class="user-info">
             <button onclick="document.getElementById('createProductModal').style.display='block'" class="btn-primary">
                 <i class="fas fa-plus"></i> Tambah Produk
             </button>
-        </div>
+        </div> -->
     </div>
 
     @if(session('success'))
@@ -174,11 +174,6 @@
                         </td>
                         <td>
                             <div style="display: flex; gap: 5px;">
-                                <a href="{{ route('digital.collaborator.products.edit', $product) }}"
-                                    style="color: var(--info); text-decoration: none; padding: 5px 10px;">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-
                                 <form action="{{ route('digital.collaborator.products.toggle', $product) }}"
                                     method="POST" style="margin: 0;">
                                     @csrf
@@ -188,7 +183,7 @@
                                     </button>
                                 </form>
 
-                                <form action="{{ route('digital.collaborator.products.destroy', $product) }}"
+                                <!-- <form action="{{ route('digital.collaborator.products.destroy', $product) }}"
                                     method="POST" onsubmit="return confirm('Yakin hapus produk ini?')"
                                     style="margin: 0;">
                                     @csrf
@@ -197,7 +192,7 @@
                                         style="border: none; background: none; color: var(--danger); cursor: pointer; padding: 5px 10px;">
                                         <i class="fas fa-trash"></i>
                                     </button>
-                                </form>
+                                </form> -->
                             </div>
                         </td>
                     </tr>

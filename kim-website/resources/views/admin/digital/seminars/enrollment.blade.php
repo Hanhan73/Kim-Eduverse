@@ -258,124 +258,124 @@
 </div>
 
 <style>
-    .table-responsive {
-        overflow-x: auto;
-    }
+.table-responsive {
+    overflow-x: auto;
+}
 
-    table {
-        width: 100%;
-        border-collapse: collapse;
-    }
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
 
-    th,
-    td {
-        padding: 15px;
-        text-align: left;
-        border-bottom: 1px solid #e2e8f0;
-    }
+th,
+td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+}
 
-    th {
-        background: #f8f9fa;
-        font-weight: 600;
-        color: var(--dark);
-    }
+th {
+    background: #f8f9fa;
+    font-weight: 600;
+    color: var(--dark);
+}
 
-    tbody tr:hover {
-        background: #f8f9fa;
-    }
+tbody tr:hover {
+    background: #f8f9fa;
+}
 </style>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const searchInput = document.getElementById('searchInput');
-        const filterStatus = document.getElementById('filterStatus');
-        const filterCertificate = document.getElementById('filterCertificate');
-        const tableRows = document.querySelectorAll('#enrollmentsTable tbody tr');
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const filterStatus = document.getElementById('filterStatus');
+    const filterCertificate = document.getElementById('filterCertificate');
+    const tableRows = document.querySelectorAll('#enrollmentsTable tbody tr');
 
-        function filterTable() {
-            const searchTerm = searchInput.value.toLowerCase();
-            const statusFilter = filterStatus.value;
-            const certFilter = filterCertificate.value;
+    function filterTable() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const statusFilter = filterStatus.value;
+        const certFilter = filterCertificate.value;
 
-            tableRows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                const matchesSearch = text.includes(searchTerm);
+        tableRows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            const matchesSearch = text.includes(searchTerm);
 
-                let matchesStatus = true;
-                if (statusFilter === 'completed') {
-                    matchesStatus = row.dataset.status === 'completed';
-                } else if (statusFilter === 'in-progress') {
-                    matchesStatus = row.dataset.status === 'in-progress';
-                } else if (statusFilter === 'pre-test') {
-                    matchesStatus = row.dataset.pretest === 'yes';
-                } else if (statusFilter === 'post-test') {
-                    matchesStatus = row.dataset.posttest === 'yes';
-                }
+            let matchesStatus = true;
+            if (statusFilter === 'completed') {
+                matchesStatus = row.dataset.status === 'completed';
+            } else if (statusFilter === 'in-progress') {
+                matchesStatus = row.dataset.status === 'in-progress';
+            } else if (statusFilter === 'pre-test') {
+                matchesStatus = row.dataset.pretest === 'yes';
+            } else if (statusFilter === 'post-test') {
+                matchesStatus = row.dataset.posttest === 'yes';
+            }
 
-                let matchesCert = true;
-                if (certFilter === 'generated') {
-                    matchesCert = row.dataset.certificate === 'generated';
-                } else if (certFilter === 'not-generated') {
-                    matchesCert = row.dataset.certificate === 'not-generated';
-                } else if (certFilter === 'sent') {
-                    matchesCert = row.dataset.certSent === 'sent';
-                }
+            let matchesCert = true;
+            if (certFilter === 'generated') {
+                matchesCert = row.dataset.certificate === 'generated';
+            } else if (certFilter === 'not-generated') {
+                matchesCert = row.dataset.certificate === 'not-generated';
+            } else if (certFilter === 'sent') {
+                matchesCert = row.dataset.certSent === 'sent';
+            }
 
-                row.style.display = matchesSearch && matchesStatus && matchesCert ? '' : 'none';
-            });
-        }
+            row.style.display = matchesSearch && matchesStatus && matchesCert ? '' : 'none';
+        });
+    }
 
-        searchInput.addEventListener('input', filterTable);
-        filterStatus.addEventListener('change', filterTable);
-        filterCertificate.addEventListener('change', filterTable);
+    searchInput.addEventListener('input', filterTable);
+    filterStatus.addEventListener('change', filterTable);
+    filterCertificate.addEventListener('change', filterTable);
 
-        // Select all checkbox
-        const selectAll = document.getElementById('selectAll');
-        const rowCheckboxes = document.querySelectorAll('.row-checkbox');
+    // Select all checkbox
+    const selectAll = document.getElementById('selectAll');
+    const rowCheckboxes = document.querySelectorAll('.row-checkbox');
 
-        selectAll?.addEventListener('change', function() {
-            rowCheckboxes.forEach(checkbox => {
-                checkbox.checked = this.checked;
-            });
+    selectAll?.addEventListener('change', function() {
+        rowCheckboxes.forEach(checkbox => {
+            checkbox.checked = this.checked;
         });
     });
+});
 
-    function exportToCSV() {
-        const table = document.getElementById('enrollmentsTable');
-        let csv = [];
+function exportToCSV() {
+    const table = document.getElementById('enrollmentsTable');
+    let csv = [];
 
-        // Headers
-        const headers = [];
-        table.querySelectorAll('thead th').forEach(th => {
-            if (!th.querySelector('input[type="checkbox"]')) {
-                headers.push(th.textContent.trim());
+    // Headers
+    const headers = [];
+    table.querySelectorAll('thead th').forEach(th => {
+        if (!th.querySelector('input[type="checkbox"]')) {
+            headers.push(th.textContent.trim());
+        }
+    });
+    csv.push(headers.join(','));
+
+    // Rows
+    const visibleRows = Array.from(table.querySelectorAll('tbody tr')).filter(row => row.style.display !== 'none');
+    visibleRows.forEach(row => {
+        const rowData = [];
+        row.querySelectorAll('td').forEach((td, index) => {
+            if (index > 0 && index < row.querySelectorAll('td').length -
+                1) { // Skip checkbox and action column
+                let text = td.textContent.trim().replace(/\s+/g, ' ').replace(/,/g, ';');
+                rowData.push('"' + text + '"');
             }
         });
-        csv.push(headers.join(','));
+        csv.push(rowData.join(','));
+    });
 
-        // Rows
-        const visibleRows = Array.from(table.querySelectorAll('tbody tr')).filter(row => row.style.display !== 'none');
-        visibleRows.forEach(row => {
-            const rowData = [];
-            row.querySelectorAll('td').forEach((td, index) => {
-                if (index > 0 && index < row.querySelectorAll('td').length -
-                    1) { // Skip checkbox and action column
-                    let text = td.textContent.trim().replace(/\s+/g, ' ').replace(/,/g, ';');
-                    rowData.push('"' + text + '"');
-                }
-            });
-            csv.push(rowData.join(','));
-        });
-
-        // Download
-        const csvContent = csv.join('\n');
-        const blob = new Blob([csvContent], {
-            type: 'text/csv;charset=utf-8;'
-        });
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = 'seminar_enrollments_{{ $seminar->slug }}_' + new Date().getTime() + '.csv';
-        link.click();
-    }
+    // Download
+    const csvContent = csv.join('\n');
+    const blob = new Blob([csvContent], {
+        type: 'text/csv;charset=utf-8;'
+    });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'seminar_enrollments_{{ $seminar->slug }}_' + new Date().getTime() + '.csv';
+    link.click();
+}
 </script>
 @endsection

@@ -413,14 +413,6 @@
                 class="menu-item {{ request()->routeIs('digital.collaborator.products.*') ? 'active' : '' }}">
                 <i class="fas fa-box"></i> My Products
             </a>
-            <a href="{{ route('digital.collaborator.seminars.index') }}"
-                class="menu-item {{ request()->routeIs('digital.collaborator.seminars.*') ? 'active' : '' }}">
-                <i class="fas fa-chalkboard-teacher"></i> My Seminars
-            </a>
-            <a href="{{ route('digital.collaborator.questionnaires.index') }}"
-                class="menu-item {{ request()->routeIs('digital.collaborator.questionnaires.*') ? 'active' : '' }}">
-                <i class="fas fa-question-circle"></i> Questionnaires
-            </a>
             <div class="menu-divider"></div>
 
             <a href="{{ route('digital.collaborator.profile') }}"

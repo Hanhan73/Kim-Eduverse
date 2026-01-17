@@ -82,4 +82,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(QuizAttempt::class);
     }
+
+    public function digitalProducts()
+    {
+        return $this->hasMany(DigitalProduct::class, 'collaborator_id');
+    }
 }

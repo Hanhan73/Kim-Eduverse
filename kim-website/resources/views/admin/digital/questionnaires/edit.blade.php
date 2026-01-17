@@ -285,9 +285,15 @@
                                     <option value="pegawai"
                                         {{ old('type', $questionnaire->type) == 'pegawai' ? 'selected' : '' }}>CEKMA
                                         Pegawai</option>
-                                    <option value="guru_dosen"
-                                        {{ old('type', $questionnaire->type) == 'guru_dosen' ? 'selected' : '' }}>CEKMA
-                                        Guru/Dosen</option>
+                                    <option value="guru"
+                                        {{ old('type', $questionnaire->type) == 'guru' ? 'selected' : '' }}>CEKMA
+                                        Guru</option>
+                                    <option value="dosen"
+                                        {{ old('type', $questionnaire->type) == 'dosen' ? 'selected' : '' }}>CEKMA
+                                        Dosen</option>
+                                    <option value="orang_tua"
+                                        {{ old('type', $questionnaire->type) == 'orang_tua' ? 'selected' : '' }}>CEKMA
+                                        Orang Tua</option>
                                     <option value="calon_asn"
                                         {{ old('type', $questionnaire->type) == 'calon_asn' ? 'selected' : '' }}>CEKMA
                                         Calon ASN</option>
