@@ -26,6 +26,8 @@
     max-width: 1400px;
     margin: 0 auto;
     padding: 50px 20px;
+    position: relative;
+    z-index: 1;
 }
 
 .catalog-toolbar {
@@ -150,6 +152,8 @@
     border-radius: 15px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
     margin-bottom: 20px;
+    position: relative;
+    z-index: 2;
 }
 
 .filter-section h3 {
@@ -214,7 +218,7 @@
 
 .cekma-toggle {
     position: absolute;
-    right: 10px;
+    right: -10px;
     top: 50%;
     transform: translateY(-50%);
     cursor: pointer;
@@ -265,6 +269,8 @@
 
 .products-main {
     min-height: 400px;
+    position: relative;
+    z-index: 1;
 }
 
 .result-info {
@@ -278,6 +284,8 @@
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 30px;
     margin-bottom: 50px;
+    position: relative;
+    z-index: 1;
 }
 
 .product-card {
@@ -447,37 +455,173 @@
     color: #764ba2;
 }
 
+/* Mobile Filter Toggle Button */
+.mobile-filter-toggle {
+    display: none;
+    width: 100%;
+    padding: 15px 20px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 20px;
+    cursor: pointer;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    transition: all 0.3s ease;
+}
+
+.mobile-filter-toggle:active {
+    transform: scale(0.98);
+}
+
+.mobile-filter-toggle i#filter-chevron {
+    transition: transform 0.3s ease;
+}
+
+/* Animasi smooth untuk collapse/expand */
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Media query untuk tablet dan mobile */
 @media (max-width: 968px) {
+    .mobile-filter-toggle {
+        display: flex;
+    }
+
     .catalog-layout {
         grid-template-columns: 1fr;
     }
 
     .sidebar {
+        position: relative;
+        top: auto;
+        margin-bottom: 20px;
+        z-index: 10;
+        transition: all 0.3s ease;
+    }
+
+    /* State collapsed (default di mobile) */
+    .sidebar.collapsed {
+        display: none;
+        max-height: 0;
+        overflow: hidden;
+        opacity: 0;
+    }
+
+    /* State expanded (saat tombol diklik) */
+    .sidebar.expanded {
+        display: block !important;
+        max-height: 5000px;
+        opacity: 1;
         margin-bottom: 30px;
+        animation: slideDown 0.3s ease;
     }
 
     .filter-section {
         margin-bottom: 15px;
+        position: relative;
+        z-index: 2;
     }
 
     .catalog-toolbar {
         flex-direction: column;
         align-items: stretch;
+        position: relative;
+        /* UBAH DARI STICKY KE RELATIVE */
+        top: auto;
+        z-index: 5;
+        margin-bottom: 20px;
     }
 
     .search-box {
         width: 100%;
+        min-width: 100%;
     }
 
     .filter-group {
         width: 100%;
         justify-content: space-between;
     }
+
+    .products-main {
+        position: relative;
+        z-index: 1;
+        background: transparent;
+    }
 }
 
+/* Media query untuk desktop */
+@media (min-width: 969px) {
+    .mobile-filter-toggle {
+        display: none !important;
+    }
+
+    .sidebar {
+        position: sticky;
+        top: 100px;
+        height: fit-content;
+        z-index: 10;
+        display: block !important;
+        opacity: 1 !important;
+        max-height: none !important;
+    }
+
+    .sidebar.collapsed,
+    .sidebar.expanded {
+        display: block !important;
+    }
+}
+
+/* Perbaikan untuk mobile kecil */
 @media (max-width: 600px) {
     .products-grid {
         grid-template-columns: 1fr;
+    }
+
+    .catalog-header h1 {
+        font-size: 1.8rem;
+    }
+
+    .catalog-header p {
+        font-size: 0.95rem;
+    }
+
+    .mobile-filter-toggle {
+        font-size: 0.95rem;
+        padding: 12px 18px;
+    }
+
+    .filter-section {
+        padding: 20px;
+    }
+
+    .product-card {
+        border-radius: 15px;
+    }
+
+    .product-body {
+        padding: 20px;
+    }
+
+    .product-title {
+        font-size: 1.1rem;
+    }
+
+    .product-price {
+        font-size: 1.3rem;
     }
 }
 </style>
@@ -550,9 +694,7 @@
 
         @if(request('cekma_type'))
         <div class="filter-tag">
-            <span>
-                CEKMA: {{ Str::title(str_replace('_', ' ', request('cekma_type'))) }}
-            </span>
+            <span>CEKMA: {{ Str::title(str_replace('_', ' ', request('cekma_type'))) }}</span>
             <a href="{{ route('digital.catalog', request()->except('cekma_type')) }}" style="color:white;">
                 <button>×</button>
             </a>
@@ -571,10 +713,16 @@
     </div>
     @endif
 
+    <!-- Mobile Filter Toggle Button -->
+    <button class="mobile-filter-toggle" onclick="toggleMobileFilter()">
+        <span><i class="fas fa-filter"></i> Filter & Kategori</span>
+        <i class="fas fa-chevron-down" id="filter-chevron"></i>
+    </button>
+
     <!-- Main Layout -->
     <div class="catalog-layout">
-        <!-- Sidebar Filters -->
-        <aside class="sidebar">
+        <!-- Sidebar Filters - TAMBAHKAN ID "mobile-sidebar" DI SINI -->
+        <aside class="sidebar" id="mobile-sidebar">
             <!-- Filter Kategori -->
             <div class="filter-section">
                 <h3><i class="fas fa-folder"></i> Kategori</h3>
@@ -750,7 +898,34 @@
 </div>
 
 <script>
+function toggleMobileFilter() {
+    const sidebar = document.getElementById('mobile-sidebar');
+    const chevron = document.getElementById('filter-chevron');
+
+    if (window.innerWidth <= 968) {
+        // Toggle antara collapsed dan expanded
+        if (sidebar.classList.contains('collapsed')) {
+            sidebar.classList.remove('collapsed');
+            sidebar.classList.add('expanded');
+            chevron.style.transform = 'rotate(180deg)';
+        } else {
+            sidebar.classList.remove('expanded');
+            sidebar.classList.add('collapsed');
+            chevron.style.transform = 'rotate(0deg)';
+        }
+    }
+}
+
+// Set initial state di mobile
 document.addEventListener('DOMContentLoaded', function() {
+    const sidebar = document.getElementById('mobile-sidebar');
+    const chevron = document.getElementById('filter-chevron');
+
+    if (window.innerWidth <= 968) {
+        sidebar.classList.add('collapsed');
+        chevron.style.transform = 'rotate(0deg)';
+    }
+
     // Toggle CEKMA subcategories
     const cekmaToggle = document.querySelector('.cekma-toggle');
     const cekmaSubcategories = document.querySelector('.cekma-subcategories');
