@@ -426,10 +426,11 @@ use App\Http\Controllers\Admin\QuestionnaireResponseController;
 use App\Http\Controllers\Admin\QuestionController;
 use App\Http\Controllers\Admin\QuizController;
 use App\Http\Controllers\Admin\LandingPageController as DigitalLandingPageController;
+use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\Digital\Collaborator\CollaboratorProductController;
 use App\Http\Controllers\Digital\Collaborator\CollaboratorProfileController;
 
-Route::get('/promo/{slug}', [DigitalLandingPageController::class, 'show'])->name('digital.landing');
+Route::get('/promo/{slug}', [LandingPageController::class, 'show'])->name('digital.landing');
 // Admin Auth Routes (No middleware)
 Route::prefix('admin/digital')->name('admin.digital.')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
