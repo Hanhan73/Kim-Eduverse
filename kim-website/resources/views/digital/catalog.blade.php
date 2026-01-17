@@ -735,7 +735,6 @@
                         onchange="window.location.href='{{ route('digital.catalog', ['category' => $category->slug, 'search' => request('search'), 'sort' => request('sort')]) }}'">
                     <label for="cat-{{ $category->id }}">
                         {{ $category->name }}
-                        <span class="count">{{ $totalCekma ?? 0 }}</span>
                     </label>
                     <i
                         class="fas fa-chevron-right cekma-toggle {{ request('category') == $category->slug || request('cekma_type') ? 'expanded' : '' }}"></i>
@@ -750,7 +749,6 @@
                             onchange="window.location.href='{{ route('digital.catalog', array_merge(request()->except('category'), ['cekma_type' => $type])) }}'">
                         <label for="cekma-{{ $type }}">
                             CEKMA {{ Str::title(str_replace('_', ' ', $type)) }}
-                            <span class="count">{{ $stat->total ?? 0 }}</span>
                         </label>
                     </div>
                     @endforeach
@@ -763,7 +761,6 @@
                         onchange="window.location.href='{{ route('digital.catalog', ['category' => $category->slug, 'search' => request('search'), 'sort' => request('sort')]) }}'">
                     <label for="cat-{{ $category->id }}">
                         {{ $category->name }}
-                        <span class="count">{{ $category->products_count ?? 0 }}</span>
                     </label>
                 </div>
                 @endif
