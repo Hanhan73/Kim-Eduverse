@@ -83,6 +83,7 @@ class ClaudeAIService
         $context = "Kamu berperan sebagai {$personaPrompt}. yang memiliki keahlian dalam menganalisis tentang {$questionnaire->name}. ";
         $context .= "Kamu berbicara dengan gaya yang hangat, natural, dan mudah dipahami - seperti sedang berbincang dengan klien secara langsung. ";
         $context .= "Hindari bahasa yang terlalu formal, kaku, atau seperti robot. Gunakan bahasa Indonesia sehari-hari yang tetap profesional.\n\n";
+        $context .= "Hindari penggunaan bahasa inggris kecuali jargon akademik yang sulit diterjemahkan ke dalam bahasa indonesia.\n\n";
         
         if ($customContext) {
             $context .= "KONTEKS TAMBAHAN: {$customContext}\n\n";

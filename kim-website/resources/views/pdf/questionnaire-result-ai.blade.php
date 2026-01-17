@@ -391,6 +391,13 @@
         font-weight: 500;
     }
 
+    .motivation-title {
+        font-size: 10pt;
+        font-weight: 800;
+        color: #b45309;
+        margin-bottom: 8px;
+    }
+
     /* Professional Note - Compact */
     .professional-box {
         background: #fafafa;
@@ -684,6 +691,7 @@
     <div class="page">
         @if($response->getMotivationalMessage())
         <div class="motivation-box">
+            <div class="motivation-title">Pesan Motivasi</div>
             <div class="motivation-text">
                 "{{ $response->getMotivationalMessage() }}"
             </div>
@@ -692,7 +700,7 @@
 
         @if($response->ai_analysis['professional_note'] ?? null)
         <div class="professional-box">
-            <div class="professional-title">Catatan Profesional</div>
+            <div class="professional-title">Catatan Refleksi</div>
             <div class="professional-text">
                 {{ $response->ai_analysis['professional_note'] }}
             </div>
@@ -700,7 +708,7 @@
         @endif
 
         <div class="disclaimer-box">
-            <div class="disclaimer-title">Penting untuk Dibaca</div>
+            <div class="disclaimer-title">Disclaimer</div>
             <div class="disclaimer-text">
                 Hasil analisis ini bersifat informatif dan edukatif, bukan merupakan diagnosis medis atau psikologis.
                 Untuk penanganan lebih lanjut atau jika Anda mengalami kesulitan yang signifikan, sangat disarankan
