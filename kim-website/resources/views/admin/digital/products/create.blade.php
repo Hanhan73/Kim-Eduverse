@@ -107,6 +107,9 @@
                             <option value="template"
                                 {{ old('type', $product->type ?? '') == 'template' ? 'selected' : '' }}>Template
                             </option>
+                            <option value="seminar"
+                                {{ old('type', $product->type ?? '') == 'seminar' ? 'selected' : '' }}>
+                                Seminar</option>
                             <option value="other" {{ old('type', $product->type ?? '') == 'other' ? 'selected' : '' }}>
                                 Other</option>
                         </select>

@@ -114,7 +114,7 @@ class ProductController extends Controller
             'slug' => 'nullable|string|unique:digital_products,slug,' . $id,
             'description' => 'required|string',
             'short_description' => 'nullable|string|max:500',
-            'type' => 'required|in:questionnaire,module,template,ebook,video,other',
+            'type' => 'required|in:questionnaire,module,template,ebook,video,seminar,other',
             'category_id' => 'required|exists:digital_product_categories,id',
             'collaborator_id' => 'nullable|exists:users,id',
             'price' => 'required|numeric|min:0',
