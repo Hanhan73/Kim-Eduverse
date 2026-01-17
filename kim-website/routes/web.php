@@ -413,8 +413,8 @@ Route::prefix('produk/digital')->name('digital.')->group(function () {
 });
 
 
-use App\Http\Controllers\LandingPageController;
-Route::get('/promo/{slug}', [\App\Http\Controllers\LandingPageController::class, 'show'])->name('digital.landing');
+use App\Http\Controllers\Admin\LandingPageController;
+Route::get('/promo/{slug}', [\App\Http\Controllers\Admin\LandingPageController::class, 'show'])->name('digital.landing');
 
 
 use App\Http\Controllers\Admin\DigitalDashboardController as DashboardController;
