@@ -420,7 +420,7 @@
                 <i class="fas fa-user-circle"></i> Profile
             </a>
 
-            <form action="#" method="POST" style="margin: 0;">
+            <form action="{{ route('digital.logout') }}" method="POST" style="margin: 0;">
                 @csrf
                 <button type="submit" class="menu-item"
                     style="width: 100%; background: none; border: none; text-align: left; cursor: pointer;">

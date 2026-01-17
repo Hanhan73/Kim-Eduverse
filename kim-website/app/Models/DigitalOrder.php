@@ -122,9 +122,11 @@ class DigitalOrder extends Model
                 continue;
             }
 
+            $platformFee = 5000;
+            $remainingAmount = max(0, $item->subtotal - $platformFee);
             // Calculate revenue split (70% collaborator, 30% platform)
-            $collaboratorShare = $item->subtotal * 0.70;
-            $platformShare = $item->subtotal * 0.30;
+            $collaboratorShare = $remainingAmount * 0.70;
+            $platformShare = $platformFee + ($remainingAmount * 0.30);
 
             // Create revenue record
             $revenue = CollaboratorRevenue::create([

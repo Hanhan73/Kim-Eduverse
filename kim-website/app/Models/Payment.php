@@ -129,9 +129,11 @@ class Payment extends Model
             return;
         }
 
+        $platformfee = 5000;
+        $remainingAmount = max(0, $this->amount - $platformfee);
         // Calculate revenue split (70% instructor, 30% platform)
-        $instructorShare = $this->amount * 0.70;
-        $platformShare = $this->amount * 0.30;
+        $instructorShare = $remainingAmount * 0.70;
+        $platformShare = $platformfee + ($remainingAmount * 0.30);
 
         // Create revenue record
         $revenue = InstructorRevenue::create([

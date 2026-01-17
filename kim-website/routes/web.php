@@ -621,6 +621,10 @@ use App\Http\Controllers\Digital\Collaborator\CollaboratorSeminarController;
 |--------------------------------------------------------------------------
 */
 
+
+Route::post('/digital/logout', [AuthController::class, 'logout'])
+    ->name('digital.logout');
+    
 // Collaborator Routes (untuk creator produk digital)
 Route::middleware(['check.digital.role:collaborator'])
     ->prefix('digital/collaborator')
@@ -699,6 +703,7 @@ Route::middleware(['check.digital.role:collaborator'])
         Route::put('/products/{product}', [CollaboratorProductController::class, 'update'])->name('products.update');
         Route::delete('/products/{product}', [CollaboratorProductController::class, 'destroy'])->name('products.destroy');
         Route::post('/products/{product}/toggle', [CollaboratorProductController::class, 'toggleStatus'])->name('products.toggle');
+
     
     });
 

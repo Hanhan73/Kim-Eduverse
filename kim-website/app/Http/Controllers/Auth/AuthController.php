@@ -83,14 +83,31 @@ class AuthController extends Controller
     /**
      * Logout
      */
-    public function logout()
-    {
-        session()->forget(['digital_admin_id', 'digital_admin_name', 'digital_admin_email', 'digital_admin_role']);
-        session()->flush();
+public function logout(Request $request)
+{
+    $role = session('digital_admin_role');
 
-        return redirect()->route('admin.digital.login')
-            ->with('success', 'Anda telah berhasil logout');
-    }
+    session()->forget([
+        'digital_admin_id',
+        'digital_admin_name',
+        'digital_admin_email',
+        'digital_admin_role'
+    ]);
+
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+
+    // Redirect sesuai role sebelum logout
+    return match ($role) {
+        'collaborator', 'bendahara_digital'
+            => redirect()->route('admin.digital.login')
+                ->with('success', 'Anda telah berhasil logout'),
+
+        default
+            => redirect()->route('admin.digital.login')
+                ->with('success', 'Anda telah berhasil logout'),
+    };
+}
 
     /**
      * Redirect to appropriate dashboard based on role
