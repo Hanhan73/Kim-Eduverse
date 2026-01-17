@@ -643,6 +643,51 @@
         }
     }
 
+    .admin-pagination {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        align-items: center;
+        margin-top: 20px;
+        flex-wrap: wrap;
+    }
+
+    .page-btn {
+        min-width: 36px;
+        height: 36px;
+        padding: 0 12px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        background: #edf2f7;
+        color: var(--dark);
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+
+    .page-btn:hover {
+        background: var(--primary);
+        color: white;
+    }
+
+    .page-btn.active {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+    }
+
+    .page-btn.disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+    }
+
+    .page-dots {
+        padding: 0 6px;
+        color: var(--gray);
+    }
+
+
     @yield('styles')
     </style>
 </head>

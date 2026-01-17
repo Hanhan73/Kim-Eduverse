@@ -130,7 +130,7 @@
 
         <!-- Pagination -->
         <div style="padding: 20px;">
-            {{ $questions->withQueryString()->links('vendor.pagination.tailwind') }}
+            {{ $questions->withQueryString()->links('vendor.pagination.admin') }}
         </div>
         @else
         <div class="empty-state">
