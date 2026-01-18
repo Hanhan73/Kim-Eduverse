@@ -133,7 +133,7 @@ class DigitalController extends Controller
             $total = 0;
         } else {
             $subtotal = collect($cart)->sum('price');
-            $tax = round($subtotal * 0.01); // 1% admin fee
+            $tax = 0;
             $total = $subtotal + $tax;
             
             Log::info('Cart totals calculated', [
@@ -247,7 +247,7 @@ class DigitalController extends Controller
         }
 
         $subtotal = collect($cart)->sum('price');
-        $tax = round($subtotal * 0.01);
+        $tax = 0;
         $total = $subtotal + $tax;
 
         return view('digital.checkout', compact('cart', 'subtotal', 'tax', 'total'));

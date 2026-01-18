@@ -627,6 +627,41 @@ textarea.form-control {
         grid-template-columns: 1fr;
     }
 }
+
+.sync-info-box {
+    background: linear-gradient(135deg, #e0f2fe 0%, #dbeafe 100%);
+    border: 2px solid #0284c7;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.sync-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.btn-sync {
+    background: linear-gradient(135deg, #0ea5e9, #0284c7);
+    color: white;
+    flex: 1;
+}
+
+.btn-sync:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(14, 165, 233, 0.4);
+}
+
+.sync-warning {
+    background: #fef3c7;
+    border: 2px solid #fbbf24;
+    border-radius: 8px;
+    padding: 12px;
+    margin-top: 10px;
+    font-size: 0.85rem;
+    color: #92400e;
+}
 </style>
 @endsection
 
@@ -692,6 +727,70 @@ textarea.form-control {
 <div class="main-grid">
     <!-- Questions Section -->
     <div>
+        <!-- Sync Feature Box -->
+        @php
+        // Find related quiz (pre-test or post-test)
+        $relatedQuiz = null;
+        $syncType = '';
+
+        // Get seminar that uses this quiz
+        $seminar = \App\Models\Seminar::where('pre_test_id', $quiz->id)
+        ->orWhere('post_test_id', $quiz->id)
+        ->first();
+
+        if ($seminar) {
+        if ($seminar->pre_test_id === $quiz->id && $seminar->post_test_id) {
+        $relatedQuiz = $seminar->postTest;
+        $syncType = 'Post-Test';
+        } elseif ($seminar->post_test_id === $quiz->id && $seminar->pre_test_id) {
+        $relatedQuiz = $seminar->preTest;
+        $syncType = 'Pre-Test';
+        }
+        }
+        @endphp
+
+        @if($relatedQuiz)
+        <div class="sync-info-box">
+            <h4 style="margin: 0 0 10px 0; color: #0c4a6e; display: flex; align-items: center; gap: 10px;">
+                <i class="fas fa-sync-alt"></i> Sinkronisasi Pertanyaan
+            </h4>
+            <p style="color: #0c4a6e; margin: 0 0 15px 0; line-height: 1.6;">
+                Quiz ini terhubung dengan <strong>{{ $relatedQuiz->title }}</strong> dalam seminar
+                <strong>{{ $seminar->title }}</strong>. Anda dapat menyinkronkan pertanyaan antara kedua quiz.
+            </p>
+
+            <div style="background: white; border-radius: 8px; padding: 15px; margin-bottom: 15px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div>
+                        <div style="font-size: 0.85rem; color: #64748b; margin-bottom: 5px;">Quiz Ini</div>
+                        <div style="font-weight: 600; color: #0c4a6e;">{{ $quiz->questions->count() }} Pertanyaan</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.85rem; color: #64748b; margin-bottom: 5px;">{{ $syncType }}</div>
+                        <div style="font-weight: 600; color: #0c4a6e;">{{ $relatedQuiz->questions->count() }} Pertanyaan
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <form action="{{ route('admin.digital.quizzes.sync', [$quiz->id, $relatedQuiz->id]) }}" method="POST"
+                onsubmit="return confirm('Yakin ingin menyinkronkan pertanyaan? Ini akan menghapus semua pertanyaan di {{ $syncType }} dan menggantinya dengan pertanyaan dari quiz ini.')">
+                @csrf
+                <button type="submit" class="btn btn-sync btn-block">
+                    <i class="fas fa-sync-alt"></i>
+                    Sync ke {{ $syncType }} ({{ $relatedQuiz->title }})
+                </button>
+            </form>
+
+            <div class="sync-warning">
+                <i class="fas fa-exclamation-triangle"></i>
+                <strong>Peringatan:</strong> Sinkronisasi akan menghapus semua pertanyaan yang ada di {{ $syncType }}
+                dan menggantinya dengan pertanyaan dari quiz ini. Pastikan Anda sudah yakin!
+            </div>
+        </div>
+        @endif
+        <div>
+        </div>
         <div class="card">
             <div class="card-header">
                 <h3><i class="fas fa-list-ol"></i> Daftar Pertanyaan ({{ $quiz->questions->count() }})</h3>

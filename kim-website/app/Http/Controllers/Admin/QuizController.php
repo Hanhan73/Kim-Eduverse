@@ -5,11 +5,41 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Quiz;
 use App\Models\QuizQuestion;
+use App\Models\Seminar;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class QuizController extends Controller
 {
+    /**
+     * Display a listing of seminar quizzes
+     */
+    public function index()
+    {
+        // Get all quizzes that are used in seminars (pre-test or post-test)
+        $quizzes = Quiz::whereHas('preTestSeminars')
+            ->orWhereHas('postTestSeminars')
+            ->with(['preTestSeminars', 'postTestSeminars', 'questions'])
+            ->withCount('questions')
+            ->latest()
+            ->paginate(15);
+
+        // Stats
+        $stats = [
+            'total_quizzes' => Quiz::whereHas('preTestSeminars')
+                ->orWhereHas('postTestSeminars')
+                ->count(),
+            'total_pre_tests' => Quiz::whereHas('preTestSeminars')->count(),
+            'total_post_tests' => Quiz::whereHas('postTestSeminars')->count(),
+            'total_questions' => QuizQuestion::whereHas('quiz', function($q) {
+                $q->whereHas('preTestSeminars')
+                  ->orWhereHas('postTestSeminars');
+            })->count(),
+        ];
+
+        return view('admin.digital.quizzes.index', compact('quizzes', 'stats'));
+    }
+
     /**
      * Show quiz edit page with questions management
      */
@@ -164,5 +194,75 @@ class QuizController extends Controller
         }
 
         return response()->json(['success' => true]);
+    }
+
+    /**
+     * Sync questions from one quiz to another (pre-test <-> post-test)
+     */
+    public function syncQuestions(Quiz $quiz, $targetQuizId)
+    {
+        // Validate that target quiz exists
+        $targetQuiz = Quiz::findOrFail($targetQuizId);
+
+        // Get source questions
+        $sourceQuestions = $quiz->questions()->orderBy('order')->get();
+
+        if ($sourceQuestions->isEmpty()) {
+            return redirect()
+                ->back()
+                ->with('error', 'Quiz sumber tidak memiliki pertanyaan untuk disinkronkan!');
+        }
+
+        // Delete existing questions in target quiz
+        QuizQuestion::where('quiz_id', $targetQuiz->id)->delete();
+
+        // Copy questions from source to target
+        foreach ($sourceQuestions as $index => $question) {
+            QuizQuestion::create([
+                'quiz_id' => $targetQuiz->id,
+                'question' => $question->question,
+                'type' => $question->type,
+                'options' => $question->options,
+                'correct_answer' => $question->correct_answer,
+                'points' => $question->points,
+                'order' => $index + 1,
+            ]);
+        }
+
+        $targetType = $targetQuiz->id === $quiz->id ? 'Quiz yang sama' : $targetQuiz->title;
+        
+        return redirect()
+            ->route('admin.digital.quizzes.edit', $quiz)
+            ->with('success', "Berhasil menyinkronkan {$sourceQuestions->count()} pertanyaan ke {$targetType}!");
+    }
+
+    /**
+     * Delete quiz (only if not used in any seminar)
+     */
+    public function destroy(Quiz $quiz)
+    {
+        // Check if quiz is used in seminars
+        $usedInPreTest = Seminar::where('pre_test_id', $quiz->id)->exists();
+        $usedInPostTest = Seminar::where('post_test_id', $quiz->id)->exists();
+
+        if ($usedInPreTest || $usedInPostTest) {
+            return back()->with('error', 'Tidak dapat menghapus quiz yang masih digunakan dalam seminar!');
+        }
+
+        $quiz->delete();
+
+        return redirect()
+            ->route('admin.digital.quizzes.index')
+            ->with('success', 'Quiz berhasil dihapus!');
+    }
+
+    /**
+     * Toggle quiz active status
+     */
+    public function toggleActive(Quiz $quiz)
+    {
+        $quiz->update(['is_active' => !$quiz->is_active]);
+
+        return back()->with('success', 'Status quiz berhasil diubah!');
     }
 }

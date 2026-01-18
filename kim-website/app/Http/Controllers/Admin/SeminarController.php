@@ -27,7 +27,17 @@ class SeminarController extends Controller
 
     public function create()
     {
-        $quizzes = Quiz::where('is_active', true)->orderBy('title')->get();
+        // HANYA ambil quiz yang:
+        // 1. Tidak punya course_id DAN tidak punya module_id (quiz standalone untuk seminar)
+        // 2. ATAU quiz yang quizable_type = 'App\Models\Seminar'
+        $quizzes = Quiz::where(function($query) {
+                $query->whereNull('course_id')
+                      ->whereNull('module_id');
+            })
+            ->orWhere('quizable_type', 'App\Models\Seminar')
+            ->where('is_active', true)
+            ->orderBy('title')
+            ->get();
         
         $collaborators = User::where('role', 'collaborator')
             ->where('is_active', true)
@@ -44,8 +54,8 @@ class SeminarController extends Controller
             'description' => 'required|string',
             'thumbnail' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'collaborator_id' => 'required|exists:users,id',
-            'instructor_name' => 'nullable|string|max:255',  // NULLABLE override
-            'instructor_bio' => 'nullable|string',           // NULLABLE override
+            'instructor_name' => 'nullable|string|max:255',
+            'instructor_bio' => 'nullable|string',
             'material_pdf_path' => 'nullable|url',
             'material_description' => 'nullable|string',
             'pre_test_id' => 'required|exists:quizzes,id',
@@ -71,7 +81,7 @@ class SeminarController extends Controller
             $validated['slug'] = Str::slug($validated['title']);
             $validated['created_by'] = auth()->id();
 
-            // FIRST: Create DigitalProduct
+            // Create DigitalProduct
             $category = DigitalProductCategory::firstOrCreate(
                 ['slug' => 'seminar'],
                 ['name' => 'Seminar', 'is_active' => true]
@@ -92,7 +102,7 @@ class SeminarController extends Controller
                 'order' => $validated['order'] ?? 0,
             ]);
 
-            // THEN: Create Seminar with product_id
+            // Create Seminar with product_id
             $validated['product_id'] = $product->id;
             $seminar = Seminar::create($validated);
 
@@ -133,7 +143,17 @@ class SeminarController extends Controller
 
     public function edit(Seminar $seminar)
     {
-        $quizzes = Quiz::where('is_active', true)->orderBy('title')->get();
+        // HANYA ambil quiz yang:
+        // 1. Tidak punya course_id DAN tidak punya module_id (quiz standalone untuk seminar)
+        // 2. ATAU quiz yang quizable_type = 'App\Models\Seminar'
+        $quizzes = Quiz::where(function($query) {
+                $query->whereNull('course_id')
+                      ->whereNull('module_id');
+            })
+            ->orWhere('quizable_type', 'App\Models\Seminar')
+            ->where('is_active', true)
+            ->orderBy('title')
+            ->get();
         
         $collaborators = User::where('role', 'collaborator')
             ->where('is_active', true)
@@ -150,8 +170,8 @@ class SeminarController extends Controller
             'description' => 'required|string',
             'thumbnail' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'collaborator_id' => 'required|exists:users,id',
-            'instructor_name' => 'nullable|string|max:255',  // NULLABLE
-            'instructor_bio' => 'nullable|string',           // NULLABLE
+            'instructor_name' => 'nullable|string|max:255',
+            'instructor_bio' => 'nullable|string',
             'material_pdf_path' => 'nullable|url',
             'material_description' => 'nullable|string',
             'pre_test_id' => 'required|exists:quizzes,id',
@@ -223,7 +243,7 @@ class SeminarController extends Controller
             Storage::disk('public')->delete($seminar->thumbnail);
         }
 
-        // Delete digital product first (because seminar has product_id FK)
+        // Delete digital product first
         if ($seminar->digitalProduct) {
             $seminar->digitalProduct->delete();
         }
@@ -281,6 +301,7 @@ class SeminarController extends Controller
         try {
             DB::beginTransaction();
 
+            // Buat quiz khusus untuk seminar (tanpa course_id dan module_id)
             $quiz = Quiz::create([
                 'title' => $validated['title'],
                 'slug' => Str::slug($validated['title']),
@@ -289,6 +310,9 @@ class SeminarController extends Controller
                 'passing_score' => $validated['passing_score'],
                 'max_attempts' => $validated['max_attempts'],
                 'is_active' => true,
+                'type' => $validated['quiz_type'] === 'pre' ? 'pre_test' : 'post_test',
+                'quizable_type' => 'App\Models\Seminar', // Tandai sebagai quiz seminar
+                // course_id dan module_id akan NULL (default)
             ]);
 
             DB::commit();

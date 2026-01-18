@@ -522,6 +522,11 @@ Route::prefix('admin/digital')->name('admin.digital.')->middleware(['check.digit
     // Route untuk mengelola Quiz
     Route::get('quizzes/{quiz}/edit', [QuizController::class, 'edit'])->name('quizzes.edit');
     Route::put('quizzes/{quiz}', [QuizController::class, 'update'])->name('quizzes.update');
+    Route::delete('quizzes/{quiz}', [QuizController::class, 'destroy'])->name('quizzes.destroy');
+    Route::get('quizzes/index', [QuizController::class, 'index'])->name('quizzes.index');
+    Route::post('quizzes', [QuizController::class, 'store'])->name('quizzes.store');
+    Route::get('quizzes/create', [QuizController::class, 'create'])->name('quizzes.create');
+    Route::patch('quizzes/{quiz}/toggle-active', [QuizController::class, 'toggleActive'])->name('quizzes.toggle-active');
 
     // Route untuk mengelola Pertanyaan
     Route::post('quizzes/{quiz}/questions', [QuizController::class, 'storeQuestion'])->name('quizzes.store-question');
@@ -531,6 +536,8 @@ Route::prefix('admin/digital')->name('admin.digital.')->middleware(['check.digit
 
     // Route untuk mengatur ulang urutan pertanyaan
     Route::post('quizzes/{quiz}/reorder-questions', [QuizController::class, 'reorderQuestions'])->name('quizzes.reorder-questions');
+    Route::post('quizzes/{quiz}/sync/{targetQuiz}', [QuizController::class, 'syncQuestions'])->name('quizzes.sync');
+
     Route::prefix('seminars')->name('seminars.')->group(function () {
         Route::get('/', [AdminSeminarController::class, 'index'])->name('index');
         Route::get('/create', [AdminSeminarController::class, 'create'])->name('create');

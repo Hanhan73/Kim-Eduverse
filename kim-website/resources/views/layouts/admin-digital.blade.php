@@ -746,19 +746,23 @@
                 <i class="fas fa-users"></i> Daftar Responden
             </a>
 
+            <div class="menu-section">On-demand seminar</div>
+
+            <a href="{{ route('admin.digital.seminars.index') }}"
+                class="menu-item {{ request()->routeIs('admin.digital.seminars.*') ? 'active' : '' }}">
+                <i class="fas fa-chalkboard-teacher"></i> Seminar
+            </a>
+
+            <a href="{{route ('admin.digital.quizzes.index') }}"
+                class="menu-item {{ request()->routeIs('admin.digital.seminar.quizzes.*') ? 'active' : '' }}">
+                <i class="fas fa-question-circle"></i> Quiz Seminar
+            </a>
 
             <div class="menu-section">Transaksi</div>
 
             <a href="{{ route('admin.digital.orders.index') }}"
                 class="menu-item {{ request()->routeIs('admin.digital.orders.*') ? 'active' : '' }}">
                 <i class="fas fa-shopping-cart"></i> Orders
-            </a>
-
-            <div class="menu-section">On-demand seminar</div>
-
-            <a href="{{ route('admin.digital.seminars.index') }}"
-                class="menu-item {{ request()->routeIs('admin.digital.seminars.*') ? 'active' : '' }}">
-                <i class="fas fa-chalkboard-teacher"></i> Seminar
             </a>
 
             <div class="menu-section">Navigasi</div>

@@ -47,8 +47,7 @@ class DigitalPaymentController extends Controller
         try {
             // Calculate totals
             $subtotal = collect($cart)->sum('price');
-            $tax = 0; // No tax
-            $total = $subtotal + $tax;
+            $total = $subtotal + $tax = 0; // Tambahkan logika pajak jika perlu
 
             // Create order
             $order = DigitalOrder::create([
