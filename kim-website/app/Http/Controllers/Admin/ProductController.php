@@ -15,7 +15,7 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        $query = DigitalProduct::with(['category']);
+        $query = DigitalProduct::with(['category', 'collaborator']);
 
         // Search
         if ($request->filled('search')) {
@@ -65,31 +65,37 @@ class ProductController extends Controller
             'is_featured' => 'boolean',
         ]);
 
-        // Set default values for checkboxes
         $validated['is_active'] = $request->input('is_active') == '1' ? true : false;
         $validated['is_featured'] = $request->input('is_featured') == '1' ? true : false;
-        // Generate slug
+        
         if (empty($validated['slug'])) {
             $validated['slug'] = Str::slug($validated['name']);
         }
 
-        // Handle thumbnail upload
         if ($request->hasFile('thumbnail')) {
             $validated['thumbnail'] = $request->file('thumbnail')->store('products/thumbnails', 'public');
         }
 
         $product = DigitalProduct::create($validated);
+        
+        // JIKA TYPE SEMINAR - Buat Seminar dengan product_id
         if ($validated['type'] === 'seminar') {
             \App\Models\Seminar::create([
-                'product_id' => $product->id,
+                'product_id' => $product->id, // BELONGS TO product
+                'collaborator_id' => $validated['collaborator_id'],
                 'title' => $validated['name'],
                 'slug' => $validated['slug'],
                 'description' => $validated['description'],
-                'instructor_name' => $request->instructor_name ?? 'Instruktur',
+                'price' => $validated['price'],
+                'thumbnail' => $validated['thumbnail'] ?? null,
+                'instructor_name' => null, // Will use collaborator
+                'instructor_bio' => null,  // Will use collaborator
                 'duration_minutes' => $request->duration_minutes ?? 60,
                 'is_active' => $validated['is_active'] ?? true,
+                'is_featured' => $validated['is_featured'] ?? false,
             ]);
         }
+        
         return redirect()
             ->route('admin.digital.products.index')
             ->with('success', 'Produk berhasil ditambahkan');
@@ -128,9 +134,7 @@ class ProductController extends Controller
         $validated['is_active'] = $request->input('is_active') == '1' ? true : false;
         $validated['is_featured'] = $request->input('is_featured') == '1' ? true : false;
     
-        // Handle thumbnail upload
         if ($request->hasFile('thumbnail')) {
-            // Delete old thumbnail
             if ($product->thumbnail) {
                 Storage::disk('public')->delete($product->thumbnail);
             }
@@ -139,14 +143,18 @@ class ProductController extends Controller
 
         $product->update($validated);
 
+        // SYNC to Seminar if type is seminar
         if ($product->type === 'seminar' && $product->seminar) {
             $product->seminar->update([
+                'collaborator_id' => $validated['collaborator_id'],
                 'title' => $validated['name'],
-                'slug' => $validated['slug'],
+                'slug' => $validated['slug'] ?? $product->slug,
                 'description' => $validated['description'],
-                'instructor_name' => $request->instructor_name ?? $product->seminar->instructor_name,
-                'duration_minutes' => $request->duration_minutes ?? $product->seminar->duration_minutes,
-                'is_active' => $validated['is_active'] ?? true,
+                'price' => $validated['price'],
+                'thumbnail' => $validated['thumbnail'] ?? $product->seminar->thumbnail,
+                'is_active' => $validated['is_active'],
+                'is_featured' => $validated['is_featured'],
+                // Don't override instructor_name/bio - keep user's custom values
             ]);
         }
 
@@ -159,11 +167,11 @@ class ProductController extends Controller
     {
         $product = DigitalProduct::findOrFail($id);
 
-        // Delete thumbnail
         if ($product->thumbnail) {
             Storage::disk('public')->delete($product->thumbnail);
         }
 
+        // Delete seminar first (it has FK to product)
         if ($product->type === 'seminar' && $product->seminar) {
             $product->seminar->delete();
         }

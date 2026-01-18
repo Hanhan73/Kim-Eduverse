@@ -11,17 +11,19 @@ class DigitalProduct extends Model
     use HasFactory;
 
     protected $fillable = [
-        'collaborator_id', // NEW
+        'collaborator_id',
         'category_id',
         'name',
         'slug',
         'description',
+        'short_description',
         'features',
         'price',
         'thumbnail',
         'type',
         'questionnaire_id',
         'file_path',
+        'file_url',
         'duration_minutes',
         'is_active',
         'is_featured',
@@ -36,9 +38,6 @@ class DigitalProduct extends Model
         'is_featured' => 'boolean',
     ];
 
-    /**
-     * Boot the model.
-     */
     protected static function boot()
     {
         parent::boot();
@@ -89,6 +88,24 @@ class DigitalProduct extends Model
     {
         return $this->hasMany(CollaboratorRevenue::class, 'product_id');
     }
+
+    /**
+     * Get the seminar associated with this product (HAS ONE)
+     * Seminar has product_id pointing to this DigitalProduct
+     */
+    public function seminar()
+    {
+        return $this->hasOne(\App\Models\Seminar::class, 'product_id');
+    }
+
+    /**
+     * Relasi ke Landing Page
+     */
+    public function landingPage()
+    {
+        return $this->hasOne(\App\Models\ProductLandingPage::class, 'product_id');
+    }
+
     /**
      * Increment sold count.
      */
@@ -113,22 +130,12 @@ class DigitalProduct extends Model
         return $this->type === 'questionnaire';
     }
 
+    /**
+     * Check if product is a seminar.
+     */
     public function isSeminar()
     {
         return $this->type === 'seminar';
-    }
-
-    public function seminar()
-    {
-        return $this->hasOne(\App\Models\Seminar::class, 'product_id');
-    }
-
-    /**
-     * Relasi ke Landing Page
-     */
-    public function landingPage()
-    {
-        return $this->hasOne(\App\Models\ProductLandingPage::class, 'product_id');
     }
 
     /**
@@ -148,5 +155,19 @@ class DigitalProduct extends Model
             return route('digital.landing', $this->slug);
         }
         return null;
+    }
+
+    /**
+     * Get display instructor name
+     * Untuk seminar, ambil dari seminar->instructor_display_name
+     * Untuk produk biasa, ambil dari collaborator
+     */
+    public function getInstructorNameAttribute()
+    {
+        if ($this->isSeminar() && $this->seminar) {
+            return $this->seminar->instructor_display_name;
+        }
+        
+        return $this->collaborator?->name ?? 'Unknown';
     }
 }

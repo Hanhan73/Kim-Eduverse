@@ -154,21 +154,59 @@
             </div>
         </div>
 
-        <!-- Instructor -->
+        <!-- Instructor/Collaborator Info - UPDATED -->
         <div class="card">
             <div class="card-header">
-                <h3><i class="fas fa-user-tie"></i> Instruktur</h3>
+                <h3><i class="fas fa-user-tie"></i> Instruktur / Collaborator</h3>
             </div>
             <div class="card-body">
+                @if($seminar->collaborator)
+                <div
+                    style="background: #f0f9ff; border: 2px solid #0284c7; border-radius: 10px; padding: 20px; margin-bottom: 15px;">
+                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                        @if($seminar->collaborator->avatar)
+                        <img src="{{ Storage::url($seminar->collaborator->avatar) }}"
+                            alt="{{ $seminar->collaborator->name }}"
+                            style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover;">
+                        @else
+                        <div
+                            style="width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--secondary)); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 1.5rem;">
+                            {{ substr($seminar->collaborator->name, 0, 1) }}
+                        </div>
+                        @endif
+                        <div>
+                            <h4 style="margin: 0; color: #0c4a6e;">{{ $seminar->collaborator->name }}</h4>
+                            <small style="color: #64748b;">{{ $seminar->collaborator->email }}</small>
+                        </div>
+                    </div>
+
+                    @if($seminar->collaborator->bio)
+                    <div style="color: #0c4a6e; line-height: 1.6;">
+                        {{ $seminar->collaborator->bio }}
+                    </div>
+                    @endif
+                </div>
+                @endif
+
+                <!-- Display info jika ada override -->
+                @if($seminar->instructor_name)
                 <div class="info-row">
-                    <strong>Nama:</strong>
+                    <strong>Displayed Instructor Name:</strong>
                     <span>{{ $seminar->instructor_name }}</span>
                 </div>
+                @endif
 
                 @if($seminar->instructor_bio)
                 <div class="info-row">
-                    <strong>Bio:</strong>
+                    <strong>Displayed Instructor Bio:</strong>
                     <span>{{ $seminar->instructor_bio }}</span>
+                </div>
+                @endif
+
+                @if(!$seminar->collaborator && !$seminar->instructor_name)
+                <div style="background: #fef3c7; border: 2px solid #fbbf24; border-radius: 8px; padding: 15px;">
+                    <i class="fas fa-exclamation-triangle" style="color: #92400e;"></i>
+                    <span style="color: #92400e;">Belum ada instructor/collaborator yang ditentukan</span>
                 </div>
                 @endif
             </div>
@@ -215,7 +253,8 @@
                             <strong>{{ $seminar->preTest->title }}</strong>
                         </div>
                         <div style="display: flex; gap: 15px; font-size: 0.9rem; color: #0c4a6e;">
-                            <span><i class="fas fa-question-circle"></i> {{ $seminar->preTest->questions->count() }}
+                            <span><i class="fas fa-question-circle"></i>
+                                {{ $seminar->preTest->questions->count() ?? 0 }}
                                 soal</span>
                             <span><i class="fas fa-clock"></i> {{ $seminar->preTest->duration_minutes }} menit</span>
                         </div>
@@ -237,7 +276,8 @@
                             <strong>{{ $seminar->postTest->title }}</strong>
                         </div>
                         <div style="display: flex; gap: 15px; font-size: 0.9rem; color: #166534;">
-                            <span><i class="fas fa-question-circle"></i> {{ $seminar->postTest->questions->count() }}
+                            <span><i class="fas fa-question-circle"></i>
+                                {{ $seminar->postTest->questions->count() ?? 0 }}
                                 soal</span>
                             <span><i class="fas fa-clock"></i> {{ $seminar->postTest->duration_minutes }} menit</span>
                         </div>
@@ -404,41 +444,41 @@
 </div>
 
 <style>
-    .info-row {
-        display: flex;
-        justify-content: space-between;
-        padding: 12px 0;
-        border-bottom: 1px solid #e2e8f0;
-    }
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #e2e8f0;
+}
 
-    .info-row:last-child {
-        border-bottom: none;
-    }
+.info-row:last-child {
+    border-bottom: none;
+}
 
-    .info-box {
-        background: #f8f9fa;
-        border-radius: 10px;
-        padding: 15px;
-        display: flex;
-        align-items: center;
-        gap: 15px;
-    }
+.info-box {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
 
-    .info-box i {
-        font-size: 2rem;
-        color: var(--primary);
-    }
+.info-box i {
+    font-size: 2rem;
+    color: var(--primary);
+}
 
-    .info-box strong {
-        display: block;
-        font-size: 1.3rem;
-        color: var(--dark);
-    }
+.info-box strong {
+    display: block;
+    font-size: 1.3rem;
+    color: var(--dark);
+}
 
-    .info-box span {
-        display: block;
-        font-size: 0.85rem;
-        color: var(--gray);
-    }
+.info-box span {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--gray);
+}
 </style>
 @endsection

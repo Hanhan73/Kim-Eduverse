@@ -97,7 +97,7 @@
                             <input type="checkbox" id="selectAll">
                         </th>
                         <th>Seminar</th>
-                        <th>Instruktur</th>
+                        <th>Instruktur / Collaborator</th>
                         <th>Harga</th>
                         <th>Durasi</th>
                         <th>Peserta</th>
@@ -139,8 +139,42 @@
                             </div>
                         </td>
                         <td>
-                            <div style="font-weight: 600;">{{ $seminar->instructor_name }}</div>
-                            <small style="color: var(--gray);">{{ Str::limit($seminar->instructor_bio, 40) }}</small>
+                            {{-- UPDATED: Show collaborator info --}}
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                @if($seminar->collaborator)
+                                {{-- Avatar --}}
+                                @if($seminar->collaborator->avatar)
+                                <img src="{{ Storage::url($seminar->collaborator->avatar) }}"
+                                    alt="{{ $seminar->collaborator->name }}"
+                                    style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+                                @else
+                                <div
+                                    style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #667eea, #764ba2); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 1rem;">
+                                    {{ substr($seminar->collaborator->name, 0, 1) }}
+                                </div>
+                                @endif
+                                {{-- Info --}}
+                                <div>
+                                    <div style="font-weight: 600; color: var(--dark);">
+                                        {{ $seminar->instructor_display_name }}
+                                    </div>
+                                    <small style="color: var(--gray);">
+                                        {{ $seminar->collaborator->email }}
+                                    </small>
+                                    @if($seminar->instructor_name)
+                                    <br>
+                                    <small style="color: #f59e0b;">
+                                        <i class="fas fa-info-circle"></i> Custom: {{ $seminar->instructor_name }}
+                                    </small>
+                                    @endif
+                                </div>
+                                @else
+                                {{-- No collaborator assigned --}}
+                                <div style="color: #ef4444;">
+                                    <i class="fas fa-exclamation-triangle"></i> Belum ditentukan
+                                </div>
+                                @endif
+                            </div>
                         </td>
                         <td>
                             <strong style="color: var(--primary);">{{ $seminar->formatted_price }}</strong>
@@ -211,45 +245,45 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Search functionality
-        const searchInput = document.getElementById('searchInput');
-        const filterStatus = document.getElementById('filterStatus');
-        const tableRows = document.querySelectorAll('tbody tr');
+document.addEventListener('DOMContentLoaded', function() {
+    // Search functionality
+    const searchInput = document.getElementById('searchInput');
+    const filterStatus = document.getElementById('filterStatus');
+    const tableRows = document.querySelectorAll('tbody tr');
 
-        function filterTable() {
-            const searchTerm = searchInput.value.toLowerCase();
-            const statusFilter = filterStatus.value;
+    function filterTable() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const statusFilter = filterStatus.value;
 
-            tableRows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                const matchesSearch = text.includes(searchTerm);
+        tableRows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            const matchesSearch = text.includes(searchTerm);
 
-                let matchesStatus = true;
-                if (statusFilter === 'active') {
-                    matchesStatus = row.querySelector('.badge-success') !== null;
-                } else if (statusFilter === 'inactive') {
-                    matchesStatus = row.querySelector('.badge-danger') !== null;
-                } else if (statusFilter === 'featured') {
-                    matchesStatus = text.includes('featured');
-                }
+            let matchesStatus = true;
+            if (statusFilter === 'active') {
+                matchesStatus = row.querySelector('.badge-success') !== null;
+            } else if (statusFilter === 'inactive') {
+                matchesStatus = row.querySelector('.badge-danger') !== null;
+            } else if (statusFilter === 'featured') {
+                matchesStatus = text.includes('featured');
+            }
 
-                row.style.display = matchesSearch && matchesStatus ? '' : 'none';
-            });
-        }
+            row.style.display = matchesSearch && matchesStatus ? '' : 'none';
+        });
+    }
 
-        searchInput.addEventListener('input', filterTable);
-        filterStatus.addEventListener('change', filterTable);
+    searchInput.addEventListener('input', filterTable);
+    filterStatus.addEventListener('change', filterTable);
 
-        // Select all checkbox
-        const selectAll = document.getElementById('selectAll');
-        const rowCheckboxes = document.querySelectorAll('.row-checkbox');
+    // Select all checkbox
+    const selectAll = document.getElementById('selectAll');
+    const rowCheckboxes = document.querySelectorAll('.row-checkbox');
 
-        selectAll?.addEventListener('change', function() {
-            rowCheckboxes.forEach(checkbox => {
-                checkbox.checked = this.checked;
-            });
+    selectAll?.addEventListener('change', function() {
+        rowCheckboxes.forEach(checkbox => {
+            checkbox.checked = this.checked;
         });
     });
+});
 </script>
 @endsection

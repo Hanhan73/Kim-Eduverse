@@ -5,9 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Seminar;
 use App\Models\Quiz;
-use App\Models\QuizQuestion;
 use App\Models\DigitalProduct;
 use App\Models\DigitalProductCategory;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
@@ -15,12 +15,9 @@ use Illuminate\Support\Str;
 
 class SeminarController extends Controller
 {
-    /**
-     * Display a listing of seminars
-     */
     public function index()
     {
-        $seminars = Seminar::with(['preTest', 'postTest', 'enrollments'])
+        $seminars = Seminar::with(['collaborator', 'preTest', 'postTest', 'enrollments'])
             ->withCount('enrollments')
             ->latest()
             ->paginate(15);
@@ -28,31 +25,31 @@ class SeminarController extends Controller
         return view('admin.digital.seminars.index', compact('seminars'));
     }
 
-    /**
-     * Show the form for creating a new seminar
-     */
     public function create()
     {
-        $quizzes = Quiz::where('is_active', true)
-            ->orderBy('title')
+        $quizzes = Quiz::where('is_active', true)->orderBy('title')->get();
+        
+        $collaborators = User::where('role', 'collaborator')
+            ->where('is_active', true)
+            ->orderBy('name')
             ->get();
 
-        return view('admin.digital.seminars.create', compact('quizzes'));
+        return view('admin.digital.seminars.create', compact('quizzes', 'collaborators'));
     }
 
-    /**
-     * Store a newly created seminar
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'thumbnail' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-            'instructor_name' => 'required|string|max:255',
-            'instructor_bio' => 'nullable|string',
-            'material_pdf_path' => 'nullable|string',
+            'collaborator_id' => 'required|exists:users,id',
+            'instructor_name' => 'nullable|string|max:255',  // NULLABLE override
+            'instructor_bio' => 'nullable|string',           // NULLABLE override
+            'material_pdf_path' => 'nullable|url',
             'material_description' => 'nullable|string',
+            'pre_test_id' => 'required|exists:quizzes,id',
+            'post_test_id' => 'required|exists:quizzes,id',
             'certificate_template' => 'nullable|string',
             'price' => 'required|numeric|min:0',
             'duration_minutes' => 'required|integer|min:1',
@@ -64,7 +61,7 @@ class SeminarController extends Controller
         try {
             DB::beginTransaction();
 
-            // Handle thumbnail upload
+            // Handle thumbnail
             if ($request->hasFile('thumbnail')) {
                 $validated['thumbnail'] = $request->file('thumbnail')
                     ->store('seminars/thumbnails', 'public');
@@ -72,46 +69,32 @@ class SeminarController extends Controller
 
             // Generate slug
             $validated['slug'] = Str::slug($validated['title']);
+            $validated['created_by'] = auth()->id();
 
-            // Handle Pre-Test
-            if ($request->pre_test_mode === 'new') {
-                $preTest = $this->createQuiz($request, 'pre');
-                $validated['pre_test_id'] = $preTest->id;
-            } else {
-                $validated['pre_test_id'] = $request->pre_test_id;
-            }
-
-            // Handle Post-Test
-            if ($request->post_test_mode === 'new') {
-                $postTest = $this->createQuiz($request, 'post');
-                $validated['post_test_id'] = $postTest->id;
-            } else {
-                $validated['post_test_id'] = $request->post_test_id;
-            }
-
-            // Create seminar
-            $seminar = Seminar::create($validated);
-
-            // Create digital product entry
+            // FIRST: Create DigitalProduct
             $category = DigitalProductCategory::firstOrCreate(
                 ['slug' => 'seminar'],
                 ['name' => 'Seminar', 'is_active' => true]
             );
 
-            DigitalProduct::create([
+            $product = DigitalProduct::create([
                 'category_id' => $category->id,
-                'name' => $seminar->title,
-                'slug' => $seminar->slug,
-                'description' => $seminar->description,
-                'price' => $seminar->price,
-                'thumbnail' => $seminar->thumbnail,
+                'collaborator_id' => $validated['collaborator_id'],
+                'name' => $validated['title'],
+                'slug' => $validated['slug'],
+                'description' => $validated['description'],
+                'price' => $validated['price'],
+                'thumbnail' => $validated['thumbnail'] ?? null,
                 'type' => 'seminar',
-                'seminar_id' => $seminar->id,
-                'duration_minutes' => $seminar->duration_minutes,
-                'is_active' => $seminar->is_active,
-                'is_featured' => $seminar->is_featured,
-                'order' => $seminar->order ?? 0,
+                'duration_minutes' => $validated['duration_minutes'],
+                'is_active' => $validated['is_active'] ?? true,
+                'is_featured' => $validated['is_featured'] ?? false,
+                'order' => $validated['order'] ?? 0,
             ]);
+
+            // THEN: Create Seminar with product_id
+            $validated['product_id'] = $product->id;
+            $seminar = Seminar::create($validated);
 
             DB::commit();
 
@@ -126,12 +109,10 @@ class SeminarController extends Controller
         }
     }
 
-    /**
-     * Display the specified seminar
-     */
     public function show(Seminar $seminar)
     {
         $seminar->load([
+            'collaborator',
             'preTest.questions',
             'postTest.questions',
             'enrollments' => function ($query) {
@@ -150,30 +131,28 @@ class SeminarController extends Controller
         return view('admin.digital.seminars.show', compact('seminar', 'stats'));
     }
 
-    /**
-     * Show the form for editing the specified seminar
-     */
     public function edit(Seminar $seminar)
     {
-        $quizzes = Quiz::where('is_active', true)
-            ->orderBy('title')
+        $quizzes = Quiz::where('is_active', true)->orderBy('title')->get();
+        
+        $collaborators = User::where('role', 'collaborator')
+            ->where('is_active', true)
+            ->orderBy('name')
             ->get();
 
-        return view('admin.digital.seminars.edit', compact('seminar', 'quizzes'));
+        return view('admin.digital.seminars.edit', compact('seminar', 'quizzes', 'collaborators'));
     }
 
-    /**
-     * Update the specified seminar
-     */
     public function update(Request $request, Seminar $seminar)
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'thumbnail' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-            'instructor_name' => 'required|string|max:255',
-            'instructor_bio' => 'nullable|string',
-            'material_pdf_path' => 'nullable|string',
+            'collaborator_id' => 'required|exists:users,id',
+            'instructor_name' => 'nullable|string|max:255',  // NULLABLE
+            'instructor_bio' => 'nullable|string',           // NULLABLE
+            'material_pdf_path' => 'nullable|url',
             'material_description' => 'nullable|string',
             'pre_test_id' => 'required|exists:quizzes,id',
             'post_test_id' => 'required|exists:quizzes,id',
@@ -188,9 +167,8 @@ class SeminarController extends Controller
         try {
             DB::beginTransaction();
 
-            // Handle thumbnail upload
+            // Handle thumbnail
             if ($request->hasFile('thumbnail')) {
-                // Delete old thumbnail
                 if ($seminar->thumbnail) {
                     Storage::disk('public')->delete($seminar->thumbnail);
                 }
@@ -206,18 +184,19 @@ class SeminarController extends Controller
             // Update seminar
             $seminar->update($validated);
 
-            // Update digital product entry
+            // Sync to DigitalProduct
             if ($seminar->digitalProduct) {
                 $seminar->digitalProduct->update([
-                    'name' => $seminar->title,
-                    'slug' => $seminar->slug,
-                    'description' => $seminar->description,
-                    'price' => $seminar->price,
-                    'thumbnail' => $seminar->thumbnail,
-                    'duration_minutes' => $seminar->duration_minutes,
-                    'is_active' => $seminar->is_active,
-                    'is_featured' => $seminar->is_featured,
-                    'order' => $seminar->order ?? 0,
+                    'collaborator_id' => $validated['collaborator_id'],
+                    'name' => $validated['title'],
+                    'slug' => $validated['slug'] ?? $seminar->slug,
+                    'description' => $validated['description'],
+                    'price' => $validated['price'],
+                    'thumbnail' => $validated['thumbnail'] ?? $seminar->thumbnail,
+                    'duration_minutes' => $validated['duration_minutes'],
+                    'is_active' => $validated['is_active'] ?? $seminar->is_active,
+                    'is_featured' => $validated['is_featured'] ?? $seminar->is_featured,
+                    'order' => $validated['order'] ?? $seminar->order,
                 ]);
             }
 
@@ -234,27 +213,21 @@ class SeminarController extends Controller
         }
     }
 
-    /**
-     * Remove the specified seminar
-     */
     public function destroy(Seminar $seminar)
     {
-        // Check if there are enrollments
         if ($seminar->enrollments()->count() > 0) {
             return back()->with('error', 'Tidak dapat menghapus seminar yang sudah memiliki peserta!');
         }
 
-        // Delete thumbnail
         if ($seminar->thumbnail) {
             Storage::disk('public')->delete($seminar->thumbnail);
         }
 
-        // Delete digital product entry
+        // Delete digital product first (because seminar has product_id FK)
         if ($seminar->digitalProduct) {
             $seminar->digitalProduct->delete();
         }
 
-        // Delete seminar
         $seminar->delete();
 
         return redirect()
@@ -262,14 +235,10 @@ class SeminarController extends Controller
             ->with('success', 'Seminar berhasil dihapus!');
     }
 
-    /**
-     * Toggle active status
-     */
     public function toggleActive(Seminar $seminar)
     {
         $seminar->update(['is_active' => !$seminar->is_active]);
 
-        // Update digital product
         if ($seminar->digitalProduct) {
             $seminar->digitalProduct->update(['is_active' => $seminar->is_active]);
         }
@@ -277,14 +246,10 @@ class SeminarController extends Controller
         return back()->with('success', 'Status seminar berhasil diubah!');
     }
 
-    /**
-     * Toggle featured status
-     */
     public function toggleFeatured(Seminar $seminar)
     {
         $seminar->update(['is_featured' => !$seminar->is_featured]);
 
-        // Update digital product
         if ($seminar->digitalProduct) {
             $seminar->digitalProduct->update(['is_featured' => $seminar->is_featured]);
         }
@@ -292,9 +257,6 @@ class SeminarController extends Controller
         return back()->with('success', 'Status featured berhasil diubah!');
     }
 
-    /**
-     * View enrollments for a seminar
-     */
     public function enrollments(Seminar $seminar)
     {
         $enrollments = $seminar->enrollments()
@@ -305,44 +267,6 @@ class SeminarController extends Controller
         return view('admin.digital.seminars.enrollments', compact('seminar', 'enrollments'));
     }
 
-    /**
-     * Create a new quiz with questions
-     */
-    private function createQuiz(Request $request, $type)
-    {
-        // Create quiz
-        $quiz = Quiz::create([
-            'title' => $request->input("{$type}_test_title"),
-            'slug' => Str::slug($request->input("{$type}_test_title")),
-            'description' => "Quiz untuk seminar: " . $request->title,
-            'duration_minutes' => $request->input("{$type}_test_duration", 30),
-            'passing_score' => $request->input("{$type}_test_passing_score", 70),
-            'max_attempts' => $request->input("{$type}_test_max_attempts", 3),
-            'is_active' => true,
-        ]);
-
-        // Create questions
-        $questions = $request->input("{$type}_questions", []);
-        foreach ($questions as $index => $questionData) {
-            QuizQuestion::create([
-                'quiz_id' => $quiz->id,
-                'question_text' => $questionData['question'],
-                'option_a' => $questionData['option_a'],
-                'option_b' => $questionData['option_b'],
-                'option_c' => $questionData['option_c'],
-                'option_d' => $questionData['option_d'],
-                'option_e' => $questionData['option_e'] ?? null,
-                'correct_answer' => $questionData['correct'],
-                'points' => $questionData['points'] ?? 1,
-                'order' => $index + 1,
-            ]);
-        }
-
-        return $quiz;
-    }
-
-    // Di dalam AdminSeminarController.php
-
     public function storeQuiz(Request $request)
     {
         $validated = $request->validate([
@@ -351,7 +275,7 @@ class SeminarController extends Controller
             'duration_minutes' => 'required|integer|min:1',
             'passing_score' => 'required|integer|min:0|max:100',
             'max_attempts' => 'required|integer|min:1',
-            'quiz_type' => 'required|in:pre,post', // Asumsi ada kolom ini
+            'quiz_type' => 'required|in:pre,post',
         ]);
 
         try {
@@ -364,9 +288,7 @@ class SeminarController extends Controller
                 'duration_minutes' => $validated['duration_minutes'],
                 'passing_score' => $validated['passing_score'],
                 'max_attempts' => $validated['max_attempts'],
-                'type' => $validated['quiz_type'] . '_test',
                 'is_active' => true,
-                // Tidak perlu course_id atau quizable_id di sini
             ]);
 
             DB::commit();

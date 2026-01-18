@@ -11,12 +11,14 @@ class Seminar extends Model
     use SoftDeletes;
 
     protected $fillable = [
+        'collaborator_id',
+        'product_id', // BELONGS TO DigitalProduct
         'title',
         'slug',
         'description',
         'thumbnail',
-        'instructor_name',
-        'instructor_bio',
+        'instructor_name',  // NULLABLE - Optional override
+        'instructor_bio',   // NULLABLE - Optional override
         'material_pdf_path',
         'material_description',
         'pre_test_id',
@@ -48,8 +50,26 @@ class Seminar extends Model
         });
     }
 
+    // RELASI KE COLLABORATOR (INSTRUCTOR)
+    public function collaborator()
+    {
+        return $this->belongsTo(User::class, 'collaborator_id');
+    }
 
-    public function creator() {
+    // BELONGS TO DigitalProduct (bukan hasOne)
+    public function digitalProduct()
+    {
+        return $this->belongsTo(DigitalProduct::class, 'product_id');
+    }
+
+    // Alias untuk backward compatibility
+    public function product()
+    {
+        return $this->digitalProduct();
+    }
+
+    public function creator() 
+    {
         return $this->belongsTo(User::class, 'created_by');
     }
     
@@ -58,12 +78,17 @@ class Seminar extends Model
         return $this->hasMany(SeminarEnrollment::class);
     }
 
-    public function digitalProduct()
+    public function preTest()
     {
-        return $this->hasOne(DigitalProduct::class, 'seminar_id');
+        return $this->belongsTo(Quiz::class, 'pre_test_id');
     }
 
-    // Helpers
+    public function postTest()
+    {
+        return $this->belongsTo(Quiz::class, 'post_test_id');
+    }
+
+    // HELPERS
     public function getFormattedPriceAttribute()
     {
         return 'Rp ' . number_format($this->price, 0, ',', '.');
@@ -74,23 +99,31 @@ class Seminar extends Model
         $this->increment('sold_count');
     }
 
-    public function preTest()
+    /**
+     * Get instructor name - prioritize override, fallback to collaborator
+     */
+    public function getInstructorDisplayNameAttribute()
     {
-        return $this->morphOne(Quiz::class, 'quizable')->where('type', 'pre_test');
+        // If there's an override, use it
+        if (!empty($this->instructor_name)) {
+            return $this->instructor_name;
+        }
+        
+        // Otherwise use collaborator name
+        return $this->collaborator?->name ?? 'Unknown Instructor';
     }
 
-    public function postTest()
+    /**
+     * Get instructor bio - prioritize override, fallback to collaborator
+     */
+    public function getInstructorDisplayBioAttribute()
     {
-        return $this->morphOne(Quiz::class, 'quizable')->where('type', 'post_test');
-    }
-
-    public function quizzes()
-    {
-        return $this->morphMany(Quiz::class, 'quizable');
-    }
-
-    public function product()
-    {
-        return $this->belongsTo(DigitalProduct::class, 'product_id');
+        // If there's an override, use it
+        if (!empty($this->instructor_bio)) {
+            return $this->instructor_bio;
+        }
+        
+        // Otherwise use collaborator bio
+        return $this->collaborator?->bio ?? '';
     }
 }
