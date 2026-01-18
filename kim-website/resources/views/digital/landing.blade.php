@@ -135,7 +135,7 @@
         }
 
         .lp-navbar-price {
-            font-size: 13px;
+            font-size: 14px;
         }
 
         .lp-btn-detail,
