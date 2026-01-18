@@ -134,6 +134,10 @@
             padding: 0 16px;
         }
 
+        .lp-navbar-price {
+            font-size: 13px;
+        }
+
         .lp-btn-detail,
         .lp-btn-buy {
             padding: 10px 16px;
