@@ -134,10 +134,6 @@
             padding: 0 16px;
         }
 
-        .lp-navbar-price {
-            display: none;
-        }
-
         .lp-btn-detail,
         .lp-btn-buy {
             padding: 10px 16px;
