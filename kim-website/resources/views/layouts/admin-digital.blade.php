@@ -758,7 +758,7 @@
 
             <a href="{{ route('admin.digital.seminars.index') }}"
                 class="menu-item {{ request()->routeIs('admin.digital.seminars.*') ? 'active' : '' }}">
-                <i class="fas fa-white-board"></i> Seminar
+                <i class="fas fa-chalkboard-teacher"></i> Seminar
             </a>
 
             <div class="menu-section">Navigasi</div>
