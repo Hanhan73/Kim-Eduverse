@@ -434,7 +434,11 @@
                 <div class="price-label">Harga</div>
                 <div class="price-main">{{ $product->formatted_price }}</div>
                 <div class="price-note">
+                    @if($product->type === 'seminar')
+                    <i class="fas fa-check-circle"></i> Termasuk e-sertifikat dan materi dalam bentuk PDF
+                    @else
                     <i class="fas fa-check-circle"></i> Termasuk analisis lengkap & konsultasi dasar
+                    @endif
                 </div>
             </div>
 
