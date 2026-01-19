@@ -8,7 +8,7 @@
     <div class="container">
         <div class="hero-grid">
             <div class="hero-content">
-                <span class="hero-badge">🎓 Platform Pembelajaran Digital</span>
+                <span class="hero-badge">Platform Pembelajaran Digital</span>
                 <h1 class="hero-title">
                     Tingkatkan Skill Anda dengan
                     <span class="gradient-text">KIM Edutech</span>
@@ -27,7 +27,7 @@
                 </div>
 
                 <!-- Quick Stats -->
-                <div class="hero-stats">
+                <!-- <div class="hero-stats">
                     <div class="stat-item">
                         <div class="stat-number">1000+</div>
                         <div class="stat-label">Peserta Aktif</div>
@@ -40,7 +40,7 @@
                         <div class="stat-number">95%</div>
                         <div class="stat-label">Tingkat Kepuasan</div>
                     </div>
-                </div>
+                </div> -->
             </div>
 
             <div class="hero-image">
