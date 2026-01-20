@@ -42,7 +42,7 @@
         </div>
         <div class="hero-image animate-float">
             <div class="hero-image-wrapper">
-                <img src="{{ asset('storage/images/building.jpg') }}" alt="KIM EDUVERSE">
+                <img src="{{ asset('images/logo.png') }}" alt="KIM EDUVERSE">
             </div>
         </div>
     </div>
