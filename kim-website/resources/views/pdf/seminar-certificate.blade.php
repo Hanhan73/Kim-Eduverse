@@ -1,3 +1,15 @@
+@php
+use Illuminate\Support\Str;
+
+$title = strtoupper($seminar->title);
+$words = explode(' ', $title);
+
+$totalWords = count($words);
+$half = ceil($totalWords / 2);
+
+$line1 = implode(' ', array_slice($words, 0, $half));
+$line2 = implode(' ', array_slice($words, $half));
+@endphp
 <!DOCTYPE html>
 <html lang="id">
 
@@ -6,268 +18,237 @@
     <title>Sertifikat Seminar</title>
 
     <style>
-    @page {
-        size: A4 landscape;
-        margin: 0;
-    }
+        @page {
+            size: A4 landscape;
+            margin: 0;
+        }
 
-    body {
-        margin: 0;
-        padding: 0;
-        font-family: "Times New Roman", serif;
-        background: #ffffff;
-    }
+        body {
+            margin: 0;
+            font-family: "Times New Roman", serif;
+            color: #222;
+        }
 
-    .page {
-        position: relative;
-        width: 100%;
-        height: 100%;
-        padding: 60px 80px;
-        box-sizing: border-box;
-    }
+        /* ================= PAGE ================= */
+        .page {
+            position: relative;
+            width: 297mm;
+            height: 210mm;
+            page-break-after: always;
+            background: url('{{ public_path("images/paper-bg.jpg") }}') center / cover no-repeat;
+        }
 
-    /* Header */
-    .brand {
-        text-align: right;
-        font-size: 18px;
-        font-weight: bold;
-        color: #1f2937;
-    }
+        /* ================= SIDEBAR ================= */
+        .sidebar {
+            position: absolute;
+            top: 25mm;
+            left: 20mm;
+            width: 28mm;
+            height: 160mm;
+            background: #0B4DBA;
+        }
 
-    .title {
-        text-align: center;
-        margin-top: 20px;
-    }
+        .sidebar-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-90deg);
 
-    .title h1 {
-        font-size: 32px;
-        margin: 0;
-        font-style: italic;
-    }
+            width: 150mm;
+            text-align: center;
 
-    .cert-number {
-        text-align: center;
-        margin-top: 6px;
-        font-size: 14px;
-    }
+            color: #fff;
+            font-size: 16px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            line-height: 1.3;
+            white-space: normal;
+        }
 
-    /* Content */
-    .content {
-        margin-top: 40px;
-        text-align: center;
-        font-size: 16px;
-        line-height: 1.6;
-    }
 
-    .participant-name {
-        margin: 20px 0;
-        font-size: 26px;
-        font-weight: bold;
-    }
+        /* ================= CONTENT ================= */
+        .content {
+            position: absolute;
+            top: 30mm;
+            left: 65mm;
+            right: 30mm;
+        }
 
-    .seminar-title {
-        font-weight: bold;
-    }
+        .logo {
+            width: 90px;
+            margin-bottom: 20px;
+        }
 
-    .italic {
-        font-style: italic;
-    }
+        .title-small {
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
 
-    /* Footer */
-    .footer {
-        position: absolute;
-        bottom: 80px;
-        width: calc(100% - 160px);
-        text-align: center;
-    }
+        .participant-name {
+            font-size: 26px;
+            font-weight: bold;
+            color: #0B4DBA;
+            margin-bottom: 16px;
+        }
 
-    .director-title {
-        margin-bottom: 60px;
-    }
+        .body-text {
+            font-size: 12px;
+            line-height: 1.7;
+            margin-bottom: 12px;
+        }
 
-    .director-name {
-        font-weight: bold;
-        text-decoration: underline;
-    }
+        .details {
+            font-size: 11px;
+            line-height: 1.6;
+            margin-top: 10px;
+        }
 
-    /* Decorative corners (optional, simple) */
-    .corner {
-        position: absolute;
-        width: 120px;
-        height: 120px;
-        border: 8px solid #0f766e;
-    }
+        /* ================= SIGNATURE ================= */
+        .signature {
+            margin-top: 35px;
+        }
 
-    .corner.top-left {
-        top: 0;
-        left: 0;
-        border-right: none;
-        border-bottom: none;
-    }
+        .sign-name {
+            font-weight: bold;
+            font-size: 12px;
+            color: #0B4DBA;
+        }
 
-    .corner.bottom-right {
-        bottom: 0;
-        right: 0;
-        border-left: none;
-        border-top: none;
-    }
+        /* ================= PAGE 2 ================= */
+        .page-2 .content {
+            top: 35mm;
+        }
 
-    .page-2 {
-        position: relative;
-        width: 100%;
-        height: 100%;
-        padding: 60px 80px;
-        box-sizing: border-box;
-        font-family: "Times New Roman", serif;
-    }
+        .page-2 h2 {
+            text-align: center;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
 
-    .page-2 h2 {
-        text-align: center;
-        font-size: 22px;
-        margin-bottom: 10px;
-    }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
 
-    .page-2 h3 {
-        text-align: center;
-        font-size: 18px;
-        margin-bottom: 30px;
-        font-weight: bold;
-    }
+        th,
+        td {
+            border: 1px solid #000;
+            padding: 8px;
+        }
 
-    table.materi-table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 14px;
-    }
+        th {
+            background: #0B4DBA;
+            color: #fff;
+        }
 
-    table.materi-table th,
-    table.materi-table td {
-        border: 1px solid #000;
-        padding: 8px;
-    }
-
-    table.materi-table th {
-        text-align: center;
-        font-weight: bold;
-    }
-
-    table.materi-table td:nth-child(1),
-    table.materi-table td:nth-child(3) {
-        text-align: center;
-        width: 60px;
-    }
-
-    .footer-2 {
-        position: absolute;
-        bottom: 80px;
-        width: calc(100% - 160px);
-        text-align: center;
-    }
-
-    .footer-2 .director-name {
-        font-weight: bold;
-        text-decoration: underline;
-    }
+        td:nth-child(1),
+        td:nth-child(3) {
+            text-align: center;
+            width: 60px;
+        }
     </style>
 </head>
 
 <body>
+
+    {{-- ================= PAGE 1 ================= --}}
     <div class="page">
-        <!-- Decorative Corners -->
-        <div class="corner top-left"></div>
-        <div class="corner bottom-right"></div>
-
-        <!-- Header -->
-        <div class="brand">
-            KIM Eduvers
-        </div>
-
-        <div class="title">
-            <h1>Sertifikat Seminar</h1>
-            <div class="cert-number">
-                Nomor: {{ $enrollment->certificate_number }}
+        <div class="sidebar">
+            <div class="sidebar-text">
+                {{ $line1 }}<br>
+                {{ $line2 }}
             </div>
         </div>
 
-        <!-- Main Content -->
         <div class="content">
-            <p>Diberikan kepada:</p>
+            <img src="{{ public_path('images/logo.png') }}" class="logo">
+
+            <div class="title-small">This is to certify that</div>
 
             <div class="participant-name">
                 {{ $enrollment->participant_name }}
             </div>
 
-            <p>
-                sebagai peserta dalam kegiatan
-                <span class="italic">On-Demand Seminar</span>
-                <span class="seminar-title">
-                    “{{ strtoupper($seminar->title) }}”
-                </span>,
-                yang diselenggarakan oleh
-                <strong>PT Kompetensi Mandiri Indonesia</strong>.
-            </p>
+            <div class="body-text">
+                has completed the on-demand seminar entitled<br>
+                <i><b>{{ $seminar->title }}</b></i>
+            </div>
 
-            <p>
-                Dilaksanakan secara <span class="italic">online</span>
-                selama {{ $seminar->total_jp ?? 6 }} Jam Pelajaran (JP)
-                pada tanggal
-                {{ $enrollment->completed_at?->format('d F Y') }}.
-            </p>
-        </div>
+            <div class="body-text">
+                This certificate is granted upon completion of an asynchronous learning module designed to provide
+                targeted
+                insights and specialized knowledge within the selected field.
+            </div>
 
-        <!-- Footer -->
-        <div class="footer">
-            <div class="director-title">Direktur,</div>
+            <div class="details">
+                <b>Total Contact Hours:</b>
+                {{ ceil($seminar->duration_minutes / 60) }} Hours<br>
 
-            <div class="director-name">
-                Yosep Hernawan, S.T., M.M., IPM.
+                <b>Certified on:</b>
+                {{ $enrollment->completed_at?->format('d F Y') ?? now()->format('d F Y') }}
+            </div>
+
+            <div class="signature">
+                <img src="{{ public_path('images/ttd.png') }}" width="120"><br>
+                <div class="sign-name">
+                    Yosep Hernawan, S.T., M.M., IPM., CBTS.
+                </div>
+                Director
             </div>
         </div>
     </div>
 
-    <div style="page-break-after: always;"></div>
-
-    <div class="page-2">
-
-        <h2>MATERI <i>ON-DEMAND SEMINAR</i></h2>
-        <h3>{{ strtoupper($seminar->title) }}</h3>
-
-        <table class="materi-table">
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>Materi</th>
-                    <th>JP</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($seminar->materials as $index => $material)
-                <tr>
-                    <td>{{ $index + 1 }}</td>
-                    <td>{{ $material->title }}</td>
-
-                    @if ($index === 0)
-                    <td rowspan="{{ $seminar->materials->count() }}" style="vertical-align: middle; font-weight: bold;">
-                        6
-                    </td>
-                    @endif
-                </tr>
-                @endforeach
-            </tbody>
-
-        </table>
-
-        <div class="footer-2">
-            <div>Direktur,</div>
-            <br><br>
-            <div class="director-name">
-                Yosep Hernawan, S.T., M.M., IPM
+    {{-- ================= PAGE 2 ================= --}}
+    <div class="page page-2">
+        <div class="sidebar">
+            <div class="sidebar-text">
+                {{ $line1 }}<br>
+                {{ $line2 }}
             </div>
         </div>
 
+        <div class="content">
+            <h2>MATERI ON-DEMAND SEMINAR</h2>
+
+            @php
+            $materi = [
+            'Pengenalan dan Konsep Dasar',
+            'Teori dan Metodologi',
+            'Teknik dan Implementasi Praktis',
+            'Studi Kasus dan Analisis',
+            'Evaluasi dan Tindak Lanjut'
+            ];
+
+            $jp = ceil($seminar->duration_minutes / 60);
+            $per = ceil($jp / count($materi));
+            @endphp
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Materi</th>
+                        <th>JP</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($materi as $i => $m)
+                    <tr>
+                        <td>{{ $i + 1 }}</td>
+                        <td>{{ $m }}</td>
+                        <td>{{ $per }}</td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+
+            <div style="text-align:center; margin-top:40px">
+                <img src="{{ public_path('images/ttd.png') }}" width="120"><br>
+                <b>Yosep Hernawan, S.T., M.M., IPM., CBTS.</b>
+            </div>
+        </div>
     </div>
-
-
 
 </body>
 

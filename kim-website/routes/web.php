@@ -148,8 +148,8 @@ Route::prefix('edutech/student')->name('edutech.student.')->middleware('edutech.
     Route::post('/quiz/{quiz}/start', [StudentQuizController::class, 'start'])->name('quiz.start');
     Route::post('/quiz/{quiz}/submit', [StudentQuizController::class, 'submit'])->name('quiz.submit');
 
-      Route::get('/my-enrollments', [CourseController::class, 'myEnrollments'])
-       ->name('my-enrollments');
+    Route::get('/my-enrollments', [CourseController::class, 'myEnrollments'])
+        ->name('my-enrollments');
 });
 
 // ========================================
@@ -594,26 +594,25 @@ Route::middleware(['edutech.auth'])
     ->prefix('edutech/bendahara')
     ->name('edutech.bendahara.')
     ->group(function () {
-// Dashboard
+        // Dashboard
         Route::get('/dashboard', [BendaharaDashboardController::class, 'index'])->name('dashboard');
-        
+
         // Withdrawals Management
         Route::get('/withdrawals', [BendaharaWithdrawalController::class, 'index'])->name('withdrawals.index');
         Route::get('/withdrawals/{withdrawal}', [BendaharaWithdrawalController::class, 'show'])->name('withdrawals.show');
         Route::post('/withdrawals/{withdrawal}/approve', [BendaharaWithdrawalController::class, 'approve'])->name('withdrawals.approve');
         Route::post('/withdrawals/{withdrawal}/reject', [BendaharaWithdrawalController::class, 'reject'])->name('withdrawals.reject');
-        
+
         // Revenue Report
         Route::get('/revenues', [BendaharaRevenueController::class, 'index'])->name('revenues.index');
-        
+
         // Instructor Management
         Route::get('/instructors', [BendaharaInstructorController::class, 'index'])->name('instructors.index');
         Route::get('/instructors/{instructor}', [BendaharaInstructorController::class, 'show'])->name('instructors.show');
-   
     });
 
 
-    use App\Http\Controllers\Digital\Collaborator\CollaboratorDashboardController;
+use App\Http\Controllers\Digital\Collaborator\CollaboratorDashboardController;
 use App\Http\Controllers\Digital\Collaborator\CollaboratorRevenueController;
 use App\Http\Controllers\Digital\Bendahara\BendaharaDigitalDashboardController;
 use App\Http\Controllers\Digital\Bendahara\BendaharaDigitalWithdrawalController;
@@ -631,28 +630,28 @@ use App\Http\Controllers\Digital\Collaborator\CollaboratorSeminarController;
 
 Route::post('/digital/logout', [AuthController::class, 'logout'])
     ->name('digital.logout');
-    
+
 // Collaborator Routes (untuk creator produk digital)
 Route::middleware(['check.digital.role:collaborator'])
     ->prefix('digital/collaborator')
     ->name('digital.collaborator.')
     ->group(function () {
-        
+
         // Dashboard
         Route::get('/dashboard', [CollaboratorDashboardController::class, 'index'])->name('dashboard');
-        
+
         // Revenue & Withdrawal
         Route::get('/revenue', [CollaboratorRevenueController::class, 'index'])->name('revenue.index');
         Route::get('/revenue/withdrawal', [CollaboratorRevenueController::class, 'createWithdrawal'])->name('revenue.withdrawal');
         Route::post('/revenue/withdrawal', [CollaboratorRevenueController::class, 'storeWithdrawal'])->name('revenue.withdrawal.store');
-        
+
         // Profile Management
         Route::get('profile', [CollaboratorProfileController::class, 'index'])->name('profile');
         Route::put('profile', [CollaboratorProfileController::class, 'update'])->name('profile.update');
         Route::put('profile/password', [CollaboratorProfileController::class, 'updatePassword'])
             ->name('profile.password');
 
-             // ============================================
+        // ============================================
         // QUESTIONNAIRES - FULL CRUD
         // ============================================
         Route::prefix('questionnaires')->name('questionnaires.')->group(function () {
@@ -662,16 +661,16 @@ Route::middleware(['check.digital.role:collaborator'])
             Route::get('/{questionnaire}/builder', [CollaboratorQuestionnaireController::class, 'builder'])->name('builder');
             Route::put('/{questionnaire}', [CollaboratorQuestionnaireController::class, 'update'])->name('update');
             Route::delete('/{questionnaire}', [CollaboratorQuestionnaireController::class, 'destroy'])->name('destroy');
-            
+
             // Dimensions Management
             Route::post('/{questionnaire}/dimensions', [CollaboratorQuestionnaireController::class, 'storeDimension'])->name('dimensions.store');
             Route::delete('/dimensions/{dimension}', [CollaboratorQuestionnaireController::class, 'deleteDimension'])->name('dimensions.destroy');
-            
+
             // Questions Management
             Route::post('/{questionnaire}/questions', [CollaboratorQuestionnaireController::class, 'storeQuestion'])->name('questions.store');
             Route::delete('/questions/{question}', [CollaboratorQuestionnaireController::class, 'deleteQuestion'])->name('questions.destroy');
         });
-        
+
         // ============================================
         // SEMINARS - FULL CRUD
         // ============================================
@@ -686,19 +685,18 @@ Route::middleware(['check.digital.role:collaborator'])
             Route::patch('/{seminar}/toggle-active', [CollaboratorSeminarController::class, 'toggleActive'])->name('toggle-active');
             Route::get('quizzes/{quiz}/edit', [CollaboratorSeminarController::class, 'edit'])->name('quizzes.edit');
             Route::put('quizzes/{quiz}', [CollaboratorSeminarController::class, 'update'])->name('quizzes.update');
-                    Route::post('/quizzes', [CollaboratorSeminarController::class, 'storeQuiz'])->name('quizzes.store');
-
+            Route::post('/quizzes', [CollaboratorSeminarController::class, 'storeQuiz'])->name('quizzes.store');
         });
 
 
-    
-        
+
+
         // ============================================
         // SIMPLE PRODUCTS - Ebook, Video, Template, Module
         // ============================================
         Route::get('/products/create-simple', [CollaboratorProductController::class, 'createSimple'])->name('products.create-simple');
         Route::post('/products/store-simple', [CollaboratorProductController::class, 'storeSimple'])->name('products.store-simple');
-        
+
         // ============================================
         // EXISTING ROUTES (Already created before)
         // ============================================
@@ -710,8 +708,6 @@ Route::middleware(['check.digital.role:collaborator'])
         Route::put('/products/{product}', [CollaboratorProductController::class, 'update'])->name('products.update');
         Route::delete('/products/{product}', [CollaboratorProductController::class, 'destroy'])->name('products.destroy');
         Route::post('/products/{product}/toggle', [CollaboratorProductController::class, 'toggleStatus'])->name('products.toggle');
-
-    
     });
 
 // Bendahara Digital Routes (finance officer untuk KIM Digital)
@@ -719,20 +715,160 @@ Route::middleware(['check.digital.role:bendahara_digital'])
     ->prefix('digital/bendahara')
     ->name('digital.bendahara.')
     ->group(function () {
-        
+
         // Dashboard
         Route::get('/dashboard', [BendaharaDigitalDashboardController::class, 'index'])->name('dashboard');
-        
+
         // Withdrawals Management
         Route::get('/withdrawals', [BendaharaDigitalWithdrawalController::class, 'index'])->name('withdrawals.index');
         Route::get('/withdrawals/{withdrawal}', [BendaharaDigitalWithdrawalController::class, 'show'])->name('withdrawals.show');
         Route::post('/withdrawals/{withdrawal}/approve', [BendaharaDigitalWithdrawalController::class, 'approve'])->name('withdrawals.approve');
         Route::post('/withdrawals/{withdrawal}/reject', [BendaharaDigitalWithdrawalController::class, 'reject'])->name('withdrawals.reject');
-        
+
         // Revenue Report
         Route::get('/revenues', [BendaharaDigitalRevenueController::class, 'index'])->name('revenues.index');
-        
+
         // Collaborator Management
         Route::get('/collaborators', [BendaharaDigitalCollaboratorController::class, 'index'])->name('collaborators.index');
         Route::get('/collaborators/{collaborator}', [BendaharaDigitalCollaboratorController::class, 'show'])->name('collaborators.show');
     });
+
+
+// ==========================================
+// TAMBAHKAN ROUTE INI DI web.php (UNTUK TESTING ONLY)
+// ==========================================
+
+// Di bagian bawah file web.php, tambahkan:
+
+Route::get('/test/certificate-preview', function () {
+    // 1. Ambil seminar pertama (atau bisa ganti dengan ID tertentu)
+    $seminar = \App\Models\Seminar::first();
+
+    if (!$seminar) {
+        return "Belum ada data seminar. Silakan buat seminar dulu.";
+    }
+
+    // 2. Buat dummy enrollment data
+    $enrollment = new \App\Models\SeminarEnrollment([
+        'certificate_number' => 'TEST-' . now()->format('Ymd') . '-001',
+        'participant_name' => 'John Doe Testing',
+        'customer_email' => 'test@example.com',
+        'completed_at' => now(),
+    ]);
+
+    // Set relasi seminar manual (karena ini dummy data)
+    $enrollment->setRelation('seminar', $seminar);
+
+    // 3. Generate PDF
+    $pdf = Pdf::loadView('pdf.seminar-certificate', [
+        'enrollment' => $enrollment,
+        'seminar' => $seminar,
+    ]);
+
+    // 4. Tampilkan PDF di browser
+    return $pdf->stream('test-certificate.pdf');
+})->name('test.certificate');
+
+
+// ==========================================
+// ATAU CARA LEBIH LENGKAP - DENGAN PILIHAN SEMINAR
+// ==========================================
+
+Route::get('/test/certificate/{seminarId}', function ($seminarId) {
+    $seminar = \App\Models\Seminar::findOrFail($seminarId);
+
+    // Buat dummy enrollment data
+    $enrollment = new \App\Models\SeminarEnrollment([
+        'certificate_number' => 'TEST-' . now()->format('Ymd') . '-001',
+        'participant_name' => 'Budi Santoso',
+        'customer_email' => 'test@example.com',
+        'completed_at' => now(),
+    ]);
+
+    $enrollment->setRelation('seminar', $seminar);
+
+    // JANGAN load materials karena tidak ada relasinya
+
+    $pdf = Pdf::loadView('pdf.seminar-certificate', [
+        'enrollment' => $enrollment,
+        'seminar' => $seminar,
+    ]);
+
+    return $pdf->stream('test-certificate.pdf');
+})->name('test.certificate.preview');
+
+// ==========================================
+// ROUTE UNTUK TESTING DENGAN DATA REAL
+// ==========================================
+
+Route::get('/test/certificate-real/{enrollmentId}', function ($enrollmentId) {
+    $enrollment = \App\Models\SeminarEnrollment::with('seminar.materials')->findOrFail($enrollmentId);
+
+    // Generate temporary certificate number jika belum ada
+    if (!$enrollment->certificate_number) {
+        $enrollment->certificate_number = 'TEMP-' . now()->format('Ymd') . '-' . $enrollment->id;
+    }
+
+    // Generate temporary participant name jika belum ada
+    if (!$enrollment->participant_name) {
+        $enrollment->participant_name = 'Peserta Test #' . $enrollment->id;
+    }
+
+    $pdf = Pdf::loadView('pdf.seminar-certificate', [
+        'enrollment' => $enrollment,
+        'seminar' => $enrollment->seminar,
+    ]);
+
+    return $pdf->stream('certificate-' . $enrollment->id . '.pdf');
+})->name('test.certificate.real');
+
+
+// ==========================================
+// ROUTE UNTUK LIST SEMINAR (BIAR BISA PILIH)
+// ==========================================
+
+Route::get('/test/certificates', function () {
+    $seminars = \App\Models\Seminar::all();
+
+    if ($seminars->isEmpty()) {
+        return "
+            <h2>Belum ada data seminar</h2>
+            <p>Silakan buat seminar terlebih dahulu.</p>
+        ";
+    }
+
+    $html = '<h1>Test Certificate Generator</h1>';
+    $html .= '<h3>Pilih Seminar:</h3>';
+    $html .= '<ul>';
+
+    foreach ($seminars as $seminar) {
+        $html .= '<li>';
+        $html .= '<strong>' . $seminar->title . '</strong><br>';
+        $html .= '<a href="' . route('test.certificate.preview', $seminar->id) . '" target="_blank">';
+        $html .= 'Preview Certificate</a>';
+        $html .= '</li><br>';
+    }
+
+    $html .= '</ul>';
+
+    // Jika ada enrollment real
+    $enrollments = \App\Models\SeminarEnrollment::with('seminar')->get();
+
+    if ($enrollments->isNotEmpty()) {
+        $html .= '<hr><h3>Atau Gunakan Data Real Enrollment:</h3>';
+        $html .= '<ul>';
+
+        foreach ($enrollments as $enrollment) {
+            $html .= '<li>';
+            $html .= 'Enrollment #' . $enrollment->id . ' - ' . $enrollment->seminar->title . '<br>';
+            $html .= 'Email: ' . $enrollment->customer_email . '<br>';
+            $html .= '<a href="' . route('test.certificate.real', $enrollment->id) . '" target="_blank">';
+            $html .= 'Preview Certificate</a>';
+            $html .= '</li><br>';
+        }
+
+        $html .= '</ul>';
+    }
+
+    return $html;
+})->name('test.certificates.list');
