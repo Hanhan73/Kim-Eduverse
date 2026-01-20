@@ -73,8 +73,8 @@ class CategoryController extends Controller
         $category = DigitalProductCategory::findOrFail($id);
 
         $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:digital_categories,name,' . $id,
-            'slug' => 'nullable|string|max:255|unique:digital_categories,slug,' . $id,
+            'name' => 'required|string|max:255|unique:digital_product_categories,name,' . $id,
+            'slug' => 'nullable|string|max:255|unique:digital_product_categories,slug,' . $id,
             'description' => 'nullable|string',
             'icon' => 'nullable|string|max:100',
             'is_active' => 'boolean',
