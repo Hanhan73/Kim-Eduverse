@@ -34,6 +34,20 @@
         flex-wrap: wrap;
     }
 
+    :root {
+        --primary: #667eea;
+        --primary-dark: #5a67d8;
+        --secondary: #764ba2;
+        --success: #48bb78;
+        --warning: #ed8936;
+        --danger: #f56565;
+        --info: #4299e1;
+        --dark: #2d3748;
+        --gray: #718096;
+        --light: #f7fafc;
+        --sidebar-width: 260px;
+    }
+
     .page-btn {
         min-width: 36px;
         height: 36px;
@@ -355,7 +369,7 @@
 
     /* Utility Classes */
     .gradient-text {
-        background: linear-gradient(100deg, rgb(235, 167, 19), rgb(255, 255, 255));
+        background: linear-gradient(45deg, rgba(61, 1, 110, 1), rgb(255, 255, 255));
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
