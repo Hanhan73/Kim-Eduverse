@@ -133,11 +133,18 @@
         font-size: 1.5rem;
     }
 
-    .logo-text {
-        background: linear-gradient(135deg, #667eea, #764ba2);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
+    /* .logo-text {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        } */
+
+    .logo-image {
+        height: 50px;
+        width: auto;
+        object-fit: contain;
+        transition: all 0.3s ease;
     }
 
     .nav-menu {
@@ -554,7 +561,12 @@
                     <div class="logo-icon">
                         <i class="fas fa-briefcase"></i>
                     </div>
-                    <span class="logo-text">KIM Eduverse</span>
+                    <a href="{{ route('home') }}" class="logo">
+                        <div class="logo-icon">
+                            <i class="fas fa-briefcase"></i>
+                        </div>
+                        <img src="{{ asset('storage/logo.jpeg') }}" alt="KIM Eduverse" class="logo-image">
+                    </a>
                 </a>
 
                 <button class="menu-toggle" id="menuToggle">
