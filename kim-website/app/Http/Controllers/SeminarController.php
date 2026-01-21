@@ -22,19 +22,19 @@ class SeminarController extends Controller
         try {
             // Log untuk debugging
             Log::info('Attempting to access seminar for order: ' . $orderNumber);
-            
+
             // 1. Cari order yang sudah dibayar
             $order = DigitalOrder::where('order_number', $orderNumber)
                 ->where('payment_status', 'paid')
                 ->with(['items.product']) // Eager load relasi product
                 ->first();
-                
+
             if (!$order) {
                 Log::error('Order not found or not paid: ' . $orderNumber);
                 return redirect()->route('digital.payment.success', $orderNumber)
                     ->with('error', 'Pesanan tidak ditemukan atau belum dibayar');
             }
-            
+
             Log::info('Order found: ' . $order->id);
 
             // 2. Cari item order yang bertipe 'seminar'
@@ -45,7 +45,7 @@ class SeminarController extends Controller
                 return redirect()->route('digital.payment.success', $orderNumber)
                     ->with('error', 'Seminar tidak ditemukan dalam pesanan Anda.');
             }
-            
+
             Log::info('Seminar item found: ' . $seminarOrderItem->id);
 
             // 3. Dapatkan objek DigitalProduct dari item tersebut
@@ -62,7 +62,7 @@ class SeminarController extends Controller
                 return redirect()->route('digital.payment.success', $orderNumber)
                     ->with('error', 'Tipe produk tidak sesuai. Diharapkan: seminar, Ditemukan: ' . $digitalProduct->product_type);
             }
-            
+
             Log::info('Digital product found: ' . $digitalProduct->id . ' with seminar_id: ' . $digitalProduct->seminar_id);
 
             // 4. Dapatkan data Seminar dari DigitalProduct menggunakan relasi Eloquent
@@ -83,7 +83,7 @@ class SeminarController extends Controller
                 'customer_email' => $order->customer_email,
                 'order_id' => $order->id,
             ]);
-            
+
             Log::info('Enrollment created or found: ' . $enrollment->id);
 
             // Load relations
@@ -117,13 +117,13 @@ class SeminarController extends Controller
                     ->where('quiz_id', $seminar->post_test_id)
                     ->where('is_submitted', false)
                     ->first();
-            }  elseif ($enrollment->post_test_passed && !$enrollment->participant_name) {
+            } elseif ($enrollment->post_test_passed && !$enrollment->participant_name) {
                 // TAMPILKAN FORM INPUT NAMA
-                    $currentView = 'name_form';
-                } elseif ($enrollment->is_completed) {
-                    $currentView = 'completed';
-                }
-                        
+                $currentView = 'name_form';
+            } elseif ($enrollment->is_completed) {
+                $currentView = 'completed';
+            }
+
             Log::info('Current view: ' . $currentView);
 
             return view('digital.seminar-learn', compact(
@@ -134,7 +134,6 @@ class SeminarController extends Controller
                 'currentQuiz',
                 'ongoingAttempt'
             ));
-
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             // Tangani error jika model tidak ditemukan dengan lebih spesifik
             Log::error('Model not found in seminar access: ' . $e->getMessage());
@@ -225,7 +224,7 @@ class SeminarController extends Controller
 
         // Ambil urutan pertanyaan yang disimpan saat start
         $questionOrder = json_decode($attempt->question_order, true) ?? [];
-        
+
         // Urutkan pertanyaan sesuai dengan yang disimpan
         $orderedQuestions = [];
         foreach ($questionOrder as $questionId) {
@@ -234,7 +233,7 @@ class SeminarController extends Controller
                 $orderedQuestions[] = $question;
             }
         }
-        
+
         // Jika tidak ada urutan yang tersimpan, gunakan urutan default
         if (empty($orderedQuestions)) {
             $orderedQuestions = $quiz->questions->all();
@@ -253,11 +252,11 @@ class SeminarController extends Controller
             }
         }
 
-    $totalQuestions = count($orderedQuestions);
-    $percentage = $totalQuestions > 0
-        ? ($correctCount / $totalQuestions) * 100
-        : 0;        
-    $isPassed = $percentage >= $quiz->passing_score;
+        $totalQuestions = count($orderedQuestions);
+        $percentage = $totalQuestions > 0
+            ? ($correctCount / $totalQuestions) * 100
+            : 0;
+        $isPassed = $percentage >= $quiz->passing_score;
 
         // Update attempt
         $attempt->update([
@@ -340,10 +339,10 @@ class SeminarController extends Controller
 
             // Generate certificate number
             $enrollment->generateCertificate();
-            
+
             // Reload enrollment to get updated certificate_number
             $enrollment->refresh();
-            
+
             Log::info('Certificate number generated: ' . $enrollment->certificate_number);
 
             // Load seminar relation if not loaded
@@ -368,7 +367,7 @@ class SeminarController extends Controller
 
             // Save PDF
             \Storage::disk('public')->put($filePath, $pdf->output());
-            
+
             Log::info('Certificate PDF saved to: ' . $filePath);
 
             // Update certificate path
@@ -376,7 +375,7 @@ class SeminarController extends Controller
 
             // Send via email
             $this->sendCertificateEmail($enrollment);
-            
+
             Log::info('Certificate generation completed for enrollment: ' . $enrollment->id);
         } catch (\Exception $e) {
             Log::error('Failed to generate certificate: ' . $e->getMessage());
@@ -394,7 +393,7 @@ class SeminarController extends Controller
 
             // Verify certificate file exists
             $certificatePath = storage_path('app/public/' . $enrollment->certificate_path);
-            
+
             if (!file_exists($certificatePath)) {
                 Log::error('Certificate file not found at: ' . $certificatePath);
                 return;
@@ -454,7 +453,6 @@ class SeminarController extends Controller
 
             Log::info('User downloading certificate: ' . $fullPath);
             return \Storage::disk('public')->download($enrollment->certificate_path);
-
         } catch (\Exception $e) {
             Log::error('Error downloading certificate: ' . $e->getMessage());
             // Aborsi dengan pesan yang jelas
@@ -583,7 +581,6 @@ class SeminarController extends Controller
 
             return redirect()->route('digital.seminar.learn', $orderNumber)
                 ->with('success', 'Nama berhasil disimpan! Sertifikat Anda sedang dibuat.');
-
         } catch (\Exception $e) {
             Log::error('Failed to save participant name: ' . $e->getMessage());
             Log::error('Stack trace: ' . $e->getTraceAsString());

@@ -555,6 +555,18 @@ Route::prefix('admin/digital')->name('admin.digital.')->middleware(['check.digit
         Route::get('/{seminar}/enrollments', [AdminSeminarController::class, 'enrollments'])->name('enrollments');
 
         Route::post('/quizzes', [AdminSeminarController::class, 'storeQuiz'])->name('quizzes.store');
+
+        Route::post('/{seminar}/materials', [AdminSeminarController::class, 'storeMaterial'])
+            ->name('materials.store');
+
+        Route::put('/{seminar}/materials/{material}', [AdminSeminarController::class, 'updateMaterial'])
+            ->name('materials.update');
+
+        Route::delete('/{seminar}/materials/{material}', [AdminSeminarController::class, 'destroyMaterial'])
+            ->name('materials.destroy');
+
+        Route::post('/{seminar}/materials/reorder', [AdminSeminarController::class, 'reorderMaterials'])
+            ->name('materials.reorder');
     });
 
     // Landing Pages Management (di dalam group admin)

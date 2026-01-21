@@ -7,6 +7,7 @@ use App\Models\Seminar;
 use App\Models\Quiz;
 use App\Models\DigitalProduct;
 use App\Models\DigitalProductCategory;
+use App\Models\SeminarMaterial;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -30,15 +31,15 @@ class SeminarController extends Controller
         // HANYA ambil quiz yang:
         // 1. Tidak punya course_id DAN tidak punya module_id (quiz standalone untuk seminar)
         // 2. ATAU quiz yang quizable_type = 'App\Models\Seminar'
-        $quizzes = Quiz::where(function($query) {
-                $query->whereNull('course_id')
-                      ->whereNull('module_id');
-            })
+        $quizzes = Quiz::where(function ($query) {
+            $query->whereNull('course_id')
+                ->whereNull('module_id');
+        })
             ->orWhere('quizable_type', 'App\Models\Seminar')
             ->where('is_active', true)
             ->orderBy('title')
             ->get();
-        
+
         $collaborators = User::where('role', 'collaborator')
             ->where('is_active', true)
             ->orderBy('name')
@@ -146,15 +147,15 @@ class SeminarController extends Controller
         // HANYA ambil quiz yang:
         // 1. Tidak punya course_id DAN tidak punya module_id (quiz standalone untuk seminar)
         // 2. ATAU quiz yang quizable_type = 'App\Models\Seminar'
-        $quizzes = Quiz::where(function($query) {
-                $query->whereNull('course_id')
-                      ->whereNull('module_id');
-            })
+        $quizzes = Quiz::where(function ($query) {
+            $query->whereNull('course_id')
+                ->whereNull('module_id');
+        })
             ->orWhere('quizable_type', 'App\Models\Seminar')
             ->where('is_active', true)
             ->orderBy('title')
             ->get();
-        
+
         $collaborators = User::where('role', 'collaborator')
             ->where('is_active', true)
             ->orderBy('name')
@@ -329,5 +330,81 @@ class SeminarController extends Controller
                 'message' => 'Gagal membuat quiz: ' . $e->getMessage()
             ], 500);
         }
+    }
+    public function storeMaterial(Request $request, Seminar $seminar)
+    {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'jp' => 'required|integer|min:1|max:100',
+        ]);
+
+        // Auto set order
+        $maxOrder = $seminar->materials()->max('order') ?? 0;
+
+        $material = $seminar->materials()->create([
+            'title' => $validated['title'],
+            'jp' => $validated['jp'],
+            'order' => $maxOrder + 1,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Materi berhasil ditambahkan',
+            'material' => $material,
+        ]);
+    }
+
+    /**
+     * Update material
+     */
+    public function updateMaterial(Request $request, Seminar $seminar, SeminarMaterial $material)
+    {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'jp' => 'required|integer|min:1|max:100',
+        ]);
+
+        $material->update($validated);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Materi berhasil diupdate',
+            'material' => $material,
+        ]);
+    }
+
+    /**
+     * Delete material
+     */
+    public function destroyMaterial(Seminar $seminar, SeminarMaterial $material)
+    {
+        $material->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Materi berhasil dihapus',
+        ]);
+    }
+
+    /**
+     * Reorder materials
+     */
+    public function reorderMaterials(Request $request, Seminar $seminar)
+    {
+        $validated = $request->validate([
+            'materials' => 'required|array',
+            'materials.*.id' => 'required|exists:seminar_materials,id',
+            'materials.*.order' => 'required|integer',
+        ]);
+
+        foreach ($validated['materials'] as $materialData) {
+            SeminarMaterial::where('id', $materialData['id'])
+                ->update(['order' => $materialData['order']]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Urutan materi berhasil diupdate',
+        ]);
     }
 }

@@ -9,6 +9,10 @@ $half = ceil($totalWords / 2);
 
 $line1 = implode(' ', array_slice($words, 0, $half));
 $line2 = implode(' ', array_slice($words, $half));
+$totalJP = $seminar->materials->sum('jp');
+if ($totalJP == 0) {
+$totalJP = ceil($seminar->duration_minutes / 60);
+}
 @endphp
 <!DOCTYPE html>
 <html lang="id">
@@ -29,7 +33,6 @@ $line2 = implode(' ', array_slice($words, $half));
         color: #222;
     }
 
-    /* ================= PAGE ================= */
     .page {
         position: relative;
         width: 297mm;
@@ -37,12 +40,10 @@ $line2 = implode(' ', array_slice($words, $half));
         background: url('{{ public_path("images/paper-bg.jpg") }}') center / cover no-repeat;
     }
 
-    /* PENTING: Hapus page-break-after dari halaman terakhir */
     .page:not(:last-child) {
         page-break-after: always;
     }
 
-    /* ================= SIDEBAR ================= */
     .sidebar {
         position: absolute;
         top: 25mm;
@@ -57,10 +58,8 @@ $line2 = implode(' ', array_slice($words, $half));
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%) rotate(-90deg);
-
         width: 150mm;
         text-align: center;
-
         color: #fff;
         font-size: 16px;
         font-weight: bold;
@@ -69,8 +68,6 @@ $line2 = implode(' ', array_slice($words, $half));
         white-space: normal;
     }
 
-
-    /* ================= CONTENT ================= */
     .content {
         position: absolute;
         top: 30mm;
@@ -107,7 +104,6 @@ $line2 = implode(' ', array_slice($words, $half));
         margin-top: 10px;
     }
 
-    /* ================= SIGNATURE ================= */
     .signature {
         margin-top: 35px;
     }
@@ -118,7 +114,6 @@ $line2 = implode(' ', array_slice($words, $half));
         color: #0B4DBA;
     }
 
-    /* ================= PAGE 2 ================= */
     .page-2 .content {
         top: 35mm;
     }
@@ -181,13 +176,12 @@ $line2 = implode(' ', array_slice($words, $half));
 
             <div class="body-text">
                 This certificate is granted upon completion of an asynchronous learning module designed to provide
-                targeted
-                insights and specialized knowledge within the selected field.
+                targeted insights and specialized knowledge within the selected field.
             </div>
 
             <div class="details">
                 <b>Total Contact Hours:</b>
-                {{ ceil($seminar->duration_minutes / 60) }} Hours<br>
+                {{ $seminar->materials->sum('jp') ?? ceil($seminar->duration_minutes / 60) }} Hours<br>
 
                 <b>Certified on:</b>
                 {{ $enrollment->completed_at?->format('d F Y') ?? now()->format('d F Y') }}<br>
@@ -218,19 +212,6 @@ $line2 = implode(' ', array_slice($words, $half));
         <div class="content">
             <h2>MATERI ON-DEMAND SEMINAR</h2>
 
-            @php
-            $materi = [
-            'Pengenalan dan Konsep Dasar',
-            'Teori dan Metodologi',
-            'Teknik dan Implementasi Praktis',
-            'Studi Kasus dan Analisis',
-            'Evaluasi dan Tindak Lanjut'
-            ];
-
-            $jp = ceil($seminar->duration_minutes / 60);
-            $per = ceil($jp / count($materi));
-            @endphp
-
             <table>
                 <thead>
                     <tr>
@@ -240,13 +221,52 @@ $line2 = implode(' ', array_slice($words, $half));
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($materi as $i => $m)
+                    @forelse($seminar->materials as $i => $material)
+                    <tr>
+                        <td>{{ $i + 1 }}</td>
+                        <td>{{ $material->title }}</td>
+
+                        @if($i === 0)
+                        <td rowspan="{{ $seminar->materials->count() }}" style="
+                        text-align: center;
+                        vertical-align: middle;
+                        font-weight: bold;
+                        font-size: 14px;
+                    ">
+                            {{ $totalJP }}
+                        </td>
+                        @endif
+                    </tr>
+                    @empty
+                    @php
+                    $defaultMaterials = [
+                    'Pengenalan dan Konsep Dasar',
+                    'Teori dan Metodologi',
+                    'Teknik dan Implementasi Praktis',
+                    'Studi Kasus dan Analisis',
+                    'Evaluasi dan Tindak Lanjut'
+                    ];
+                    $totalJP = ceil($seminar->duration_minutes / 60);
+                    @endphp
+
+                    @foreach($defaultMaterials as $i => $m)
                     <tr>
                         <td>{{ $i + 1 }}</td>
                         <td>{{ $m }}</td>
-                        <td>{{ $per }}</td>
+
+                        @if($i === 0)
+                        <td rowspan="{{ count($defaultMaterials) }}" style="
+                            text-align: center;
+                            vertical-align: middle;
+                            font-weight: bold;
+                            font-size: 14px;
+                        ">
+                            {{ $totalJP }}
+                        </td>
+                        @endif
                     </tr>
                     @endforeach
+                    @endforelse
                 </tbody>
             </table>
 

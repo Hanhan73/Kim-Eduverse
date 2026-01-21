@@ -68,11 +68,11 @@ class Seminar extends Model
         return $this->digitalProduct();
     }
 
-    public function creator() 
+    public function creator()
     {
         return $this->belongsTo(User::class, 'created_by');
     }
-    
+
     public function enrollments()
     {
         return $this->hasMany(SeminarEnrollment::class);
@@ -88,6 +88,15 @@ class Seminar extends Model
         return $this->belongsTo(Quiz::class, 'post_test_id');
     }
 
+    public function materials()
+    {
+        return $this->hasMany(SeminarMaterial::class)->orderBy('order');
+    }
+
+    public function getTotalJpAttribute()
+    {
+        return $this->materials()->sum('jp');
+    }
     // HELPERS
     public function getFormattedPriceAttribute()
     {
@@ -108,7 +117,7 @@ class Seminar extends Model
         if (!empty($this->instructor_name)) {
             return $this->instructor_name;
         }
-        
+
         // Otherwise use collaborator name
         return $this->collaborator?->name ?? 'Unknown Instructor';
     }
@@ -122,7 +131,7 @@ class Seminar extends Model
         if (!empty($this->instructor_bio)) {
             return $this->instructor_bio;
         }
-        
+
         // Otherwise use collaborator bio
         return $this->collaborator?->bio ?? '';
     }

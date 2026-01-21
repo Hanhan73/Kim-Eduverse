@@ -77,13 +77,12 @@
                 </div>
             </div>
 
-            <!-- Instructor Info - UPDATED -->
+            <!-- Instructor Info -->
             <div class="card">
                 <div class="card-header">
                     <h3><i class="fas fa-user-tie"></i> Instruktur / Collaborator</h3>
                 </div>
                 <div class="card-body">
-                    <!-- PILIH COLLABORATOR -->
                     <div class="form-group">
                         <label>Pilih Collaborator <span style="color: red;">*</span></label>
                         <select name="collaborator_id" id="collaborator_id"
@@ -115,7 +114,6 @@
                         </div>
                     </div>
 
-                    <!-- OVERRIDE INSTRUCTOR NAME (OPTIONAL) -->
                     <div class="form-group">
                         <label>
                             Nama Instruktur
@@ -131,7 +129,6 @@
                         <small class="form-text">Kosongkan untuk menggunakan nama dari collaborator</small>
                     </div>
 
-                    <!-- OVERRIDE INSTRUCTOR BIO (OPTIONAL) -->
                     <div class="form-group">
                         <label>
                             Bio Instruktur
@@ -148,7 +145,7 @@
                 </div>
             </div>
 
-            <!-- Material -->
+            <!-- Material PDF -->
             <div class="card">
                 <div class="card-header">
                     <h3><i class="fas fa-file-pdf"></i> Materi Seminar</h3>
@@ -177,6 +174,106 @@
                 </div>
             </div>
 
+            <!-- 📚 DAFTAR MATERI (untuk sertifikat) -->
+            @if(isset($seminar))
+            <div class="card">
+                <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                    <h3><i class="fas fa-list-ol"></i> Daftar Materi (untuk Sertifikat)</h3>
+                    <button type="button" class="btn btn-sm btn-primary" onclick="openMaterialModal()">
+                        <i class="fas fa-plus-circle"></i> Tambah Materi
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div
+                        style="background: #e0f2fe; border: 2px solid #0284c7; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+                        <div style="display: flex; gap: 10px; align-items: start;">
+                            <i class="fas fa-info-circle"
+                                style="color: #0284c7; margin-top: 3px; font-size: 1.2rem;"></i>
+                            <div style="color: #0c4a6e; line-height: 1.6;">
+                                <strong>Tentang Daftar Materi:</strong>
+                                <ul style="margin: 8px 0 0 20px;">
+                                    <li>Materi ini akan tampil di <strong>halaman 2 sertifikat</strong></li>
+                                    <li>Input nama materi dan Jam Pelajaran (JP)</li>
+                                    <li>Total JP akan otomatis dihitung</li>
+                                    <li>Drag & drop untuk ubah urutan</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="materials-list" style="min-height: 100px;">
+                        @forelse($seminar->materials ?? [] as $material)
+                        <div class="material-item" data-id="{{ $material->id }}"
+                            style="background: #f8f9fa; border: 2px solid #e2e8f0; border-radius: 10px; padding: 15px; margin-bottom: 12px; transition: all 0.3s ease;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div style="display: flex; align-items: center; gap: 15px; flex: 1;">
+                                    <i class="fas fa-grip-vertical drag-handle"
+                                        style="color: #94a3b8; cursor: move; font-size: 1.2rem;"></i>
+
+                                    <div style="flex: 1;">
+                                        <div style="font-weight: 600; color: var(--dark); margin-bottom: 5px;">
+                                            {{ $material->title }}
+                                        </div>
+                                        <div style="display: flex; gap: 15px; font-size: 0.9rem; color: #64748b;">
+                                            <span><i class="fas fa-clock"></i> {{ $material->jp }} JP</span>
+                                            <span><i class="fas fa-sort-numeric-up"></i> Urutan:
+                                                {{ $material->order }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div style="display: flex; gap: 8px;">
+                                    <button type="button" class="btn btn-sm btn-warning"
+                                        onclick="editMaterial({{ $material->id }}, '{{ addslashes($material->title) }}', {{ $material->jp }})">
+                                        <i class="fas fa-pencil-alt"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-danger"
+                                        onclick="deleteMaterial({{ $material->id }})">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        @empty
+                        <div class="empty-state" id="empty-materials"
+                            style="text-align: center; padding: 40px; color: #94a3b8;">
+                            <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 15px; opacity: 0.5;"></i>
+                            <p style="font-size: 1.1rem; font-weight: 500;">Belum ada materi</p>
+                            <p style="font-size: 0.9rem;">Klik "Tambah Materi" untuk mulai</p>
+                        </div>
+                        @endforelse
+                    </div>
+
+                    @if(($seminar->materials ?? collect())->count() > 0)
+                    <div
+                        style="background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 10px; padding: 20px; margin-top: 20px; color: white; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="font-size: 0.9rem; opacity: 0.9;">Total Jam Pelajaran</div>
+                            <div style="font-size: 2rem; font-weight: 700;" id="total-jp">
+                                {{ $seminar->materials->sum('jp') }} JP
+                            </div>
+                        </div>
+                        <i class="fas fa-graduation-cap" style="font-size: 3rem; opacity: 0.3;"></i>
+                    </div>
+                    @endif
+                </div>
+            </div>
+            @else
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fas fa-list-ol"></i> Daftar Materi (untuk Sertifikat)</h3>
+                </div>
+                <div class="card-body" style="background: #fef3c7; border: 2px solid #fbbf24; border-radius: 8px;">
+                    <div style="display: flex; gap: 10px; align-items: center; color: #92400e;">
+                        <i class="fas fa-info-circle" style="font-size: 1.3rem;"></i>
+                        <div>
+                            <strong>Info:</strong> Daftar materi dapat ditambahkan setelah seminar disimpan.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endif
+
             <!-- Tests -->
             <div class="card">
                 <div class="card-header">
@@ -184,7 +281,6 @@
                 </div>
                 <div class="card-body">
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                        <!-- Pre-Test -->
                         <div class="form-group">
                             <label>Pre-Test <span style="color: red;">*</span></label>
                             <div style="display: flex; gap: 10px;">
@@ -208,7 +304,6 @@
                             @enderror
                         </div>
 
-                        <!-- Post-Test -->
                         <div class="form-group">
                             <label>Post-Test <span style="color: red;">*</span></label>
                             <div style="display: flex; gap: 10px;">
@@ -253,7 +348,6 @@
 
         <!-- Sidebar -->
         <div>
-            <!-- Publish Settings -->
             <div class="card">
                 <div class="card-header">
                     <h3><i class="fas fa-cog"></i> Pengaturan</h3>
@@ -286,7 +380,6 @@
                 </div>
             </div>
 
-            <!-- Template Certificate -->
             <div class="card">
                 <div class="card-header">
                     <h3><i class="fas fa-certificate"></i> Sertifikat</h3>
@@ -316,7 +409,6 @@
                 </div>
             </div>
 
-            <!-- Action Buttons -->
             <div class="card">
                 <div class="card-body">
                     <button type="submit" class="btn btn-primary btn-block">
@@ -338,7 +430,7 @@
     </div>
 </form>
 
-<!-- Quiz Creation Modal (sama seperti sebelumnya) -->
+<!-- Quiz Modal -->
 <div id="quizModal" class="modal" style="display: none;">
     <div class="modal-content" style="max-width: 800px;">
         <div class="modal-header">
@@ -388,8 +480,56 @@
     </div>
 </div>
 
+<!-- Material Modal -->
+@if(isset($seminar))
+<div id="materialModal" class="modal" style="display: none;">
+    <div class="modal-content" style="max-width: 600px;">
+        <div class="modal-header">
+            <h3 id="materialModalTitle">Tambah Materi Baru</h3>
+            <button type="button" class="close" onclick="closeMaterialModal()">&times;</button>
+        </div>
+
+        <form id="materialForm" onsubmit="saveMaterial(event)">
+            <input type="hidden" id="material_id">
+
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Nama Materi <span style="color: red;">*</span></label>
+                    <input type="text" id="material_title" class="form-control" required
+                        placeholder="Contoh: Pengenalan dan Konsep Dasar">
+                    <small class="form-text">Nama materi yang akan tampil di sertifikat</small>
+                </div>
+
+                <div class="form-group">
+                    <label>Jam Pelajaran (JP) <span style="color: red;">*</span></label>
+                    <input type="number" id="material_jp" class="form-control" required min="1" max="100"
+                        placeholder="Contoh: 2">
+                    <small class="form-text">1 JP ≈ 45-60 menit</small>
+                </div>
+
+                <div
+                    style="background: #e0f2fe; border-left: 4px solid #0284c7; padding: 12px; border-radius: 6px; margin-top: 15px;">
+                    <small style="color: #0c4a6e;">
+                        <i class="fas fa-lightbulb"></i>
+                        <strong>Tips:</strong> Pastikan total JP sesuai dengan durasi seminar
+                    </small>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeMaterialModal()">
+                    <i class="fas fa-times"></i> Batal
+                </button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Simpan
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+@endif
+
 <style>
-/* Styles tetap sama */
 .modal {
     position: fixed;
     z-index: 1000;
@@ -515,8 +655,18 @@
     padding: 6px 12px;
     font-size: 0.875rem;
 }
-</style>
 
+.sortable-ghost {
+    opacity: 0.4;
+    background: #e0f2fe;
+}
+
+.material-item:hover {
+    border-color: var(--primary) !important;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 <script>
 let currentQuizType = '';
 
@@ -526,11 +676,11 @@ function updateInstructorInfo(select) {
     const name = selected.dataset.name || '';
     const bio = selected.dataset.bio || '';
 
-    // Fill the override fields dengan data collaborator sebagai placeholder
     document.getElementById('instructor_name').placeholder = `Default: ${name}`;
     document.getElementById('instructor_bio').placeholder = `Default: ${bio}`;
 }
 
+// Quiz Modal Functions
 function openQuizModal(type) {
     currentQuizType = type;
     document.getElementById('quizType').value = type;
@@ -606,11 +756,159 @@ document.getElementById('quizForm').addEventListener('submit', function(e) {
         });
 });
 
+// Material Modal Functions
+@if(isset($seminar))
+// Initialize Sortable only if there are materials
+document.addEventListener('DOMContentLoaded', function() {
+    const materialsList = document.getElementById('materials-list');
+    if (materialsList) {
+        const hasItems = materialsList.querySelectorAll('.material-item').length > 0;
+        if (hasItems) {
+            new Sortable(materialsList, {
+                animation: 150,
+                handle: '.drag-handle',
+                ghostClass: 'sortable-ghost',
+                onEnd: function() {
+                    reorderMaterials();
+                }
+            });
+        }
+    }
+});
+
+function openMaterialModal() {
+    console.log('Opening modal...');
+    document.getElementById('material_id').value = '';
+    document.getElementById('material_title').value = '';
+    document.getElementById('material_jp').value = '';
+    document.getElementById('materialModalTitle').textContent = 'Tambah Materi Baru';
+    document.getElementById('materialModal').style.display = 'block';
+    console.log('Modal display:', document.getElementById('materialModal').style.display);
+}
+
+function editMaterial(id, title, jp) {
+    document.getElementById('material_id').value = id;
+    document.getElementById('material_title').value = title;
+    document.getElementById('material_jp').value = jp;
+    document.getElementById('materialModalTitle').textContent = 'Edit Materi';
+    document.getElementById('materialModal').style.display = 'block';
+}
+
+function closeMaterialModal() {
+    document.getElementById('materialModal').style.display = 'none';
+}
+
+function saveMaterial(event) {
+    event.preventDefault();
+
+    const id = document.getElementById('material_id').value;
+    const title = document.getElementById('material_title').value;
+    const jp = document.getElementById('material_jp').value;
+    const seminarId = {{ $seminar->id }};
+
+    if (!title || !jp) {
+        alert('Semua field harus diisi!');
+        return;
+    }
+
+    const url = id ?
+        `/admin/digital/seminars/${seminarId}/materials/${id}` :
+        `/admin/digital/seminars/${seminarId}/materials`;
+
+    const method = id ? 'PUT' : 'POST';
+
+    fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({
+                title,
+                jp
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Gagal menyimpan: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Terjadi kesalahan saat menyimpan materi');
+        });
+}
+
+function deleteMaterial(id) {
+    if (!confirm('Yakin ingin menghapus materi ini?')) return;
+
+const seminarId = {{ $seminar->id }};
+
+    fetch(`/admin/digital/seminars/${seminarId}/materials/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Gagal menghapus: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Terjadi kesalahan saat menghapus materi');
+        });
+}
+
+function reorderMaterials() {
+    const items = document.querySelectorAll('.material-item');
+    const materials = Array.from(items).map((item, index) => ({
+        id: item.dataset.id,
+        order: index + 1
+    }));
+
+const seminarId = {{ $seminar->id }};
+
+    fetch(`/admin/digital/seminars/${seminarId}/materials/reorder`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({
+                materials
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (!data.success) {
+                alert('Gagal mengubah urutan');
+                location.reload();
+            }
+        });
+}
+@endif
+
+// Close modal on outside click
 window.onclick = function(event) {
-    const modal = document.getElementById('quizModal');
-    if (event.target === modal) {
+    const quizModal = document.getElementById('quizModal');
+    if (event.target === quizModal) {
         closeQuizModal();
     }
+
+    @if(isset($seminar))
+    const materialModal = document.getElementById('materialModal');
+    if (event.target === materialModal) {
+        closeMaterialModal();
+    }
+    @endif
 }
 
 function previewImage(input) {
@@ -631,7 +929,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (preSelect) updateQuizButton('pre', preSelect);
     if (postSelect) updateQuizButton('post', postSelect);
 
-    // Trigger initial instructor info update if collaborator already selected
     const collabSelect = document.getElementById('collaborator_id');
     if (collabSelect && collabSelect.value) {
         updateInstructorInfo(collabSelect);
