@@ -70,7 +70,26 @@ class SeminarEnrollment extends Model
             return false;
         }
 
-        $this->certificate_number = 'SEM-' . strtoupper(uniqid());
+        // Generate certificate number dengan format: 0001/ODS-KE/01/2026
+        // UniqueID = auto increment 4 digit (0001, 0002, 0003, ...)
+        
+        $now = now();
+        
+        // Hitung total sertifikat yang sudah pernah dibuat (termasuk yang dihapus)
+        // Pakai withTrashed() kalau pakai SoftDeletes di model ini
+        $totalCertificates = self::whereNotNull('certificate_number')->count();
+        
+        // Auto increment: tambah 1, format jadi 4 digit dengan leading zero
+        $sequenceNumber = str_pad($totalCertificates + 1, 4, '0', STR_PAD_LEFT);
+        
+        // Format: 0001/ODS-KE/MM/YYYY
+        $this->certificate_number = sprintf(
+            '%s/ODS-KE/%s/%s',
+            $sequenceNumber,    // 0001, 0002, 0003, ...
+            $now->format('m'),  // Bulan (01-12)
+            $now->format('Y')   // Tahun (2026)
+        );
+        
         $this->certificate_generated = true;
         $this->certificate_issued_at = now();
         $this->is_completed = true;

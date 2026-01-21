@@ -18,135 +18,139 @@ $line2 = implode(' ', array_slice($words, $half));
     <title>Sertifikat Seminar</title>
 
     <style>
-        @page {
-            size: A4 landscape;
-            margin: 0;
-        }
+    @page {
+        size: A4 landscape;
+        margin: 0;
+    }
 
-        body {
-            margin: 0;
-            font-family: "Times New Roman", serif;
-            color: #222;
-        }
+    body {
+        margin: 0;
+        font-family: "Times New Roman", serif;
+        color: #222;
+    }
 
-        /* ================= PAGE ================= */
-        .page {
-            position: relative;
-            width: 297mm;
-            height: 210mm;
-            page-break-after: always;
-            background: url('{{ public_path("images/paper-bg.jpg") }}') center / cover no-repeat;
-        }
+    /* ================= PAGE ================= */
+    .page {
+        position: relative;
+        width: 297mm;
+        height: 210mm;
+        background: url('{{ public_path("images/paper-bg.jpg") }}') center / cover no-repeat;
+    }
 
-        /* ================= SIDEBAR ================= */
-        .sidebar {
-            position: absolute;
-            top: 25mm;
-            left: 20mm;
-            width: 28mm;
-            height: 160mm;
-            background: #0B4DBA;
-        }
+    /* PENTING: Hapus page-break-after dari halaman terakhir */
+    .page:not(:last-child) {
+        page-break-after: always;
+    }
 
-        .sidebar-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(-90deg);
+    /* ================= SIDEBAR ================= */
+    .sidebar {
+        position: absolute;
+        top: 25mm;
+        left: 20mm;
+        width: 28mm;
+        height: 160mm;
+        background: #0B4DBA;
+    }
 
-            width: 150mm;
-            text-align: center;
+    .sidebar-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) rotate(-90deg);
 
-            color: #fff;
-            font-size: 16px;
-            font-weight: bold;
-            letter-spacing: 2px;
-            line-height: 1.3;
-            white-space: normal;
-        }
+        width: 150mm;
+        text-align: center;
+
+        color: #fff;
+        font-size: 16px;
+        font-weight: bold;
+        letter-spacing: 2px;
+        line-height: 1.3;
+        white-space: normal;
+    }
 
 
-        /* ================= CONTENT ================= */
-        .content {
-            position: absolute;
-            top: 30mm;
-            left: 65mm;
-            right: 30mm;
-        }
+    /* ================= CONTENT ================= */
+    .content {
+        position: absolute;
+        top: 30mm;
+        left: 65mm;
+        right: 30mm;
+    }
 
-        .logo {
-            width: 90px;
-            margin-bottom: 20px;
-        }
+    .logo {
+        width: 90px;
+        margin-bottom: 20px;
+    }
 
-        .title-small {
-            font-size: 14px;
-            margin-bottom: 12px;
-        }
+    .title-small {
+        font-size: 14px;
+        margin-bottom: 12px;
+    }
 
-        .participant-name {
-            font-size: 26px;
-            font-weight: bold;
-            color: #0B4DBA;
-            margin-bottom: 16px;
-        }
+    .participant-name {
+        font-size: 26px;
+        font-weight: bold;
+        color: #0B4DBA;
+        margin-bottom: 16px;
+    }
 
-        .body-text {
-            font-size: 12px;
-            line-height: 1.7;
-            margin-bottom: 12px;
-        }
+    .body-text {
+        font-size: 12px;
+        line-height: 1.7;
+        margin-bottom: 12px;
+    }
 
-        .details {
-            font-size: 11px;
-            line-height: 1.6;
-            margin-top: 10px;
-        }
+    .details {
+        font-size: 11px;
+        line-height: 1.6;
+        margin-top: 10px;
+    }
 
-        /* ================= SIGNATURE ================= */
-        .signature {
-            margin-top: 35px;
-        }
+    /* ================= SIGNATURE ================= */
+    .signature {
+        margin-top: 35px;
+    }
 
-        .sign-name {
-            font-weight: bold;
-            font-size: 12px;
-            color: #0B4DBA;
-        }
+    .sign-name {
+        font-weight: bold;
+        font-size: 12px;
+        color: #0B4DBA;
+    }
 
-        /* ================= PAGE 2 ================= */
-        .page-2 .content {
-            top: 35mm;
-        }
+    /* ================= PAGE 2 ================= */
+    .page-2 .content {
+        top: 35mm;
+    }
 
-        .page-2 h2 {
-            text-align: center;
-            font-size: 18px;
-            margin-bottom: 20px;
-        }
+    .page-2 h2 {
+        text-align: center;
+        font-size: 18px;
+        margin-bottom: 20px;
+    }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 12px;
-        }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12px;
+    }
 
-        th,
-        td {
-            border: 1px solid #000;
-            padding: 8px;
-        }
+    th,
+    td {
+        border: 1px solid #000;
+        padding: 8px;
+    }
 
-        th {
-            background: #0B4DBA;
-            color: #fff;
-        }
+    th {
+        background: #0B4DBA;
+        color: #fff;
+    }
 
-        td:nth-child(1),
-        td:nth-child(3) {
-            text-align: center;
-            width: 60px;
-        }
+    td:nth-child(1),
+    td:nth-child(3) {
+        text-align: center;
+        width: 60px;
+    }
     </style>
 </head>
 
@@ -186,7 +190,10 @@ $line2 = implode(' ', array_slice($words, $half));
                 {{ ceil($seminar->duration_minutes / 60) }} Hours<br>
 
                 <b>Certified on:</b>
-                {{ $enrollment->completed_at?->format('d F Y') ?? now()->format('d F Y') }}
+                {{ $enrollment->completed_at?->format('d F Y') ?? now()->format('d F Y') }}<br>
+
+                <b>Certificate Number:</b>
+                {{ $enrollment->certificate_number }}
             </div>
 
             <div class="signature">
