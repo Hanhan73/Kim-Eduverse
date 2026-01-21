@@ -155,8 +155,8 @@ $totalJP = ceil($seminar->duration_minutes / 60);
     <div class="page">
         <div class="sidebar">
             <div class="sidebar-text">
-                {{ $line1 }}<br>
-                {{ $line2 }}
+                On-Demand Seminar<br>
+                Certificate
             </div>
         </div>
 
