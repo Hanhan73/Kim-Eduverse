@@ -100,6 +100,7 @@
                         <th>Instruktur / Collaborator</th>
                         <th>Harga</th>
                         <th>Durasi</th>
+                        <th>Total JP</th>
                         <th>Peserta</th>
                         <th>Status</th>
                         <th style="width: 120px;">Aksi</th>
@@ -182,6 +183,10 @@
                         <td>
                             <i class="fas fa-clock" style="color: var(--info);"></i>
                             {{ $seminar->duration_minutes }} menit
+                        </td>
+                        <td>
+                            <i class="fas fa-book" style="color: var(--success);"></i>
+                            {{ $seminar->total_jp }} JP
                         </td>
                         <td>
                             <a href="{{ route('admin.digital.seminars.enrollments', $seminar) }}"

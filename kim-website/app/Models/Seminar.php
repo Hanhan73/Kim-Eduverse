@@ -31,6 +31,7 @@ class Seminar extends Model
         'sold_count',
         'order',
         'created_by',
+        'total_jp',
     ];
 
     protected $casts = [
@@ -93,10 +94,6 @@ class Seminar extends Model
         return $this->hasMany(SeminarMaterial::class)->orderBy('order');
     }
 
-    public function getTotalJpAttribute()
-    {
-        return $this->materials()->sum('jp');
-    }
     // HELPERS
     public function getFormattedPriceAttribute()
     {

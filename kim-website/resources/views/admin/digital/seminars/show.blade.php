@@ -154,7 +154,7 @@
             </div>
         </div>
 
-        <!-- Instructor/Collaborator Info - UPDATED -->
+        <!-- Instructor/Collaborator Info -->
         <div class="card">
             <div class="card-header">
                 <h3><i class="fas fa-user-tie"></i> Instruktur / Collaborator</h3>
@@ -188,7 +188,6 @@
                 </div>
                 @endif
 
-                <!-- Display info jika ada override -->
                 @if($seminar->instructor_name)
                 <div class="info-row">
                     <strong>Displayed Instructor Name:</strong>
@@ -212,10 +211,10 @@
             </div>
         </div>
 
-        <!-- Material -->
+        <!-- Material PDF -->
         <div class="card">
             <div class="card-header">
-                <h3><i class="fas fa-file-pdf"></i> Materi</h3>
+                <h3><i class="fas fa-file-pdf"></i> Materi PDF</h3>
             </div>
             <div class="card-body">
                 @if($seminar->material_pdf_path)
@@ -233,6 +232,119 @@
                     <span>{{ $seminar->material_description }}</span>
                 </div>
                 @endif
+
+                @if(!$seminar->material_pdf_path && !$seminar->material_description)
+                <div class="empty-state" style="padding: 30px;">
+                    <i class="fas fa-file-pdf" style="font-size: 2.5rem; opacity: 0.3; margin-bottom: 10px;"></i>
+                    <p style="color: #94a3b8;">Belum ada materi PDF yang diunggah</p>
+                </div>
+                @endif
+            </div>
+        </div>
+
+        <!-- 📚 DAFTAR MATERI & TOTAL JP - SECTION BARU -->
+        <div class="card">
+            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <h3><i class="fas fa-list-ol"></i> Daftar Materi & Total JP</h3>
+                <a href="{{ route('admin.digital.seminars.edit', $seminar) }}" class="btn btn-sm btn-primary">
+                    <i class="fas fa-edit"></i> Edit Materi
+                </a>
+            </div>
+            <div class="card-body">
+                <!-- TOTAL JP -->
+                @if($seminar->total_jp)
+                <div
+                    style="background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 12px; padding: 25px; margin-bottom: 25px; color: white; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-size: 0.95rem; opacity: 0.9; margin-bottom: 8px;">
+                            <i class="fas fa-clock"></i> Total Jam Pelajaran
+                        </div>
+                        <div style="font-size: 2.5rem; font-weight: 700;">
+                            {{ $seminar->total_jp }} JP
+                        </div>
+
+                    </div>
+                    <i class="fas fa-graduation-cap" style="font-size: 4rem; opacity: 0.2;"></i>
+                </div>
+                @else
+                <div
+                    style="background: #fef3c7; border: 2px solid #fbbf24; border-radius: 10px; padding: 20px; margin-bottom: 25px; text-align: center;">
+                    <i class="fas fa-exclamation-circle"
+                        style="color: #92400e; font-size: 2rem; margin-bottom: 10px;"></i>
+                    <div style="color: #92400e; font-weight: 600;">Total JP belum diisi</div>
+                    <small style="color: #92400e; opacity: 0.8;">Klik tombol "Edit Materi" untuk menambahkan</small>
+                </div>
+                @endif
+
+                <!-- DAFTAR MATERI -->
+                @if($seminar->materials && $seminar->materials->count() > 0)
+                <div style="background: #f8f9fa; border-radius: 10px; padding: 20px;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h4 style="margin: 0; color: var(--dark);">
+                            <i class="fas fa-book"></i> Daftar Materi
+                        </h4>
+                        <span class="badge badge-info" style="font-size: 0.9rem;">
+                            {{ $seminar->materials->count() }} Materi
+                        </span>
+                    </div>
+
+                    <div style="background: white; border-radius: 8px; overflow: hidden;">
+                        @foreach($seminar->materials->sortBy('order') as $index => $material)
+                        <div
+                            style="padding: 15px 20px; border-bottom: 2px solid #e2e8f0; display: flex; align-items: center; gap: 15px; {{ $loop->last ? 'border-bottom: none;' : '' }}">
+                            <div
+                                style="background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; width: 35px; height: 35px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0;">
+                                {{ $index + 1 }}
+                            </div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 600; color: var(--dark); margin-bottom: 3px;">
+                                    {{ $material->title }}
+                                </div>
+                                <div style="font-size: 0.85rem; color: #64748b;">
+                                    <i class="fas fa-sort-numeric-up"></i> Urutan: {{ $material->order }}
+                                </div>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+
+                    <!-- Summary Card -->
+                    <div
+                        style="background: linear-gradient(135deg, #10b981, #059669); border-radius: 10px; padding: 20px; margin-top: 20px; color: white; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="font-size: 0.9rem; opacity: 0.9;">Total Materi Terdaftar</div>
+                            <div style="font-size: 2rem; font-weight: 700;">{{ $seminar->materials->count() }} Materi
+                            </div>
+                        </div>
+                        <i class="fas fa-check-circle" style="font-size: 3rem; opacity: 0.3;"></i>
+                    </div>
+                </div>
+                @else
+                <div
+                    style="background: #f8f9fa; border: 2px dashed #cbd5e1; border-radius: 10px; padding: 40px; text-align: center;">
+                    <i class="fas fa-inbox" style="font-size: 3.5rem; color: #cbd5e1; margin-bottom: 15px;"></i>
+                    <h4 style="color: #64748b; margin-bottom: 8px;">Belum ada materi yang ditambahkan</h4>
+                    <p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 20px;">
+                        Tambahkan materi untuk ditampilkan di sertifikat peserta
+                    </p>
+                    <a href="{{ route('admin.digital.seminars.edit', $seminar) }}" class="btn btn-primary">
+                        <i class="fas fa-plus-circle"></i> Tambah Materi Sekarang
+                    </a>
+                </div>
+                @endif
+
+                <!-- Info Box -->
+                <div
+                    style="background: #e0f2fe; border-left: 4px solid #0284c7; border-radius: 6px; padding: 15px; margin-top: 20px;">
+                    <div style="display: flex; gap: 12px; align-items: start;">
+                        <i class="fas fa-info-circle" style="color: #0284c7; margin-top: 2px; font-size: 1.1rem;"></i>
+                        <div style="color: #0c4a6e; font-size: 0.9rem; line-height: 1.6;">
+                            <strong>Catatan:</strong> Daftar materi ini akan ditampilkan pada halaman 2 sertifikat yang
+                            diterbitkan setelah peserta menyelesaikan seminar.
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
