@@ -976,7 +976,12 @@
                         </p>
 
                         <div class="product-meta">
-                            @if($product->duration_minutes)
+                            @if($product->type === 'seminar')
+                            <div class="meta-item">
+                                <i class="fas fa-clock"></i>
+                                <span>{{ $product->seminar->total_jp }} JP</span>
+                            </div>
+                            @elseif($product->duration_minutes)
                             <div class="meta-item">
                                 <i class="fas fa-clock"></i>
                                 <span>{{ $product->duration_minutes }} menit</span>
