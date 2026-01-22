@@ -137,8 +137,26 @@ Route::prefix('edutech')->name('edutech.')->middleware('edutech.auth')->group(fu
 Route::prefix('edutech/student')->name('edutech.student.')->middleware('edutech.student')->group(function () {
     Route::get('/dashboard', [StudentDashboardController::class, 'index'])->name('dashboard');
     Route::get('/my-courses', [StudentMyCourseController::class, 'index'])->name('my-courses');
+
+    // ===== CERTIFICATES - UPDATED =====
     Route::get('/certificates', [StudentCertificateController::class, 'index'])->name('certificates');
-    Route::get('/certificate/{id}/download', [StudentCertificateController::class, 'download'])->name('certificate.download');
+
+    // Download Course Certificate
+    Route::get('/certificate/{id}/download', [StudentCertificateController::class, 'download'])
+        ->name('certificate.download');
+
+    // Download Degree Certificate (NEW)
+    Route::get('/certificate/{id}/download-degree', [StudentCertificateController::class, 'downloadDegree'])
+        ->name('certificate.download-degree');
+
+    // View Certificate in Browser (Optional)
+    Route::get('/certificate/{id}/view', [StudentCertificateController::class, 'view'])
+        ->name('certificate.view');
+
+    // View Degree Certificate in Browser (Optional - NEW)
+    Route::get('/certificate/{id}/view-degree', [StudentCertificateController::class, 'viewDegree'])
+        ->name('certificate.view-degree');
+
     // Learning Page (BARU - satu halaman untuk semua)
     Route::get('/courses/{slug}/learn', [LearningController::class, 'show'])->name('courses.learn');
     Route::post('/learning/lesson/{lesson}/complete', [LearningController::class, 'completeLesson'])->name('learning.complete');
@@ -286,13 +304,29 @@ Route::prefix('edutech/admin')->name('edutech.admin.')->middleware('edutech.admi
     Route::post('/enrollments/{id}/reject', [EnrollmentsController::class, 'reject'])->name('enrollments.reject');
     Route::delete('/enrollments/{id}', [EnrollmentsController::class, 'destroy'])->name('enrollments.destroy');
 
-    // ===== CERTIFICATES MANAGEMENT =====
+    // ===== CERTIFICATES MANAGEMENT - UPDATED =====
     Route::get('/certificates', [CertificatesController::class, 'index'])->name('certificates');
     Route::get('/certificates/{id}', [CertificatesController::class, 'show'])->name('certificates.show');
-    Route::post('/certificates/issue/{enrollmentId}', [CertificatesController::class, 'issue'])->name('certificates.issue');
-    Route::post('/certificates/{id}/revoke', [CertificatesController::class, 'revoke'])->name('certificates.revoke');
-    Route::get('/certificates/{id}/download', [CertificatesController::class, 'download'])->name('certificates.download');
-    Route::get('/certificates/verify', [CertificatesController::class, 'verify'])->name('certificates.verify');
+
+    // Issue Certificates (Course + Degree if applicable)
+    Route::post('/certificates/issue/{enrollmentId}', [CertificatesController::class, 'issue'])
+        ->name('certificates.issue');
+
+    // Revoke Certificates (Both Course & Degree)
+    Route::post('/certificates/{id}/revoke', [CertificatesController::class, 'revoke'])
+        ->name('certificates.revoke');
+
+    // Download Course Certificate
+    Route::get('/certificates/{id}/download', [CertificatesController::class, 'download'])
+        ->name('certificates.download');
+
+    // Download Degree Certificate (NEW)
+    Route::get('/certificates/{id}/download-degree', [CertificatesController::class, 'downloadDegree'])
+        ->name('certificates.download-degree');
+
+    // Verify Certificate
+    Route::get('/certificates/verify', [CertificatesController::class, 'verify'])
+        ->name('certificates.verify');
 
     // ===== SETTINGS =====
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
@@ -884,3 +918,13 @@ Route::get('/test/certificates', function () {
 
     return $html;
 })->name('test.certificates.list');
+
+
+Route::prefix('edutech')->name('edutech.')->group(function () {
+    Route::get('/verify-certificate', function () {
+        return view('edutech.certificate-verify');
+    })->name('certificate.verify.form');
+
+    Route::post('/verify-certificate', [CertificatesController::class, 'verify'])
+        ->name('certificate.verify.check');
+});

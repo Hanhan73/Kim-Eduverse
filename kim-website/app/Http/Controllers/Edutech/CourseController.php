@@ -29,7 +29,7 @@ class CourseController extends Controller
             $enrollment = Enrollment::where('student_id', session('edutech_user_id'))
                 ->where('course_id', $course->id)
                 ->first();
-            
+
             if ($enrollment) {
                 // User sudah pernah enroll
                 $isEnrolled = $enrollment->payment_status === 'paid';
@@ -52,11 +52,11 @@ class CourseController extends Controller
         }
 
         return view('edutech.courses.detail', compact(
-            'course', 
-            'isEnrolled', 
-            'enrollment', 
+            'course',
+            'isEnrolled',
+            'enrollment',
             'hasPendingPayment',
-            'relatedCourses', 
+            'relatedCourses',
             'isInstructor'
         ));
     }
@@ -74,7 +74,7 @@ class CourseController extends Controller
         }
 
         $studentId = session('edutech_user_id');
-        
+
         // Find course by SLUG
         $course = Course::where('slug', $slug)
             ->where('is_published', true)
@@ -92,7 +92,7 @@ class CourseController extends Controller
                     ->route('edutech.courses.learn', $course->slug)
                     ->with('info', 'Anda sudah terdaftar di course ini');
             }
-            
+
             // Jika masih pending, redirect ke payment
             if ($existingEnrollment->payment_status === 'pending') {
                 return redirect()
@@ -165,11 +165,11 @@ class CourseController extends Controller
 
         // Get specific lesson or first lesson
         $currentLesson = null;
-        
+
         if ($request->has('lesson')) {
             $currentLesson = \App\Models\Lesson::find($request->lesson);
         }
-        
+
         // If no lesson specified, get first lesson from first module
         if (!$currentLesson && $course->modules->count() > 0) {
             $firstModule = $course->modules->first();
@@ -202,17 +202,17 @@ class CourseController extends Controller
 
         // Separate by payment status
         $pendingPayments = $enrollments->where('payment_status', 'pending');
-        
+
         // Separate by completion status (hanya yang sudah paid)
         $paidEnrollments = $enrollments->where('payment_status', 'paid');
-        
+
         $activeCourses = $paidEnrollments->where('status', '!=', 'completed');
         $completedCourses = $paidEnrollments->where('status', 'completed');
 
         return view('edutech.student.my-courses', compact(
             'enrollments',
             'pendingPayments',
-            'activeCourses', 
+            'activeCourses',
             'completedCourses'
         ));
     }

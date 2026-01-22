@@ -7,441 +7,443 @@
     <title>My Certificates - KIM Edutech</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    :root {
-        --primary: #4F46E5;
-        --secondary: #7C3AED;
-        --success: #10B981;
-        --warning: #F59E0B;
-        --danger: #EF4444;
-        --dark: #1F2937;
-        --gray: #6B7280;
-        --light: #F3F4F6;
-        --white: #FFFFFF;
-    }
+        :root {
+            --primary: #4F46E5;
+            --secondary: #7C3AED;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --dark: #1F2937;
+            --gray: #6B7280;
+            --light: #F3F4F6;
+            --white: #FFFFFF;
+        }
 
-    body {
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
-    }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
 
-    /* Sidebar */
-    .sidebar {
-        position: fixed;
-        left: 0;
-        top: 0;
-        width: 250px;
-        height: 100vh;
-        background: #1e293b;
-        padding: 20px;
-        color: white;
-        z-index: 1000;
-    }
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 250px;
+            height: 100vh;
+            background: #1e293b;
+            padding: 20px;
+            color: white;
+            z-index: 1000;
+        }
 
-    .sidebar-header {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 15px;
-        margin-bottom: 30px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
 
-    .sidebar-header i {
-        font-size: 1.5rem;
-        color: var(--primary);
-    }
+        .sidebar-header i {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
 
-    .sidebar-header h2 {
-        font-size: 1.2rem;
-        font-weight: 700;
-    }
+        .sidebar-header h2 {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
 
-    .nav-menu {
-        list-style: none;
-    }
+        .nav-menu {
+            list-style: none;
+        }
 
-    .nav-item {
-        margin-bottom: 8px;
-    }
+        .nav-item {
+            margin-bottom: 8px;
+        }
 
-    .nav-link {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 12px 15px;
-        color: rgba(255, 255, 255, 0.7);
-        text-decoration: none;
-        border-radius: 8px;
-        transition: all 0.3s;
-    }
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
 
-    .nav-link:hover,
-    .nav-link.active {
-        background: rgba(79, 70, 229, 0.2);
-        color: white;
-    }
+        .nav-link:hover,
+        .nav-link.active {
+            background: rgba(79, 70, 229, 0.2);
+            color: white;
+        }
 
-    /* Main Content */
-    .main-content {
-        margin-left: 250px;
-        padding: 30px;
-        min-height: 100vh;
-    }
+        .main-content {
+            margin-left: 250px;
+            padding: 30px;
+            min-height: 100vh;
+        }
 
-    /* Header */
-    .page-header {
-        background: white;
-        padding: 25px 30px;
-        border-radius: 15px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-        margin-bottom: 30px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
+        .page-header {
+            background: white;
+            padding: 25px 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-    .page-title {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-    }
+        .page-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
 
-    .page-title i {
-        font-size: 2rem;
-        color: var(--primary);
-    }
+        .page-title i {
+            font-size: 2rem;
+            color: var(--primary);
+        }
 
-    .page-title h1 {
-        font-size: 1.8rem;
-        color: var(--dark);
-    }
+        .page-title h1 {
+            font-size: 1.8rem;
+            color: var(--dark);
+        }
 
-    .user-section {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-    }
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
 
-    .user-avatar {
-        width: 45px;
-        height: 45px;
-        border-radius: 50%;
-        background: var(--primary);
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 700;
-        font-size: 1.1rem;
-    }
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
 
-    .btn-logout {
-        background: var(--danger);
-        color: white;
-        padding: 10px 20px;
-        border-radius: 8px;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        font-weight: 600;
-        transition: all 0.3s;
-    }
+        .btn-logout {
+            background: var(--danger);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
 
-    .btn-logout:hover {
-        background: #dc2626;
-        transform: translateY(-2px);
-    }
+        .btn-logout:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+        }
 
-    /* Stats Cards */
-    .stats-container {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 20px;
-        margin-bottom: 30px;
-    }
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
 
-    .stat-card {
-        background: white;
-        padding: 25px;
-        border-radius: 15px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-        text-align: center;
-    }
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
 
-    .stat-icon {
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.5rem;
-        margin: 0 auto 15px;
-    }
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin: 0 auto 15px;
+        }
 
-    .stat-icon.earned {
-        background: rgba(16, 185, 129, 0.1);
-        color: var(--success);
-    }
+        .stat-icon.course {
+            background: rgba(79, 70, 229, 0.1);
+            color: var(--primary);
+        }
 
-    .stat-icon.verified {
-        background: rgba(79, 70, 229, 0.1);
-        color: var(--primary);
-    }
+        .stat-icon.degree {
+            background: rgba(199, 37, 78, 0.1);
+            color: #c7254e;
+        }
 
-    .stat-number {
-        font-size: 2rem;
-        font-weight: 700;
-        color: var(--dark);
-        margin-bottom: 5px;
-    }
+        .stat-icon.verified {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
 
-    .stat-label {
-        color: var(--gray);
-        font-size: 0.9rem;
-    }
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 5px;
+        }
 
-    /* Certificates Grid */
-    .certificates-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-        gap: 25px;
-    }
+        .stat-label {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
 
-    .certificate-card {
-        background: white;
-        border-radius: 15px;
-        overflow: hidden;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s, box-shadow 0.3s;
-    }
+        .certificates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
 
-    .certificate-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-    }
+        .certificate-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
 
-    .certificate-header {
-        background: linear-gradient(135deg, var(--primary), var(--secondary));
-        padding: 20px;
-        color: white;
-    }
+        .certificate-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
 
-    .certificate-badge {
-        width: 60px;
-        height: 60px;
-        background: rgba(255, 255, 255, 0.2);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 15px;
-    }
+        .certificate-header {
+            padding: 20px;
+            color: white;
+        }
 
-    .certificate-badge i {
-        font-size: 1.8rem;
-    }
+        .certificate-header.course {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
 
-    .verified-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
-        background: rgba(16, 185, 129, 0.2);
-        color: var(--success);
-        padding: 5px 12px;
-        border-radius: 20px;
-        font-size: 0.85rem;
-        font-weight: 600;
-    }
+        .certificate-header.degree {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
 
-    .certificate-number {
-        font-size: 0.85rem;
-        opacity: 0.9;
-        margin-top: 10px;
-    }
+        .certificate-badge {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+        }
 
-    .certificate-body {
-        padding: 20px;
-    }
+        .certificate-badge i {
+            font-size: 1.8rem;
+        }
 
-    .certificate-course {
-        font-size: 1.2rem;
-        font-weight: 700;
-        color: var(--dark);
-        margin-bottom: 15px;
-    }
+        .verified-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
 
-    .certificate-meta {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        margin-bottom: 20px;
-        padding: 15px;
-        background: var(--light);
-        border-radius: 8px;
-    }
+        .certificate-number {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            margin-top: 10px;
+        }
 
-    .certificate-info {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        font-size: 0.9rem;
-        color: var(--gray);
-    }
+        .certificate-body {
+            padding: 20px;
+        }
 
-    .certificate-info i {
-        color: var(--primary);
-        width: 20px;
-    }
+        .certificate-course {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 15px;
+        }
 
-    .certificate-actions {
-        display: flex;
-        gap: 10px;
-    }
+        .certificate-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: var(--light);
+            border-radius: 8px;
+        }
 
-    .btn-download {
-        flex: 1;
-        background: var(--success);
-        color: white;
-        padding: 12px;
-        border-radius: 8px;
-        text-decoration: none;
-        text-align: center;
-        font-weight: 600;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        transition: all 0.3s;
-    }
+        .certificate-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
 
-    .btn-download:hover {
-        background: #059669;
-        transform: translateY(-2px);
-    }
+        .certificate-info i {
+            color: var(--primary);
+            width: 20px;
+        }
 
-    .btn-share {
-        background: var(--primary);
-        color: white;
-        padding: 12px 15px;
-        border-radius: 8px;
-        text-decoration: none;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.3s;
-    }
+        .certificate-actions {
+            display: flex;
+            gap: 10px;
+        }
 
-    .btn-share:hover {
-        background: #4338ca;
-    }
+        .btn-download {
+            flex: 1;
+            background: var(--success);
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
 
-    /* Empty State */
-    .empty-state {
-        background: white;
-        border-radius: 15px;
-        padding: 60px 30px;
-        text-align: center;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-    }
+        .btn-download:hover {
+            background: #059669;
+            transform: translateY(-2px);
+        }
 
-    .empty-state i {
-        font-size: 5rem;
-        color: var(--gray);
-        opacity: 0.3;
-        margin-bottom: 20px;
-    }
+        .btn-download.degree {
+            background: #c7254e;
+        }
 
-    .empty-state h3 {
-        font-size: 1.5rem;
-        color: var(--dark);
-        margin-bottom: 10px;
-    }
+        .btn-download.degree:hover {
+            background: #a01c3a;
+        }
 
-    .empty-state p {
-        color: var(--gray);
-        margin-bottom: 25px;
-    }
+        .empty-state {
+            background: white;
+            border-radius: 15px;
+            padding: 60px 30px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
 
-    .btn-primary {
-        background: var(--primary);
-        color: white;
-        padding: 12px 30px;
-        border-radius: 8px;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        font-weight: 600;
-        transition: all 0.3s;
-    }
+        .empty-state i {
+            font-size: 5rem;
+            color: var(--gray);
+            opacity: 0.3;
+            margin-bottom: 20px;
+        }
 
-    .btn-primary:hover {
-        background: #4338ca;
-        transform: translateY(-2px);
-    }
+        .empty-state h3 {
+            font-size: 1.5rem;
+            color: var(--dark);
+            margin-bottom: 10px;
+        }
+
+        .empty-state p {
+            color: var(--gray);
+            margin-bottom: 25px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover {
+            background: #4338ca;
+            transform: translateY(-2px);
+        }
+
+        .certificate-type-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .certificate-type-badge.course {
+            background: rgba(79, 70, 229, 0.1);
+            color: var(--primary);
+        }
+
+        .certificate-type-badge.degree {
+            background: rgba(199, 37, 78, 0.1);
+            color: #c7254e;
+        }
     </style>
 </head>
 
 <body>
-    <!-- Sidebar -->
     <aside class="sidebar">
         <div class="sidebar-header">
             <i class="fas fa-graduation-cap"></i>
             <h2>Student Panel</h2>
         </div>
-
         <ul class="nav-menu">
             <li class="nav-item">
                 <a href="{{ route('edutech.student.dashboard') }}" class="nav-link">
-                    <i class="fas fa-home"></i>
-                    <span>Dashboard</span>
+                    <i class="fas fa-home"></i><span>Dashboard</span>
                 </a>
             </li>
             <li class="nav-item">
                 <a href="{{ route('edutech.profile.index') }}" class="nav-link">
-                    <i class="fas fa-user"></i>
-                    <span>Profile Saya</span>
+                    <i class="fas fa-user"></i><span>Profile Saya</span>
                 </a>
             </li>
             <li class="nav-item">
                 <a href="{{ route('edutech.student.my-courses') }}" class="nav-link">
-                    <i class="fas fa-book"></i>
-                    <span>My Courses</span>
+                    <i class="fas fa-book"></i><span>My Courses</span>
                 </a>
             </li>
             <li class="nav-item">
                 <a href="{{ route('edutech.student.certificates') }}" class="nav-link active">
-                    <i class="fas fa-certificate"></i>
-                    <span>Certificates</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="#" class="nav-link">
-                    <i class="fas fa-search"></i>
-                    <span>Browse Courses</span>
+                    <i class="fas fa-certificate"></i><span>Certificates</span>
                 </a>
             </li>
             <li class="nav-item">
                 <a href="{{ route('edutech.landing') }}" class="nav-link">
-                    <i class="fas fa-globe"></i>
-                    <span>Home</span>
+                    <i class="fas fa-globe"></i><span>Home</span>
                 </a>
             </li>
         </ul>
     </aside>
 
-    <!-- Main Content -->
     <main class="main-content">
-        <!-- Page Header -->
         <div class="page-header">
             <div class="page-title">
                 <i class="fas fa-certificate"></i>
@@ -449,12 +451,10 @@
             </div>
             <div class="user-section">
                 <div class="user-avatar">S</div>
-
                 <a href="#" class="btn-logout"
                     onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                     <i class="fas fa-sign-out-alt"></i> Logout
                 </a>
-
                 <form id="logout-form" action="{{ route('edutech.logout') }}" method="POST" style="display: none;">
                     @csrf
                 </form>
@@ -462,14 +462,21 @@
         </div>
 
         @if($certificates->count() > 0)
-        <!-- Stats -->
         <div class="stats-container">
             <div class="stat-card">
-                <div class="stat-icon earned">
-                    <i class="fas fa-trophy"></i>
+                <div class="stat-icon course">
+                    <i class="fas fa-certificate"></i>
                 </div>
                 <div class="stat-number">{{ $certificates->count() }}</div>
-                <div class="stat-label">Certificates Earned</div>
+                <div class="stat-label">Course Certificates</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon degree">
+                    <i class="fas fa-award"></i>
+                </div>
+                <div class="stat-number">{{ $certificates->where('degree_certificate_issued_at', '!=', null)->count() }}
+                </div>
+                <div class="stat-label">Degree Certificates</div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon verified">
@@ -480,20 +487,21 @@
             </div>
         </div>
 
-        <!-- Certificates Grid -->
         <div class="certificates-grid">
             @foreach($certificates as $certificate)
+            <!-- Course Certificate Card -->
             <div class="certificate-card">
-                <div class="certificate-header">
+                <div class="certificate-header course">
                     <div class="certificate-badge">
-                        <i class="fas fa-award"></i>
+                        <i class="fas fa-certificate"></i>
                     </div>
                     <div style="text-align: center;">
+                        <div class="certificate-type-badge course">Course Certificate</div>
                         <div class="verified-badge">
                             <i class="fas fa-check-circle"></i> Verified
                         </div>
                         <div class="certificate-number">
-                            Certificate No: {{ $certificate->certificate_number }}
+                            No: {{ $certificate->certified_number }}
                         </div>
                     </div>
                 </div>
@@ -519,19 +527,60 @@
                     <div class="certificate-actions">
                         <a href="{{ route('edutech.student.certificate.download', $certificate->id) }}"
                             class="btn-download">
-                            <i class="fas fa-download"></i>
-                            Download PDF
-                        </a>
-                        <a href="#" class="btn-share" title="Share Certificate">
-                            <i class="fas fa-share-alt"></i>
+                            <i class="fas fa-download"></i> Download PDF
                         </a>
                     </div>
                 </div>
             </div>
+
+            <!-- Degree Certificate Card (if available) -->
+            @if($certificate->course->has_degree && $certificate->degree_certificate_issued_at)
+            <div class="certificate-card">
+                <div class="certificate-header degree">
+                    <div class="certificate-badge">
+                        <i class="fas fa-award"></i>
+                    </div>
+                    <div style="text-align: center;">
+                        <div class="certificate-type-badge degree">Degree Certificate</div>
+                        <div class="verified-badge">
+                            <i class="fas fa-check-circle"></i> Verified
+                        </div>
+                        <div class="certificate-number">
+                            No: {{ $certificate->degree_certificate_number }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="certificate-body">
+                    <h3 class="certificate-course">{{ $certificate->course->degree_title }}</h3>
+
+                    <div class="certificate-meta">
+                        <div class="certificate-info">
+                            <i class="fas fa-calendar-check"></i>
+                            <span>Issued: {{ $certificate->degree_certificate_issued_at->format('d F Y') }}</span>
+                        </div>
+                        <div class="certificate-info">
+                            <i class="fas fa-graduation-cap"></i>
+                            <span>Course: {{ $certificate->course->title }}</span>
+                        </div>
+                        <div class="certificate-info">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                            <span>Director: {{ $certificate->course->instructor->name }}</span>
+                        </div>
+                    </div>
+
+                    <div class="certificate-actions">
+                        <a href="{{ route('edutech.student.certificate.download-degree', $certificate->id) }}"
+                            class="btn-download degree">
+                            <i class="fas fa-download"></i> Download Degree PDF
+                        </a>
+                    </div>
+                </div>
+            </div>
+            @endif
             @endforeach
         </div>
         @else
-        <!-- Empty State -->
         <div class="empty-state">
             <i class="fas fa-certificate"></i>
             <h3>Belum Ada Sertifikat</h3>

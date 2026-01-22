@@ -1,357 +1,457 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Course - Instructor</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+@extends('layouts.instructor')
 
-        :root {
-            --primary: #667eea;
-            --secondary: #764ba2;
-            --success: #48bb78;
-            --warning: #ed8936;
-            --danger: #f56565;
-            --dark: #2d3748;
-            --gray: #718096;
-            --light: #f7fafc;
-        }
+@section('title', 'Create New Course - KIM EDUVERSE')
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background: #f8f9fa;
-        }
+<style>
+    /* --- Base Variables & Reset --- */
+    :root {
+        --primary: #667eea;
+        --primary-dark: #5a67d8;
+        --secondary: #764ba2;
+        --success: #48bb78;
+        --warning: #ed8936;
+        --danger: #f56565;
+        --dark: #2d3748;
+        --gray: #718096;
+        --light: #f7fafc;
+        --border: #e2e8f0;
+        --bg: #f8f9fa;
+    }
 
-        .container {
-            max-width: 900px;
-            margin: 40px auto;
-            padding: 0 20px;
-        }
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: 'Inter', sans-serif;
+    }
 
-        .page-header {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            margin-bottom: 30px;
-        }
+    body {
+        background: var(--bg);
+        color: var(--dark);
+    }
 
-        .page-header h1 {
-            font-size: 2rem;
-            color: var(--dark);
-            margin-bottom: 10px;
-        }
+    /* --- Layout --- */
+    .create-wrapper {
+        max-width: 900px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
 
-        .page-header p {
-            color: var(--gray);
-        }
+    /* --- Cards --- */
+    .card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02), 0 1px 3px rgba(0, 0, 0, 0.05);
+        border: 1px solid var(--border);
+        margin-bottom: 2rem;
+        overflow: hidden;
+    }
 
-        .form-card {
-            background: white;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        }
+    .card-header {
+        padding: 1.5rem 2rem;
+        border-bottom: 1px solid var(--border);
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+    }
 
-        .form-group {
-            margin-bottom: 25px;
-        }
+    .card-header h1 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
 
-        .form-group label {
-            display: block;
-            font-weight: 600;
-            color: var(--dark);
-            margin-bottom: 8px;
-        }
+    .card-header p {
+        opacity: 0.9;
+        font-size: 0.95rem;
+    }
 
-        .form-group label span {
-            color: var(--danger);
-        }
+    .card-body {
+        padding: 2rem;
+    }
 
-        .form-control {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
+    /* --- Forms --- */
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+    }
 
-        .form-control:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    @media (max-width: 768px) {
+        .form-grid {
+            grid-template-columns: 1fr;
         }
+    }
 
-        textarea.form-control {
-            min-height: 120px;
-            resize: vertical;
-        }
+    .form-group {
+        margin-bottom: 1.25rem;
+    }
 
-        select.form-control {
-            cursor: pointer;
-        }
+    .form-group label {
+        display: block;
+        font-weight: 600;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+        color: var(--dark);
+    }
 
-        .form-hint {
-            font-size: 0.85rem;
-            color: var(--gray);
-            margin-top: 5px;
-        }
+    .form-group label span.req {
+        color: var(--danger);
+    }
 
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
+    .form-group .form-hint {
+        font-size: 0.8rem;
+        color: var(--gray);
+        margin-top: 0.25rem;
+    }
 
-        .file-upload {
-            border: 2px dashed #e2e8f0;
-            border-radius: 8px;
-            padding: 30px;
-            text-align: center;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
+    .form-control {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 2px solid var(--border);
+        border-radius: 8px;
+        font-size: 0.95rem;
+        transition: border-color 0.2s;
+    }
 
-        .file-upload:hover {
-            border-color: var(--primary);
-            background: #f7fafc;
-        }
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary);
+    }
 
-        .file-upload input[type="file"] {
-            display: none;
-        }
+    textarea.form-control {
+        resize: vertical;
+        min-height: 120px;
+    }
 
-        .file-upload-icon {
-            font-size: 3rem;
-            color: var(--primary);
-            margin-bottom: 15px;
-        }
+    /* --- Toggle Switch Custom Style --- */
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 50px;
+        height: 26px;
+    }
 
-        .file-upload-text {
-            color: var(--gray);
-            margin-bottom: 10px;
-        }
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
 
-        .file-upload-button {
-            display: inline-block;
-            padding: 10px 20px;
-            background: var(--primary);
-            color: white;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-        }
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #cbd5e0;
+        transition: .4s;
+        border-radius: 34px;
+    }
 
-        .image-preview {
-            margin-top: 20px;
-            display: none;
-        }
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 18px;
+        width: 18px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        transition: .4s;
+        border-radius: 50%;
+    }
 
-        .image-preview img {
-            max-width: 300px;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
+    input:checked+.slider {
+        background-color: var(--primary);
+    }
 
-        .form-actions {
-            display: flex;
-            gap: 15px;
-            margin-top: 40px;
-            padding-top: 30px;
-            border-top: 2px solid var(--light);
-        }
+    input:focus+.slider {
+        box-shadow: 0 0 1px var(--primary);
+    }
 
-        .btn {
-            padding: 14px 30px;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: none;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-        }
+    input:checked+.slider:before {
+        transform: translateX(24px);
+    }
 
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-        }
+    /* --- Buttons --- */
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        border: none;
+        transition: all 0.2s;
+        text-decoration: none;
+    }
 
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
-        }
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        box-shadow: 0 4px 6px rgba(102, 126, 234, 0.3);
+    }
 
-        .btn-secondary {
-            background: var(--light);
-            color: var(--dark);
-        }
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 10px rgba(102, 126, 234, 0.4);
+    }
 
-        .btn-secondary:hover {
-            background: #e2e8f0;
-        }
+    .btn-secondary {
+        background: white;
+        color: var(--dark);
+        border: 1px solid var(--border);
+    }
 
-        .alert {
-            padding: 15px 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
+    .btn-secondary:hover {
+        background: var(--light);
+    }
 
-        .alert-danger {
-            background: #fed7d7;
-            color: #742a2a;
-            border: 1px solid #fc8181;
-        }
+    /* --- Image Upload --- */
+    .image-upload-area {
+        border: 2px dashed var(--border);
+        border-radius: 8px;
+        padding: 2rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s;
+        background: var(--light);
+        position: relative;
+        overflow: hidden;
+    }
 
-        .alert-success {
-            background: #c6f6d5;
-            color: #22543d;
-            border: 1px solid #9ae6b4;
-        }
+    .image-upload-area:hover {
+        border-color: var(--primary);
+        background: #ebf4ff;
+    }
 
-        @media (max-width: 768px) {
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="page-header">
-            <h1>📚 Create New Course</h1>
-            <p>Fill in the details below to create your course. You can add modules and lessons after creating the course.</p>
+    .image-preview {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: none;
+        z-index: 5;
+    }
+
+    .upload-placeholder i {
+        font-size: 3rem;
+        color: var(--primary);
+        margin-bottom: 10px;
+    }
+
+    .upload-placeholder p {
+        color: var(--gray);
+        font-size: 0.9rem;
+    }
+
+    /* --- Alert Box --- */
+    .alert {
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .alert-danger {
+        background: #fff5f5;
+        color: #c53030;
+        border: 1px solid #feb2b2;
+    }
+
+    .alert ul {
+        margin-top: 0.5rem;
+        margin-left: 1.2rem;
+    }
+</style>
+
+@section('content')
+<div class="create-wrapper">
+
+    <!-- Header Section -->
+    <div class="card">
+        <div class="card-header">
+            <h1>Create New Course</h1>
+            <p>Mulai perjalanan instruksimu dengan membuat materi berkualitas tinggi.</p>
         </div>
-
-        @if($errors->any())
-        <div class="alert alert-danger">
-            <strong>Oops!</strong> There were some errors:
-            <ul style="margin-top: 10px;">
-                @foreach($errors->all() as $error)
-                <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-        @endif
-
-        <form action="{{ route('edutech.instructor.courses.store') }}" method="POST" enctype="multipart/form-data">
-            @csrf
-            
-            <div class="form-card">
-                <h3 style="margin-bottom: 25px; color: var(--dark);">Basic Information</h3>
-
-                <!-- Title -->
-                <div class="form-group">
-                    <label>Course Title <span>*</span></label>
-                    <input type="text" name="title" class="form-control" placeholder="e.g., Complete Web Development Bootcamp" value="{{ old('title') }}" required>
-                    <div class="form-hint">Choose a clear and descriptive title for your course</div>
+        <div class="card-body">
+            @if($errors->any())
+            <div class="alert alert-danger">
+                <div>
+                    <strong><i class="fas fa-exclamation-circle"></i> Terjadi kesalahan:</strong>
+                    <ul>
+                        @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
                 </div>
+            </div>
+            @endif
 
-                <!-- Description -->
-                <div class="form-group">
-                    <label>Description <span>*</span></label>
-                    <textarea name="description" class="form-control" placeholder="Describe what students will learn in this course..." required>{{ old('description') }}</textarea>
-                    <div class="form-hint">Provide a detailed overview of the course content and learning outcomes</div>
-                </div>
+            <form action="{{ route('edutech.instructor.courses.store') }}" method="POST" enctype="multipart/form-data">
+                @csrf
 
-                <!-- Category & Level -->
-                <div class="form-row">
+                <div class="form-grid">
+                    <!-- Title -->
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label>Course Title <span class="req">*</span></label>
+                        <input type="text" name="title" class="form-control"
+                            placeholder="Contoh: Mastering Laravel 10 for Beginners" value="{{ old('title') }}"
+                            required>
+                        <div class="form-hint">Gunakan judul yang jelas dan menarik minat.</div>
+                    </div>
+
+                    <!-- Category -->
                     <div class="form-group">
-                        <label>Category <span>*</span></label>
+                        <label>Category <span class="req">*</span></label>
                         <select name="category" class="form-control" required>
-                            <option value="">Select Category</option>
-                            @foreach($categories as $key => $category)
-                            <option value="{{ $key }}" {{ old('category') == $key ? 'selected' : '' }}>{{ $category }}</option>
+                            <option value="">Pilih Kategori</option>
+                            @foreach($categories as $key => $value)
+                            <option value="{{ $key }}" {{ old('category') == $key ? 'selected' : '' }}>{{ $value }}
+                            </option>
                             @endforeach
                         </select>
                     </div>
 
+                    <!-- Level -->
                     <div class="form-group">
-                        <label>Level <span>*</span></label>
+                        <label>Level <span class="req">*</span></label>
                         <select name="level" class="form-control" required>
-                            <option value="">Select Level</option>
-                            <option value="beginner" {{ old('level') == 'beginner' ? 'selected' : '' }}>Beginner</option>
-                            <option value="intermediate" {{ old('level') == 'intermediate' ? 'selected' : '' }}>Intermediate</option>
-                            <option value="advanced" {{ old('level') == 'advanced' ? 'selected' : '' }}>Advanced</option>
+                            <option value="beginner" {{ old('level') == 'beginner' ? 'selected' : '' }}>Beginner
+                                (Pemula)</option>
+                            <option value="intermediate" {{ old('level') == 'intermediate' ? 'selected' : '' }}>
+                                Intermediate (Menengah)</option>
+                            <option value="advanced" {{ old('level') == 'advanced' ? 'selected' : '' }}>Advanced
+                                (Lanjutan)</option>
                         </select>
                     </div>
-                </div>
 
-                <!-- Price & Duration -->
-                <div class="form-row">
+                    <!-- Price -->
                     <div class="form-group">
-                        <label>Price (Rp) <span>*</span></label>
-                        <input type="number" name="price" class="form-control" placeholder="0" value="{{ old('price', 0) }}" min="0" step="1000" required>
-                        <div class="form-hint">Set to 0 for free course</div>
+                        <label>Price (IDR) <span class="req">*</span></label>
+                        <input type="number" name="price" class="form-control" placeholder="0"
+                            value="{{ old('price', 0) }}" min="0" required>
+                        <div class="form-hint">Set 0 jika course ini gratis.</div>
                     </div>
 
+                    <!-- Duration -->
                     <div class="form-group">
-                        <label>Duration (Hours) <span>*</span></label>
-                        <input type="number" name="duration_hours" class="form-control" placeholder="10" value="{{ old('duration_hours') }}" min="1" required>
-                        <div class="form-hint">Estimated total course duration</div>
+                        <label>Estimasi Durasi (Jam) <span class="req">*</span></label>
+                        <input type="number" name="duration_hours" class="form-control" placeholder="10"
+                            value="{{ old('duration_hours') }}" min="1" required>
                     </div>
+
+                    <!-- FITUR BARU: DEGREE / GELAR -->
+                    <div class="form-group"
+                        style="grid-column: span 2; background: #fff; padding: 1rem; border: 1px solid var(--border); border-radius: 8px;">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <label style="margin: 0; font-size: 1rem;">Apakah Course ini memberikan Gelar / Sertifikat
+                                Resmi?</label>
+                            <label class="switch">
+                                <input type="checkbox" name="has_degree" id="hasDegreeToggle">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+
+                        <div id="degreeTitleGroup" style="display: none; transition: all 0.3s; margin-top: 10px;">
+                            <label>Judul Gelar / Sertifikat <span class="req">*</span></label>
+                            <input type="text" name="degree_title" class="form-control"
+                                value="{{ old('degree_title') }}"
+                                placeholder="Contoh: Sertifikat Kompetensi Fullstack Developer">
+                            <div class="form-hint">Judul ini akan dicetak pada sertifikat kelulusan siswa.</div>
+                        </div>
+                    </div>
+                    <!-- END FITUR BARU -->
+
                 </div>
 
-                <!-- Thumbnail -->
+                <!-- Description -->
+                <div class="form-group" style="margin-top: 1rem;">
+                    <label>Course Description <span class="req">*</span></label>
+                    <textarea name="description" class="form-control" rows="4"
+                        placeholder="Jelaskan apa yang akan dipelajari siswa..."
+                        required>{{ old('description') }}</textarea>
+                </div>
+
+                <!-- Thumbnail Upload -->
                 <div class="form-group">
                     <label>Course Thumbnail</label>
-                    <div class="file-upload" onclick="document.getElementById('thumbnail').click()">
-                        <input type="file" id="thumbnail" name="thumbnail" accept="image/*" onchange="previewImage(event)">
-                        <div class="file-upload-icon">
+                    <div class="image-upload-area" onclick="document.getElementById('thumbnailInput').click()">
+                        <input type="file" id="thumbnailInput" name="thumbnail" accept="image/*" style="display: none;"
+                            onchange="previewImage(event)">
+
+                        <img id="imgPreview" class="image-preview">
+
+                        <div class="upload-placeholder">
                             <i class="fas fa-cloud-upload-alt"></i>
+                            <p><strong>Klik untuk upload gambar</strong></p>
+                            <p style="font-size: 0.8rem;">Rekomendasi: 1280x720px (JPG/PNG)</p>
                         </div>
-                        <div class="file-upload-text">
-                            Click to upload course thumbnail
-                        </div>
-                        <div class="file-upload-button">
-                            Choose File
-                        </div>
-                        <div class="form-hint" style="margin-top: 15px;">
-                            Recommended: 1280x720px, Max 2MB (JPG, PNG)
-                        </div>
-                    </div>
-                    <div class="image-preview" id="imagePreview">
-                        <img id="preview" src="" alt="Preview">
                     </div>
                 </div>
 
-                <!-- Form Actions -->
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save"></i>
-                        Create Course
-                    </button>
+                <!-- Actions -->
+                <div
+                    style="display: flex; justify-content: flex-end; gap: 15px; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border);">
                     <a href="{{ route('edutech.instructor.courses') }}" class="btn btn-secondary">
-                        <i class="fas fa-times"></i>
                         Cancel
                     </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-plus-circle"></i> Create Course
+                    </button>
                 </div>
-            </div>
-        </form>
+
+            </form>
+        </div>
     </div>
 
-    <script>
-        function previewImage(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById('preview').src = e.target.result;
-                    document.getElementById('imagePreview').style.display = 'block';
-                };
-                reader.readAsDataURL(file);
+</div>
+
+<script>
+    // Image Preview Logic
+    function previewImage(event) {
+        const file = event.target.files[0];
+        const preview = document.getElementById('imgPreview');
+        const placeholder = document.querySelector('.upload-placeholder');
+
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+                placeholder.style.opacity = '0';
             }
+            reader.readAsDataURL(file);
+        } else {
+            preview.style.display = 'none';
+            placeholder.style.opacity = '1';
         }
-    </script>
-</body>
-</html>
+    }
+
+    // Degree Toggle Logic
+    const degreeToggle = document.getElementById('hasDegreeToggle');
+    const degreeTitleGroup = document.getElementById('degreeTitleGroup');
+    const degreeInput = document.querySelector('input[name="degree_title"]');
+
+    if (degreeToggle) {
+        degreeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                degreeTitleGroup.style.display = 'block';
+                degreeInput.setAttribute('required', 'required');
+            } else {
+                degreeTitleGroup.style.display = 'none';
+                degreeInput.removeAttribute('required');
+                degreeInput.value = ''; // Reset value if unchecked
+            }
+        });
+    }
+</script>
+@endsection

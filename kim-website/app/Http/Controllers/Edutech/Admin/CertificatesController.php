@@ -10,25 +10,29 @@ use App\Services\CertificatePdfService;
 
 class CertificatesController extends Controller
 {
+    protected $certificateService;
+
+    public function __construct(CertificatePdfService $certificateService)
+    {
+        $this->certificateService = $certificateService;
+    }
+
     public function index(Request $request)
     {
         $query = Enrollment::with(['student', 'course'])
             ->whereNotNull('certificate_issued_at');
 
-        // Search filter
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->whereHas('student', function($q) use ($search) {
+            $query->whereHas('student', function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%");
             });
         }
 
-        // Course filter
         if ($request->filled('course')) {
             $query->where('course_id', $request->course);
         }
 
-        // Date range filter
         if ($request->filled('date_from')) {
             $query->whereDate('certificate_issued_at', '>=', $request->date_from);
         }
@@ -42,6 +46,7 @@ class CertificatesController extends Controller
 
         $stats = [
             'total_certificates' => Enrollment::whereNotNull('certificate_issued_at')->count(),
+            'total_degree_certificates' => Enrollment::whereNotNull('degree_certificate_issued_at')->count(),
             'this_month' => Enrollment::whereNotNull('certificate_issued_at')
                 ->whereMonth('certificate_issued_at', now()->month)
                 ->whereYear('certificate_issued_at', now()->year)
@@ -70,57 +75,89 @@ class CertificatesController extends Controller
     {
         $enrollment = Enrollment::findOrFail($enrollmentId);
 
-        // Check if already completed
         if (!$enrollment->completed_at) {
             return redirect()->back()
                 ->with('error', 'Cannot issue certificate for incomplete course!');
         }
 
-        // Check if certificate already issued
         if ($enrollment->certificate_issued_at) {
             return redirect()->back()
                 ->with('error', 'Certificate already issued!');
         }
 
-        // Generate certificate number
         $enrollment->certificate_number = 'CERT-' . strtoupper(uniqid());
         $enrollment->certificate_issued_at = now();
+
+        // Issue degree certificate if course has degree
+        if ($enrollment->course->has_degree) {
+            $enrollment->degree_certificate_number = 'DEGREE-' . strtoupper(uniqid());
+            $enrollment->degree_certificate_issued_at = now();
+        }
+
         $enrollment->save();
 
         return redirect()->back()
-            ->with('success', 'Certificate issued successfully!');
+            ->with('success', 'Certificate(s) issued successfully!');
     }
 
     public function revoke($id)
     {
         $enrollment = Enrollment::findOrFail($id);
-        
+
         $enrollment->certificate_issued_at = null;
+        $enrollment->degree_certificate_issued_at = null;
         $enrollment->save();
 
         return redirect()->back()
-            ->with('success', 'Certificate revoked successfully!');
+            ->with('success', 'Certificate(s) revoked successfully!');
     }
 
-
-
-    public function download($id, CertificatePdfService $service)
+    /**
+     * Download course certificate
+     */
+    public function download($id)
     {
         $enrollment = Enrollment::whereNotNull('certificate_issued_at')->findOrFail($id);
 
-        return response(
-            $service->generate($enrollment),
-            200,
-            ['Content-Type' => 'application/pdf']
-        );
+        $pdf = $this->certificateService->generateCourseCertificate($enrollment);
+
+        return response($pdf, 200)
+            ->header('Content-Type', 'application/pdf')
+            ->header(
+                'Content-Disposition',
+                'attachment; filename="certificate-' . $enrollment->certified_number . '.pdf"'
+            );
+    }
+
+    /**
+     * Download degree certificate
+     */
+    public function downloadDegree($id)
+    {
+        $enrollment = Enrollment::whereNotNull('degree_certificate_issued_at')->findOrFail($id);
+
+        if (!$enrollment->course->has_degree) {
+            abort(404, 'This course does not award a degree certificate');
+        }
+
+        $pdf = $this->certificateService->generateDegreeCertificate($enrollment);
+
+        return response($pdf, 200)
+            ->header('Content-Type', 'application/pdf')
+            ->header(
+                'Content-Disposition',
+                'attachment; filename="degree-certificate-' . $enrollment->degree_certificate_number . '.pdf"'
+            );
     }
 
     public function verify(Request $request)
     {
         $certificateNumber = $request->input('certificate_number');
-        
+
+        // Check for course certificate
         $certificate = Enrollment::with(['student', 'course'])
             ->where('certificate_number', $certificateNumber)
+            ->orWhere('degree_certificate_number', $certificateNumber)
             ->first();
 
         if (!$certificate) {
@@ -130,39 +167,12 @@ class CertificatesController extends Controller
             ]);
         }
 
+        $isDegree = ($certificate->degree_certificate_number === $certificateNumber);
+
         return view('edutech.admin.certificates.verify', [
             'found' => true,
-            'certificate' => $certificate
+            'certificate' => $certificate,
+            'isDegree' => $isDegree
         ]);
-    }
-
-    // DEBUG ENDPOINT - Hapus setelah selesai troubleshoot
-    public function debug()
-    {
-        $checks = [];
-
-        // Check 1: FPDI installed?
-        $checks['fpdi_installed'] = class_exists('\setasign\Fpdi\Fpdi');
-
-        // Check 2: Template exists?
-        $templatePath = storage_path('app/certificates/template.pdf');
-        $checks['template_path'] = $templatePath;
-        $checks['template_exists'] = file_exists($templatePath);
-        $checks['template_readable'] = file_exists($templatePath) ? is_readable($templatePath) : false;
-        $checks['template_size'] = file_exists($templatePath) ? filesize($templatePath) : 0;
-
-        // Check 3: Enrollments with certificates
-        $checks['total_certificates'] = Enrollment::whereNotNull('certificate_issued_at')->count();
-        $checks['sample_certificate'] = Enrollment::with(['student', 'course.instructor'])
-            ->whereNotNull('certificate_issued_at')
-            ->first();
-
-        // Check 4: Storage permissions
-        $checks['storage_path'] = storage_path();
-        $checks['storage_writable'] = is_writable(storage_path('app'));
-        $checks['certificates_dir_exists'] = is_dir(storage_path('app/certificates'));
-        $checks['certificates_dir_writable'] = is_dir(storage_path('app/certificates')) ? is_writable(storage_path('app/certificates')) : false;
-
-        return response()->json($checks, 200, [], JSON_PRETTY_PRINT);
     }
 }

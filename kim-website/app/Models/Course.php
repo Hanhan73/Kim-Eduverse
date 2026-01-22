@@ -23,12 +23,15 @@ class Course extends Model
         'is_published',
         'is_featured',
         'passing_score',
+        'has_degree',
+        'degree_title',
     ];
 
     protected $casts = [
         'price' => 'decimal:2',
         'is_published' => 'boolean',
         'is_featured' => 'boolean',
+        'has_degree' => 'boolean',
     ];
 
     // Relationships
@@ -69,7 +72,6 @@ class Course extends Model
         return $this->hasMany(LiveSession::class);
     }
 
-    // ✅ FIX: Tambah relationship yang hilang
     public function quizzes()
     {
         return $this->hasMany(Quiz::class);
@@ -84,6 +86,11 @@ class Course extends Model
     public function scopeFeatured($query)
     {
         return $query->where('is_featured', true);
+    }
+
+    public function scopeWithDegree($query)
+    {
+        return $query->where('has_degree', true);
     }
 
     // Helpers
