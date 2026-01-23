@@ -416,6 +416,12 @@
                     <i class="fas fa-clock"></i>
                     <span>{{ $product->seminar->total_jp }} JP</span>
                 </div>
+                @elseif($product->type === 'ebook')
+                <div class="meta-item">
+                    <i class="fas fa-clock"></i>
+                    <span>{{ $product->ebook_access_duration_days }} Hari</span>
+                </div>
+
                 @elseif($product->duration_minutes)
                 <div class="meta-item">
                     <i class="fas fa-clock"></i>

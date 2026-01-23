@@ -612,6 +612,26 @@ Route::prefix('admin/digital')->name('admin.digital.')->middleware(['check.digit
         Route::get('/{product}/preview', [DigitalLandingPageController::class, 'preview'])->name('preview');
     });
 
+    Route::prefix('ebook-access')->name('ebook-access.')->group(function () {
+    // List all ebook accesses
+    Route::get('/', [App\Http\Controllers\Admin\EbookAccessController::class, 'index'])->name('index');
+    
+    // Show access details
+    Route::get('/{id}', [App\Http\Controllers\Admin\EbookAccessController::class, 'show'])->name('show');
+    
+    // Extend access
+    Route::post('/{id}/extend', [App\Http\Controllers\Admin\EbookAccessController::class, 'extend'])->name('extend');
+    
+    // Revoke access
+    Route::post('/{id}/revoke', [App\Http\Controllers\Admin\EbookAccessController::class, 'revoke'])->name('revoke');
+    
+    // Reactivate access
+    Route::post('/{id}/reactivate', [App\Http\Controllers\Admin\EbookAccessController::class, 'reactivate'])->name('reactivate');
+    
+    // Delete access
+    Route::delete('/{id}', [App\Http\Controllers\Admin\EbookAccessController::class, 'destroy'])->name('destroy');
+});
+
     // User Management
     Route::resource('users', UserController::class);
     Route::post('users/{id}/toggle-status', [UserController::class, 'toggleStatus'])
@@ -927,4 +947,13 @@ Route::prefix('edutech')->name('edutech.')->group(function () {
 
     Route::post('/verify-certificate', [CertificatesController::class, 'verify'])
         ->name('certificate.verify.check');
+});
+
+
+Route::prefix('ebook')->name('ebook.')->group(function () {
+    // View e-book dengan token
+    Route::get('/view/{token}', [App\Http\Controllers\EbookController::class, 'view'])->name('view');
+    
+    // Get PDF content (proxy)
+    Route::get('/content/{token}', [App\Http\Controllers\EbookController::class, 'getContent'])->name('content');
 });

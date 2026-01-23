@@ -758,6 +758,12 @@
                 <i class="fas fa-question-circle"></i> Quiz Seminar
             </a>
 
+            <div class="menu-section">E-book</div>
+            <a href="{{ route('admin.digital.ebook-access.index') }}"
+                class="menu-item {{ request()->routeIs('admin.digital.ebook-access.*') ? 'active' : '' }}">
+                <i class="fas fa-book"></i> E-book Access
+            </a>
+
             <div class="menu-section">Transaksi</div>
 
             <a href="{{ route('admin.digital.orders.index') }}"
