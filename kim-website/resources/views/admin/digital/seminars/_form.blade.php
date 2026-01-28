@@ -536,11 +536,7 @@ function saveMaterial(event) {
 
     const id = document.getElementById('material_id').value;
     const title = document.getElementById('material_title').value;
-    const seminarId = {
-        {
-            $seminar - > id
-        }
-    };
+    const seminarId = {{ $seminar->id }};
 
     if (!title) {
         alert('Nama materi harus diisi!');
@@ -580,11 +576,7 @@ function saveMaterial(event) {
 function deleteMaterial(id) {
     if (!confirm('Yakin ingin menghapus materi ini?')) return;
 
-    const seminarId = {
-        {
-            $seminar - > id
-        }
-    };
+    const seminarId = {{ $seminar->id }};
 
     fetch(`/admin/digital/seminars/${seminarId}/materials/${id}`, {
             method: 'DELETE',
@@ -608,11 +600,7 @@ function reorderMaterials() {
         id: item.dataset.id,
         order: index + 1
     }));
-    const seminarId = {
-        {
-            $seminar - > id
-        }
-    };
+    const seminarId = {{ $seminar->id }};
 
     fetch(`/admin/digital/seminars/${seminarId}/materials/reorder`, {
             method: 'POST',
@@ -657,7 +645,7 @@ function previewImage(input) {
 function updateQuizButton(type, select) {
     const button = document.getElementById(`${type}_test_button`);
     const selectedValue = select.value;
-
+    
     if (selectedValue) {
         // Jika ada quiz dipilih, ubah tombol jadi "Edit"
         button.innerHTML = '<i class="fas fa-edit"></i> Edit';
