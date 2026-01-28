@@ -430,6 +430,85 @@
         </form>
     </div>
 </div>
+{{-- MODAL QUIZ BARU --}}
+<div id="quizModal" class="modal" style="display: none;">
+    <div class="modal-content" style="max-width: 600px;">
+        <div class="modal-header">
+            <h3 id="quizModalTitle">Buat Quiz Baru</h3>
+            <button type="button" class="close" onclick="closeQuizModal()">&times;</button>
+        </div>
+
+        <form id="quizForm" onsubmit="saveQuiz(event)">
+            <input type="hidden" id="quiz_type"> {{-- pre atau post --}}
+
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Judul Quiz <span style="color: red;">*</span></label>
+                    <input type="text" id="quiz_title" class="form-control" required
+                        placeholder="Contoh: Pre-Test Seminar Digital Marketing">
+                </div>
+
+                <div class="form-group">
+                    <label>Deskripsi</label>
+                    <textarea id="quiz_description" class="form-control" rows="3"
+                        placeholder="Deskripsi singkat tentang quiz..."></textarea>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Durasi (menit) <span style="color: red;">*</span></label>
+                            <input type="number" id="quiz_duration" class="form-control" 
+                                value="30" min="1" max="300" required>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Nilai Lulus (%) <span style="color: red;">*</span></label>
+                            <input type="number" id="quiz_passing_score" class="form-control" 
+                                value="70" min="0" max="100" required>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Max Percobaan</label>
+                            <input type="number" id="quiz_max_attempts" class="form-control" 
+                                value="3" min="1" max="10">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="custom-control custom-checkbox">
+                        <input type="checkbox" class="custom-control-input" id="quiz_is_active" checked>
+                        <label class="custom-control-label" for="quiz_is_active">
+                            Quiz Aktif
+                        </label>
+                    </div>
+                </div>
+
+                <div style="background: #e0f2fe; border-left: 4px solid #0284c7; padding: 12px; border-radius: 6px;">
+                    <small style="color: #0c4a6e;">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>Info:</strong> Setelah quiz dibuat, Anda bisa menambahkan pertanyaan dengan klik tombol "Edit"
+                    </small>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeQuizModal()">
+                    <i class="fas fa-times"></i> Batal
+                </button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Simpan Quiz
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
 @endif
 
 <style>
@@ -493,6 +572,37 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
+}
+
+.custom-control-input:checked ~ .custom-control-label::before {
+    background-color: #4e73df;
+    border-color: #4e73df;
+}
+
+.modal-body {
+    padding: 20px;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.modal-footer {
+    padding: 15px 20px;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+/* Alert notification styles */
+.alert {
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.alert-success {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
 }
 </style>
 
@@ -665,5 +775,151 @@ function updateQuizButton(type, select) {
 document.addEventListener('DOMContentLoaded', function() {
     updateQuizButton('pre', document.getElementById('pre_test_id'));
     updateQuizButton('post', document.getElementById('post_test_id'));
+});
+function openQuizModal(type) {
+    document.getElementById('quiz_type').value = type;
+    document.getElementById('quiz_title').value = '';
+    document.getElementById('quiz_description').value = '';
+    document.getElementById('quiz_duration').value = '30';
+    document.getElementById('quiz_passing_score').value = '70';
+    document.getElementById('quiz_max_attempts').value = '3';
+    document.getElementById('quiz_is_active').checked = true;
+    
+    const typeText = type === 'pre' ? 'Pre-Test' : 'Post-Test';
+    document.getElementById('quizModalTitle').textContent = `Buat ${typeText} Baru`;
+    
+    // Auto-fill title
+    const seminarTitle = document.querySelector('input[name="title"]').value;
+    if (seminarTitle) {
+        document.getElementById('quiz_title').value = `${typeText} - ${seminarTitle}`;
+    }
+    
+    document.getElementById('quizModal').style.display = 'block';
+}
+
+function closeQuizModal() {
+    document.getElementById('quizModal').style.display = 'none';
+}
+
+function saveQuiz(event) {
+    event.preventDefault();
+
+    const quizData = {
+        title: document.getElementById('quiz_title').value,
+        description: document.getElementById('quiz_description').value,
+        duration_minutes: document.getElementById('quiz_duration').value,
+        passing_score: document.getElementById('quiz_passing_score').value,
+        max_attempts: document.getElementById('quiz_max_attempts').value,
+        is_active: document.getElementById('quiz_is_active').checked ? 1 : 0,
+    };
+
+    // Tampilkan loading
+    const submitBtn = event.target.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+    submitBtn.disabled = true;
+
+    fetch('/admin/digital/quizzes', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify(quizData)
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                // Tambahkan quiz baru ke dropdown
+                const quizType = document.getElementById('quiz_type').value;
+                const selectId = quizType === 'pre' ? 'pre_test_id' : 'post_test_id';
+                const select = document.getElementById(selectId);
+                
+                const option = new Option(data.quiz.title, data.quiz.id, true, true);
+                select.add(option);
+                
+                // Update button
+                updateQuizButton(quizType, select);
+                
+                // Close modal
+                closeQuizModal();
+                
+                // Show success message
+                showNotification('success', 'Quiz berhasil dibuat! Klik tombol "Edit" untuk menambahkan pertanyaan.');
+            } else {
+                alert('Gagal menyimpan quiz: ' + (data.message || 'Unknown error'));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Terjadi kesalahan saat menyimpan quiz');
+        })
+        .finally(() => {
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        });
+}
+
+// UPDATE FUNCTION updateQuizButton
+function updateQuizButton(type, select) {
+    const button = document.getElementById(`${type}_test_button`);
+    const selectedValue = select.value;
+    
+    if (selectedValue) {
+        // Jika ada quiz dipilih, ubah tombol jadi "Edit"
+        button.innerHTML = '<i class="fas fa-edit"></i> Edit';
+        button.classList.remove('btn-primary');
+        button.classList.add('btn-warning');
+        button.onclick = function() {
+            window.open(`/admin/digital/quizzes/${selectedValue}/edit`, '_blank');
+        };
+    } else {
+        // Jika belum ada yang dipilih, tombol jadi "Tambah" dengan modal
+        button.innerHTML = '<i class="fas fa-plus"></i> Tambah';
+        button.classList.remove('btn-warning');
+        button.classList.add('btn-primary');
+        button.onclick = function() {
+            openQuizModal(type);
+        };
+    }
+}
+
+// Helper function untuk notification
+function showNotification(type, message) {
+    // Buat elemen notification
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show`;
+    notification.style.position = 'fixed';
+    notification.style.top = '20px';
+    notification.style.right = '20px';
+    notification.style.zIndex = '9999';
+    notification.style.minWidth = '300px';
+    notification.innerHTML = `
+        ${message}
+        <button type="button" class="close" data-dismiss="alert">
+            <span>&times;</span>
+        </button>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Auto dismiss setelah 5 detik
+    setTimeout(() => {
+        notification.remove();
+    }, 5000);
+}
+
+// Initialize buttons on page load
+document.addEventListener('DOMContentLoaded', function() {
+    const preTestSelect = document.getElementById('pre_test_id');
+    const postTestSelect = document.getElementById('post_test_id');
+    
+    if (preTestSelect) {
+        updateQuizButton('pre', preTestSelect);
+    }
+    
+    if (postTestSelect) {
+        updateQuizButton('post', postTestSelect);
+    }
 });
 </script>
