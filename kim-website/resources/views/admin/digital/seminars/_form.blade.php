@@ -442,15 +442,14 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="form-group">
-                    <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input" id="quiz_is_active" checked>
-                        <label class="custom-control-label" for="quiz_is_active">
-                            Quiz Aktif
-                        </label>
-                    </div>
-                </div>
+<div class="form-group">
+    <div class="custom-control custom-checkbox">
+        <input type="checkbox" class="custom-control-input" id="quiz_is_active" checked value="1">
+        <label class="custom-control-label" for="quiz_is_active">
+            Quiz Aktif
+        </label>
+    </div>
+</div>
 
                 <div style="background: #e0f2fe; border-left: 4px solid #0284c7; padding: 12px; border-radius: 6px;">
                     <small style="color: #0c4a6e;">
@@ -805,11 +804,19 @@ function saveQuiz(event) {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json'
             },
             body: JSON.stringify(quizData)
         })
-        .then(res => res.json())
+        .then(res => {
+            if (!res.ok) {
+                return res.json().then(data => {
+                    throw new Error(data.message || 'Server error');
+                });
+            }
+            return res.json();
+        })
         .then(data => {
             if (data.success) {
                 // Tambahkan quiz baru ke dropdown
@@ -829,12 +836,12 @@ function saveQuiz(event) {
                 // Show success message
                 showNotification('success', 'Quiz berhasil dibuat! Klik tombol "Edit" untuk menambahkan pertanyaan.');
             } else {
-                alert('Gagal menyimpan quiz: ' + (data.message || 'Unknown error'));
+                showNotification('danger', data.message || 'Gagal menyimpan quiz');
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Terjadi kesalahan saat menyimpan quiz');
+            showNotification('danger', 'Terjadi kesalahan saat menyimpan quiz: ' + error.message);
         })
         .finally(() => {
             submitBtn.innerHTML = originalText;
@@ -904,4 +911,31 @@ document.addEventListener('DOMContentLoaded', function() {
         updateQuizButton('post', postTestSelect);
     }
 });
+
+
+function showNotification(type, message) {
+    // Buat elemen notification
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type} alert-dismissible fade show`;
+    notification.style.position = 'fixed';
+    notification.style.top = '20px';
+    notification.style.right = '20px';
+    notification.style.zIndex = '9999';
+    notification.style.minWidth = '300px';
+    notification.innerHTML = `
+        ${message}
+        <button type="button" class="close" onclick="this.parentElement.remove()">
+            <span>&times;</span>
+        </button>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Auto dismiss setelah 5 detik
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.parentNode.removeChild(notification);
+        }
+    }, 5000);
+}
 </script>

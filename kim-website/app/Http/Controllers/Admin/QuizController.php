@@ -53,37 +53,54 @@ class QuizController extends Controller
      */
 public function store(Request $request)
 {
-    $validated = $request->validate([
-        'title' => 'required|string|max:255',
-        'description' => 'nullable|string',
-        'duration_minutes' => 'required|integer|min:1|max:300',
-        'passing_score' => 'required|integer|min:0|max:100',
-        'max_attempts' => 'nullable|integer|min:1|max:10',
-        'is_active' => 'boolean',
-    ]);
-
-    // Set default values
-    $validated['is_active'] = $request->input('is_active', 0);
-    $validated['max_attempts'] = $validated['max_attempts'] ?? 3;
-
-    $quiz = Quiz::create($validated);
-
-    // Cek apakah request dari AJAX (modal)
-    if ($request->ajax() || $request->wantsJson()) {
-        return response()->json([
-            'success' => true,
-            'message' => 'Quiz berhasil dibuat!',
-            'quiz' => [
-                'id' => $quiz->id,
-                'title' => $quiz->title,
-            ]
+    try {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'duration_minutes' => 'required|integer|min:1|max:300',
+            'passing_score' => 'required|integer|min:0|max:100',
+            'max_attempts' => 'nullable|integer|min:1|max:10',
+            'is_active' => 'sometimes|boolean',
         ]);
-    }
 
-    // Redirect biasa untuk form standalone
-    return redirect()
-        ->route('admin.digital.quizzes.edit', $quiz)
-        ->with('success', 'Quiz berhasil dibuat! Silakan tambahkan pertanyaan.');
+        // Set default values
+        $validated['is_active'] = $request->input('is_active', 0);
+        $validated['max_attempts'] = $validated['max_attempts'] ?? 3;
+
+        $quiz = Quiz::create($validated);
+
+        // Cek apakah request dari AJAX (modal)
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Quiz berhasil dibuat!',
+                'quiz' => [
+                    'id' => $quiz->id,
+                    'title' => $quiz->title,
+                ]
+            ]);
+        }
+
+        // Redirect biasa untuk form standalone
+        return redirect()
+            ->route('admin.digital.quizzes.edit', $quiz)
+            ->with('success', 'Quiz berhasil dibuat! Silakan tambahkan pertanyaan.');
+    } catch (\Exception $e) {
+        // Log error untuk debugging
+        \Log::error('Error creating quiz: ' . $e->getMessage());
+        
+        // Return error response
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal membuat quiz: ' . $e->getMessage()
+            ], 500);
+        }
+        
+        return back()
+            ->withInput()
+            ->with('error', 'Gagal membuat quiz: ' . $e->getMessage());
+    }
 }
 
     /**
