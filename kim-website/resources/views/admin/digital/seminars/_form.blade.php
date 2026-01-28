@@ -392,44 +392,6 @@
 </form>
 
 <!-- Material Modal (TANPA INPUT JP) -->
-@if(isset($seminar))
-<div id="materialModal" class="modal" style="display: none;">
-    <div class="modal-content" style="max-width: 500px;">
-        <div class="modal-header">
-            <h3 id="materialModalTitle">Tambah Materi Baru</h3>
-            <button type="button" class="close" onclick="closeMaterialModal()">&times;</button>
-        </div>
-
-        <form id="materialForm" onsubmit="saveMaterial(event)">
-            <input type="hidden" id="material_id">
-
-            <div class="modal-body">
-                <div class="form-group">
-                    <label>Nama Materi <span style="color: red;">*</span></label>
-                    <input type="text" id="material_title" class="form-control" required
-                        placeholder="Contoh: Pengenalan dan Konsep Dasar">
-                    <small class="form-text">Nama materi yang akan tampil di sertifikat</small>
-                </div>
-
-                <div style="background: #e0f2fe; border-left: 4px solid #0284c7; padding: 12px; border-radius: 6px;">
-                    <small style="color: #0c4a6e;">
-                        <i class="fas fa-info-circle"></i>
-                        <strong>Info:</strong> Total JP diatur di form utama, bukan per materi
-                    </small>
-                </div>
-            </div>
-
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="closeMaterialModal()">
-                    <i class="fas fa-times"></i> Batal
-                </button>
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-save"></i> Simpan
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
 
 {{-- MODAL QUIZ BARU --}}
 <div id="quizModal" class="modal" style="display: none;">
@@ -504,6 +466,45 @@
                 </button>
                 <button type="submit" class="btn btn-primary">
                     <i class="fas fa-save"></i> Simpan Quiz
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{{-- MODAL MATERI --}}
+@if(isset($seminar))
+<div id="materialModal" class="modal" style="display: none;">
+    <div class="modal-content" style="max-width: 500px;">
+        <div class="modal-header">
+            <h3 id="materialModalTitle">Tambah Materi Baru</h3>
+            <button type="button" class="close" onclick="closeMaterialModal()">&times;</button>
+        </div>
+
+        <form id="materialForm" onsubmit="saveMaterial(event)">
+            <input type="hidden" id="material_id">
+
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Nama Materi <span style="color: red;">*</span></label>
+                    <input type="text" id="material_title" class="form-control" required
+                        placeholder="Contoh: Pengenalan dan Konsep Dasar">
+                    <small class="form-text">Nama materi yang akan tampil di sertifikat</small>
+                </div>
+
+                <div style="background: #e0f2fe; border-left: 4px solid #0284c7; padding: 12px; border-radius: 6px;">
+                    <small style="color: #0c4a6e;">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>Info:</strong> Total JP diatur di form utama, bukan per materi
+                    </small>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeMaterialModal()">
+                    <i class="fas fa-times"></i> Batal
+                </button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Simpan
                 </button>
             </div>
         </form>
