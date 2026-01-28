@@ -536,7 +536,11 @@ function saveMaterial(event) {
 
     const id = document.getElementById('material_id').value;
     const title = document.getElementById('material_title').value;
-    const seminarId = {{ $seminar->id }};
+    const seminarId = {
+        {
+            $seminar - > id
+        }
+    };
 
     if (!title) {
         alert('Nama materi harus diisi!');
@@ -576,7 +580,11 @@ function saveMaterial(event) {
 function deleteMaterial(id) {
     if (!confirm('Yakin ingin menghapus materi ini?')) return;
 
-    const seminarId = {{ $seminar->id }};
+    const seminarId = {
+        {
+            $seminar - > id
+        }
+    };
 
     fetch(`/admin/digital/seminars/${seminarId}/materials/${id}`, {
             method: 'DELETE',
@@ -600,7 +608,11 @@ function reorderMaterials() {
         id: item.dataset.id,
         order: index + 1
     }));
-    const seminarId = {{ $seminar->id }};
+    const seminarId = {
+        {
+            $seminar - > id
+        }
+    };
 
     fetch(`/admin/digital/seminars/${seminarId}/materials/reorder`, {
             method: 'POST',
@@ -641,4 +653,29 @@ function previewImage(input) {
         reader.readAsDataURL(input.files[0]);
     }
 }
+
+function updateQuizButton(type, select) {
+    const button = document.getElementById(`${type}_test_button`);
+    const selectedValue = select.value;
+
+    if (selectedValue) {
+        // Jika ada quiz dipilih, ubah tombol jadi "Edit"
+        button.innerHTML = '<i class="fas fa-edit"></i> Edit';
+        button.onclick = function() {
+            window.open(`/admin/digital/quizzes/${selectedValue}/edit`, '_blank');
+        };
+    } else {
+        // Jika belum ada yang dipilih, tombol jadi "Tambah"
+        button.innerHTML = '<i class="fas fa-plus"></i> Tambah';
+        button.onclick = function() {
+            window.open('/admin/digital/quizzes/create', '_blank');
+        };
+    }
+}
+
+// Initialize buttons on page load
+document.addEventListener('DOMContentLoaded', function() {
+    updateQuizButton('pre', document.getElementById('pre_test_id'));
+    updateQuizButton('post', document.getElementById('post_test_id'));
+});
 </script>
