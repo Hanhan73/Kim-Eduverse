@@ -430,6 +430,7 @@
         </form>
     </div>
 </div>
+
 {{-- MODAL QUIZ BARU --}}
 <div id="quizModal" class="modal" style="display: none;">
     <div class="modal-content" style="max-width: 600px;">
@@ -605,6 +606,7 @@
     color: #155724;
 }
 </style>
+
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 <script>
 @if(isset($seminar))
