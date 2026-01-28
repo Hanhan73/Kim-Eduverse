@@ -605,7 +605,6 @@
     color: #155724;
 }
 </style>
-
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 <script>
 @if(isset($seminar))
@@ -752,30 +751,10 @@ function previewImage(input) {
     }
 }
 
-function updateQuizButton(type, select) {
-    const button = document.getElementById(`${type}_test_button`);
-    const selectedValue = select.value;
-    
-    if (selectedValue) {
-        // Jika ada quiz dipilih, ubah tombol jadi "Edit"
-        button.innerHTML = '<i class="fas fa-edit"></i> Edit';
-        button.onclick = function() {
-            window.open(`/admin/digital/quizzes/${selectedValue}/edit`, '_blank');
-        };
-    } else {
-        // Jika belum ada yang dipilih, tombol jadi "Tambah"
-        button.innerHTML = '<i class="fas fa-plus"></i> Tambah';
-        button.onclick = function() {
-            window.open('/admin/digital/quizzes/create', '_blank');
-        };
-    }
-}
+// ============================================
+// QUIZ MODAL FUNCTIONS
+// ============================================
 
-// Initialize buttons on page load
-document.addEventListener('DOMContentLoaded', function() {
-    updateQuizButton('pre', document.getElementById('pre_test_id'));
-    updateQuizButton('post', document.getElementById('post_test_id'));
-});
 function openQuizModal(type) {
     document.getElementById('quiz_type').value = type;
     document.getElementById('quiz_title').value = '';
@@ -860,7 +839,7 @@ function saveQuiz(event) {
         });
 }
 
-// UPDATE FUNCTION updateQuizButton
+// SATU-SATUNYA FUNCTION updateQuizButton (YANG BENAR)
 function updateQuizButton(type, select) {
     const button = document.getElementById(`${type}_test_button`);
     const selectedValue = select.value;
@@ -896,7 +875,7 @@ function showNotification(type, message) {
     notification.style.minWidth = '300px';
     notification.innerHTML = `
         ${message}
-        <button type="button" class="close" data-dismiss="alert">
+        <button type="button" class="close" onclick="this.parentElement.remove()">
             <span>&times;</span>
         </button>
     `;
