@@ -28,6 +28,7 @@
     position: relative;
     z-index: 1;
     background: #f8f9fa;
+    border-radius: 50px;
 }
 
 .catalog-toolbar {
