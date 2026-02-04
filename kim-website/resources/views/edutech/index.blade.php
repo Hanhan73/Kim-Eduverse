@@ -8,7 +8,6 @@
     <div class="container">
         <div class="hero-grid">
             <div class="hero-content">
-                <span class="hero-badge">Platform Pembelajaran Digital</span>
                 <h1 class="hero-title">
                     Tingkatkan Skill Anda dengan
                     <span class="gradient-text">KIM Edutech</span>
@@ -44,7 +43,7 @@
             </div>
 
             <div class="hero-image">
-                <img src="https://via.placeholder.com/600x500/667eea/ffffff?text=Learning+Platform" alt="KIM Edutech">
+                <img src="{{ asset('images/edutech-logo.png') }}" alt="KIM Edutech">
             </div>
         </div>
     </div>

@@ -90,6 +90,24 @@
         color: #2d3748;
         line-height: 1.6;
         overflow-x: hidden;
+
+        background: #f7fafc;
+    }
+
+    body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+
+        background-image: linear-gradient(rgba(255, 255, 255, 0.85),
+            rgba(255, 255, 255, 0.85)),
+        url('{{ asset("images/bg-office.jpg") }}');
+
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+
+        z-index: -1;
     }
 
     .container {
@@ -270,6 +288,12 @@
         color: #2d3748;
         cursor: pointer;
         padding: 8px;
+    }
+
+    @media (max-width: 768px) {
+        body::before {
+            background-attachment: scroll;
+        }
     }
 
     /* Footer */
@@ -562,6 +586,67 @@
             opacity: 0;
         }
     }
+
+
+    .logo-with-tagline {
+        gap: 14px;
+    }
+
+    .kim-tagline {
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+    }
+
+    .tagline-text {
+        font-size: 0.85rem;
+        font-weight: 600;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        white-space: nowrap;
+
+        background: linear-gradient(90deg, #667eea, #764ba2, #667eea);
+        background-size: 200% auto;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+
+        animation:
+            shimmer 3s linear infinite,
+            fadeSlide 1.2s ease-out;
+    }
+
+    /* shimmer effect */
+    @keyframes shimmer {
+        to {
+            background-position: 200% center;
+        }
+    }
+
+    /* entrance animation */
+    @keyframes fadeSlide {
+        from {
+            opacity: 0;
+            transform: translateX(-10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .tagline-text {
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .kim-tagline {
+            display: none;
+        }
+    }
     </style>
 
     @stack('styles')
@@ -572,8 +657,12 @@
     <nav class="navbar">
         <div class="container">
             <div class="nav-container">
-                <a href="{{ route('home') }}" class="logo">
+                <a href="{{ route('home') }}" class="logo logo-with-tagline">
                     <img src="{{ asset('images/logo.png') }}" alt="KIM Eduverse" class="logo-image">
+
+                    <span class="kim-tagline">
+                        <span class="tagline-text">Know the Unknowable</span>
+                    </span>
                 </a>
 
                 <button class="menu-toggle" id="menuToggle">
@@ -688,7 +777,7 @@
                     <ul class="footer-links">
                         <li class="footer-link"><i class="fas fa-envelope"></i> info@kim.co.id</li>
                         <li class="footer-link"><i class="fas fa-phone"></i> +62 812-3456-7890</li>
-                        <li class="footer-link"><i class="fas fa-map-marker-alt"></i> Bandung, Indonesia</li>
+                        <li class="footer-link"><i class="fas fa-map-marker-alt"></i> Bandung Barat, Indonesia</li>
                     </ul>
                 </div>
             </div>

@@ -21,22 +21,22 @@
     <div class="container">
         <div class="overview-grid">
             <div class="overview-image">
-                <img src="https://via.placeholder.com/600x400/667eea/ffffff?text=PT+KIM+Office" alt="PT KIM Office">
+                <img src="{{ asset('images/pt-kim-office.png') }}" alt="PT KIM Office">
                 <div class="image-decoration"></div>
             </div>
             <div class="overview-content">
                 <span class="section-badge">Profil Perusahaan</span>
                 <h2 class="section-title">Siapa Kami?</h2>
                 <p class="overview-text">
-                    <strong>PT Kompetensi Indonesia Mandiri (PT KIM)</strong> adalah perusahaan perseroan terbatas 
-                    yang berdomisili di Kawasan Bandung Barat. PT KIM melayani pelatihan, konsultasi dan sertifikasi 
-                    untuk hampir semua bidang, antara lain pendidikan, manajemen, manajemen industri, manajemen sumber 
-                    daya manusia, informasi dan teknologi, pertanian, pariwisata, desain, bahasa dan lain-lain untuk 
+                    <strong>PT Kompetensi Indonesia Mandiri (PT KIM)</strong> adalah perusahaan perseroan terbatas
+                    yang berdomisili di Kawasan Bandung Barat. PT KIM melayani pelatihan, konsultasi dan sertifikasi
+                    untuk hampir semua bidang, antara lain pendidikan, manajemen, manajemen industri, manajemen sumber
+                    daya manusia, informasi dan teknologi, pertanian, pariwisata, desain, bahasa dan lain-lain untuk
                     instansi pemerintah dan swasta.
                 </p>
                 <p class="overview-text">
-                    Dengan tim profesional yang berpengalaman dan komitmen tinggi terhadap kualitas layanan, 
-                    kami berkomitmen untuk memberikan solusi terbaik yang disesuaikan dengan kebutuhan spesifik 
+                    Dengan tim profesional yang berpengalaman dan komitmen tinggi terhadap kualitas layanan,
+                    kami berkomitmen untuk memberikan solusi terbaik yang disesuaikan dengan kebutuhan spesifik
                     setiap klien melalui pendekatan yang efektif, efisien, dan berbasis teknologi terkini.
                 </p>
                 <div class="overview-stats">
@@ -68,7 +68,7 @@
                 </div>
                 <h3>Visi Kami</h3>
                 <p>
-                    Menjadi perusahaan penyelenggara pelatihan, konsultasi dan sertifikasi bertaraf 
+                    Menjadi perusahaan penyelenggara pelatihan, konsultasi dan sertifikasi bertaraf
                     internasional pada tahun 2032.
                 </p>
             </div>
@@ -125,7 +125,8 @@
                     <i class="fas fa-chart-line"></i>
                 </div>
                 <h3>Effectiveness</h3>
-                <p>Senantiasa menjalankan proses bisnis dengan sistem yang efektif untuk mendukung optimalisasi dan produktivitas</p>
+                <p>Senantiasa menjalankan proses bisnis dengan sistem yang efektif untuk mendukung optimalisasi dan
+                    produktivitas</p>
             </div>
 
             <div class="value-card">
@@ -141,7 +142,8 @@
                     <i class="fas fa-arrow-up"></i>
                 </div>
                 <h3>Continuous Improvement</h3>
-                <p>Setiap hari adalah peningkatan dari hari sebelumnya. Keberhasilan adalah menjadi lebih baik dari sebelumnya</p>
+                <p>Setiap hari adalah peningkatan dari hari sebelumnya. Keberhasilan adalah menjadi lebih baik dari
+                    sebelumnya</p>
             </div>
         </div>
     </div>
@@ -164,7 +166,8 @@
                     <i class="fas fa-bullseye"></i>
                 </div>
                 <h3>Niche</h3>
-                <p>Menawarkan layanan dan produk yang lebih unik atau baru dengan kemudahan akses, fleksibilitas layanan dan produk serta harga yang kompetitif</p>
+                <p>Menawarkan layanan dan produk yang lebih unik atau baru dengan kemudahan akses, fleksibilitas layanan
+                    dan produk serta harga yang kompetitif</p>
             </div>
 
             <div class="advantage-item">
@@ -172,7 +175,8 @@
                     <i class="fas fa-rocket"></i>
                 </div>
                 <h3>Agile</h3>
-                <p>Menawarkan layanan dan produk yang lebih menguntungkan customer karena sesuai kebutuhan dan dapat diadaptasi dengan cepat</p>
+                <p>Menawarkan layanan dan produk yang lebih menguntungkan customer karena sesuai kebutuhan dan dapat
+                    diadaptasi dengan cepat</p>
             </div>
 
             <div class="advantage-item">
@@ -235,8 +239,10 @@
                     Areas for Improvement
                 </h2>
                 <ul class="sw-list">
-                    <li><i class="fas fa-arrow-right"></i> Daya jangkau promosi layanan dan produk perusahaan masih dalam proses peningkatan secara berkelanjutan</li>
-                    <li><i class="fas fa-arrow-right"></i> Peningkatan infrastruktur perusahaan masih dalam proses berkelanjutan</li>
+                    <li><i class="fas fa-arrow-right"></i> Daya jangkau promosi layanan dan produk perusahaan masih
+                        dalam proses peningkatan secara berkelanjutan</li>
+                    <li><i class="fas fa-arrow-right"></i> Peningkatan infrastruktur perusahaan masih dalam proses
+                        berkelanjutan</li>
                 </ul>
             </div>
         </div>
@@ -259,8 +265,8 @@
                 </div>
                 <h3>KIM Consultant</h3>
                 <p>
-                    Layanan konsultasi profesional di berbagai bidang: Pendidikan, Manajemen, 
-                    Teknik Industri, TIK, Pertanian, Pariwisata, dan Desain untuk membantu 
+                    Layanan konsultasi profesional di berbagai bidang: Pendidikan, Manajemen,
+                    Teknik Industri, TIK, Pertanian, Pariwisata, dan Desain untuk membantu
                     meningkatkan kompetensi organisasi Anda.
                 </p>
                 <a href="{{ route('consultant.index') }}" class="service-link">
@@ -275,7 +281,7 @@
                 </div>
                 <h3>KIM Developer</h3>
                 <p>
-                    Pengembangan aplikasi dan sistem informasi custom dengan teknologi terkini 
+                    Pengembangan aplikasi dan sistem informasi custom dengan teknologi terkini
                     untuk berbagai kebutuhan bisnis Anda, dari aplikasi web hingga mobile.
                 </p>
                 <a href="{{ route('developer.index') }}" class="service-link">
@@ -290,7 +296,7 @@
                 </div>
                 <h3>KIM Edutech</h3>
                 <p>
-                    Platform pembelajaran digital dan solusi edutech untuk transformasi 
+                    Platform pembelajaran digital dan solusi edutech untuk transformasi
                     pendidikan modern di era digital dengan metode yang efektif dan efisien.
                 </p>
                 <a href="{{ route('edutech.index') }}" class="service-link">
@@ -315,7 +321,9 @@
                     <i class="fas fa-building"></i>
                 </div>
                 <h3>Instansi Pemerintah dan Swasta</h3>
-                <p>BUMN, Lembaga Pendidikan Tinggi/Universitas, Lembaga Pendidikan Formal dan Informal, Pemprov, Pemkab, Pemkot, Dinas-Dinas Pemerintah, Perusahaan Swasta, UMKM, Koperasi, dan instansi lainnya baik bidang jasa dan manufaktur.</p>
+                <p>BUMN, Lembaga Pendidikan Tinggi/Universitas, Lembaga Pendidikan Formal dan Informal, Pemprov, Pemkab,
+                    Pemkot, Dinas-Dinas Pemerintah, Perusahaan Swasta, UMKM, Koperasi, dan instansi lainnya baik bidang
+                    jasa dan manufaktur.</p>
             </div>
 
             <div class="market-card">
@@ -323,7 +331,8 @@
                     <i class="fas fa-user-friends"></i>
                 </div>
                 <h3>Masyarakat Umum</h3>
-                <p>Individu atau organisasi lainnya yang memerlukan peningkatan soft skill dan hard skill sesuai kebutuhannya untuk pengembangan karir dan kompetensi.</p>
+                <p>Individu atau organisasi lainnya yang memerlukan peningkatan soft skill dan hard skill sesuai
+                    kebutuhannya untuk pengembangan karir dan kompetensi.</p>
             </div>
         </div>
     </div>
@@ -335,7 +344,8 @@
         <div class="cta-content">
             <h2>Mari Bergabung dengan 500+ Klien Kami</h2>
             <p>Konsultasi gratis untuk menentukan solusi terbaik bagi bisnis Anda</p>
-            <p class="cta-tagline"><strong>We're here to help. We're Center of Excellent Competency. Because We're KIM.</strong></p>
+            <p class="cta-tagline"><strong>We're here to help. We're Center of Excellent Competency. Because We're
+                    KIM.</strong></p>
             <div class="cta-buttons">
                 <a href="{{ route('contact.index') }}" class="btn btn-white">
                     <i class="fas fa-phone-alt"></i> Hubungi Kami
@@ -967,6 +977,7 @@
 
 /* Responsive */
 @media (max-width: 992px) {
+
     .overview-grid,
     .vm-grid,
     .sw-grid {

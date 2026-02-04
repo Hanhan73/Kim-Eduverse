@@ -161,7 +161,7 @@ $totalJP = ceil($seminar->duration_minutes / 60);
         </div>
 
         <div class="content">
-            <img src="{{ public_path('images/logo.png') }}" class="logo">
+            <img src="{{ storage_path('app/private-assets/logo.png') }}" class="logo">
 
             <div class="title-small">This is to certify that</div>
 
@@ -191,7 +191,7 @@ $totalJP = ceil($seminar->duration_minutes / 60);
             </div>
 
             <div class="signature">
-                <img src="{{ public_path('images/ttd.png') }}" width="120"><br>
+                <img src="{{ storage_path('app/private-assets/ttd.jpeg') }}" width="120"><br>
                 <div class="sign-name">
                     Yosep Hernawan, S.T., M.M., IPM., CBTS.
                 </div>
