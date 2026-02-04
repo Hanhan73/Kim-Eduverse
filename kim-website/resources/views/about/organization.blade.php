@@ -891,7 +891,7 @@
 
                     <div class="junior-card">
                         <div class="junior-photo">
-                            <img src="{{ asset('images/team/Sefty.png') }}" alt="Sefty Mustika"
+                            <img src="{{ asset('images/team/sefty.png') }}" alt="Sefty Mustika"
                                 onerror="this.src='https://ui-avatars.com/api/?name=Sefty+Mustika&size=500&background=d69e2e&color=fff&bold=true&font-size=0.3'">
                         </div>
                         <div class="junior-info">
