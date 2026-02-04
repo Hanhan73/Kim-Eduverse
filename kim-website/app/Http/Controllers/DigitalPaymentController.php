@@ -41,6 +41,7 @@ class DigitalPaymentController extends Controller
     {
         $request->validate([
             'customer_email' => 'required|email|max:255',
+            'customer_name' => 'required|string|max:255',
         ]);
 
         $cart = session()->get('digital_cart', []);
@@ -59,6 +60,7 @@ class DigitalPaymentController extends Controller
             $order = DigitalOrder::create([
                 'order_number' => 'ORD-' . strtoupper(uniqid()),
                 'customer_email' => $request->customer_email,
+                'customer_name' => $request->customer_name,
                 'subtotal' => $subtotal,
                 'tax' => $tax,
                 'total' => $total,
@@ -110,6 +112,7 @@ class DigitalPaymentController extends Controller
                 ],
                 'customer_details' => [
                     'email' => $order->customer_email,
+                    'name' => $order->customer_name,
                     'phone' => $order->customer_phone ?? '',
                 ],
                 'item_details' => $order->items->map(function ($item) {

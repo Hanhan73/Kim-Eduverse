@@ -15,23 +15,26 @@
                     style="background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
 
                     <!-- Header -->
-                    <tr>
-                        <td
-                            style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 30px; text-align: center;">
-                            <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700;">
-                                ✅ Pembayaran Berhasil!
-                            </h1>
-                            <p style="margin: 10px 0 0; color: #ffffff; font-size: 16px; opacity: 0.9;">
-                                Terima kasih atas pembelian Anda
-                            </p>
-                        </td>
-                    </tr>
+                    <td
+                        style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 30px; text-align: center;">
+
+                        <img src="{{ asset('images/logo.png') }}" alt="KIM Eduverse" width="140"
+                            style="display:block; margin:0 auto 20px; max-width:140px;">
+
+                        <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700;">
+                            Pembayaran Berhasil!
+                        </h1>
+
+                        <p style="margin: 10px 0 0; color: #ffffff; font-size: 16px; opacity: 0.9;">
+                            Terima kasih atas pembelian Anda
+                        </p>
+                    </td>
 
                     <!-- Content -->
                     <tr>
                         <td style="padding: 40px 30px;">
                             <p style="margin: 0 0 20px; color: #2d3748; font-size: 16px; line-height: 1.6;">
-                                Halo! 👋
+                                Halo! {{ $order->customer_name }},
                             </p>
                             <p style="margin: 0 0 30px; color: #2d3748; font-size: 16px; line-height: 1.6;">
                                 Pembayaran Anda telah berhasil dikonfirmasi. Berikut detail pesanan Anda:
@@ -49,6 +52,14 @@
                                                 </td>
                                                 <td style="color: #2d3748; font-size: 14px; font-weight: 600;">
                                                     {{ $order->order_number }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="color: #718096; font-size: 14px;">
+                                                    <strong>Nama:</strong>
+                                                </td>
+                                                <td style="color: #2d3748; font-size: 14px;">
+                                                    {{ $order->customer_name }}
                                                 </td>
                                             </tr>
                                             <tr>
@@ -74,7 +85,7 @@
 
                             <!-- Products Purchased -->
                             <h3 style="margin: 0 0 20px; color: #2d3748; font-size: 18px; font-weight: 700;">
-                                📦 Produk yang Dibeli
+                                Produk yang Dibeli
                             </h3>
 
                             @foreach($order->items as $item)
