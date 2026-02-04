@@ -152,7 +152,7 @@
                 <ul class="product-features">
                     <li><i class="fas fa-check"></i> E-Book & Modul Digital</li>
                     <li><i class="fas fa-check"></i> Seminar On-Demand</li>
-                    <li><i class="fas fa-check"></i> CEKMA (Cek Mutu Akademik)</li>
+                    <li><i class="fas fa-check"></i> CEKMA (Cek Mandiri)</li>
                     <li><i class="fas fa-check"></i> Pembayaran Aman & Mudah</li>
                 </ul>
                 <a href="{{ route('digital.index') }}" class="btn btn-product">
