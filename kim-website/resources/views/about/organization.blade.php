@@ -851,7 +851,7 @@
                 <div class="junior-staff-grid">
                     <div class="junior-card">
                         <div class="junior-photo">
-                            <img src="{{ asset('images/team/Fahlevi.png') }}" alt="Fahlevi Permana"
+                            <img src="{{ asset('images/team/fahlevi.png') }}" alt="Fahlevi Permana"
                                 onerror="this.src='https://ui-avatars.com/api/?name=Fahlevi+Permana&size=500&background=667eea&color=fff&bold=true&font-size=0.3'">
                         </div>
                         <div class="junior-info">
