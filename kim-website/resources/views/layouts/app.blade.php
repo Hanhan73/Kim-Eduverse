@@ -672,7 +672,8 @@
 
     @media (max-width: 480px) {
         .kim-tagline {
-            display: none;
+            font-size: 0.5rem;
+            letter-spacing: 0.8px;
         }
     }
     </style>
