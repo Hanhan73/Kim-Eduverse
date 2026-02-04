@@ -998,8 +998,7 @@
                         <div class="product-footer">
                             <div class="product-price">{{ $product->formatted_price }}</div>
                         </div>
-                        <a href="{{ route('digital.show', $product->slug) }}" class="btn-detail"
-                            onclick="event.stopPropagation()">
+                        <a href="{{ route('digital.show', $product->slug) }}" class="btn-detail">
                             Lihat Detail <i class="fas fa-arrow-right"></i>
                         </a>
                     </div>
