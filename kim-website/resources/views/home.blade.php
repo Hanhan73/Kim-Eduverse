@@ -40,7 +40,7 @@
                 </a>
             </div>
         </div>
-        <div class="hero-image animate-float">
+        <div class="hero-image">
             <div class="hero-image-wrapper">
                 <img src="{{ asset('images/logo.png') }}" alt="KIM EDUVERSE">
             </div>
@@ -591,21 +591,6 @@
     display: block;
 }
 
-.animate-float {
-    animation: float 6s ease-in-out infinite;
-}
-
-@keyframes float {
-
-    0%,
-    100% {
-        transform: translateY(0);
-    }
-
-    50% {
-        transform: translateY(-20px);
-    }
-}
 
 .scroll-indicator {
     position: absolute;
