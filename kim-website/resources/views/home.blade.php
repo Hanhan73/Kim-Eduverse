@@ -66,7 +66,7 @@
 
         <div class="products-grid">
             <!-- KIM Consultant -->
-            <div class="product-card consultant-card">
+            <div class="product-card consultant-card grid a">
                 <div class="product-header">
                     <div class="product-number">01</div>
                     <div class="product-icon">
@@ -90,7 +90,7 @@
             </div>
 
             <!-- KIM Developer -->
-            <div class="product-card developer-card">
+            <div class="product-card developer-card grid b">
                 <div class="product-header">
                     <div class="product-number">02</div>
                     <div class="product-icon">
@@ -114,7 +114,7 @@
             </div>
 
             <!-- KIM Edutech -->
-            <div class="product-card edutech-card">
+            <div class="product-card edutech-card grid c">
                 <div class="product-header">
                     <div class="product-number">03</div>
                     <div class="product-icon">
@@ -136,7 +136,7 @@
                     Pelajari Lebih Lanjut <i class="fas fa-arrow-right"></i>
                 </a>
             </div>
-            <div class="product-card digital-card">
+            <div class="product-card digital-card grid d">
                 <div class="product-header">
                     <div class="product-number">04</div>
                     <div class="product-icon">
@@ -677,8 +677,27 @@
 
 .products-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-areas:
+        "a b"
+        "c d";
     gap: 40px;
+}
+
+.grid-a {
+    grid-area: a;
+}
+
+.grid-b {
+    grid-area: b;
+}
+
+.grid-c {
+    grid-area: c;
+}
+
+.grid-d {
+    grid-area: d;
 }
 
 .product-card {
@@ -689,6 +708,18 @@
     transition: all 0.4s ease;
     position: relative;
     overflow: hidden;
+}
+
+.consultant-card {
+    border: solid #667eea;
+}
+
+.developer-card {
+    border: solid #48bb78;
+}
+
+.edutech-card {
+    border: solid #c51313ff;
 }
 
 .product-card::before {
@@ -1189,6 +1220,18 @@
     }
 }
 
+
+@media (max-width: 992px) {
+    .products-grid {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "a"
+            "b"
+            "c"
+            "d";
+    }
+}
+
 .hero-section span,
 .hero-section p,
 .hero-section li {
@@ -1352,19 +1395,11 @@
 
 .digital-card {
     background: linear-gradient(180deg, #ffffff, #f0f4ff);
-    border: 2px solid #667eea;
+    border: solid #ffd900ff;
 }
 
 .digital-card .product-icon {
-    background: linear-gradient(135deg, #48bb78, #38a169);
-}
-
-.digital-card .btn-product {
-    background: linear-gradient(135deg, #48bb78, #38a169);
-}
-
-.digital-card .btn-product:hover {
-    box-shadow: 0 10px 25px rgba(72, 187, 120, 0.45);
+    background: linear-gradient(135deg, #ffd900ff, #ffbb00ff);
 }
 </style>
 @endpush
