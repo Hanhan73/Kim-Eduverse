@@ -1157,31 +1157,6 @@
     transform: translateY(-3px);
 }
 
-/* Animations */
-.animate-fade-in {
-    opacity: 0;
-    transform: translateY(30px);
-    animation: fadeInUp 1s forwards;
-}
-
-.animate-fade-in-delay {
-    opacity: 0;
-    transform: translateY(30px);
-    animation: fadeInUp 1s forwards 0.3s;
-}
-
-.animate-fade-in-delay-2 {
-    opacity: 0;
-    transform: translateY(30px);
-    animation: fadeInUp 1s forwards 0.6s;
-}
-
-@keyframes fadeInUp {
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
 
 /* Responsive */
 @media (max-width: 1200px) {
