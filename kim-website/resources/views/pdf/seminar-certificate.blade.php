@@ -204,8 +204,8 @@ $totalJP = ceil($seminar->duration_minutes / 60);
     <div class="page page-2">
         <div class="sidebar">
             <div class="sidebar-text">
-                {{ $line1 }}<br>
-                {{ $line2 }}
+                On-Demand Seminar<br>
+                Certificate
             </div>
         </div>
 
@@ -271,7 +271,7 @@ $totalJP = ceil($seminar->duration_minutes / 60);
             </table>
 
             <div style="text-align:center; margin-top:40px">
-                <img src="{{ public_path('images/ttd.png') }}" width="120"><br>
+                <img src="{{ storage_path('app/private-assets/ttd.jpeg') }}" width="120"><br>
                 <b>Yosep Hernawan, S.T., M.M., IPM., CBTS.</b>
             </div>
         </div>
