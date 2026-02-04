@@ -1166,10 +1166,9 @@
     }
 }
 
-p,
-span,
-li,
-small {
+.hero-section span,
+.hero-section p,
+.hero-section li {
     opacity: 1 !important;
 }
 
