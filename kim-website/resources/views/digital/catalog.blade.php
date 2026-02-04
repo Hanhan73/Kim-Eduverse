@@ -25,6 +25,7 @@
 }
 
 .catalog-container {
+    width: 90%;
     margin: 0 auto;
     padding: 50px 20px;
     position: relative;
