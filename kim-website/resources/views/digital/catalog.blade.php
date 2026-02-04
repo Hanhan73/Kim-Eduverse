@@ -5,7 +5,9 @@
 @push('styles')
 <style>
 .catalog-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(rgba(102, 126, 234, 0.85),
+        rgba(118, 75, 162, 0.85)),
+    url('{{ asset("images/bg-office2.jpg") }}');
     color: white;
     padding: 60px 0 40px;
     text-align: center;
@@ -28,7 +30,7 @@
     position: relative;
     z-index: 1;
     background: #f8f9fa;
-    border-radius: 50px;
+    border-radius: 20px;
 }
 
 .catalog-toolbar {

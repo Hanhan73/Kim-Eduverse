@@ -9,7 +9,7 @@
     margin: 50px auto;
     padding: 0 20px;
     background: #f8f9fa;
-    border-radius: 50px;
+    border-radius: 10px;
 }
 
 .breadcrumb {
