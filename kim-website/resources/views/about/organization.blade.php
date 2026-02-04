@@ -7,25 +7,27 @@
 /* Animated Background */
 .animated-bg {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    inset: 0;
     z-index: -1;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-    background-size: 200% 200%;
-    animation: gradientShift 15s ease infinite;
+
+    background: linear-gradient(rgba(102, 126, 234, 0.75),
+        rgba(118, 75, 162, 0.75)),
+    url('{{ asset("images/bg-office1.jpg") }}');
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    animation: zoomBg 25s ease-in-out infinite alternate;
 }
 
-@keyframes gradientShift {
-
-    0%,
-    100% {
-        background-position: 0% 50%;
+@keyframes zoomBg {
+    from {
+        transform: scale(1);
     }
 
-    50% {
-        background-position: 100% 50%;
+    to {
+        transform: scale(1.08);
     }
 }
 

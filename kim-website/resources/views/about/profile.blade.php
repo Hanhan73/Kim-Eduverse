@@ -363,7 +363,13 @@
 <style>
 /* Profile Header */
 .profile-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(rgba(102, 126, 234, 0.85),
+        rgba(118, 75, 162, 0.85)),
+    url('{{ asset("images/bg-office1.jpg") }}');
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     color: white;
     padding: 120px 0 100px;
     text-align: center;
@@ -886,7 +892,13 @@
 /* CTA Profile */
 .cta-profile {
     padding: 100px 0;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(rgba(102, 126, 234, 0.85),
+        rgba(118, 75, 162, 0.85)),
+    url('{{ asset("images/bg-office1.jpg") }}');
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     text-align: center;
     color: white;
 }

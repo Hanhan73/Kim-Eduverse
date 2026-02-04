@@ -5,7 +5,13 @@
 @push('styles')
 <style>
 .digital-hero {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(rgba(102, 126, 234, 0.85),
+        rgba(118, 75, 162, 0.85)),
+    url('{{ asset("images/bg-office2.jpg") }}');
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     color: white;
     padding: 100px 0 80px;
     position: relative;
@@ -347,7 +353,13 @@
 
 /* CTA Section */
 .cta-section {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(rgba(102, 126, 234, 0.85),
+        rgba(118, 75, 162, 0.85)),
+    url('{{ asset("images/bg-office2.jpg") }}');
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     color: white;
     padding: 80px 20px;
     text-align: center;

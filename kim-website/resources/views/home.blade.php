@@ -11,7 +11,7 @@
             <span class="hero-badge animate-fade-in">PT Kompetensi Indonesia Mandiri</span>
             <h1 class="hero-title animate-fade-in">
                 Transformasi Digital <br>
-                <span class="gradient-text">Dimulai dari Sini</span>
+                <span id="typewriter" class="gradient-text"></span>
             </h1>
             <p class="hero-subtitle animate-fade-in-delay">
                 Pelatihan, Konsultasi, Sertifikasi, dan Pengembangan Teknologi untuk
@@ -630,6 +630,33 @@
     }
 }
 
+#typewriter {
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    position: relative;
+}
+
+/* cursor */
+#typewriter::after {
+    content: '|';
+    margin-left: 6px;
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+
+    0%,
+    50% {
+        opacity: 1;
+    }
+
+    51%,
+    100% {
+        opacity: 0;
+    }
+}
+
 /* Products Section */
 .products-section {
     padding: 100px 0;
@@ -1071,7 +1098,13 @@
 /* CTA Section */
 .cta-section {
     padding: 100px 0;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(rgba(102, 126, 234, 0.85),
+        rgba(118, 75, 162, 0.85)),
+    url('{{ asset("images/bg-office.jpg") }}');
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     text-align: center;
     color: white;
 }
@@ -1361,4 +1394,25 @@ small {
     font-weight: 600;
 }
 </style>
+@endpush
+
+@push('scripts')
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const text = "Dimulai dari Sini";
+    const el = document.getElementById("typewriter");
+
+    let index = 0;
+
+    function type() {
+        if (index < text.length) {
+            el.textContent += text.charAt(index);
+            index++;
+            setTimeout(type, 80);
+        }
+    }
+
+    type();
+});
+</script>
 @endpush
