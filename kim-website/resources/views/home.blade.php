@@ -449,9 +449,14 @@
     min-height: 100vh;
     display: flex;
     align-items: center;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    overflow: hidden;
+
+    background: linear-gradient(rgba(102, 126, 234, 0.85),
+        rgba(118, 75, 162, 0.85)),
+    url('{{ asset("images/bg-office.jpg") }}');
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 .hero-overlay {
