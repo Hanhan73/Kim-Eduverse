@@ -84,30 +84,40 @@
         color: var(--gray);
     }
 
+    html {
+        position: relative;
+        min-height: 100%;
+    }
+
 
     body {
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         color: #2d3748;
         line-height: 1.6;
         overflow-x: hidden;
-
+        position: relative;
+        z-index: 0;
         background: #f7fafc;
     }
 
     body::before {
         content: "";
         position: fixed;
-        inset: 0;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
 
-        background-image: linear-gradient(rgba(255, 255, 255, 0.85),
-            rgba(255, 255, 255, 0.85)),
+        background-image: linear-gradient(rgba(255, 255, 255, 0.80),
+            rgba(255, 255, 255, 0.80)),
         url('{{ asset("images/bg-office.jpg") }}');
-
+        background-attachment: fixed;
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
 
         z-index: -1;
+        pointer-events: none;
     }
 
     .container {
@@ -595,7 +605,7 @@
     .kim-tagline {
         display: flex;
         align-items: center;
-        overflow: hidden;
+        gap: 2px;
     }
 
     .tagline-text {
@@ -610,9 +620,27 @@
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
 
-        animation:
-            shimmer 3s linear infinite,
-            fadeSlide 1.2s ease-out;
+        animation: shimmer 3s linear infinite;
+    }
+
+    .cursor {
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: #667eea;
+        animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+
+        0%,
+        50% {
+            opacity: 1;
+        }
+
+        50.01%,
+        100% {
+            opacity: 0;
+        }
     }
 
     /* shimmer effect */
@@ -661,8 +689,10 @@
                     <img src="{{ asset('images/logo.png') }}" alt="KIM Eduverse" class="logo-image">
 
                     <span class="kim-tagline">
-                        <span class="tagline-text">Know the Unknowable</span>
+                        <span id="typewriter" class="tagline-text"></span>
+                        <span class="cursor">|</span>
                     </span>
+
                 </a>
 
                 <button class="menu-toggle" id="menuToggle">
@@ -837,6 +867,35 @@
             link.classList.add('active');
         }
     });
+
+    const text = "Know the Unknowable";
+    const speed = 80;
+    let index = 0;
+    let isDeleting = false;
+
+    const target = document.getElementById("typewriter");
+
+    function typeLoop() {
+        if (!target) return;
+
+        if (!isDeleting && index <= text.length) {
+            target.textContent = text.substring(0, index++);
+        } else if (isDeleting && index >= 0) {
+            target.textContent = text.substring(0, index--);
+        }
+
+        if (index === text.length + 5) {
+            isDeleting = true;
+        }
+
+        if (isDeleting && index === 0) {
+            isDeleting = false;
+        }
+
+        setTimeout(typeLoop, isDeleting ? 50 : speed);
+    }
+
+    typeLoop();
     </script>
 
     @stack('scripts')
