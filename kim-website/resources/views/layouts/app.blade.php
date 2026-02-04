@@ -672,7 +672,7 @@
 
     @media (max-width: 480px) {
         .tagline-text {
-            font-size: 0.5rem;
+            font-size: 0.7rem;
             letter-spacing: 0.5px;
         }
     }
