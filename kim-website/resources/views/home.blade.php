@@ -11,7 +11,7 @@
             <span class="hero-badge animate-fade-in">PT Kompetensi Indonesia Mandiri</span>
             <h1 class="hero-title animate-fade-in">
                 Transformasi Digital <br>
-                <span id="typewriter" class="gradient-text"></span>
+                <span id="hero-typewriter" class="gradient-text"></span>
             </h1>
             <p class="hero-subtitle animate-fade-in-delay">
                 Pelatihan, Konsultasi, Sertifikasi, dan Pengembangan Teknologi untuk
@@ -630,7 +630,7 @@
     }
 }
 
-#typewriter {
+#hero-typewriter {
     display: inline-block;
     white-space: nowrap;
     overflow: hidden;
@@ -638,7 +638,7 @@
 }
 
 /* cursor */
-#typewriter::after {
+#hero-typewriter::after {
     content: '|';
     margin-left: 6px;
     animation: blink 1s infinite;
@@ -1399,20 +1399,23 @@ small {
 @push('scripts')
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-    const text = "Dimulai dari Sini";
-    const el = document.getElementById("typewriter");
+    // Hero section typewriter effect
+    const heroText = "Dimulai dari Sini";
+    const heroEl = document.getElementById("hero-typewriter");
 
-    let index = 0;
+    if (heroEl) {
+        let heroIndex = 0;
 
-    function type() {
-        if (index < text.length) {
-            el.textContent += text.charAt(index);
-            index++;
-            setTimeout(type, 80);
+        function typeHero() {
+            if (heroIndex < heroText.length) {
+                heroEl.textContent += heroText.charAt(heroIndex);
+                heroIndex++;
+                setTimeout(typeHero, 80);
+            }
         }
-    }
 
-    type();
+        typeHero();
+    }
 });
 </script>
 @endpush

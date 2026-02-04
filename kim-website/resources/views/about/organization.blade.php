@@ -10,8 +10,8 @@
     inset: 0;
     z-index: -1;
 
-    background: linear-gradient(rgba(102, 126, 234, 0.75),
-        rgba(118, 75, 162, 0.75)),
+    background: linear-gradient(rgba(102, 126, 234, 0.85),
+        rgba(118, 75, 162, 0.85)),
     url('{{ asset("images/bg-office1.jpg") }}');
 
     background-size: cover;

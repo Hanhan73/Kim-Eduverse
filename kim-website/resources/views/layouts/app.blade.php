@@ -689,7 +689,7 @@
                     <img src="{{ asset('images/logo.png') }}" alt="KIM Eduverse" class="logo-image">
 
                     <span class="kim-tagline">
-                        <span id="typewriter" class="tagline-text"></span>
+                        <span id="nav-typewriter" class="tagline-text"></span>
                         <span class="cursor">|</span>
                     </span>
 
@@ -868,34 +868,35 @@
         }
     });
 
-    const text = "Know the Unknowable";
-    const speed = 80;
-    let index = 0;
+    // Navbar typewriter effect
+    const navText = "Know the Unknowable";
+    const navSpeed = 80;
+    let navIndex = 0;
     let isDeleting = false;
 
-    const target = document.getElementById("typewriter");
+    const navTarget = document.getElementById("nav-typewriter");
 
-    function typeLoop() {
-        if (!target) return;
+    function navTypeLoop() {
+        if (!navTarget) return;
 
-        if (!isDeleting && index <= text.length) {
-            target.textContent = text.substring(0, index++);
-        } else if (isDeleting && index >= 0) {
-            target.textContent = text.substring(0, index--);
+        if (!isDeleting && navIndex <= navText.length) {
+            navTarget.textContent = navText.substring(0, navIndex++);
+        } else if (isDeleting && navIndex >= 0) {
+            navTarget.textContent = navText.substring(0, navIndex--);
         }
 
-        if (index === text.length + 5) {
+        if (navIndex === navText.length + 5) {
             isDeleting = true;
         }
 
-        if (isDeleting && index === 0) {
+        if (isDeleting && navIndex === 0) {
             isDeleting = false;
         }
 
-        setTimeout(typeLoop, isDeleting ? 50 : speed);
+        setTimeout(navTypeLoop, isDeleting ? 50 : navSpeed);
     }
 
-    typeLoop();
+    navTypeLoop();
     </script>
 
     @stack('scripts')
