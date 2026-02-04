@@ -541,14 +541,14 @@
             @if($order->payment_status === 'paid')
             <!-- Success Header -->
             <div class="success-header">
-                <img src="{{ asset('images/logo.png') }}" alt="Success Icon" style="width: 80px; margin-bottom: 20px;">
+                <img src="{{ asset('images/logo.png') }}" alt="Success Icon" style="width: 180px; margin-bottom: 20px;">
                 <h1>Pembayaran Berhasil!</h1>
                 <p>Terima kasih atas pembelian Anda</p>
             </div>
             @elseif($hasQuestionnaire && $order->responses->where('is_completed', true)->count() > 0)
             <!-- Success Header for Completed Questionnaire -->
             <div class="success-header">
-                <img src="{{ asset('images/logo.png') }}" alt="Success Icon" style="width: 80px; margin-bottom: 20px;">
+                <img src="{{ asset('images/logo.png') }}" alt="Success Icon" style="width: 180px; margin-bottom: 20px;">
                 <h1>CEKMA Telah Berhasil Diisi!</h1>
                 <p>Terima kasih atas pembelian Anda</p>
             </div>
