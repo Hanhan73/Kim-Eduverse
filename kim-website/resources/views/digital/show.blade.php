@@ -8,7 +8,7 @@
     max-width: 1200px;
     margin: 50px auto;
     padding: 0 20px;
-    background: #f8f9fa;
+
 }
 
 .breadcrumb {
@@ -33,6 +33,7 @@
     grid-template-columns: 1fr 1fr;
     gap: 60px;
     margin-bottom: 60px;
+    background: #f8f9fa;
 }
 
 .product-visual {
@@ -283,6 +284,7 @@
 
 .related-products {
     margin-top: 80px;
+    background: #f8f9fa;
 }
 
 .related-products h2 {

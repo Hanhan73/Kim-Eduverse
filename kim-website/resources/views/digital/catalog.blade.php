@@ -28,7 +28,6 @@
     padding: 50px 20px;
     position: relative;
     z-index: 1;
-    background: #f8f9fa;
 }
 
 .catalog-toolbar {
@@ -139,6 +138,7 @@
     display: grid;
     grid-template-columns: 250px 1fr;
     gap: 40px;
+    background: #f8f9fa;
 }
 
 .sidebar {
