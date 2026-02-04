@@ -136,6 +136,29 @@
                     Pelajari Lebih Lanjut <i class="fas fa-arrow-right"></i>
                 </a>
             </div>
+            <div class="product-card digital-card">
+                <div class="product-header">
+                    <div class="product-number">04</div>
+                    <div class="product-icon">
+                        <i class="fas fa-store"></i>
+                    </div>
+                </div>
+                <h3 class="product-title">KIM Digital</h3>
+                <p class="product-description">
+                    Marketplace resmi produk digital KIM mulai dari e-book,
+                    seminar on-demand, hingga CEKMA (Cek Mandiri)
+                    untuk membantu memahami kondisi diri secara objektif berbasis data.
+                </p>
+                <ul class="product-features">
+                    <li><i class="fas fa-check"></i> E-Book & Modul Digital</li>
+                    <li><i class="fas fa-check"></i> Seminar On-Demand</li>
+                    <li><i class="fas fa-check"></i> CEKMA (Cek Mutu Akademik)</li>
+                    <li><i class="fas fa-check"></i> Pembayaran Aman & Mudah</li>
+                </ul>
+                <a href="{{ route('digital.index') }}" class="btn btn-product">
+                    Mulai Jelajahi Produk <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
         </div>
     </div>
 </section>
@@ -1325,6 +1348,23 @@
 .btn i {
     opacity: 1 !important;
     font-weight: 600;
+}
+
+.digital-card {
+    background: linear-gradient(180deg, #ffffff, #f0f4ff);
+    border: 2px solid #667eea;
+}
+
+.digital-card .product-icon {
+    background: linear-gradient(135deg, #48bb78, #38a169);
+}
+
+.digital-card .btn-product {
+    background: linear-gradient(135deg, #48bb78, #38a169);
+}
+
+.digital-card .btn-product:hover {
+    box-shadow: 0 10px 25px rgba(72, 187, 120, 0.45);
 }
 </style>
 @endpush
