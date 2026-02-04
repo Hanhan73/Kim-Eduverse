@@ -18,7 +18,7 @@
                     <td
                         style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 30px; text-align: center;">
 
-                        <img src="https://kimeduverse.com/images/logo.png" alt="KIM Eduverse" width="140"
+                        <img src="{{ url('images/logo.png') }}" alt="KIM Eduverse" width="140"
                             style="display:block; margin:0 auto 20px; max-width:140px;">
 
                         <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700;">
