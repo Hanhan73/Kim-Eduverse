@@ -238,6 +238,7 @@
 .empty-cart {
     text-align: center;
     padding: 100px 20px;
+    background: #f8f9fa;
 }
 
 .empty-cart i {

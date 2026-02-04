@@ -28,6 +28,7 @@
     padding: 50px 20px;
     position: relative;
     z-index: 1;
+    background: #f8f9fa;
 }
 
 .catalog-toolbar {
