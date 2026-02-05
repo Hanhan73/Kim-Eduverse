@@ -436,8 +436,8 @@
     padding: 10px 20px;
 
     margin-top: 15px;
-    margin-left: auto;
-    margin-right: 0;
+    margin-left: 0;
+    margin-right: auto;
 
     border-bottom-left-radius: 30px;
     border-top-right-radius: 40px;
