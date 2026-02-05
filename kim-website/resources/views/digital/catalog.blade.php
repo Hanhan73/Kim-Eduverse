@@ -432,20 +432,27 @@
 
 .btn-detail {
     background: linear-gradient(135deg, #4f6ceeff, #764ba2);
-    color: rgba(255, 255, 255, 1);
+    color: #ffffff;
     padding: 10px 20px;
-    margin: auto;
+
+    margin-top: 15px;
+    margin-left: auto;
+    margin-right: 0;
+
     border-bottom-left-radius: 30px;
     border-top-right-radius: 40px;
+
     text-decoration: none;
     font-weight: 600;
     font-size: 1rem;
+
     transition: all 0.3s ease;
     display: inline-flex;
     align-items: center;
-    width: 77%;
     gap: 8px;
-    margin-top: 15px;
+
+    width: fit-content;
+
 }
 
 .btn-detail:hover {
