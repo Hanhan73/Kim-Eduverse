@@ -300,6 +300,9 @@
     overflow: hidden;
     transition: all 0.3s ease;
     cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 .product-card:hover {
@@ -335,6 +338,9 @@
 
 .product-body {
     padding: 25px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 .product-category {
@@ -352,6 +358,11 @@
     color: #2d3748;
     margin-bottom: 12px;
     line-height: 1.4;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 .product-description {
@@ -359,6 +370,11 @@
     font-size: 0.9rem;
     margin-bottom: 20px;
     line-height: 1.6;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 .product-meta {
@@ -386,6 +402,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-top: auto;
 }
 
 .product-price {
@@ -428,6 +445,7 @@
     align-items: center;
     width: 77%;
     gap: 8px;
+    margin-top: 15px;
 }
 
 .btn-detail:hover {

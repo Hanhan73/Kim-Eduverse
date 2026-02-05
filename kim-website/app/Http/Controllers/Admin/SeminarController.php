@@ -93,7 +93,7 @@ class SeminarController extends Controller
                 'description' => $validated['description'],
                 'price' => $validated['price'],
                 'thumbnail' => $validated['thumbnail'] ?? null,
-                'type' => 'on-demand seminar',
+                'type' => 'on-demand-seminar',
                 'duration_minutes' => $validated['duration_minutes'],
                 'is_active' => $validated['is_active'] ?? true,
                 'is_featured' => $validated['is_featured'] ?? false,
