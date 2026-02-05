@@ -24,6 +24,25 @@
                     </div>
 
                     <div class="form-group">
+                        <label>Tipe Seminar <span style="color: red;">*</span></label>
+                        <select name="type" class="form-control @error('type') is-invalid @enderror" required>
+                            <option value="">-- Pilih Tipe Seminar --</option>
+                            <option value="pendidikan"
+                                {{ old('type', $seminar->type ?? '') == 'pendidikan' ? 'selected' : '' }}>Pendidikan
+                            </option>
+                            <option value="manajemen"
+                                {{ old('type', $seminar->type ?? '') == 'manajemen' ? 'selected' : '' }}>Manajemen
+                            </option>
+                            <option value="kearsipan"
+                                {{ old('type', $seminar->type ?? '') == 'kearsipan' ? 'selected' : '' }}>Kearsipan
+                            </option>
+                        </select>
+                        @error('type')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="form-group">
                         <label>Deskripsi <span style="color: red;">*</span></label>
                         <textarea name="description" rows="5"
                             class="form-control @error('description') is-invalid @enderror"
@@ -421,40 +440,40 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label>Durasi (menit) <span style="color: red;">*</span></label>
-                            <input type="number" id="quiz_duration" class="form-control" 
-                                value="30" min="1" max="300" required>
+                            <input type="number" id="quiz_duration" class="form-control" value="30" min="1" max="300"
+                                required>
                         </div>
                     </div>
 
                     <div class="col-md-4">
                         <div class="form-group">
                             <label>Nilai Lulus (%) <span style="color: red;">*</span></label>
-                            <input type="number" id="quiz_passing_score" class="form-control" 
-                                value="70" min="0" max="100" required>
+                            <input type="number" id="quiz_passing_score" class="form-control" value="70" min="0"
+                                max="100" required>
                         </div>
                     </div>
 
                     <div class="col-md-4">
                         <div class="form-group">
                             <label>Max Percobaan</label>
-                            <input type="number" id="quiz_max_attempts" class="form-control" 
-                                value="3" min="1" max="10">
+                            <input type="number" id="quiz_max_attempts" class="form-control" value="3" min="1" max="10">
                         </div>
                     </div>
                 </div>
-<div class="form-group">
-    <div class="custom-control custom-checkbox">
-        <input type="checkbox" class="custom-control-input" id="quiz_is_active" checked value="1">
-        <label class="custom-control-label" for="quiz_is_active">
-            Quiz Aktif
-        </label>
-    </div>
-</div>
+                <div class="form-group">
+                    <div class="custom-control custom-checkbox">
+                        <input type="checkbox" class="custom-control-input" id="quiz_is_active" checked value="1">
+                        <label class="custom-control-label" for="quiz_is_active">
+                            Quiz Aktif
+                        </label>
+                    </div>
+                </div>
 
                 <div style="background: #e0f2fe; border-left: 4px solid #0284c7; padding: 12px; border-radius: 6px;">
                     <small style="color: #0c4a6e;">
                         <i class="fas fa-info-circle"></i>
-                        <strong>Info:</strong> Setelah quiz dibuat, Anda bisa menambahkan pertanyaan dengan klik tombol "Edit"
+                        <strong>Info:</strong> Setelah quiz dibuat, Anda bisa menambahkan pertanyaan dengan klik tombol
+                        "Edit"
                     </small>
                 </div>
             </div>
@@ -575,7 +594,7 @@
     gap: 8px;
 }
 
-.custom-control-input:checked ~ .custom-control-label::before {
+.custom-control-input:checked~.custom-control-label::before {
     background-color: #4e73df;
     border-color: #4e73df;
 }
@@ -597,7 +616,7 @@
 /* Alert notification styles */
 .alert {
     border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .alert-success {
@@ -647,7 +666,7 @@ function saveMaterial(event) {
 
     const id = document.getElementById('material_id').value;
     const title = document.getElementById('material_title').value;
-    const seminarId = {{ $seminar->id }};
+    const seminarId = {{$seminar->id}};}};
 
     if (!title) {
         alert('Nama materi harus diisi!');
@@ -687,7 +706,7 @@ function saveMaterial(event) {
 function deleteMaterial(id) {
     if (!confirm('Yakin ingin menghapus materi ini?')) return;
 
-    const seminarId = {{ $seminar->id }};
+    const seminarId = {{$seminar->id}};
 
     fetch(`/admin/digital/seminars/${seminarId}/materials/${id}`, {
             method: 'DELETE',
@@ -711,7 +730,7 @@ function reorderMaterials() {
         id: item.dataset.id,
         order: index + 1
     }));
-    const seminarId = {{ $seminar->id }};
+    const seminarId = {{$seminar->id}};
 
     fetch(`/admin/digital/seminars/${seminarId}/materials/reorder`, {
             method: 'POST',
@@ -765,16 +784,16 @@ function openQuizModal(type) {
     document.getElementById('quiz_passing_score').value = '70';
     document.getElementById('quiz_max_attempts').value = '3';
     document.getElementById('quiz_is_active').checked = true;
-    
+
     const typeText = type === 'pre' ? 'Pre-Test' : 'Post-Test';
     document.getElementById('quizModalTitle').textContent = `Buat ${typeText} Baru`;
-    
+
     // Auto-fill title
     const seminarTitle = document.querySelector('input[name="title"]').value;
     if (seminarTitle) {
         document.getElementById('quiz_title').value = `${typeText} - ${seminarTitle}`;
     }
-    
+
     document.getElementById('quizModal').style.display = 'block';
 }
 
@@ -823,18 +842,19 @@ function saveQuiz(event) {
                 const quizType = document.getElementById('quiz_type').value;
                 const selectId = quizType === 'pre' ? 'pre_test_id' : 'post_test_id';
                 const select = document.getElementById(selectId);
-                
+
                 const option = new Option(data.quiz.title, data.quiz.id, true, true);
                 select.add(option);
-                
+
                 // Update button
                 updateQuizButton(quizType, select);
-                
+
                 // Close modal
                 closeQuizModal();
-                
+
                 // Show success message
-                showNotification('success', 'Quiz berhasil dibuat! Klik tombol "Edit" untuk menambahkan pertanyaan.');
+                showNotification('success',
+                    'Quiz berhasil dibuat! Klik tombol "Edit" untuk menambahkan pertanyaan.');
             } else {
                 showNotification('danger', data.message || 'Gagal menyimpan quiz');
             }
@@ -853,7 +873,7 @@ function saveQuiz(event) {
 function updateQuizButton(type, select) {
     const button = document.getElementById(`${type}_test_button`);
     const selectedValue = select.value;
-    
+
     if (selectedValue) {
         // Jika ada quiz dipilih, ubah tombol jadi "Edit"
         button.innerHTML = '<i class="fas fa-edit"></i> Edit';
@@ -889,9 +909,9 @@ function showNotification(type, message) {
             <span>&times;</span>
         </button>
     `;
-    
+
     document.body.appendChild(notification);
-    
+
     // Auto dismiss setelah 5 detik
     setTimeout(() => {
         notification.remove();
@@ -902,11 +922,11 @@ function showNotification(type, message) {
 document.addEventListener('DOMContentLoaded', function() {
     const preTestSelect = document.getElementById('pre_test_id');
     const postTestSelect = document.getElementById('post_test_id');
-    
+
     if (preTestSelect) {
         updateQuizButton('pre', preTestSelect);
     }
-    
+
     if (postTestSelect) {
         updateQuizButton('post', postTestSelect);
     }
@@ -928,9 +948,9 @@ function showNotification(type, message) {
             <span>&times;</span>
         </button>
     `;
-    
+
     document.body.appendChild(notification);
-    
+
     // Auto dismiss setelah 5 detik
     setTimeout(() => {
         if (notification.parentNode) {

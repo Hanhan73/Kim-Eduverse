@@ -22,6 +22,7 @@ class DigitalProduct extends Model
         'thumbnail',
         'type',
         'questionnaire_id',
+        'seminar_id',
         'file_path',
         'file_url',
         'duration_minutes',
@@ -95,7 +96,7 @@ class DigitalProduct extends Model
      */
     public function seminar()
     {
-        return $this->hasOne(\App\Models\Seminar::class, 'product_id');
+        return $this->belongsTo(\App\Models\Seminar::class);
     }
 
     /**

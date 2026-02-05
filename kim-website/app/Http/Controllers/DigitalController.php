@@ -38,11 +38,16 @@ class DigitalController extends Controller
     {
         $query = DigitalProduct::where('is_active', true)->with('category');
 
+
         // Filter by category
         if ($request->filled('category')) {
-            $query->whereHas('category', function ($q) use ($request) {
-                $q->where('slug', $request->category);
-            });
+            if ($request->category === 'on-demand-seminar') {
+                $query->where('type', 'on-demand-seminar');
+            } else {
+                $query->whereHas('category', function ($q) use ($request) {
+                    $q->where('slug', $request->category);
+                });
+            }
         }
 
         // Search functionality
@@ -57,6 +62,14 @@ class DigitalController extends Controller
         if ($request->filled('cekma_type')) {
             $query->whereHas('questionnaire', function ($q) use ($request) {
                 $q->where('type', $request->cekma_type);
+            });
+        }
+
+        if ($request->filled('seminar_type')) {
+            $query->whereIn('seminar_id', function ($sub) use ($request) {
+                $sub->select('id')
+                    ->from('seminars')
+                    ->where('type', $request->seminar_type);
             });
         }
 
@@ -84,12 +97,20 @@ class DigitalController extends Controller
             ->get()
             ->keyBy('type');
 
+            $seminarStats = \App\Models\Seminar::select('seminars.type')
+            ->selectRaw('COUNT(DISTINCT digital_products.id) as total')
+            ->join('digital_products', 'digital_products.seminar_id', '=', 'seminars.id')
+            ->where('digital_products.is_active', true)
+            ->groupBy('seminars.type')
+            ->get()
+            ->keyBy('type');
+
         $totalCekma = $cekmaStats->sum('total');
 
         $products = $query->paginate(12)->withQueryString();
         $categories = DigitalProductCategory::all();
 
-        return view('digital.catalog', compact('products', 'categories', 'cekmaStats', 'totalCekma'));
+        return view('digital.catalog', compact('products', 'categories', 'cekmaStats', 'totalCekma', 'seminarStats'));
     }
 
     /**

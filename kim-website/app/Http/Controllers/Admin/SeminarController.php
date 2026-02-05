@@ -49,6 +49,7 @@ class SeminarController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
+            'type' => 'required|string|in:pendidikan,manajemen,kearsipan',
             'description' => 'required|string',
             'thumbnail' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'collaborator_id' => 'required|exists:users,id',
@@ -88,10 +89,11 @@ class SeminarController extends Controller
                 'collaborator_id' => $validated['collaborator_id'],
                 'name' => $validated['title'],
                 'slug' => $validated['slug'],
+                'seminar_id' => $validated['seminar_id'] ?? null, 
                 'description' => $validated['description'],
                 'price' => $validated['price'],
                 'thumbnail' => $validated['thumbnail'] ?? null,
-                'type' => 'seminar',
+                'type' => 'on-demand seminar',
                 'duration_minutes' => $validated['duration_minutes'],
                 'is_active' => $validated['is_active'] ?? true,
                 'is_featured' => $validated['is_featured'] ?? false,
@@ -159,6 +161,7 @@ class SeminarController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
+            'type' => 'required|string|in:pendidikan,manajemen,kearsipan',
             'description' => 'required|string',
             'thumbnail' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'collaborator_id' => 'required|exists:users,id',

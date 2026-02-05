@@ -14,6 +14,7 @@ class Seminar extends Model
         'collaborator_id',
         'product_id', // BELONGS TO DigitalProduct
         'title',
+        'type',
         'slug',
         'description',
         'thumbnail',

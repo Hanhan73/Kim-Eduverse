@@ -781,6 +781,9 @@
                 @if(request('cekma_type'))
                 <input type="hidden" name="cekma_type" value="{{ request('cekma_type') }}">
                 @endif
+                @if(request('seminar_type'))
+                <input type="hidden" name="seminar_type" value="{{ request('seminar_type') }}">
+                @endif
                 @if(request('sort'))
                 <input type="hidden" name="sort" value="{{ request('sort') }}">
                 @endif
@@ -798,6 +801,10 @@
                 @if(request('cekma_type'))
                 <input type="hidden" name="cekma_type" value="{{ request('cekma_type') }}">
                 @endif
+                @if(request('seminar_type'))
+                <input type="hidden" name="seminar_type" value="{{ request('seminar_type') }}">
+                @endif
+
                 <select name="sort" class="filter-select" onchange="document.getElementById('sortForm').submit()">
                     <option value="popular" {{ request('sort') == 'popular' ? 'selected' : '' }}>Terpopuler</option>
                     <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Terbaru</option>
@@ -811,7 +818,7 @@
     </div>
 
     <!-- Active Filters -->
-    @if(request('category') || request('search') || request('cekma_type'))
+    @if(request('category') || request('search') || request('cekma_type') || request('seminar_type'))
     <div class="active-filters">
         @if(request('category'))
         <div class="filter-tag">
@@ -833,10 +840,19 @@
         </div>
         @endif
 
+        @if(request('seminar_type'))
+        <div class="filter-tag">
+            <span>On-Demand Seminar: {{ Str::title(str_replace('_', ' ', request('seminar_type'))) }}</span>
+            <a href="{{ route('digital.catalog', request()->except('seminar_type')) }}" style="color:white;">
+                <button>×</button>
+            </a>
+        </div>
+        @endif
+
         @if(request('search'))
         <div class="filter-tag">
             <span>Pencarian: "{{ request('search') }}"</span>
-            <a href="{{ route('digital.catalog', ['category' => request('category'), 'cekma_type' => request('cekma_type'), 'sort' => request('sort')]) }}"
+            <a href="{{ route('digital.catalog', ['category' => request('category'), 'cekma_type' => request('cekma_type'), 'seminar_type' => request('seminar_type'), 'sort' => request('sort')]) }}"
                 style="color: white;">
                 <button>×</button>
             </a>
@@ -885,6 +901,32 @@
                     </div>
                     @endforeach
                 </div>
+                @elseif($category->slug === 'on-demand-seminar')
+                <div class="filter-option cekma-category">
+                    <input type="radio" name="category_filter"
+                        {{ request('category') == 'on-demand-seminar' && !request('seminar_type') ? 'checked' : '' }}
+                        onchange="window.location.href='{{ route('digital.catalog', ['category' => 'on-demand-seminar']) }}'">
+
+                    <label>Seminar On-Demand</label>
+
+                    <i class="fas fa-chevron-right cekma-toggle
+        {{ request('category') == 'on-demand-seminar' || request('seminar_type') ? 'expanded' : '' }}"></i>
+                </div>
+
+                <div class="cekma-subcategories
+    {{ request('category') == 'on-demand-seminar' || request('seminar_type') ? 'expanded' : '' }}">
+                    @foreach($seminarStats as $type => $stat)
+                    <div class="cekma-subcategory {{ request('seminar_type') === $type ? 'active' : '' }}">
+                        <input type="radio" {{ request('seminar_type') === $type ? 'checked' : '' }}
+                            onchange="window.location.href='{{ route('digital.catalog', ['category'=>'on-demand-seminar','seminar_type'=>$type]) }}'">
+
+                        <label>
+                            {{ Str::title(str_replace('_', ' ', $type)) }}
+                        </label>
+                    </div>
+                    @endforeach
+
+                </div>
                 @else
                 <!-- Regular Category -->
                 <div class="filter-option">
@@ -898,7 +940,7 @@
                 @endif
                 @endforeach
 
-                @if(request('category') || request('cekma_type'))
+                @if(request('category') || request('cekma_type') || request('seminar_type'))
                 <a href="{{ route('digital.catalog', ['search' => request('search'), 'sort' => request('sort')]) }}"
                     class="reset-filter">
                     <i class="fas fa-times-circle"></i> Reset Filter
@@ -918,6 +960,9 @@
                     @endif
                     @if(request('cekma_type'))
                     <input type="hidden" name="cekma_type" value="{{ request('cekma_type') }}">
+                    @endif
+                    @if(request('seminar_type'))
+                    <input type="hidden" name="seminar_type" value="{{ request('seminar_type') }}">
                     @endif
                     @if(request('sort'))
                     <input type="hidden" name="sort" value="{{ request('sort') }}">
@@ -1052,6 +1097,8 @@ function toggleMobileFilter() {
 
 // Set initial state di mobile
 document.addEventListener('DOMContentLoaded', function() {
+
+    // Mobile sidebar default
     const sidebar = document.getElementById('mobile-sidebar');
     const chevron = document.getElementById('filter-chevron');
 
@@ -1060,17 +1107,20 @@ document.addEventListener('DOMContentLoaded', function() {
         chevron.style.transform = 'rotate(0deg)';
     }
 
-    // Toggle CEKMA subcategories
-    const cekmaToggle = document.querySelector('.cekma-toggle');
-    const cekmaSubcategories = document.querySelector('.cekma-subcategories');
+    // SEMUA DROPDOWN (CEKMA + SEMINAR)
+    document.querySelectorAll('.cekma-category').forEach(category => {
+        const toggle = category.querySelector('.cekma-toggle');
+        const sub = category.nextElementSibling;
 
-    if (cekmaToggle && cekmaSubcategories) {
-        cekmaToggle.addEventListener('click', function(e) {
+        if (!toggle || !sub) return;
+
+        toggle.addEventListener('click', function(e) {
             e.stopPropagation();
-            this.classList.toggle('expanded');
-            cekmaSubcategories.classList.toggle('expanded');
+            toggle.classList.toggle('expanded');
+            sub.classList.toggle('expanded');
         });
-    }
+    });
+
 });
 </script>
 @endsection
