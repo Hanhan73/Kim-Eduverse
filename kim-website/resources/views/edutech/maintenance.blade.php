@@ -6,119 +6,128 @@
     <title>KIM Edutech - Sedang Diperbarui</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 
     <style>
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    body {
-        font-family: 'Inter', sans-serif;
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        color: white;
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
 
-        background: linear-gradient(rgba(102, 126, 234, .85), rgba(118, 75, 162, .85)),
-        url('{{ asset("images/bg-office2.jpg") }}') center/cover no-repeat;
-    }
+            /* WARNA BARU — BIRU TEAL */
+            background:
+                linear-gradient(rgba(0, 102, 153, .88), rgba(0, 150, 136, .88)),
+                url('{{ asset("images/bg-office2.jpg") }}') center/cover no-repeat;
+        }
 
-    .card {
-        background: rgba(255, 255, 255, 0.12);
-        backdrop-filter: blur(10px);
-        border-radius: 20px;
-        padding: 50px 40px;
-        max-width: 640px;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, .25);
-    }
+        .card {
+            background: rgba(255, 255, 255, 0.14);
+            backdrop-filter: blur(12px);
+            border-radius: 22px;
+            padding: 50px 45px;
+            max-width: 640px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, .25);
 
-    .logo {
-        width: 220px;
-        margin-bottom: 80px;
-    }
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-    h1 {
-        font-size: 2.2rem;
-        font-weight: 800;
-        margin-bottom: 16px;
-    }
+        .logo {
+            width: 200px;
+            margin-bottom: 25px;
+            display: block;
+        }
 
-    p {
-        font-size: 1.1rem;
-        line-height: 1.7;
-        opacity: .95;
-        margin-bottom: 30px;
-    }
+        .badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, .25);
+            padding: 10px 20px;
+            border-radius: 999px;
+            font-size: .95rem;
+            font-weight: 600;
+            margin-bottom: 22px;
+        }
 
-    .badge {
-        display: inline-block;
-        background: rgba(255, 255, 255, .2);
-        padding: 8px 18px;
-        border-radius: 999px;
-        font-size: .9rem;
-        margin-bottom: 20px;
-        font-weight: 600;
-    }
+        h1 {
+            font-size: 2.1rem;
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
 
-    .btn {
-        display: inline-block;
-        padding: 14px 26px;
-        border-radius: 50px;
-        background: white;
-        color: #667eea;
-        font-weight: 700;
-        text-decoration: none;
-        transition: .25s;
-    }
+        p {
+            font-size: 1.08rem;
+            line-height: 1.7;
+            opacity: .95;
+            margin-bottom: 24px;
+        }
 
-    .btn:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 10px 25px rgba(255, 255, 255, .35);
-    }
+        .btn {
+            display: inline-block;
+            padding: 14px 26px;
+            border-radius: 50px;
+            background: white;
+            color: #006699;
+            font-weight: 700;
+            text-decoration: none;
+            transition: .25s;
+        }
 
-    .sub {
-        font-size: .9rem;
-        opacity: .85;
-        margin-top: 18px;
-    }
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255, 255, 255, .35);
+        }
+
+        .sub {
+            font-size: .9rem;
+            opacity: .9;
+            margin-top: 18px;
+        }
     </style>
 </head>
 
 <body>
 
-    <div class="card">
-        <img src="{{ asset('images/logo.png') }}" class="logo" alt="KIM">
+<div class="card">
 
-        <div class="badge">Sedang Pengembangan</div>
+    <img src="{{ asset('images/logo.png') }}" class="logo" alt="KIM">
 
-        <h1>KIM Edutech Sementara Tidak Tersedia</h1>
-
-        <p>
-            Fitur pembelajaran <strong>KIM Edutech</strong> saat ini sedang dalam proses
-            peningkatan sistem dan penyempurnaan layanan agar pengalaman belajar menjadi
-            lebih baik.
-        </p>
-
-        <p>
-            Selama masa pembaruan, akses pengguna untuk sementara dinonaktifkan.
-            Terima kasih atas pengertiannya.
-        </p>
-
-        <a href="{{ route('home') }}" class="btn">
-            ← Kembali ke Beranda
-        </a>
-
-        <div class="sub">
-            Kami akan segera kembali dengan versi yang lebih optimal.
-        </div>
+    <div class="badge">
+        🚧 Sedang Pengembangan
     </div>
 
-</body>
+    <h1>KIM Edutech Sementara Tidak Tersedia</h1>
 
+    <p>
+        Fitur pembelajaran <strong>KIM Edutech</strong> sedang dalam proses
+        peningkatan sistem dan penyempurnaan layanan agar pengalaman belajar
+        menjadi lebih baik.
+    </p>
+
+    <p>
+        Selama masa pembaruan, akses pengguna untuk sementara dinonaktifkan.
+        Terima kasih atas pengertiannya.
+    </p>
+
+    <a href="{{ route('home') }}" class="btn">
+        ← Kembali ke Beranda
+    </a>
+
+    <div class="sub">
+        Kami akan segera kembali dengan versi yang lebih optimal.
+    </div>
+
+</div>
+
+</body>
 </html>
