@@ -41,13 +41,110 @@ class QuizController extends Controller
     }
 
     /**
+     * Show the form for creating a new quiz
+     */
+    public function create()
+    {
+        return view('admin.digital.quizzes.create');
+    }
+
+    /**
+     * Store a newly created quiz
+     */
+public function store(Request $request)
+{
+    try {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'duration_minutes' => 'required|integer|min:1|max:300',
+            'passing_score' => 'required|integer|min:0|max:100',
+            'max_attempts' => 'nullable|integer|min:1|max:10',
+            'is_active' => 'sometimes|boolean',
+        ]);
+
+        // Set default values
+        $validated['is_active'] = $request->input('is_active', 0);
+        $validated['max_attempts'] = $validated['max_attempts'] ?? 3;
+
+        $quiz = Quiz::create($validated);
+
+        // Cek apakah request dari AJAX (modal)
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Quiz berhasil dibuat!',
+                'quiz' => [
+                    'id' => $quiz->id,
+                    'title' => $quiz->title,
+                ]
+            ]);
+        }
+
+        // Redirect biasa untuk form standalone
+        return redirect()
+            ->route('admin.digital.quizzes.edit', $quiz)
+            ->with('success', 'Quiz berhasil dibuat! Silakan tambahkan pertanyaan.');
+    } catch (\Exception $e) {
+        // Log error untuk debugging
+        \Log::error('Error creating quiz: ' . $e->getMessage());
+        
+        // Return error response
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal membuat quiz: ' . $e->getMessage()
+            ], 500);
+        }
+        
+        return back()
+            ->withInput()
+            ->with('error', 'Gagal membuat quiz: ' . $e->getMessage());
+    }
+}
+
+    /**
      * Show quiz edit page with questions management
      */
     public function edit(Quiz $quiz)
     {
         $quiz->load('questions');
         
-        return view('admin.digital.quizzes.edit', compact('quiz'));
+        // Get related quizzes for sync feature
+        $relatedQuizzes = collect();
+        
+        // Find seminars where this quiz is used as pre-test
+        $seminarsWithThisAsPreTest = Seminar::where('pre_test_id', $quiz->id)
+            ->with('postTest')
+            ->get();
+        
+        foreach ($seminarsWithThisAsPreTest as $seminar) {
+            if ($seminar->postTest && $seminar->postTest->id !== $quiz->id) {
+                $relatedQuizzes->push([
+                    'id' => $seminar->postTest->id,
+                    'title' => $seminar->postTest->title . ' (Post-Test: ' . $seminar->title . ')',
+                ]);
+            }
+        }
+        
+        // Find seminars where this quiz is used as post-test
+        $seminarsWithThisAsPostTest = Seminar::where('post_test_id', $quiz->id)
+            ->with('preTest')
+            ->get();
+        
+        foreach ($seminarsWithThisAsPostTest as $seminar) {
+            if ($seminar->preTest && $seminar->preTest->id !== $quiz->id) {
+                $relatedQuizzes->push([
+                    'id' => $seminar->preTest->id,
+                    'title' => $seminar->preTest->title . ' (Pre-Test: ' . $seminar->title . ')',
+                ]);
+            }
+        }
+        
+        // Remove duplicates
+        $relatedQuizzes = $relatedQuizzes->unique('id');
+        
+        return view('admin.digital.quizzes.edit', compact('quiz', 'relatedQuizzes'));
     }
 
     /**

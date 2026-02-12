@@ -29,7 +29,8 @@ class OrderConfirmation extends Mailable
     {
         Log::info('Building OrderConfirmation email', [
             'order_number' => $this->order->order_number,
-            'customer_email' => $this->order->customer_email
+            'customer_email' => $this->order->customer_email,
+            'customer_name' => $this->order->customer_name,
         ]);
 
         return $this->subject('Konfirmasi Pesanan - ' . $this->order->order_number)

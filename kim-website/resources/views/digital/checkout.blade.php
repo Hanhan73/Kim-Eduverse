@@ -509,86 +509,95 @@
                     </h3>
 
                     <div class="form-group">
-                        <label for="customer_email">Email <span>*</span></label>
-                        <input type="email" id="customer_email" name="customer_email"
-                            class="form-control @error('customer_email') error @enderror"
-                            value="{{ old('customer_email') }}" required placeholder="email@example.com">
-                        @error('customer_email')
+                        <label for="customer_name">Nama Lengkap <span>*</span></label>
+                        <input type="text" id="customer_name" name="customer_name"
+                            class="form-control @error('customer_name') error @enderror"
+                            value="{{ old('customer_name') }}" required placeholder="Masukkan nama lengkap Anda">
+                        @error('customer_name')
                         <div class="error-message">{{ $message }}</div>
                         @enderror
-                        <small style="color: #718096; font-size: 0.85rem; margin-top: 5px; display: block;">
-                            Hasil akan dikirim ke email ini
-                        </small>
                     </div>
-                </div>
+                    <label for="customer_email">Email <span>*</span></label>
+                    <input type="email" id="customer_email" name="customer_email"
+                        class="form-control @error('customer_email') error @enderror"
+                        value="{{ old('customer_email') }}" required placeholder="email@example.com">
+                    @error('customer_email')
+                    <div class="error-message">{{ $message }}</div>
+                    @enderror
+                    <small style="color: #718096; font-size: 0.85rem; margin-top: 5px; display: block;">
+                        Hasil akan dikirim ke email ini
+                    </small>
 
-                <div class="info-box">
-                    <i class="fas fa-info-circle"></i>
-                    <div>
-                        <strong>Informasi Penting:</strong><br>
-                        Pastikan email yang Anda masukkan benar. Hasil analisis dan invoice akan dikirim ke email
-                        tersebut.
-                    </div>
-                </div>
-
-                <!-- Terms & Conditions -->
-                <div class="tnc-section">
-                    <div class="tnc-checkbox">
-                        <input type="checkbox" id="agreeTnc" name="agree_tnc" value="1">
-                        <label for="agreeTnc">
-                            Saya telah membaca dan menyetujui
-                            <a href="#" id="openTnc">Syarat & Ketentuan Pembayaran</a>
-                            dari Midtrans dan KIM Digital
-                        </label>
-                    </div>
-                    <div class="tnc-error" id="tncError">
-                        <i class="fas fa-exclamation-circle"></i> Anda harus menyetujui syarat dan ketentuan untuk
-                        melanjutkan
-                    </div>
                 </div>
             </div>
 
-            <!-- Order Summary -->
-            <div class="order-summary">
-                <h2 class="summary-title">Ringkasan Pesanan</h2>
-
-                <div style="max-height: 300px; overflow-y: auto; margin-bottom: 20px;">
-                    @foreach($cart as $item)
-                    <div class="order-item">
-                        <div class="item-thumb">
-                            <i
-                                class="fas {{ $item['type'] === 'questionnaire' ? 'fa-clipboard-list' : 'fa-file-alt' }}"></i>
-                        </div>
-                        <div class="item-info">
-                            <h4>{{ $item['name'] }}</h4>
-                            <div class="price">Rp {{ number_format($item['price'], 0, ',', '.') }}</div>
-                        </div>
-                    </div>
-                    @endforeach
+            <div class="info-box">
+                <i class="fas fa-info-circle"></i>
+                <div>
+                    <strong>Informasi Penting:</strong><br>
+                    Pastikan email yang Anda masukkan benar. Hasil analisis dan invoice akan dikirim ke email
+                    tersebut.
                 </div>
+            </div>
 
-                <div class="summary-row">
-                    <span>Subtotal ({{ count($cart) }} item)</span>
-                    <span>Rp {{ number_format($subtotal, 0, ',', '.') }}</span>
+            <!-- Terms & Conditions -->
+            <div class="tnc-section">
+                <div class="tnc-checkbox">
+                    <input type="checkbox" id="agreeTnc" name="agree_tnc" value="1">
+                    <label for="agreeTnc">
+                        Saya telah membaca dan menyetujui
+                        <a href="#" id="openTnc">Syarat & Ketentuan Pembayaran</a>
+                        dari Midtrans dan KIM Digital
+                    </label>
                 </div>
-
-                <div class="summary-row total">
-                    <span>Total Pembayaran</span>
-                    <span class="amount">Rp {{ number_format($total, 0, ',', '.') }}</span>
-                </div>
-
-                <button type="submit" class="btn-submit" id="submitBtn">
-                    <i class="fas fa-lock"></i>
-                    Lanjut ke Pembayaran
-                </button>
-
-                <div class="security-note">
-                    <i class="fas fa-shield-alt"></i>
-                    <span><strong>100% Aman</strong> - Powered by Midtrans</span>
+                <div class="tnc-error" id="tncError">
+                    <i class="fas fa-exclamation-circle"></i> Anda harus menyetujui syarat dan ketentuan untuk
+                    melanjutkan
                 </div>
             </div>
         </div>
-    </form>
+
+        <!-- Order Summary -->
+        <div class="order-summary">
+            <h2 class="summary-title">Ringkasan Pesanan</h2>
+
+            <div style="max-height: 300px; overflow-y: auto; margin-bottom: 20px;">
+                @foreach($cart as $item)
+                <div class="order-item">
+                    <div class="item-thumb">
+                        <i
+                            class="fas {{ $item['type'] === 'questionnaire' ? 'fa-clipboard-list' : 'fa-file-alt' }}"></i>
+                    </div>
+                    <div class="item-info">
+                        <h4>{{ $item['name'] }}</h4>
+                        <div class="price">Rp {{ number_format($item['price'], 0, ',', '.') }}</div>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+
+            <div class="summary-row">
+                <span>Subtotal ({{ count($cart) }} item)</span>
+                <span>Rp {{ number_format($subtotal, 0, ',', '.') }}</span>
+            </div>
+
+            <div class="summary-row total">
+                <span>Total Pembayaran</span>
+                <span class="amount">Rp {{ number_format($total, 0, ',', '.') }}</span>
+            </div>
+
+            <button type="submit" class="btn-submit" id="submitBtn">
+                <i class="fas fa-lock"></i>
+                Lanjut ke Pembayaran
+            </button>
+
+            <div class="security-note">
+                <i class="fas fa-shield-alt"></i>
+                <span><strong>100% Aman</strong> - Powered by Midtrans</span>
+            </div>
+        </div>
+</div>
+</form>
 </div>
 
 <!-- Modal Terms & Conditions -->

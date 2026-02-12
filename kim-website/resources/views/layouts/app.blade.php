@@ -16,6 +16,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/home-styles.css') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon.png') }}">
 
 
     <style>
@@ -83,12 +84,40 @@
         color: var(--gray);
     }
 
+    html {
+        position: relative;
+        min-height: 100%;
+    }
+
 
     body {
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         color: #2d3748;
         line-height: 1.6;
         overflow-x: hidden;
+        position: relative;
+        z-index: 0;
+        background: #f7fafc;
+    }
+
+    body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+
+        background-image: linear-gradient(rgba(255, 255, 255, 0.80),
+            rgba(255, 255, 255, 0.80)),
+        url('{{ asset("images/bg-office.jpg") }}');
+        background-attachment: fixed;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+
+        z-index: -1;
+        pointer-events: none;
     }
 
     .container {
@@ -269,6 +298,12 @@
         color: #2d3748;
         cursor: pointer;
         padding: 8px;
+    }
+
+    @media (max-width: 768px) {
+        body::before {
+            background-attachment: scroll;
+        }
     }
 
     /* Footer */
@@ -561,6 +596,86 @@
             opacity: 0;
         }
     }
+
+
+    .logo-with-tagline {
+        gap: 14px;
+    }
+
+    .kim-tagline {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+    }
+
+    .tagline-text {
+        font-size: 0.85rem;
+        font-weight: 600;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        white-space: nowrap;
+
+        background: linear-gradient(90deg, #667eea, #764ba2, #667eea);
+        background-size: 200% auto;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+
+        animation: shimmer 3s linear infinite;
+    }
+
+    .cursor {
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: #667eea;
+        animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+
+        0%,
+        50% {
+            opacity: 1;
+        }
+
+        50.01%,
+        100% {
+            opacity: 0;
+        }
+    }
+
+    /* shimmer effect */
+    @keyframes shimmer {
+        to {
+            background-position: 200% center;
+        }
+    }
+
+    /* entrance animation */
+    @keyframes fadeSlide {
+        from {
+            opacity: 0;
+            transform: translateX(-10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .tagline-text {
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .tagline-text {
+            font-size: 0.7rem;
+            letter-spacing: 0.5px;
+        }
+    }
     </style>
 
     @stack('styles')
@@ -571,8 +686,14 @@
     <nav class="navbar">
         <div class="container">
             <div class="nav-container">
-                <a href="{{ route('home') }}" class="logo">
+                <a href="{{ route('home') }}" class="logo logo-with-tagline">
                     <img src="{{ asset('images/logo.png') }}" alt="KIM Eduverse" class="logo-image">
+
+                    <span class="kim-tagline">
+                        <span id="nav-typewriter" class="tagline-text"></span>
+                        <span class="cursor">|</span>
+                    </span>
+
                 </a>
 
                 <button class="menu-toggle" id="menuToggle">
@@ -687,7 +808,7 @@
                     <ul class="footer-links">
                         <li class="footer-link"><i class="fas fa-envelope"></i> info@kim.co.id</li>
                         <li class="footer-link"><i class="fas fa-phone"></i> +62 812-3456-7890</li>
-                        <li class="footer-link"><i class="fas fa-map-marker-alt"></i> Bandung, Indonesia</li>
+                        <li class="footer-link"><i class="fas fa-map-marker-alt"></i> Bandung Barat, Indonesia</li>
                     </ul>
                 </div>
             </div>
@@ -747,6 +868,36 @@
             link.classList.add('active');
         }
     });
+
+    // Navbar typewriter effect
+    const navText = "Know the Unknowable";
+    const navSpeed = 80;
+    let navIndex = 0;
+    let isDeleting = false;
+
+    const navTarget = document.getElementById("nav-typewriter");
+
+    function navTypeLoop() {
+        if (!navTarget) return;
+
+        if (!isDeleting && navIndex <= navText.length) {
+            navTarget.textContent = navText.substring(0, navIndex++);
+        } else if (isDeleting && navIndex >= 0) {
+            navTarget.textContent = navText.substring(0, navIndex--);
+        }
+
+        if (navIndex === navText.length + 5) {
+            isDeleting = true;
+        }
+
+        if (isDeleting && navIndex === 0) {
+            isDeleting = false;
+        }
+
+        setTimeout(navTypeLoop, isDeleting ? 50 : navSpeed);
+    }
+
+    navTypeLoop();
     </script>
 
     @stack('scripts')

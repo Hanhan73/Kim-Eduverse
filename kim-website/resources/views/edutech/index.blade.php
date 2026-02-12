@@ -8,7 +8,6 @@
     <div class="container">
         <div class="hero-grid">
             <div class="hero-content">
-                <span class="hero-badge">Platform Pembelajaran Digital</span>
                 <h1 class="hero-title">
                     Tingkatkan Skill Anda dengan
                     <span class="gradient-text">KIM Edutech</span>
@@ -44,7 +43,7 @@
             </div>
 
             <div class="hero-image">
-                <img src="https://via.placeholder.com/600x500/667eea/ffffff?text=Learning+Platform" alt="KIM Edutech">
+                <img src="{{ asset('images/edutech-logo.png') }}" alt="KIM Edutech">
             </div>
         </div>
     </div>
@@ -340,7 +339,13 @@
 <style>
 /* Edutech Hero */
 .edutech-hero {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(rgba(102, 126, 234, 0.85),
+        rgba(118, 75, 162, 0.85)),
+    url('{{ asset("images/bg-office2.jpg") }}');
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     color: white;
     padding: 100px 0 80px;
     position: relative;
@@ -784,7 +789,13 @@
 /* CTA Edutech */
 .cta-edutech {
     padding: 100px 0;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(rgba(102, 126, 234, 0.85),
+        rgba(118, 75, 162, 0.85)),
+    url('{{ asset("images/bg-office2.jpg") }}');
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     text-align: center;
     color: white;
 }

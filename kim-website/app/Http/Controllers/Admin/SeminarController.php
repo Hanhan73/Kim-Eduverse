@@ -28,9 +28,6 @@ class SeminarController extends Controller
 
     public function create()
     {
-        // HANYA ambil quiz yang:
-        // 1. Tidak punya course_id DAN tidak punya module_id (quiz standalone untuk seminar)
-        // 2. ATAU quiz yang quizable_type = 'App\Models\Seminar'
         $quizzes = Quiz::where(function ($query) {
             $query->whereNull('course_id')
                 ->whereNull('module_id');
@@ -52,6 +49,7 @@ class SeminarController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
+            'type' => 'required|string|in:pendidikan,manajemen,kearsipan',
             'description' => 'required|string',
             'thumbnail' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'collaborator_id' => 'required|exists:users,id',
@@ -64,6 +62,7 @@ class SeminarController extends Controller
             'certificate_template' => 'nullable|string',
             'price' => 'required|numeric|min:0',
             'duration_minutes' => 'required|integer|min:1',
+            'total_jp' => 'nullable|integer|min:1', // TAMBAH INI
             'is_active' => 'boolean',
             'is_featured' => 'boolean',
             'order' => 'nullable|integer',
@@ -72,17 +71,14 @@ class SeminarController extends Controller
         try {
             DB::beginTransaction();
 
-            // Handle thumbnail
             if ($request->hasFile('thumbnail')) {
                 $validated['thumbnail'] = $request->file('thumbnail')
                     ->store('seminars/thumbnails', 'public');
             }
 
-            // Generate slug
             $validated['slug'] = Str::slug($validated['title']);
             $validated['created_by'] = auth()->id();
 
-            // Create DigitalProduct
             $category = DigitalProductCategory::firstOrCreate(
                 ['slug' => 'seminar'],
                 ['name' => 'Seminar', 'is_active' => true]
@@ -93,17 +89,17 @@ class SeminarController extends Controller
                 'collaborator_id' => $validated['collaborator_id'],
                 'name' => $validated['title'],
                 'slug' => $validated['slug'],
+                'seminar_id' => $validated['seminar_id'] ?? null, 
                 'description' => $validated['description'],
                 'price' => $validated['price'],
                 'thumbnail' => $validated['thumbnail'] ?? null,
-                'type' => 'seminar',
+                'type' => 'on-demand-seminar',
                 'duration_minutes' => $validated['duration_minutes'],
                 'is_active' => $validated['is_active'] ?? true,
                 'is_featured' => $validated['is_featured'] ?? false,
                 'order' => $validated['order'] ?? 0,
             ]);
 
-            // Create Seminar with product_id
             $validated['product_id'] = $product->id;
             $seminar = Seminar::create($validated);
 
@@ -144,9 +140,6 @@ class SeminarController extends Controller
 
     public function edit(Seminar $seminar)
     {
-        // HANYA ambil quiz yang:
-        // 1. Tidak punya course_id DAN tidak punya module_id (quiz standalone untuk seminar)
-        // 2. ATAU quiz yang quizable_type = 'App\Models\Seminar'
         $quizzes = Quiz::where(function ($query) {
             $query->whereNull('course_id')
                 ->whereNull('module_id');
@@ -168,6 +161,7 @@ class SeminarController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
+            'type' => 'required|string|in:pendidikan,manajemen,kearsipan',
             'description' => 'required|string',
             'thumbnail' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'collaborator_id' => 'required|exists:users,id',
@@ -180,6 +174,7 @@ class SeminarController extends Controller
             'certificate_template' => 'nullable|string',
             'price' => 'required|numeric|min:0',
             'duration_minutes' => 'required|integer|min:1',
+            'total_jp' => 'nullable|integer|min:1', // TAMBAH INI
             'is_active' => 'boolean',
             'is_featured' => 'boolean',
             'order' => 'nullable|integer',
@@ -188,7 +183,6 @@ class SeminarController extends Controller
         try {
             DB::beginTransaction();
 
-            // Handle thumbnail
             if ($request->hasFile('thumbnail')) {
                 if ($seminar->thumbnail) {
                     Storage::disk('public')->delete($seminar->thumbnail);
@@ -197,15 +191,12 @@ class SeminarController extends Controller
                     ->store('seminars/thumbnails', 'public');
             }
 
-            // Update slug if title changed
             if ($validated['title'] !== $seminar->title) {
                 $validated['slug'] = Str::slug($validated['title']);
             }
 
-            // Update seminar
             $seminar->update($validated);
 
-            // Sync to DigitalProduct
             if ($seminar->digitalProduct) {
                 $seminar->digitalProduct->update([
                     'collaborator_id' => $validated['collaborator_id'],
@@ -244,7 +235,6 @@ class SeminarController extends Controller
             Storage::disk('public')->delete($seminar->thumbnail);
         }
 
-        // Delete digital product first
         if ($seminar->digitalProduct) {
             $seminar->digitalProduct->delete();
         }
@@ -302,7 +292,6 @@ class SeminarController extends Controller
         try {
             DB::beginTransaction();
 
-            // Buat quiz khusus untuk seminar (tanpa course_id dan module_id)
             $quiz = Quiz::create([
                 'title' => $validated['title'],
                 'slug' => Str::slug($validated['title']),
@@ -312,8 +301,7 @@ class SeminarController extends Controller
                 'max_attempts' => $validated['max_attempts'],
                 'is_active' => true,
                 'type' => $validated['quiz_type'] === 'pre' ? 'pre_test' : 'post_test',
-                'quizable_type' => 'App\Models\Seminar', // Tandai sebagai quiz seminar
-                // course_id dan module_id akan NULL (default)
+                'quizable_type' => 'App\Models\Seminar',
             ]);
 
             DB::commit();
@@ -331,19 +319,18 @@ class SeminarController extends Controller
             ], 500);
         }
     }
+
+    // MATERIAL FUNCTIONS - HAPUS KOLOM JP
     public function storeMaterial(Request $request, Seminar $seminar)
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'jp' => 'required|integer|min:1|max:100',
         ]);
 
-        // Auto set order
         $maxOrder = $seminar->materials()->max('order') ?? 0;
 
         $material = $seminar->materials()->create([
             'title' => $validated['title'],
-            'jp' => $validated['jp'],
             'order' => $maxOrder + 1,
         ]);
 
@@ -354,14 +341,10 @@ class SeminarController extends Controller
         ]);
     }
 
-    /**
-     * Update material
-     */
     public function updateMaterial(Request $request, Seminar $seminar, SeminarMaterial $material)
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'jp' => 'required|integer|min:1|max:100',
         ]);
 
         $material->update($validated);
@@ -373,9 +356,6 @@ class SeminarController extends Controller
         ]);
     }
 
-    /**
-     * Delete material
-     */
     public function destroyMaterial(Seminar $seminar, SeminarMaterial $material)
     {
         $material->delete();
@@ -386,9 +366,6 @@ class SeminarController extends Controller
         ]);
     }
 
-    /**
-     * Reorder materials
-     */
     public function reorderMaterials(Request $request, Seminar $seminar)
     {
         $validated = $request->validate([

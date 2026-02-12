@@ -40,7 +40,7 @@
                 </a>
             </div>
         </div>
-        <div class="hero-image animate-float">
+        <div class="hero-image">
             <div class="hero-image-wrapper">
                 <img src="{{ asset('images/logo.png') }}" alt="KIM EDUVERSE">
             </div>
@@ -66,7 +66,7 @@
 
         <div class="products-grid">
             <!-- KIM Consultant -->
-            <div class="product-card consultant-card">
+            <div class="product-card consultant-card grid a">
                 <div class="product-header">
                     <div class="product-number">01</div>
                     <div class="product-icon">
@@ -90,7 +90,7 @@
             </div>
 
             <!-- KIM Developer -->
-            <div class="product-card developer-card">
+            <div class="product-card developer-card grid b">
                 <div class="product-header">
                     <div class="product-number">02</div>
                     <div class="product-icon">
@@ -114,7 +114,7 @@
             </div>
 
             <!-- KIM Edutech -->
-            <div class="product-card edutech-card">
+            <div class="product-card edutech-card grid c">
                 <div class="product-header">
                     <div class="product-number">03</div>
                     <div class="product-icon">
@@ -134,6 +134,29 @@
                 </ul>
                 <a href="{{ route('edutech.index') }}" class="btn btn-product">
                     Pelajari Lebih Lanjut <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            <div class="product-card digital-card grid d">
+                <div class="product-header">
+                    <div class="product-number">04</div>
+                    <div class="product-icon">
+                        <i class="fas fa-store"></i>
+                    </div>
+                </div>
+                <h3 class="product-title">KIM Digital</h3>
+                <p class="product-description">
+                    Marketplace resmi produk digital KIM mulai dari e-book,
+                    seminar on-demand, hingga CEKMA (Cek Mandiri)
+                    untuk membantu memahami kondisi diri secara objektif berbasis data.
+                </p>
+                <ul class="product-features">
+                    <li><i class="fas fa-check"></i> E-Book & Modul Digital</li>
+                    <li><i class="fas fa-check"></i> Seminar On-Demand</li>
+                    <li><i class="fas fa-check"></i> CEKMA (Cek Mandiri)</li>
+                    <li><i class="fas fa-check"></i> Pembayaran Aman & Mudah</li>
+                </ul>
+                <a href="{{ route('digital.index') }}" class="btn btn-product">
+                    Mulai Jelajahi Produk <i class="fas fa-arrow-right"></i>
                 </a>
             </div>
         </div>
@@ -449,9 +472,14 @@
     min-height: 100vh;
     display: flex;
     align-items: center;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    overflow: hidden;
+
+    background: linear-gradient(rgba(102, 126, 234, 0.85),
+        rgba(118, 75, 162, 0.85)),
+    url('{{ asset("images/bg-office.jpg") }}');
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 .hero-overlay {
@@ -586,21 +614,6 @@
     display: block;
 }
 
-.animate-float {
-    animation: float 6s ease-in-out infinite;
-}
-
-@keyframes float {
-
-    0%,
-    100% {
-        transform: translateY(0);
-    }
-
-    50% {
-        transform: translateY(-20px);
-    }
-}
 
 .scroll-indicator {
     position: absolute;
@@ -624,6 +637,7 @@
         transform: translate(-50%, 10px);
     }
 }
+
 
 /* Products Section */
 .products-section {
@@ -663,8 +677,27 @@
 
 .products-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-areas:
+        "a b"
+        "c d";
     gap: 40px;
+}
+
+.grid-a {
+    grid-area: a;
+}
+
+.grid-b {
+    grid-area: b;
+}
+
+.grid-c {
+    grid-area: c;
+}
+
+.grid-d {
+    grid-area: d;
 }
 
 .product-card {
@@ -675,6 +708,18 @@
     transition: all 0.4s ease;
     position: relative;
     overflow: hidden;
+}
+
+.consultant-card {
+    border: solid #667eea;
+}
+
+.developer-card {
+    border: solid #48bb78;
+}
+
+.edutech-card {
+    border: solid #c51313ff;
 }
 
 .product-card::before {
@@ -1066,7 +1111,13 @@
 /* CTA Section */
 .cta-section {
     padding: 100px 0;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(rgba(102, 126, 234, 0.85),
+        rgba(118, 75, 162, 0.85)),
+    url('{{ asset("images/bg-office.jpg") }}');
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     text-align: center;
     color: white;
 }
@@ -1119,31 +1170,6 @@
     transform: translateY(-3px);
 }
 
-/* Animations */
-.animate-fade-in {
-    opacity: 0;
-    transform: translateY(30px);
-    animation: fadeInUp 1s forwards;
-}
-
-.animate-fade-in-delay {
-    opacity: 0;
-    transform: translateY(30px);
-    animation: fadeInUp 1s forwards 0.3s;
-}
-
-.animate-fade-in-delay-2 {
-    opacity: 0;
-    transform: translateY(30px);
-    animation: fadeInUp 1s forwards 0.6s;
-}
-
-@keyframes fadeInUp {
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
 
 /* Responsive */
 @media (max-width: 1200px) {
@@ -1194,10 +1220,21 @@
     }
 }
 
-p,
-span,
-li,
-small {
+
+@media (max-width: 992px) {
+    .products-grid {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "a"
+            "b"
+            "c"
+            "d";
+    }
+}
+
+.hero-section span,
+.hero-section p,
+.hero-section li {
     opacity: 1 !important;
 }
 
@@ -1354,6 +1391,15 @@ small {
 .btn i {
     opacity: 1 !important;
     font-weight: 600;
+}
+
+.digital-card {
+    background: linear-gradient(180deg, #ffffff, #f0f4ff);
+    border: solid #ffd900ff;
+}
+
+.digital-card .product-icon {
+    background: linear-gradient(135deg, #ffd900ff, #ffbb00ff);
 }
 </style>
 @endpush

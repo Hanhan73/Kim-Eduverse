@@ -7,25 +7,27 @@
 /* Animated Background */
 .animated-bg {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    inset: 0;
     z-index: -1;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-    background-size: 200% 200%;
-    animation: gradientShift 15s ease infinite;
+
+    background: linear-gradient(rgba(102, 126, 234, 0.85),
+        rgba(118, 75, 162, 0.85)),
+    url('{{ asset("images/bg-office1.jpg") }}');
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    animation: zoomBg 25s ease-in-out infinite alternate;
 }
 
-@keyframes gradientShift {
-
-    0%,
-    100% {
-        background-position: 0% 50%;
+@keyframes zoomBg {
+    from {
+        transform: scale(1);
     }
 
-    50% {
-        background-position: 100% 50%;
+    to {
+        transform: scale(1.08);
     }
 }
 
@@ -821,6 +823,17 @@
                 </div>
                 <div class="executive-card">
                     <div class="exec-photo">
+                        <img src="{{ asset('images/team/anjar.png') }}" alt="Anjar Suprayogi"
+                            onerror="this.src='https://ui-avatars.com/api/?name=Anjar+Suprayogi&size=400&background=805ad5&color=fff&bold=true&font-size=0.3'">
+                        <div class="exec-badge chmo">CHMO</div>
+                    </div>
+                    <div class="exec-info">
+                        <h4 class="head-name">Anjar Suprayogi, M.T.</h4>
+                        <p class="exec-title">Chief Human Capital Officer</p>
+                    </div>
+                </div>
+                <div class="executive-card">
+                    <div class="exec-photo">
                         <img src="{{ asset('images/team/farhan.png') }}" alt="Farhan Muzhaffar"
                             onerror="this.src='https://ui-avatars.com/api/?name=Farhan+Muzhaffar&size=600&background=9f7aea&color=fff&bold=true&font-size=0.3'">
                         <div class="exec-badge cto">CTO</div>
@@ -831,58 +844,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Department Heads - REDESIGN -->
-            <div class="department-heads-grid">
-                <div class="dept-head-card">
-                    <div class="dept-header">
-                        <div class="dept-icon" style="background: linear-gradient(135deg, #805ad5, #6b46c1);">
-                            <i class="fas fa-laptop-code"></i>
-                        </div>
-                        <h5 class="dept-name">Information & Technology</h5>
-                    </div>
-                    <div class="dept-photo-section">
-                        <img src="{{ asset('images/team/anjar.png') }}" alt="Anjar Suprayogi"
-                            onerror="this.src='https://ui-avatars.com/api/?name=Anjar+Suprayogi&size=400&background=805ad5&color=fff&bold=true&font-size=0.3'">
-                    </div>
-                    <div class="dept-info">
-                        <p class="head-name">Anjar Suprayogi, M.T.</p>
-                    </div>
-                </div>
-
-                <div class="dept-head-card">
-                    <div class="dept-header">
-                        <div class="dept-icon" style="background: linear-gradient(135deg, #e53e3e, #c53030);">
-                            <i class="fas fa-calculator"></i>
-                        </div>
-                        <h5 class="dept-name">Financial & Accounting</h5>
-                    </div>
-                    <div class="dept-photo-section">
-                        <img src="{{ asset('images/team/yosan.png') }}" alt="Yosan Krisna"
-                            onerror="this.src='https://ui-avatars.com/api/?name=Yosan+Krisna&size=400&background=e53e3e&color=fff&bold=true&font-size=0.3'">
-                    </div>
-                    <div class="dept-info">
-                        <p class="head-name">Yosan Krisna, S.Ds.</p>
-                    </div>
-                </div>
-
-                <div class="dept-head-card">
-                    <div class="dept-header">
-                        <div class="dept-icon" style="background: linear-gradient(135deg, #38b2ac, #319795);">
-                            <i class="fas fa-users"></i>
-                        </div>
-                        <h5 class="dept-name">Human Resources Dept</h5>
-                    </div>
-                    <div class="dept-photo-section">
-                        <img src="{{ asset('images/team/neneng.png') }}" alt="Neneng Isti"
-                            onerror="this.src='https://ui-avatars.com/api/?name=Neneng+Isti&size=400&background=38b2ac&color=fff&bold=true&font-size=0.3'">
-                    </div>
-                    <div class="dept-info">
-                        <p class="head-name">Neneng Isti Heliani, ST.</p>
-                    </div>
-                </div>
-            </div>
-
             <!-- Junior Staff - REDESIGN -->
             <div class="junior-staff-section">
                 <h4 class="staff-section-title">
@@ -990,39 +951,6 @@
 
                 <div class="expert-card">
                     <div class="expert-photo">
-                        <img src="{{ asset('images/team/dr-toni.png') }}" alt="Dr. Toni"
-                            onerror="this.src='https://ui-avatars.com/api/?name=Dr+Toni+Heryana&size=500&background=48bb78&color=fff&bold=true&font-size=0.3'">
-                    </div>
-                    <div class="expert-content">
-                        <h4>Dr. Toni Heryana. MM</h4>
-                        <p class="expert-expertise">Keuangan, Akuntansi, Pajak</p>
-                    </div>
-                </div>
-
-                <div class="expert-card">
-                    <div class="expert-photo">
-                        <img src="{{ asset('images/team/dr-baban.png') }}" alt="Dr. Baban"
-                            onerror="this.src='https://ui-avatars.com/api/?name=Dr+Baban+Sobandi&size=500&background=3182ce&color=fff&bold=true&font-size=0.3'">
-                    </div>
-                    <div class="expert-content">
-                        <h4>Dr. Baban Sobandi MSi</h4>
-                        <p class="expert-expertise">Keuangan, Akuntansi, Pajak</p>
-                    </div>
-                </div>
-
-                <div class="expert-card">
-                    <div class="expert-photo">
-                        <img src="{{ asset('images/team/dr-joni.png') }}" alt="Dr. Joni"
-                            onerror="this.src='https://ui-avatars.com/api/?name=Dr+Joni+Dawud&size=500&background=d69e2e&color=fff&bold=true&font-size=0.3'">
-                    </div>
-                    <div class="expert-content">
-                        <h4>Dr. Joni Dawud DEA</h4>
-                        <p class="expert-expertise">Keuangan, Akuntansi, Pajak</p>
-                    </div>
-                </div>
-
-                <div class="expert-card">
-                    <div class="expert-photo">
                         <img src="{{ asset('images/team/rasto.png') }}" alt="Dr. Rasto"
                             onerror="this.src='https://ui-avatars.com/api/?name=Dr+Rasto&size=600&background=805ad5&color=fff&bold=true&font-size=0.3'">
                     </div>
@@ -1050,28 +978,6 @@
                     </div>
                     <div class="expert-content">
                         <h4>Rakhmat Supriatna, S.E., M.Si.</h4>
-                        <p class="expert-expertise">Pajak daerah & kendaraan bermotor</p>
-                    </div>
-                </div>
-
-                <div class="expert-card">
-                    <div class="expert-photo">
-                        <img src="{{ asset('images/team/bambang.png') }}" alt="Bambang Yanudi"
-                            onerror="this.src='https://ui-avatars.com/api/?name=Bambang+Yanudi&size=500&background=dd6b20&color=fff&bold=true&font-size=0.3'">
-                    </div>
-                    <div class="expert-content">
-                        <h4>Bambang Yanudi</h4>
-                        <p class="expert-expertise">Pajak daerah & kendaraan bermotor</p>
-                    </div>
-                </div>
-
-                <div class="expert-card">
-                    <div class="expert-photo">
-                        <img src="{{ asset('images/team/hadiat.png') }}" alt="Hadiat Supriatna"
-                            onerror="this.src='https://ui-avatars.com/api/?name=Hadiat+Supriatna&size=500&background=667eea&color=fff&bold=true&font-size=0.3'">
-                    </div>
-                    <div class="expert-content">
-                        <h4>Hadiat Supriatna</h4>
                         <p class="expert-expertise">Pajak daerah & kendaraan bermotor</p>
                     </div>
                 </div>

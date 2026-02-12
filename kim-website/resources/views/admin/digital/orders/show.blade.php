@@ -45,9 +45,9 @@
             </div>
             <div class="info-row">
                 <span class="label">Order Status:</span>
-                @if($order->order_status === 'completed')
+                @if($order->status === 'completed')
                 <span class="badge badge-success">Completed</span>
-                @elseif($order->order_status === 'pending')
+                @elseif($order->status === 'pending')
                 <span class="badge badge-warning">Pending</span>
                 @else
                 <span class="badge badge-danger">Cancelled</span>
@@ -126,17 +126,22 @@
                 <div class="form-group">
                     <label>Payment Status</label>
                     <select name="payment_status">
-                        <option value="pending" {{ $order->payment_status === 'pending' ? 'selected' : '' }}>Pending</option>
+                        <option value="pending" {{ $order->payment_status === 'pending' ? 'selected' : '' }}>Pending
+                        </option>
                         <option value="paid" {{ $order->payment_status === 'paid' ? 'selected' : '' }}>Paid</option>
-                        <option value="failed" {{ $order->payment_status === 'failed' ? 'selected' : '' }}>Failed</option>
+                        <option value="failed" {{ $order->payment_status === 'failed' ? 'selected' : '' }}>Failed
+                        </option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label>Order Status</label>
                     <select name="order_status">
-                        <option value="pending" {{ $order->order_status === 'pending' ? 'selected' : '' }}>Pending</option>
-                        <option value="completed" {{ $order->order_status === 'completed' ? 'selected' : '' }}>Completed</option>
-                        <option value="cancelled" {{ $order->order_status === 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+                        <option value="pending" {{ $order->order_status === 'pending' ? 'selected' : '' }}>Pending
+                        </option>
+                        <option value="completed" {{ $order->order_status === 'completed' ? 'selected' : '' }}>Completed
+                        </option>
+                        <option value="cancelled" {{ $order->order_status === 'cancelled' ? 'selected' : '' }}>Cancelled
+                        </option>
                     </select>
                 </div>
             </div>
@@ -149,179 +154,180 @@
 </div>
 
 <style>
-    .admin-container {
-        max-width: 1400px;
-        margin: 0 auto;
-        padding: 30px;
-    }
+.admin-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 30px;
+}
 
-    .page-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 30px;
-    }
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
 
-    .page-header h1 {
-        font-size: 2rem;
-        color: #2d3748;
-        margin-bottom: 5px;
-    }
+.page-header h1 {
+    font-size: 2rem;
+    color: #2d3748;
+    margin-bottom: 5px;
+}
 
-    .header-actions {
-        display: flex;
-        gap: 10px;
-    }
+.header-actions {
+    display: flex;
+    gap: 10px;
+}
 
-    .btn-primary, .btn-secondary {
-        padding: 12px 24px;
-        border-radius: 10px;
-        text-decoration: none;
-        font-weight: 600;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        border: none;
-        cursor: pointer;
-    }
+.btn-primary,
+.btn-secondary {
+    padding: 12px 24px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: none;
+    cursor: pointer;
+}
 
-    .btn-primary {
-        background: linear-gradient(135deg, #667eea, #764ba2);
-        color: white;
-    }
+.btn-primary {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+}
 
-    .btn-secondary {
-        background: white;
-        color: #667eea;
-        border: 2px solid #667eea;
-    }
+.btn-secondary {
+    background: white;
+    color: #667eea;
+    border: 2px solid #667eea;
+}
 
-    .order-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 20px;
-        margin-bottom: 20px;
-    }
+.order-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-bottom: 20px;
+}
 
-    .info-card {
-        background: white;
-        border-radius: 12px;
-        padding: 25px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
+.info-card {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
 
-    .info-card h3 {
-        font-size: 1.2rem;
-        color: #2d3748;
-        margin-bottom: 20px;
-        padding-bottom: 10px;
-        border-bottom: 2px solid #e2e8f0;
-    }
+.info-card h3 {
+    font-size: 1.2rem;
+    color: #2d3748;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e2e8f0;
+}
 
-    .info-row {
-        display: flex;
-        justify-content: space-between;
-        padding: 12px 0;
-        border-bottom: 1px solid #f7fafc;
-    }
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #f7fafc;
+}
 
-    .info-row .label {
-        color: #718096;
-        font-weight: 500;
-    }
+.info-row .label {
+    color: #718096;
+    font-weight: 500;
+}
 
-    .badge {
-        padding: 4px 12px;
-        border-radius: 12px;
-        font-size: 0.85rem;
-        font-weight: 600;
-    }
+.badge {
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
 
-    .badge-success {
-        background: #c6f6d5;
-        color: #22543d;
-    }
+.badge-success {
+    background: #c6f6d5;
+    color: #22543d;
+}
 
-    .badge-warning {
-        background: #feebc8;
-        color: #7c2d12;
-    }
+.badge-warning {
+    background: #feebc8;
+    color: #7c2d12;
+}
 
-    .badge-danger {
-        background: #fed7d7;
-        color: #742a2a;
-    }
+.badge-danger {
+    background: #fed7d7;
+    color: #742a2a;
+}
 
-    .badge-info {
-        background: #bee3f8;
-        color: #2c5282;
-    }
+.badge-info {
+    background: #bee3f8;
+    color: #2c5282;
+}
 
-    .table-card {
-        background: white;
-        border-radius: 12px;
-        padding: 25px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        margin-bottom: 20px;
-    }
+.table-card {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
 
-    .table-card h3 {
-        margin-bottom: 20px;
-        color: #2d3748;
-    }
+.table-card h3 {
+    margin-bottom: 20px;
+    color: #2d3748;
+}
 
-    .data-table {
-        width: 100%;
-        border-collapse: collapse;
-    }
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
 
-    .data-table th,
-    .data-table td {
-        padding: 15px;
-        text-align: left;
-        border-bottom: 1px solid #e2e8f0;
-    }
+.data-table th,
+.data-table td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+}
 
-    .data-table th {
-        background: #f7fafc;
-        font-weight: 600;
-        color: #4a5568;
-        font-size: 0.9rem;
-    }
+.data-table th {
+    background: #f7fafc;
+    font-weight: 600;
+    color: #4a5568;
+    font-size: 0.9rem;
+}
 
-    .data-table tfoot td {
-        padding-top: 15px;
-        border-top: 2px solid #e2e8f0;
-    }
+.data-table tfoot td {
+    padding-top: 15px;
+    border-top: 2px solid #e2e8f0;
+}
 
-    .total-row td {
-        font-size: 1.1rem;
-        color: #667eea;
-    }
+.total-row td {
+    font-size: 1.1rem;
+    color: #667eea;
+}
 
-    .text-right {
-        text-align: right;
-    }
+.text-right {
+    text-align: right;
+}
 
-    .form-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 20px;
-        margin-bottom: 20px;
-    }
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+}
 
-    .form-group label {
-        display: block;
-        font-weight: 600;
-        margin-bottom: 8px;
-        color: #2d3748;
-    }
+.form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #2d3748;
+}
 
-    .form-group select {
-        width: 100%;
-        padding: 10px 15px;
-        border: 2px solid #e2e8f0;
-        border-radius: 8px;
-    }
+.form-group select {
+    width: 100%;
+    padding: 10px 15px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+}
 </style>
 @endsection

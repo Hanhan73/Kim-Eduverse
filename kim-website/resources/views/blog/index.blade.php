@@ -26,13 +26,10 @@
                     <form action="{{ route('blog.index') }}" method="GET" class="search-form">
                         <div class="search-input-wrapper">
                             <i class="fas fa-search"></i>
-                            <input type="text" 
-                                   name="search" 
-                                   class="search-input" 
-                                   placeholder="Cari artikel..."
-                                   value="{{ request('search') }}">
+                            <input type="text" name="search" class="search-input" placeholder="Cari artikel..."
+                                value="{{ request('search') }}">
                         </div>
-                        
+
                         <select name="category" class="category-select" onchange="this.form.submit()">
                             <option value="">Semua Kategori</option>
                             @foreach($categories as $cat)
@@ -60,11 +57,11 @@
                                 @endif
                                 <span class="article-category">{{ $article->category }}</span>
                             </div>
-                            
+
                             <div class="article-content">
                                 <h2 class="article-title">{{ $article->title }}</h2>
                                 <p class="article-excerpt">{{ $article->excerpt }}</p>
-                                
+
                                 <div class="article-meta">
                                     <span class="meta-item">
                                         <i class="fas fa-user"></i> {{ $article->author }}
@@ -123,13 +120,14 @@
                         <i class="fas fa-folder"></i> Kategori
                     </h3>
                     <div class="categories-list">
-                        <a href="{{ route('blog.index') }}" class="category-item {{ !request('category') ? 'active' : '' }}">
+                        <a href="{{ route('blog.index') }}"
+                            class="category-item {{ !request('category') ? 'active' : '' }}">
                             <span>Semua</span>
                             <span class="category-count">{{ $totalArticles }}</span>
                         </a>
                         @foreach($categories as $cat)
-                        <a href="{{ route('blog.index', ['category' => $cat]) }}" 
-                        class="category-item {{ request('category') == $cat ? 'active' : '' }}">
+                        <a href="{{ route('blog.index', ['category' => $cat]) }}"
+                            class="category-item {{ request('category') == $cat ? 'active' : '' }}">
                             <span>{{ $cat }}</span>
                             <span class="category-count">{{ $categoryCounts[$cat] ?? 0 }}</span>
                         </a>
@@ -154,7 +152,13 @@
 @push('styles')
 <style>
 .blog-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(rgba(102, 126, 234, 0.85),
+        rgba(118, 75, 162, 0.85)),
+    url('{{ asset("images/bg-office3.jpg") }}');
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     color: white;
     padding: 100px 0 60px;
     text-align: center;
@@ -187,7 +191,7 @@
     padding: 30px;
     border-radius: 15px;
     margin-bottom: 30px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
 .search-form {
@@ -239,13 +243,13 @@
     background: white;
     border-radius: 15px;
     overflow: hidden;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
     transition: all 0.3s;
 }
 
 .article-card:hover {
     transform: translateY(-8px);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 }
 
 .article-link {
@@ -331,7 +335,7 @@
     padding: 25px;
     border-radius: 15px;
     margin-bottom: 25px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
 .widget-title {
@@ -453,11 +457,11 @@
     .blog-layout {
         grid-template-columns: 1fr;
     }
-    
+
     .search-form {
         grid-template-columns: 1fr;
     }
-    
+
     .articles-grid {
         grid-template-columns: 1fr;
     }

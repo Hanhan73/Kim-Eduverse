@@ -8,6 +8,8 @@
     max-width: 1200px;
     margin: 50px auto;
     padding: 0 20px;
+    background: #f8f9fa;
+    border-radius: 10px;
 }
 
 .breadcrumb {
@@ -32,6 +34,7 @@
     grid-template-columns: 1fr 1fr;
     gap: 60px;
     margin-bottom: 60px;
+    background: #f8f9fa;
 }
 
 .product-visual {
@@ -282,6 +285,7 @@
 
 .related-products {
     margin-top: 80px;
+    background: #f8f9fa;
 }
 
 .related-products h2 {
@@ -411,7 +415,18 @@
             <h1>{{ $product->name }}</h1>
 
             <div class="product-meta">
-                @if($product->duration_minutes)
+                @if($product->type === 'seminar')
+                <div class="meta-item">
+                    <i class="fas fa-clock"></i>
+                    <span>{{ $product->seminar->total_jp }} JP</span>
+                </div>
+                @elseif($product->type === 'ebook')
+                <div class="meta-item">
+                    <i class="fas fa-clock"></i>
+                    <span>{{ $product->ebook_access_duration_days }} Hari</span>
+                </div>
+
+                @elseif($product->duration_minutes)
                 <div class="meta-item">
                     <i class="fas fa-clock"></i>
                     <span>{{ $product->duration_minutes }} menit</span>
@@ -519,11 +534,4 @@
     </div>
     @endif
 </div>
-
-@if(session('success'))
-<script>
-alert('{{ session('
-    success ') }}');
-</script>
-@endif
 @endsection

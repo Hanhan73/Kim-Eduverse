@@ -5,7 +5,9 @@
 @push('styles')
 <style>
 .catalog-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(rgba(102, 126, 234, 0.85),
+        rgba(118, 75, 162, 0.85)),
+    url('{{ asset("images/bg-office2.jpg") }}');
     color: white;
     padding: 60px 0 40px;
     text-align: center;
@@ -23,11 +25,13 @@
 }
 
 .catalog-container {
-    max-width: 1400px;
+    width: 80%;
     margin: 0 auto;
     padding: 50px 20px;
     position: relative;
     z-index: 1;
+    background: #f8f9fa;
+    border-radius: 20px;
 }
 
 .catalog-toolbar {
@@ -138,6 +142,7 @@
     display: grid;
     grid-template-columns: 250px 1fr;
     gap: 40px;
+
 }
 
 .sidebar {
@@ -295,6 +300,9 @@
     overflow: hidden;
     transition: all 0.3s ease;
     cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 .product-card:hover {
@@ -330,6 +338,9 @@
 
 .product-body {
     padding: 25px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 .product-category {
@@ -347,6 +358,11 @@
     color: #2d3748;
     margin-bottom: 12px;
     line-height: 1.4;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 .product-description {
@@ -354,6 +370,11 @@
     font-size: 0.9rem;
     margin-bottom: 20px;
     line-height: 1.6;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 .product-meta {
@@ -381,6 +402,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-top: auto;
 }
 
 .product-price {
@@ -410,19 +432,27 @@
 
 .btn-detail {
     background: linear-gradient(135deg, #4f6ceeff, #764ba2);
-    color: rgba(255, 255, 255, 1);
+    color: #ffffff;
     padding: 10px 20px;
-    margin: auto;
+
+    margin-top: 15px;
+    margin-left: 0;
+    margin-right: auto;
+
     border-bottom-left-radius: 30px;
     border-top-right-radius: 40px;
+
     text-decoration: none;
     font-weight: 600;
     font-size: 1rem;
+
     transition: all 0.3s ease;
     display: inline-flex;
     align-items: center;
-    width: 77%;
     gap: 8px;
+
+    width: fit-content;
+
 }
 
 .btn-detail:hover {
@@ -776,6 +806,9 @@
                 @if(request('cekma_type'))
                 <input type="hidden" name="cekma_type" value="{{ request('cekma_type') }}">
                 @endif
+                @if(request('seminar_type'))
+                <input type="hidden" name="seminar_type" value="{{ request('seminar_type') }}">
+                @endif
                 @if(request('sort'))
                 <input type="hidden" name="sort" value="{{ request('sort') }}">
                 @endif
@@ -793,6 +826,10 @@
                 @if(request('cekma_type'))
                 <input type="hidden" name="cekma_type" value="{{ request('cekma_type') }}">
                 @endif
+                @if(request('seminar_type'))
+                <input type="hidden" name="seminar_type" value="{{ request('seminar_type') }}">
+                @endif
+
                 <select name="sort" class="filter-select" onchange="document.getElementById('sortForm').submit()">
                     <option value="popular" {{ request('sort') == 'popular' ? 'selected' : '' }}>Terpopuler</option>
                     <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Terbaru</option>
@@ -806,7 +843,7 @@
     </div>
 
     <!-- Active Filters -->
-    @if(request('category') || request('search') || request('cekma_type'))
+    @if(request('category') || request('search') || request('cekma_type') || request('seminar_type'))
     <div class="active-filters">
         @if(request('category'))
         <div class="filter-tag">
@@ -828,10 +865,19 @@
         </div>
         @endif
 
+        @if(request('seminar_type'))
+        <div class="filter-tag">
+            <span>On-Demand Seminar: {{ Str::title(str_replace('_', ' ', request('seminar_type'))) }}</span>
+            <a href="{{ route('digital.catalog', request()->except('seminar_type')) }}" style="color:white;">
+                <button>×</button>
+            </a>
+        </div>
+        @endif
+
         @if(request('search'))
         <div class="filter-tag">
             <span>Pencarian: "{{ request('search') }}"</span>
-            <a href="{{ route('digital.catalog', ['category' => request('category'), 'cekma_type' => request('cekma_type'), 'sort' => request('sort')]) }}"
+            <a href="{{ route('digital.catalog', ['category' => request('category'), 'cekma_type' => request('cekma_type'), 'seminar_type' => request('seminar_type'), 'sort' => request('sort')]) }}"
                 style="color: white;">
                 <button>×</button>
             </a>
@@ -880,6 +926,32 @@
                     </div>
                     @endforeach
                 </div>
+                @elseif($category->slug === 'on-demand-seminar')
+                <div class="filter-option cekma-category">
+                    <input type="radio" name="category_filter"
+                        {{ request('category') == 'on-demand-seminar' && !request('seminar_type') ? 'checked' : '' }}
+                        onchange="window.location.href='{{ route('digital.catalog', ['category' => 'on-demand-seminar']) }}'">
+
+                    <label>Seminar On-Demand</label>
+
+                    <i class="fas fa-chevron-right cekma-toggle
+        {{ request('category') == 'on-demand-seminar' || request('seminar_type') ? 'expanded' : '' }}"></i>
+                </div>
+
+                <div class="cekma-subcategories
+    {{ request('category') == 'on-demand-seminar' || request('seminar_type') ? 'expanded' : '' }}">
+                    @foreach($seminarStats as $type => $stat)
+                    <div class="cekma-subcategory {{ request('seminar_type') === $type ? 'active' : '' }}">
+                        <input type="radio" {{ request('seminar_type') === $type ? 'checked' : '' }}
+                            onchange="window.location.href='{{ route('digital.catalog', ['category'=>'on-demand-seminar','seminar_type'=>$type]) }}'">
+
+                        <label>
+                            {{ Str::title(str_replace('_', ' ', $type)) }}
+                        </label>
+                    </div>
+                    @endforeach
+
+                </div>
                 @else
                 <!-- Regular Category -->
                 <div class="filter-option">
@@ -893,7 +965,7 @@
                 @endif
                 @endforeach
 
-                @if(request('category') || request('cekma_type'))
+                @if(request('category') || request('cekma_type') || request('seminar_type'))
                 <a href="{{ route('digital.catalog', ['search' => request('search'), 'sort' => request('sort')]) }}"
                     class="reset-filter">
                     <i class="fas fa-times-circle"></i> Reset Filter
@@ -913,6 +985,9 @@
                     @endif
                     @if(request('cekma_type'))
                     <input type="hidden" name="cekma_type" value="{{ request('cekma_type') }}">
+                    @endif
+                    @if(request('seminar_type'))
+                    <input type="hidden" name="seminar_type" value="{{ request('seminar_type') }}">
                     @endif
                     @if(request('sort'))
                     <input type="hidden" name="sort" value="{{ request('sort') }}">
@@ -976,7 +1051,12 @@
                         </p>
 
                         <div class="product-meta">
-                            @if($product->duration_minutes)
+                            @if($product->type === 'seminar')
+                            <div class="meta-item">
+                                <i class="fas fa-clock"></i>
+                                <span>{{ $product->seminar->total_jp }} JP</span>
+                            </div>
+                            @elseif($product->duration_minutes)
                             <div class="meta-item">
                                 <i class="fas fa-clock"></i>
                                 <span>{{ $product->duration_minutes }} menit</span>
@@ -1042,6 +1122,8 @@ function toggleMobileFilter() {
 
 // Set initial state di mobile
 document.addEventListener('DOMContentLoaded', function() {
+
+    // Mobile sidebar default
     const sidebar = document.getElementById('mobile-sidebar');
     const chevron = document.getElementById('filter-chevron');
 
@@ -1050,17 +1132,20 @@ document.addEventListener('DOMContentLoaded', function() {
         chevron.style.transform = 'rotate(0deg)';
     }
 
-    // Toggle CEKMA subcategories
-    const cekmaToggle = document.querySelector('.cekma-toggle');
-    const cekmaSubcategories = document.querySelector('.cekma-subcategories');
+    // SEMUA DROPDOWN (CEKMA + SEMINAR)
+    document.querySelectorAll('.cekma-category').forEach(category => {
+        const toggle = category.querySelector('.cekma-toggle');
+        const sub = category.nextElementSibling;
 
-    if (cekmaToggle && cekmaSubcategories) {
-        cekmaToggle.addEventListener('click', function(e) {
+        if (!toggle || !sub) return;
+
+        toggle.addEventListener('click', function(e) {
             e.stopPropagation();
-            this.classList.toggle('expanded');
-            cekmaSubcategories.classList.toggle('expanded');
+            toggle.classList.toggle('expanded');
+            sub.classList.toggle('expanded');
         });
-    }
+    });
+
 });
 </script>
 @endsection

@@ -8,6 +8,7 @@ use App\Models\DigitalProduct;
 use App\Models\QuestionnaireResponse;
 use App\Mail\OrderConfirmation;
 use App\Mail\DigitalProductDelivery;
+use App\Services\EbookAccessService; // TAMBAH INI
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
@@ -19,8 +20,13 @@ use Midtrans\Notification;
 
 class DigitalPaymentController extends Controller
 {
-    public function __construct()
+    protected $ebookService; // TAMBAH INI
+
+    // UPDATE CONSTRUCTOR
+    public function __construct(EbookAccessService $ebookService)
     {
+        $this->ebookService = $ebookService;
+        
         // Set Midtrans configuration
         Config::$serverKey = config('services.midtrans.server_key');
         Config::$isProduction = config('services.midtrans.is_production', false);
@@ -35,6 +41,7 @@ class DigitalPaymentController extends Controller
     {
         $request->validate([
             'customer_email' => 'required|email|max:255',
+            'customer_name' => 'required|string|max:255',
         ]);
 
         $cart = session()->get('digital_cart', []);
@@ -47,17 +54,18 @@ class DigitalPaymentController extends Controller
         try {
             // Calculate totals
             $subtotal = collect($cart)->sum('price');
-            $total = $subtotal + $tax = 0; // Tambahkan logika pajak jika perlu
+            $total = $subtotal + $tax = 0;
 
             // Create order
             $order = DigitalOrder::create([
                 'order_number' => 'ORD-' . strtoupper(uniqid()),
                 'customer_email' => $request->customer_email,
+                'customer_name' => $request->customer_name,
                 'subtotal' => $subtotal,
                 'tax' => $tax,
                 'total' => $total,
                 'payment_status' => 'pending',
-                'order_status' => 'pending',
+                'status' => 'pending',
             ]);
 
             // Create order items
@@ -68,16 +76,13 @@ class DigitalPaymentController extends Controller
                     'product_type' => $item['type'],
                     'price' => $item['price'],
                     'quantity' => 1,
-                    'subtotal' => $item['price'], // quantity * price
+                    'subtotal' => $item['price'],
                 ]);
             }
 
             DB::commit();
-
-            // Clear cart after successful order creation
             session()->forget('digital_cart');
 
-            // Redirect to payment page
             return redirect()->route('digital.payment.show', $order->order_number);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -95,13 +100,11 @@ class DigitalPaymentController extends Controller
             ->with('items')
             ->firstOrFail();
 
-        // Only show payment if order is still pending
         if ($order->payment_status !== 'pending') {
             return redirect()->route('digital.payment.success', $order->order_number);
         }
 
         try {
-            // Create Midtrans Snap transaction
             $params = [
                 'transaction_details' => [
                     'order_id' => $order->order_number,
@@ -109,6 +112,7 @@ class DigitalPaymentController extends Controller
                 ],
                 'customer_details' => [
                     'email' => $order->customer_email,
+                    'name' => $order->customer_name,
                     'phone' => $order->customer_phone ?? '',
                 ],
                 'item_details' => $order->items->map(function ($item) {
@@ -116,7 +120,7 @@ class DigitalPaymentController extends Controller
                         'id' => $item->product_id,
                         'price' => (int) $item->price,
                         'quantity' => $item->quantity,
-                        'name' => substr($item->product_name, 0, 50), // Max 50 chars
+                        'name' => substr($item->product_name, 0, 50),
                     ];
                 })->toArray(),
             ];
@@ -132,17 +136,12 @@ class DigitalPaymentController extends Controller
 
     /**
      * Display payment success page
-     * 
-     * PENTING: Karena webhook tidak bekerja di localhost, 
-     * kita cek status langsung ke Midtrans API di halaman success
      */
     public function success($orderNumber)
     {
         $order = DigitalOrder::where('order_number', $orderNumber)
             ->with(['items.product', 'responses.questionnaire'])
             ->firstOrFail();
-
-        $hasSeminar = $order->items->contains('product_type', 'seminar');
 
         // Jika belum paid, cek status ke Midtrans langsung
         if ($order->payment_status !== 'paid') {
@@ -156,14 +155,23 @@ class DigitalPaymentController extends Controller
         });
 
         $hasDownloadable = $order->items->contains(function ($item) {
-            return in_array($item->product_type, ['ebook', 'template', 'worksheet', 'document']);
+            return in_array($item->product_type, ['template', 'worksheet', 'document']);
         });
 
-        // Get downloadable products (support file_path atau file_url)
+        $hasSeminar = $order->items->contains('product_type', 'seminar');
+
+        // TAMBAH INI - Check e-book
+        $hasEbook = $order->items->contains('product_type', 'ebook');
+        
+        $ebookItems = $order->items->filter(function($item) {
+            return $item->product_type === 'ebook';
+        });
+
+        // Get downloadable products (EXCLUDE ebook karena punya sistem sendiri)
         $downloadableProducts = $order->items->filter(function ($item) {
             $hasFile = $item->product &&
                 ($item->product->file_path || $item->product->file_url);
-            $isDownloadableType = in_array($item->product_type, ['ebook', 'template', 'worksheet', 'document']);
+            $isDownloadableType = in_array($item->product_type, ['template', 'worksheet', 'document']);
             return $hasFile && $isDownloadableType;
         });
 
@@ -176,13 +184,14 @@ class DigitalPaymentController extends Controller
             'hasDownloadable',
             'downloadableProducts',
             'incompleteQuestionnaires',
-            'hasSeminar'
+            'hasSeminar',
+            'hasEbook',      // TAMBAH INI
+            'ebookItems'     // TAMBAH INI
         ));
     }
 
     /**
      * Check payment status directly from Midtrans API
-     * Solusi untuk localhost yang tidak bisa terima webhook
      */
     private function checkMidtransStatus($order)
     {
@@ -199,6 +208,12 @@ class DigitalPaymentController extends Controller
 
             if ($response->successful()) {
                 $data = $response->json();
+                $order->update([
+                    'payment_method' => $data['payment_type'] ?? null,
+                    'midtrans_order_id' => $data['order_id'] ?? $order->order_number,
+                    'midtrans_transaction_id' => $data['transaction_id'] ?? null,
+                    'midtrans_response' => $data,
+                ]);
                 $transactionStatus = $data['transaction_status'] ?? null;
                 $fraudStatus = $data['fraud_status'] ?? null;
 
@@ -208,7 +223,6 @@ class DigitalPaymentController extends Controller
                     'fraud' => $fraudStatus,
                 ]);
 
-                // Handle status
                 if ($transactionStatus == 'capture') {
                     if ($fraudStatus == 'accept') {
                         $this->processSuccessfulPayment($order);
@@ -216,11 +230,11 @@ class DigitalPaymentController extends Controller
                 } elseif ($transactionStatus == 'settlement') {
                     $this->processSuccessfulPayment($order);
                 } elseif ($transactionStatus == 'pending') {
-                    // Still pending, do nothing
+                    // Still pending
                 } elseif (in_array($transactionStatus, ['deny', 'expire', 'cancel'])) {
                     $order->update([
                         'payment_status' => 'failed',
-                        'order_status' => 'cancelled',
+                        'status' => 'cancelled',
                     ]);
                 }
             }
@@ -249,6 +263,12 @@ class DigitalPaymentController extends Controller
 
             $order = DigitalOrder::where('order_number', $orderNumber)->first();
 
+            $order->update([
+                'payment_method' => $notification->payment_type ?? null,
+                'midtrans_order_id' => $notification->order_id ?? null,
+                'midtrans_transaction_id' => $notification->transaction_id ?? null,
+                'midtrans_response' => json_decode(json_encode($notification), true),
+            ]);
             if (!$order) {
                 Log::error('Order not found: ' . $orderNumber);
                 return response()->json(['message' => 'Order not found'], 404);
@@ -256,7 +276,6 @@ class DigitalPaymentController extends Controller
 
             DB::beginTransaction();
             try {
-                // Handle different transaction statuses
                 if ($transactionStatus == 'capture') {
                     if ($fraudStatus == 'accept') {
                         $this->processSuccessfulPayment($order);
@@ -266,12 +285,12 @@ class DigitalPaymentController extends Controller
                 } elseif ($transactionStatus == 'pending') {
                     $order->update([
                         'payment_status' => 'pending',
-                        'order_status' => 'pending',
+                        'status' => 'pending',
                     ]);
                 } elseif (in_array($transactionStatus, ['deny', 'expire', 'cancel'])) {
                     $order->update([
                         'payment_status' => 'failed',
-                        'order_status' => 'cancelled',
+                        'status' => 'cancelled',
                     ]);
                 }
 
@@ -289,7 +308,7 @@ class DigitalPaymentController extends Controller
     }
 
     /**
-     * Process successful payment
+     * Process successful payment - UPDATED WITH EBOOK
      */
     private function processSuccessfulPayment($order)
     {
@@ -298,11 +317,13 @@ class DigitalPaymentController extends Controller
             return;
         }
 
+        Log::info('=== PROCESSING SUCCESSFUL PAYMENT ===', ['order' => $order->order_number]);
+
         // Update order status
         $order->update([
             'payment_status' => 'paid',
-            'order_status' => 'completed',
-            'paid_at' => now(),
+            'status' => 'completed',
+            'paid_at' => $order->paid_at ?? now(),
         ]);
 
         // Update product sold count
@@ -316,9 +337,10 @@ class DigitalPaymentController extends Controller
         $hasQuestionnaire = false;
         $hasDownloadable = false;
         $hasSeminar = false;
+        $hasEbook = false; // TAMBAH INI
 
         foreach ($order->items as $item) {
-            // Create questionnaire responses for questionnaire products
+            // Create questionnaire responses
             if ($item->product_type === 'questionnaire') {
                 if ($item->product && $item->product->questionnaire_id) {
                     $existingResponse = QuestionnaireResponse::where('order_id', $order->id)
@@ -338,11 +360,8 @@ class DigitalPaymentController extends Controller
                 $hasQuestionnaire = true;
             }
 
-            // --- PERBAIKAN DIMULAI DI SINI ---
-
-            // Create seminar enrollment for seminar products
+            // Create seminar enrollment
             if ($item->product_type === 'seminar') {
-                // 1. Ambil data DigitalProduct berdasarkan product_id dari order item
                 $digitalProduct = DigitalProduct::find($item->product_id);
 
                 Log::info('Processing seminar enrollment', [
@@ -351,18 +370,16 @@ class DigitalPaymentController extends Controller
                     'digital_product_seminar_id' => $digitalProduct ? $digitalProduct->seminar_id : 'NULL',
                 ]);
 
-                // 2. Pastikan digital product ada dan memiliki seminar_id
                 if ($digitalProduct && $digitalProduct->seminar_id) {
-                    // 3. Gunakan seminar_id dari digital_product untuk membuat enrollment
                     $seminarId = $digitalProduct->seminar_id;
 
                     $existingEnrollment = \App\Models\SeminarEnrollment::where('order_id', $order->id)
-                        ->where('seminar_id', $seminarId) // Gunakan ID seminar yang benar
+                        ->where('seminar_id', $seminarId)
                         ->first();
 
                     if (!$existingEnrollment) {
                         \App\Models\SeminarEnrollment::create([
-                            'seminar_id' => $seminarId, // Ini adalah ID dari tabel seminars
+                            'seminar_id' => $seminarId,
                             'customer_email' => $order->customer_email,
                             'order_id' => $order->id,
                         ]);
@@ -371,58 +388,57 @@ class DigitalPaymentController extends Controller
                             'order_id' => $order->id,
                             'seminar_id' => $seminarId,
                         ]);
-                    } else {
-                        Log::info('Seminar enrollment already exists', [
-                            'order_id' => $order->id,
-                            'seminar_id' => $seminarId,
-                        ]);
                     }
-                } else {
-                    Log::error('Digital product or seminar_id not found', [
-                        'product_id' => $item->product_id,
-                    ]);
                 }
                 $hasSeminar = true;
             }
 
-            // --- PERBAIKAN SELESAI DI SINI ---
+            // TAMBAH INI - Process E-book
+            if ($item->product_type === 'ebook') {
+                $hasEbook = true;
+            }
 
-            // Mark downloadable products
-            if (in_array($item->product_type, ['ebook', 'template', 'worksheet', 'document'])) {
+            // Mark downloadable products (EXCLUDE ebook)
+            if (in_array($item->product_type, ['template', 'worksheet', 'document'])) {
                 $hasDownloadable = true;
+            }
+        }
+
+        // CREATE EBOOK ACCESS - TAMBAH INI
+        if ($hasEbook) {
+            Log::info('Creating ebook access for order', ['order_id' => $order->id]);
+            try {
+                $this->ebookService->createAccessForOrder($order);
+                Log::info('Ebook access created successfully');
+            } catch (\Exception $e) {
+                Log::error('Failed to create ebook access', [
+                    'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString()
+                ]);
             }
         }
 
         // Send appropriate email
         try {
             if ($hasSeminar) {
-                // Send specific seminar access email
                 Mail::to($order->customer_email)->send(new \App\Mail\SeminarAccessMail($order));
                 Log::info('Seminar access email sent', ['order' => $order->order_number]);
             } elseif ($hasDownloadable) {
-                // Send email with download links for downloadable products
                 Mail::to($order->customer_email)->send(new DigitalProductDelivery($order));
                 Log::info('Digital product delivery email sent', ['order' => $order->order_number]);
             } else {
-                // Send standard confirmation email
                 Mail::to($order->customer_email)->send(new OrderConfirmation($order));
                 Log::info('Standard order confirmation email sent', ['order' => $order->order_number]);
             }
         } catch (\Exception $e) {
             Log::error('Failed to send order confirmation email: ' . $e->getMessage());
         }
+
+        Log::info('=== PAYMENT PROCESSING COMPLETE ===');
     }
 
     /**
      * Download digital product file
-     * 
-     * Support 2 tipe sumber file:
-     * 1. Local storage: 'digital-products/ebook.pdf'
-     * 2. External URL: 'https://drive.google.com/...'
-     * 
-     * Tips Google Drive direct download link:
-     * - Format: https://drive.google.com/uc?export=download&id=FILE_ID
-     * - Ambil FILE_ID dari share link: https://drive.google.com/file/d/FILE_ID/view
      */
     public function downloadProduct($orderNumber, $productId)
     {
@@ -430,33 +446,30 @@ class DigitalPaymentController extends Controller
             ->where('payment_status', 'paid')
             ->firstOrFail();
 
-        // Check if product is in this order
         $orderItem = $order->items()->where('product_id', $productId)->firstOrFail();
-
-        // Get product
         $product = DigitalProduct::findOrFail($productId);
 
-        // Check if product has file source (file_path atau file_url)
+        // TAMBAH INI - Block download untuk e-book
+        if ($product->type === 'ebook') {
+            abort(403, 'E-book tidak dapat didownload. Gunakan link akses yang dikirim via email.');
+        }
+
         $fileSource = $product->file_url ?? $product->file_path;
 
         if (!$fileSource) {
             abort(404, 'File tidak ditemukan');
         }
 
-        // Log download attempt
         Log::info('Product download attempt', [
             'order' => $orderNumber,
             'product_id' => $productId,
             'file_source' => $fileSource,
         ]);
 
-        // Check apakah external URL atau local path
         if ($this->isExternalUrl($fileSource)) {
-            // External URL - redirect ke Google Drive / URL eksternal
             return redirect()->away($fileSource);
         }
 
-        // Local storage
         $filePath = storage_path('app/public/' . $fileSource);
 
         if (!file_exists($filePath)) {
@@ -467,11 +480,9 @@ class DigitalPaymentController extends Controller
             abort(404, 'File tidak ditemukan di server');
         }
 
-        // Generate download filename
         $extension = pathinfo($filePath, PATHINFO_EXTENSION);
         $filename = \Str::slug($product->name) . '.' . $extension;
 
-        // Increment download count (optional)
         $product->increment('download_count');
 
         return response()->download($filePath, $filename);
@@ -486,18 +497,14 @@ class DigitalPaymentController extends Controller
     }
 
     /**
-     * Helper: Convert Google Drive share link to direct download link
-     * 
-     * Input:  https://drive.google.com/file/d/1ABC123xyz/view?usp=sharing
-     * Output: https://drive.google.com/uc?export=download&id=1ABC123xyz
+     * Convert Google Drive share link to direct download link
      */
     public static function convertGoogleDriveLink($shareLink)
     {
-        // Pattern untuk extract file ID dari berbagai format Google Drive link
         $patterns = [
-            '/\/file\/d\/([a-zA-Z0-9_-]+)/',  // /file/d/FILE_ID/
-            '/id=([a-zA-Z0-9_-]+)/',           // ?id=FILE_ID
-            '/\/d\/([a-zA-Z0-9_-]+)/',         // /d/FILE_ID/
+            '/\/file\/d\/([a-zA-Z0-9_-]+)/',
+            '/id=([a-zA-Z0-9_-]+)/',
+            '/\/d\/([a-zA-Z0-9_-]+)/',
         ];
 
         foreach ($patterns as $pattern) {
@@ -507,7 +514,6 @@ class DigitalPaymentController extends Controller
             }
         }
 
-        // Jika tidak match, return original link
         return $shareLink;
     }
 
@@ -520,7 +526,6 @@ class DigitalPaymentController extends Controller
             ->with(['items.product'])
             ->firstOrFail();
 
-        // Generate PDF using DomPDF
         $pdf = \PDF::loadView('pdf.invoice', compact('order'));
 
         return $pdf->download('invoice-' . $order->order_number . '.pdf');

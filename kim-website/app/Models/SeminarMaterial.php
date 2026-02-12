@@ -9,12 +9,10 @@ class SeminarMaterial extends Model
     protected $fillable = [
         'seminar_id',
         'title',
-        'jp',
         'order',
     ];
 
     protected $casts = [
-        'jp' => 'integer',
         'order' => 'integer',
     ];
 

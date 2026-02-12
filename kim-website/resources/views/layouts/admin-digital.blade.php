@@ -7,6 +7,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Admin Digital') - KIM</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon.png') }}">
     <style>
     * {
         margin: 0;
@@ -756,6 +757,12 @@
             <a href="{{route ('admin.digital.quizzes.index') }}"
                 class="menu-item {{ request()->routeIs('admin.digital.seminar.quizzes.*') ? 'active' : '' }}">
                 <i class="fas fa-question-circle"></i> Quiz Seminar
+            </a>
+
+            <div class="menu-section">E-book</div>
+            <a href="{{ route('admin.digital.ebook-access.index') }}"
+                class="menu-item {{ request()->routeIs('admin.digital.ebook-access.*') ? 'active' : '' }}">
+                <i class="fas fa-book"></i> E-book Access
             </a>
 
             <div class="menu-section">Transaksi</div>

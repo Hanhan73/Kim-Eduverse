@@ -22,6 +22,7 @@ class DigitalProduct extends Model
         'thumbnail',
         'type',
         'questionnaire_id',
+        'seminar_id',
         'file_path',
         'file_url',
         'duration_minutes',
@@ -29,6 +30,7 @@ class DigitalProduct extends Model
         'is_featured',
         'order',
         'sold_count',
+        'ebook_access_duration_days', // Tambahan untuk e-book
     ];
 
     protected $casts = [
@@ -91,11 +93,10 @@ class DigitalProduct extends Model
 
     /**
      * Get the seminar associated with this product (HAS ONE)
-     * Seminar has product_id pointing to this DigitalProduct
      */
     public function seminar()
     {
-        return $this->hasOne(\App\Models\Seminar::class, 'product_id');
+        return $this->belongsTo(\App\Models\Seminar::class);
     }
 
     /**
@@ -104,6 +105,14 @@ class DigitalProduct extends Model
     public function landingPage()
     {
         return $this->hasOne(\App\Models\ProductLandingPage::class, 'product_id');
+    }
+
+    /**
+     * Get ebook accesses for this product
+     */
+    public function ebookAccesses()
+    {
+        return $this->hasMany(EbookAccess::class, 'product_id');
     }
 
     /**
@@ -139,6 +148,14 @@ class DigitalProduct extends Model
     }
 
     /**
+     * Check if product is an ebook.
+     */
+    public function isEbook()
+    {
+        return $this->type === 'ebook';
+    }
+
+    /**
      * Check apakah produk punya landing page yang aktif
      */
     public function hasLandingPage()
@@ -159,8 +176,6 @@ class DigitalProduct extends Model
 
     /**
      * Get display instructor name
-     * Untuk seminar, ambil dari seminar->instructor_display_name
-     * Untuk produk biasa, ambil dari collaborator
      */
     public function getInstructorNameAttribute()
     {
@@ -169,5 +184,27 @@ class DigitalProduct extends Model
         }
         
         return $this->collaborator?->name ?? 'Unknown';
+    }
+
+    /**
+     * Get formatted ebook access duration
+     */
+    public function getFormattedAccessDurationAttribute()
+    {
+        if (!$this->isEbook()) {
+            return null;
+        }
+
+        $days = $this->ebook_access_duration_days ?? 90;
+        
+        if ($days >= 365) {
+            $years = floor($days / 365);
+            return $years . ' tahun';
+        } elseif ($days >= 30) {
+            $months = floor($days / 30);
+            return $months . ' bulan';
+        }
+        
+        return $days . ' hari';
     }
 }

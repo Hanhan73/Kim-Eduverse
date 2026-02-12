@@ -47,7 +47,17 @@ class ProductController extends Controller
         return view('admin.digital.products.create', compact('categories', 'questionnaires', 'collaborators'));
     }
 
-    public function store(Request $request)
+    public function edit($id)
+    {
+        $product = DigitalProduct::findOrFail($id);
+        $categories = DigitalProductCategory::where('is_active', true)->get();
+        $questionnaires = Questionnaire::all();
+        $collaborators = User::where('is_active', true)->where('role', 'collaborator')->get();
+
+        return view('admin.digital.products.edit', compact('product', 'categories', 'questionnaires', 'collaborators'));
+    }
+
+        public function store(Request $request)
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -63,6 +73,8 @@ class ProductController extends Controller
             'thumbnail' => 'nullable|image|max:2048',
             'is_active' => 'boolean',
             'is_featured' => 'boolean',
+            // Tambahan untuk e-book
+            'ebook_access_duration_days' => 'nullable|integer|min:1|max:3650',
         ]);
 
         $validated['is_active'] = $request->input('is_active') == '1' ? true : false;
@@ -76,20 +88,25 @@ class ProductController extends Controller
             $validated['thumbnail'] = $request->file('thumbnail')->store('products/thumbnails', 'public');
         }
 
+        // Set default ebook access duration jika type ebook
+        if ($validated['type'] === 'ebook' && empty($validated['ebook_access_duration_days'])) {
+            $validated['ebook_access_duration_days'] = 90; // default 3 bulan
+        }
+
         $product = DigitalProduct::create($validated);
         
         // JIKA TYPE SEMINAR - Buat Seminar dengan product_id
         if ($validated['type'] === 'seminar') {
             \App\Models\Seminar::create([
-                'product_id' => $product->id, // BELONGS TO product
+                'product_id' => $product->id,
                 'collaborator_id' => $validated['collaborator_id'],
                 'title' => $validated['name'],
                 'slug' => $validated['slug'],
                 'description' => $validated['description'],
                 'price' => $validated['price'],
                 'thumbnail' => $validated['thumbnail'] ?? null,
-                'instructor_name' => null, // Will use collaborator
-                'instructor_bio' => null,  // Will use collaborator
+                'instructor_name' => null,
+                'instructor_bio' => null,
                 'duration_minutes' => $request->duration_minutes ?? 60,
                 'is_active' => $validated['is_active'] ?? true,
                 'is_featured' => $validated['is_featured'] ?? false,
@@ -99,16 +116,6 @@ class ProductController extends Controller
         return redirect()
             ->route('admin.digital.products.index')
             ->with('success', 'Produk berhasil ditambahkan');
-    }
-
-    public function edit($id)
-    {
-        $product = DigitalProduct::findOrFail($id);
-        $categories = DigitalProductCategory::where('is_active', true)->get();
-        $questionnaires = Questionnaire::all();
-        $collaborators = User::where('is_active', true)->where('role', 'collaborator')->get();
-
-        return view('admin.digital.products.edit', compact('product', 'categories', 'questionnaires', 'collaborators'));
     }
 
     public function update(Request $request, $id)
@@ -129,6 +136,8 @@ class ProductController extends Controller
             'thumbnail' => 'nullable|image|max:2048',
             'is_active' => 'boolean',
             'is_featured' => 'boolean',
+            // Tambahan untuk e-book
+            'ebook_access_duration_days' => 'nullable|integer|min:1|max:3650',
         ]);
 
         $validated['is_active'] = $request->input('is_active') == '1' ? true : false;
@@ -154,7 +163,6 @@ class ProductController extends Controller
                 'thumbnail' => $validated['thumbnail'] ?? $product->seminar->thumbnail,
                 'is_active' => $validated['is_active'],
                 'is_featured' => $validated['is_featured'],
-                // Don't override instructor_name/bio - keep user's custom values
             ]);
         }
 

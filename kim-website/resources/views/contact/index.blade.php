@@ -91,13 +91,9 @@
                             <label for="nama" class="form-label">
                                 <i class="fas fa-user"></i> Nama Lengkap <span class="required">*</span>
                             </label>
-                            <input type="text" 
-                                   id="nama" 
-                                   name="nama" 
-                                   class="form-control @error('nama') is-invalid @enderror"
-                                   placeholder="Masukkan nama lengkap"
-                                   value="{{ old('nama') }}"
-                                   required>
+                            <input type="text" id="nama" name="nama"
+                                class="form-control @error('nama') is-invalid @enderror"
+                                placeholder="Masukkan nama lengkap" value="{{ old('nama') }}" required>
                             @error('nama')
                             <span class="error-text">{{ $message }}</span>
                             @enderror
@@ -107,13 +103,9 @@
                             <label for="email" class="form-label">
                                 <i class="fas fa-envelope"></i> Email <span class="required">*</span>
                             </label>
-                            <input type="email" 
-                                   id="email" 
-                                   name="email" 
-                                   class="form-control @error('email') is-invalid @enderror"
-                                   placeholder="nama@email.com"
-                                   value="{{ old('email') }}"
-                                   required>
+                            <input type="email" id="email" name="email"
+                                class="form-control @error('email') is-invalid @enderror" placeholder="nama@email.com"
+                                value="{{ old('email') }}" required>
                             @error('email')
                             <span class="error-text">{{ $message }}</span>
                             @enderror
@@ -125,28 +117,29 @@
                             <label for="telepon" class="form-label">
                                 <i class="fas fa-phone"></i> Nomor Telepon
                             </label>
-                            <input type="tel" 
-                                   id="telepon" 
-                                   name="telepon" 
-                                   class="form-control"
-                                   placeholder="08xx-xxxx-xxxx"
-                                   value="{{ old('telepon') }}">
+                            <input type="tel" id="telepon" name="telepon" class="form-control"
+                                placeholder="08xx-xxxx-xxxx" value="{{ old('telepon') }}">
                         </div>
 
                         <div class="form-group">
                             <label for="subjek" class="form-label">
                                 <i class="fas fa-tag"></i> Subjek <span class="required">*</span>
                             </label>
-                            <select id="subjek" 
-                                    name="subjek" 
-                                    class="form-control @error('subjek') is-invalid @enderror"
-                                    required>
+                            <select id="subjek" name="subjek" class="form-control @error('subjek') is-invalid @enderror"
+                                required>
                                 <option value="">Pilih Subjek</option>
-                                <option value="Konsultasi" {{ old('subjek') == 'Konsultasi' ? 'selected' : '' }}>Konsultasi Bisnis</option>
-                                <option value="Pengembangan Aplikasi" {{ old('subjek') == 'Pengembangan Aplikasi' ? 'selected' : '' }}>Pengembangan Aplikasi</option>
-                                <option value="Platform Edutech" {{ old('subjek') == 'Platform Edutech' ? 'selected' : '' }}>Platform Edutech</option>
-                                <option value="Kerjasama" {{ old('subjek') == 'Kerjasama' ? 'selected' : '' }}>Kerjasama/Partnership</option>
-                                <option value="Lainnya" {{ old('subjek') == 'Lainnya' ? 'selected' : '' }}>Lainnya</option>
+                                <option value="Konsultasi" {{ old('subjek') == 'Konsultasi' ? 'selected' : '' }}>
+                                    Konsultasi Bisnis</option>
+                                <option value="Pengembangan Aplikasi"
+                                    {{ old('subjek') == 'Pengembangan Aplikasi' ? 'selected' : '' }}>Pengembangan
+                                    Aplikasi</option>
+                                <option value="Platform Edutech"
+                                    {{ old('subjek') == 'Platform Edutech' ? 'selected' : '' }}>Platform Edutech
+                                </option>
+                                <option value="Kerjasama" {{ old('subjek') == 'Kerjasama' ? 'selected' : '' }}>
+                                    Kerjasama/Partnership</option>
+                                <option value="Lainnya" {{ old('subjek') == 'Lainnya' ? 'selected' : '' }}>Lainnya
+                                </option>
                             </select>
                             @error('subjek')
                             <span class="error-text">{{ $message }}</span>
@@ -158,12 +151,8 @@
                         <label for="pesan" class="form-label">
                             <i class="fas fa-comment-dots"></i> Pesan <span class="required">*</span>
                         </label>
-                        <textarea id="pesan" 
-                                  name="pesan" 
-                                  class="form-control @error('pesan') is-invalid @enderror"
-                                  rows="6"
-                                  placeholder="Ceritakan kebutuhan Anda..."
-                                  required>{{ old('pesan') }}</textarea>
+                        <textarea id="pesan" name="pesan" class="form-control @error('pesan') is-invalid @enderror"
+                            rows="6" placeholder="Ceritakan kebutuhan Anda..." required>{{ old('pesan') }}</textarea>
                         @error('pesan')
                         <span class="error-text">{{ $message }}</span>
                         @enderror
@@ -186,7 +175,7 @@
             <div class="info-container">
                 <div class="info-box">
                     <h3>Informasi Kontak</h3>
-                    
+
                     <div class="info-item">
                         <div class="info-icon">
                             <i class="fas fa-map-marker-alt"></i>
@@ -204,7 +193,7 @@
                         <div class="info-content">
                             <h4>Hubungi Kami</h4>
                             <p>Phone: <a href="tel:+6281234567890">+62 812-3456-7890</a><br>
-                            Email: <a href="mailto:info@kim.co.id">info@kim.co.id</a></p>
+                                Email: <a href="mailto:info@kim.co.id">info@kim.co.id</a></p>
                         </div>
                     </div>
 
@@ -270,7 +259,8 @@
                     <i class="fas fa-chevron-down"></i>
                 </button>
                 <div class="faq-answer">
-                    <p>Anda dapat menghubungi kami melalui form di atas, WhatsApp, telepon, atau email. Tim kami akan merespons dalam 24 jam untuk menjadwalkan sesi konsultasi gratis.</p>
+                    <p>Anda dapat menghubungi kami melalui form di atas, WhatsApp, telepon, atau email. Tim kami akan
+                        merespons dalam 24 jam untuk menjadwalkan sesi konsultasi gratis.</p>
                 </div>
             </div>
 
@@ -280,7 +270,9 @@
                     <i class="fas fa-chevron-down"></i>
                 </button>
                 <div class="faq-answer">
-                    <p>Waktu pengerjaan bervariasi tergantung kompleksitas proyek. Proyek kecil 1-2 bulan, menengah 3-6 bulan, dan besar 6-12 bulan. Kami akan memberikan timeline detail setelah analisis kebutuhan.</p>
+                    <p>Waktu pengerjaan bervariasi tergantung kompleksitas proyek. Proyek kecil 1-2 bulan, menengah 3-6
+                        bulan, dan besar 6-12 bulan. Kami akan memberikan timeline detail setelah analisis kebutuhan.
+                    </p>
                 </div>
             </div>
 
@@ -290,7 +282,8 @@
                     <i class="fas fa-chevron-down"></i>
                 </button>
                 <div class="faq-answer">
-                    <p>Ya, kami memberikan garansi bug fix minimal 3-6 bulan tergantung paket yang dipilih. Maintenance dan support jangka panjang juga tersedia dengan biaya terpisah.</p>
+                    <p>Ya, kami memberikan garansi bug fix minimal 3-6 bulan tergantung paket yang dipilih. Maintenance
+                        dan support jangka panjang juga tersedia dengan biaya terpisah.</p>
                 </div>
             </div>
 
@@ -300,7 +293,8 @@
                     <i class="fas fa-chevron-down"></i>
                 </button>
                 <div class="faq-answer">
-                    <p>Ya, kami melayani klien di seluruh Indonesia bahkan internasional. Banyak meeting dapat dilakukan secara online, dan kami juga bersedia melakukan kunjungan ke lokasi klien jika diperlukan.</p>
+                    <p>Ya, kami melayani klien di seluruh Indonesia bahkan internasional. Banyak meeting dapat dilakukan
+                        secara online, dan kami juga bersedia melakukan kunjungan ke lokasi klien jika diperlukan.</p>
                 </div>
             </div>
 
@@ -310,7 +304,9 @@
                     <i class="fas fa-chevron-down"></i>
                 </button>
                 <div class="faq-answer">
-                    <p>Kami menerapkan sistem pembayaran bertahap (termin) sesuai milestone proyek. Biasanya: 30% DP, 40% saat development selesai, dan 30% saat project delivery. Term dapat disesuaikan dengan kesepakatan.</p>
+                    <p>Kami menerapkan sistem pembayaran bertahap (termin) sesuai milestone proyek. Biasanya: 30% DP,
+                        40% saat development selesai, dan 30% saat project delivery. Term dapat disesuaikan dengan
+                        kesepakatan.</p>
                 </div>
             </div>
 
@@ -320,7 +316,9 @@
                     <i class="fas fa-chevron-down"></i>
                 </button>
                 <div class="faq-answer">
-                    <p>Ya, untuk paket full custom development, Anda akan mendapatkan full source code beserta dokumentasi lengkap. Untuk beberapa produk ready-made, kami menawarkan opsi lisensi penggunaan.</p>
+                    <p>Ya, untuk paket full custom development, Anda akan mendapatkan full source code beserta
+                        dokumentasi lengkap. Untuk beberapa produk ready-made, kami menawarkan opsi lisensi penggunaan.
+                    </p>
                 </div>
             </div>
         </div>
@@ -353,7 +351,13 @@
 <style>
 /* Contact Header */
 .contact-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(rgba(102, 126, 234, 0.85),
+        rgba(118, 75, 162, 0.85)),
+    url('{{ asset("images/bg-office5.jpg") }}');
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     color: white;
     padding: 120px 0 80px;
     text-align: center;
@@ -902,7 +906,13 @@ select.form-control {
 /* Contact CTA */
 .contact-cta {
     padding: 100px 0;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(rgba(102, 126, 234, 0.85),
+        rgba(118, 75, 162, 0.85)),
+    url('{{ asset("images/bg-office5.jpg") }}');
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     position: relative;
     overflow: hidden;
 }
@@ -1038,6 +1048,7 @@ select.form-control {
         opacity: 0;
         transform: translateY(30px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -1065,9 +1076,12 @@ select.form-control {
 
 /* Success animation */
 @keyframes successPulse {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: scale(1);
     }
+
     50% {
         transform: scale(1.05);
     }
@@ -1084,10 +1098,10 @@ select.form-control {
 document.addEventListener('DOMContentLoaded', function() {
     // FAQ Accordion
     const faqItems = document.querySelectorAll('.faq-item');
-    
+
     faqItems.forEach(item => {
         const question = item.querySelector('.faq-question');
-        
+
         question.addEventListener('click', () => {
             // Close other items
             faqItems.forEach(otherItem => {
@@ -1095,7 +1109,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     otherItem.classList.remove('active');
                 }
             });
-            
+
             // Toggle current item
             item.classList.toggle('active');
         });
@@ -1104,13 +1118,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // Form validation enhancement
     const form = document.querySelector('.contact-form');
     const submitBtn = document.querySelector('.btn-submit');
-    
+
     if (form) {
         form.addEventListener('submit', function(e) {
             // Disable submit button to prevent double submission
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
-            
+
             // Re-enable after 3 seconds (in case of error)
             setTimeout(() => {
                 submitBtn.disabled = false;
@@ -1120,7 +1134,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Real-time validation
         const inputs = form.querySelectorAll('.form-control');
-        
+
         inputs.forEach(input => {
             input.addEventListener('blur', function() {
                 if (this.hasAttribute('required') && !this.value.trim()) {
@@ -1162,12 +1176,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 entry.target.style.opacity = '0';
                 entry.target.style.transform = 'translateY(30px)';
                 entry.target.style.transition = 'all 0.6s ease';
-                
+
                 setTimeout(() => {
                     entry.target.style.opacity = '1';
                     entry.target.style.transform = 'translateY(0)';
                 }, 100);
-                
+
                 observer.unobserve(entry.target);
             }
         });
@@ -1185,7 +1199,7 @@ document.addEventListener('DOMContentLoaded', function() {
             alert.style.transition = 'all 0.5s ease';
             alert.style.opacity = '0';
             alert.style.transform = 'translateY(-20px)';
-            
+
             setTimeout(() => {
                 alert.remove();
             }, 500);
@@ -1200,18 +1214,18 @@ document.addEventListener('DOMContentLoaded', function() {
         counter.className = 'char-counter';
         counter.style.cssText = 'text-align: right; font-size: 0.85rem; color: #718096; margin-top: 5px;';
         textarea.parentNode.appendChild(counter);
-        
+
         function updateCounter() {
             const remaining = maxLength - textarea.value.length;
             counter.textContent = `${remaining} karakter tersisa`;
-            
+
             if (remaining < 100) {
                 counter.style.color = '#e53e3e';
             } else {
                 counter.style.color = '#718096';
             }
         }
-        
+
         textarea.addEventListener('input', updateCounter);
         updateCounter();
     }
@@ -1219,7 +1233,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Click tracking for contact methods
     document.querySelectorAll('.method-link, .social-btn, .quick-link').forEach(link => {
         link.addEventListener('click', function() {
-            console.log('Contact method clicked:', this.textContent || this.getAttribute('href'));
+            console.log('Contact method clicked:', this.textContent || this.getAttribute(
+                'href'));
         });
     });
 

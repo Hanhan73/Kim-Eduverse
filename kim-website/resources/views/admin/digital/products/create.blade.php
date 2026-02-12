@@ -61,6 +61,7 @@
                 <div class="form-card">
                     <h3>Kategori & Tipe</h3>
 
+
                     <div class="form-group">
                         <label for="collaborator_id">Collaborator / Pembuat Konten</label>
                         <select id="collaborator_id" name="collaborator_id">
@@ -92,7 +93,7 @@
 
                     <div class="form-group">
                         <label for="type">Tipe Produk <span class="required">*</span></label>
-                        <select id="type" name="type" required onchange="toggleQuestionnaireField()">
+                        <select id="type" name="type" required onchange="toggleProductTypeFields()">
                             <option value="">Pilih Tipe</option>
                             <option value="questionnaire"
                                 {{ old('type', $product->type ?? '') == 'questionnaire' ? 'selected' : '' }}>
@@ -108,8 +109,7 @@
                                 {{ old('type', $product->type ?? '') == 'template' ? 'selected' : '' }}>Template
                             </option>
                             <option value="seminar"
-                                {{ old('type', $product->type ?? '') == 'seminar' ? 'selected' : '' }}>
-                                Seminar</option>
+                                {{ old('type', $product->type ?? '') == 'seminar' ? 'selected' : '' }}>Seminar</option>
                             <option value="other" {{ old('type', $product->type ?? '') == 'other' ? 'selected' : '' }}>
                                 Other</option>
                         </select>
@@ -158,6 +158,25 @@
                             value="{{ old('file_url', $product->file_url ?? '') }}" placeholder="https://">
                         @error('file_url')<span class="error">{{ $message }}</span>@enderror
                         <small>Link Google Drive, Dropbox, dll</small>
+                    </div>
+
+                    <div class="form-group" id="ebook-duration-field" style="display: none;">
+                        <label for="ebook_access_duration_days">Durasi Akses E-Book (Hari) <span
+                                class="required">*</span></label>
+                        <input type="number" id="ebook_access_duration_days" name="ebook_access_duration_days"
+                            value="{{ old('ebook_access_duration_days', $product->ebook_access_duration_days ?? 90) }}"
+                            min="1" max="3650">
+                        @error('ebook_access_duration_days')<span class="error">{{ $message }}</span>@enderror
+                        <small>Berapa lama pelanggan dapat mengakses e-book setelah pembelian (dalam hari)</small>
+
+                        <!-- Quick preset buttons -->
+                        <div style="margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap;">
+                            <button type="button" class="btn-preset" onclick="setDuration(30)">1 Bulan</button>
+                            <button type="button" class="btn-preset" onclick="setDuration(60)">2 Bulan</button>
+                            <button type="button" class="btn-preset" onclick="setDuration(90)">3 Bulan</button>
+                            <button type="button" class="btn-preset" onclick="setDuration(180)">6 Bulan</button>
+                            <button type="button" class="btn-preset" onclick="setDuration(365)">1 Tahun</button>
+                        </div>
                     </div>
                 </div>
 
@@ -346,24 +365,70 @@
         position: static;
     }
 }
+
+.btn-preset {
+    padding: 8px 14px;
+    background: #edf2ff;
+    border: 1px solid #c3dafe;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #4c51bf;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-preset:hover {
+    background: #667eea;
+    color: #fff;
+    border-color: #667eea;
+    transform: translateY(-1px);
+}
+
+.btn-preset:active {
+    transform: scale(0.97);
+}
 </style>
 
 <script>
-function toggleQuestionnaireField() {
-    const typeSelect = document.getElementById('type');
-    const questionnaireField = document.getElementById('questionnaire-field');
+function toggleProductTypeFields() {
+    const type = document.getElementById('type').value;
 
-    if (typeSelect.value === 'questionnaire') {
+    const questionnaireField = document.getElementById('questionnaire-field');
+    const ebookDurationField = document.getElementById('ebook-duration-field');
+
+    // Hide all conditional fields
+    questionnaireField.style.display = 'none';
+    ebookDurationField.style.display = 'none';
+
+    // Show based on type
+    if (type === 'questionnaire') {
         questionnaireField.style.display = 'block';
-    } else {
-        questionnaireField.style.display = 'none';
+    }
+
+    if (type === 'ebook') {
+        ebookDurationField.style.display = 'block';
     }
 }
 
-// Run on page load
-document.addEventListener('DOMContentLoaded', toggleQuestionnaireField);
+// Set duration helper
+function setDuration(days) {
+    const input = document.getElementById('ebook_access_duration_days');
+    if (!input) return;
 
-// Auto-generate slug from name
+    input.value = days;
+    input.focus();
+}
+
+// Init on load
+document.addEventListener('DOMContentLoaded', () => {
+    toggleProductTypeFields();
+
+    document.getElementById('type')
+        .addEventListener('change', toggleProductTypeFields);
+});
+
+// Auto-generate slug
 document.getElementById('name').addEventListener('input', function() {
     const slug = this.value.toLowerCase()
         .replace(/[^a-z0-9]+/g, '-')

@@ -238,6 +238,8 @@
 .empty-cart {
     text-align: center;
     padding: 100px 20px;
+    background: #f8f9fa;
+    border-radius: 20px;
 }
 
 .empty-cart i {
@@ -385,11 +387,4 @@
     </div>
     @endif
 </div>
-
-@if(session('success'))
-<script>
-alert('{{ session('
-    success ') }}');
-</script>
-@endif
 @endsection

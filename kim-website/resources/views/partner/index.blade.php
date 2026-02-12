@@ -385,7 +385,7 @@
                     <i class="fas fa-quote-left"></i>
                 </div>
                 <p class="testimonial-text">
-                    "PT KIM sangat profesional dalam menangani proyek ERP kami. Tim mereka responsif 
+                    "PT KIM sangat profesional dalam menangani proyek ERP kami. Tim mereka responsif
                     dan solusi yang diberikan sangat sesuai dengan kebutuhan bisnis kami."
                 </p>
                 <div class="testimonial-author">
@@ -409,7 +409,7 @@
                     <i class="fas fa-quote-left"></i>
                 </div>
                 <p class="testimonial-text">
-                    "LMS yang dikembangkan oleh KIM Edutech sangat membantu kami dalam mengelola 
+                    "LMS yang dikembangkan oleh KIM Edutech sangat membantu kami dalam mengelola
                     pembelajaran online. Interface-nya user-friendly dan fiturnya lengkap."
                 </p>
                 <div class="testimonial-author">
@@ -433,7 +433,7 @@
                     <i class="fas fa-quote-left"></i>
                 </div>
                 <p class="testimonial-text">
-                    "Konsultan dari PT KIM membantu kami merestrukturisasi manajemen operasional. 
+                    "Konsultan dari PT KIM membantu kami merestrukturisasi manajemen operasional.
                     Hasilnya sangat signifikan, efisiensi meningkat 40% dalam 6 bulan."
                 </p>
                 <div class="testimonial-author">
@@ -478,7 +478,13 @@
 <style>
 /* Partner Header */
 .partner-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(rgba(102, 126, 234, 0.85),
+        rgba(118, 75, 162, 0.85)),
+    url('{{ asset("images/bg-office4.jpg") }}');
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     color: white;
     padding: 120px 0 80px;
     text-align: center;
@@ -856,7 +862,13 @@
 /* Partner CTA */
 .partner-cta {
     padding: 100px 0;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(rgba(102, 126, 234, 0.85),
+        rgba(118, 75, 162, 0.85)),
+    url('{{ asset("images/bg-office4.jpg") }}');
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     text-align: center;
     color: white;
     position: relative;
@@ -984,6 +996,7 @@
         opacity: 0;
         transform: translateY(30px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -1039,7 +1052,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 statsObserver.unobserve(entry.target);
             }
         });
-    }, { threshold: 0.5 });
+    }, {
+        threshold: 0.5
+    });
 
     const statsSection = document.querySelector('.partner-stats');
     if (statsSection) {
@@ -1054,7 +1069,7 @@ document.addEventListener('DOMContentLoaded', function() {
         button.addEventListener('click', function() {
             // Remove active class from all buttons
             filterButtons.forEach(btn => btn.classList.remove('active'));
-            
+
             // Add active class to clicked button
             this.classList.add('active');
 
@@ -1063,11 +1078,11 @@ document.addEventListener('DOMContentLoaded', function() {
             // Filter partner groups
             partnerGroups.forEach(group => {
                 const groupCategory = group.getAttribute('data-category');
-                
+
                 if (category === 'all' || groupCategory === category) {
                     group.classList.remove('hidden');
                     group.style.display = 'block';
-                    
+
                     // Animate cards
                     setTimeout(() => {
                         group.style.animation = 'fadeInUp 0.6s ease-out';
@@ -1102,11 +1117,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 const img = entry.target;
                 img.style.opacity = '0';
                 img.style.transition = 'opacity 0.5s ease';
-                
+
                 setTimeout(() => {
                     img.style.opacity = '1';
                 }, 100);
-                
+
                 imageObserver.unobserve(img);
             }
         });
@@ -1123,17 +1138,19 @@ document.addEventListener('DOMContentLoaded', function() {
                     entry.target.style.opacity = '0';
                     entry.target.style.transform = 'translateY(20px)';
                     entry.target.style.transition = 'all 0.6s ease';
-                    
+
                     setTimeout(() => {
                         entry.target.style.opacity = '1';
                         entry.target.style.transform = 'translateY(0)';
                     }, 50);
                 }, index * 100);
-                
+
                 testimonialObserver.unobserve(entry.target);
             }
         });
-    }, { threshold: 0.2 });
+    }, {
+        threshold: 0.2
+    });
 
     testimonialCards.forEach(card => testimonialObserver.observe(card));
 
@@ -1146,17 +1163,19 @@ document.addEventListener('DOMContentLoaded', function() {
                     entry.target.style.opacity = '0';
                     entry.target.style.transform = 'translateY(30px)';
                     entry.target.style.transition = 'all 0.5s ease';
-                    
+
                     setTimeout(() => {
                         entry.target.style.opacity = '1';
                         entry.target.style.transform = 'translateY(0)';
                     }, 50);
                 }, index * 100);
-                
+
                 benefitObserver.unobserve(entry.target);
             }
         });
-    }, { threshold: 0.2 });
+    }, {
+        threshold: 0.2
+    });
 
     benefitCards.forEach(card => benefitObserver.observe(card));
 });

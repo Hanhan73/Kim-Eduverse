@@ -265,6 +265,8 @@
         <!-- Header -->
         <div class="invoice-header">
             <div class="company-info">
+                <img src="{{ storage_path('app/private-assets/logo.png') }}" alt="KIM Logo"
+                    style="width: 120px; margin-bottom: 10px;">
                 <div class="company-name">PT KIM</div>
                 <div class="company-details">
                     PT KIM<br>

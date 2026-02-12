@@ -541,14 +541,14 @@
             @if($order->payment_status === 'paid')
             <!-- Success Header -->
             <div class="success-header">
-                <div class="success-icon">✓</div>
+                <img src="{{ asset('images/logo.png') }}" alt="Success Icon" style="width: 180px; margin-bottom: 20px;">
                 <h1>Pembayaran Berhasil!</h1>
                 <p>Terima kasih atas pembelian Anda</p>
             </div>
             @elseif($hasQuestionnaire && $order->responses->where('is_completed', true)->count() > 0)
             <!-- Success Header for Completed Questionnaire -->
             <div class="success-header">
-                <div class="success-icon">✓</div>
+                <img src="{{ asset('images/logo.png') }}" alt="Success Icon" style="width: 180px; margin-bottom: 20px;">
                 <h1>CEKMA Telah Berhasil Diisi!</h1>
                 <p>Terima kasih atas pembelian Anda</p>
             </div>
@@ -658,6 +658,76 @@
                             </a>
                         </div>
                         @endforeach
+                    </div>
+                </div>
+                @endif
+
+                {{-- ========================================
+    SECTION: E-BOOK ACCESS
+======================================== --}}
+                @php
+                $ebookItems = $order->items()->whereHas('product', function($q) {
+                $q->where('type', 'ebook');
+                })->get();
+                $hasEbook = $ebookItems->count() > 0;
+                @endphp
+
+                @if($order->payment_status === 'paid' && $hasEbook)
+                <div class="action-section" style="background: #f0f9ff; border-color: #90cdf4;">
+                    <h3><i class="fas fa-book-reader" style="color: #3182ce;"></i> Akses E-Book Anda</h3>
+                    <p>E-book Anda siap dibaca! Klik tombol di bawah untuk membaca e-book secara online. Link akses juga
+                        telah dikirim ke email Anda.</p>
+
+                    <div class="download-list">
+                        @foreach($ebookItems as $item)
+                        @php
+                        $access = $item->product->ebookAccesses()
+                        ->where('order_id', $order->id)
+                        ->where('is_active', true)
+                        ->first();
+                        @endphp
+
+                        @if($access && $access->isValid())
+                        <div class="download-item">
+                            <div class="download-item-info">
+                                <div class="download-item-icon"
+                                    style="background: linear-gradient(135deg, #3182ce, #2c5282);">
+                                    <i class="fas fa-book"></i>
+                                </div>
+                                <div>
+                                    <span class="download-item-name">{{ $item->product_name }}</span>
+                                    <div style="font-size: 12px; color: #718096; margin-top: 4px;">
+                                        <i class="fas fa-clock"></i> Berlaku hingga
+                                        {{ $access->expires_at->format('d M Y') }}
+                                        ({{ $access->days_remaining }} hari lagi)
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="{{ $access->access_url }}" class="btn btn-primary btn-sm" target="_blank"
+                                style="background: linear-gradient(135deg, #3182ce, #2c5282);">
+                                <i class="fas fa-book-reader"></i> Baca E-Book
+                            </a>
+                        </div>
+                        @endif
+                        @endforeach
+                    </div>
+
+                    <!-- Info Box -->
+                    <div
+                        style="background: #fff3cd; border: 2px solid #ffc107; border-radius: 10px; padding: 15px; margin-top: 20px; display: flex; align-items: start; gap: 12px;">
+                        <i class="fas fa-info-circle" style="color: #856404; font-size: 20px; margin-top: 2px;"></i>
+                        <div style="flex: 1;">
+                            <strong style="color: #856404; display: block; margin-bottom: 5px;">Penting untuk
+                                Diperhatikan:</strong>
+                            <ul
+                                style="margin: 0; padding-left: 20px; color: #856404; font-size: 14px; line-height: 1.6;">
+                                <li>E-book hanya dapat dibaca <strong>online</strong> melalui browser</li>
+                                <li><strong>Tidak dapat diunduh atau dicetak</strong> untuk melindungi hak cipta</li>
+                                <li>Link akses bersifat <strong>pribadi</strong> dan akan kadaluarsa sesuai masa berlaku
+                                </li>
+                                <li>Simpan email Anda untuk akses di kemudian hari</li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
                 @endif
