@@ -301,7 +301,7 @@
 </div>
 
 <!-- Midtrans Snap JS -->
-<script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('services.midtrans.client_key') }}"></script>
+<script src="https://app.midtrans.com/snap/snap.js" data-client-key="{{ config('services.midtrans.client_key') }}"></script>
 
 <script>
 const payButton = document.getElementById('payButton');
