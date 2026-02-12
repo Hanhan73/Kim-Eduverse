@@ -25,13 +25,7 @@ Route::prefix('produk')->group(function () {
     Route::get('/developer', [DeveloperController::class, 'index'])->name('developer.index');
     Route::get('/developer/{category}', [DeveloperController::class, 'show'])->name('developer.show');
     Route::post('/developer/request', [DeveloperController::class, 'store'])->name('developer.store');
-    Route::get('/edutech', function () {
-        if (auth()->check() && auth()->user()->role == 'admin') {
-            return view('edutech.index');
-        }
-
-        return view('edutech.maintenance');
-    });
+    Route::get('/edutech', [EdutechController::class, 'index'])->name('edutech.index');
 });
 
 // Tentang Kami Routes
