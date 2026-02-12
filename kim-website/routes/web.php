@@ -25,7 +25,13 @@ Route::prefix('produk')->group(function () {
     Route::get('/developer', [DeveloperController::class, 'index'])->name('developer.index');
     Route::get('/developer/{category}', [DeveloperController::class, 'show'])->name('developer.show');
     Route::post('/developer/request', [DeveloperController::class, 'store'])->name('developer.store');
-    Route::get('/edutech', [EdutechController::class, 'index'])->name('edutech.index');
+    Route::get('/edutech', function () {
+        if (auth()->check() && auth()->user()->role == 'admin') {
+            return view('edutech.index');
+        }
+
+        return view('edutech.maintenance');
+    });
 });
 
 // Tentang Kami Routes
@@ -613,24 +619,24 @@ Route::prefix('admin/digital')->name('admin.digital.')->middleware(['check.digit
     });
 
     Route::prefix('ebook-access')->name('ebook-access.')->group(function () {
-    // List all ebook accesses
-    Route::get('/', [App\Http\Controllers\Admin\EbookAccessController::class, 'index'])->name('index');
-    
-    // Show access details
-    Route::get('/{id}', [App\Http\Controllers\Admin\EbookAccessController::class, 'show'])->name('show');
-    
-    // Extend access
-    Route::post('/{id}/extend', [App\Http\Controllers\Admin\EbookAccessController::class, 'extend'])->name('extend');
-    
-    // Revoke access
-    Route::post('/{id}/revoke', [App\Http\Controllers\Admin\EbookAccessController::class, 'revoke'])->name('revoke');
-    
-    // Reactivate access
-    Route::post('/{id}/reactivate', [App\Http\Controllers\Admin\EbookAccessController::class, 'reactivate'])->name('reactivate');
-    
-    // Delete access
-    Route::delete('/{id}', [App\Http\Controllers\Admin\EbookAccessController::class, 'destroy'])->name('destroy');
-});
+        // List all ebook accesses
+        Route::get('/', [App\Http\Controllers\Admin\EbookAccessController::class, 'index'])->name('index');
+
+        // Show access details
+        Route::get('/{id}', [App\Http\Controllers\Admin\EbookAccessController::class, 'show'])->name('show');
+
+        // Extend access
+        Route::post('/{id}/extend', [App\Http\Controllers\Admin\EbookAccessController::class, 'extend'])->name('extend');
+
+        // Revoke access
+        Route::post('/{id}/revoke', [App\Http\Controllers\Admin\EbookAccessController::class, 'revoke'])->name('revoke');
+
+        // Reactivate access
+        Route::post('/{id}/reactivate', [App\Http\Controllers\Admin\EbookAccessController::class, 'reactivate'])->name('reactivate');
+
+        // Delete access
+        Route::delete('/{id}', [App\Http\Controllers\Admin\EbookAccessController::class, 'destroy'])->name('destroy');
+    });
 
     // User Management
     Route::resource('users', UserController::class);
@@ -953,7 +959,7 @@ Route::prefix('edutech')->name('edutech.')->group(function () {
 Route::prefix('ebook')->name('ebook.')->group(function () {
     // View e-book dengan token
     Route::get('/view/{token}', [App\Http\Controllers\EbookController::class, 'view'])->name('view');
-    
+
     // Get PDF content (proxy)
     Route::get('/content/{token}', [App\Http\Controllers\EbookController::class, 'getContent'])->name('content');
 });
