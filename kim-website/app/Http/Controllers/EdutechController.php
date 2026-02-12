@@ -8,6 +8,12 @@ class EdutechController extends Controller
 {
     public function index()
     {
-        return view('edutech.index');
+
+        if (auth()->user()->role == 'admin') {
+            return view('edutech.index');
+
+
+            return view('edutech.maintenance');
+        }
     }
 }
