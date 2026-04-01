@@ -41,8 +41,8 @@ class DigitalController extends Controller
 
         // Filter by category
         if ($request->filled('category')) {
-            if ($request->category === 'on-demand-seminar') {
-                $query->where('type', 'on-demand-seminar');
+            if ($request->category === 'seminar') {
+                $query->where('type', 'seminar');
             } else {
                 $query->whereHas('category', function ($q) use ($request) {
                     $q->where('slug', $request->category);
