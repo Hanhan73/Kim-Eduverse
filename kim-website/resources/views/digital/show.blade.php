@@ -393,7 +393,7 @@
         <div class="product-visual">
             <div class="product-image-main">
                 @if($product->thumbnail)
-                <img src="{{ asset('storage/' . $product->thumbnail) }}" alt="{{ $product->name }}"
+                <img src="{{ asset('products/thumbnails/' . $product->thumbnail) }}" alt="{{ $product->name }}"
                     style="width: 100%; height: 100%; object-fit: cover; border-radius: 20px;">
                 @else
                 <i class="fas {{ $product->type === 'questionnaire' ? 'fa-clipboard-list' : 'fa-file-alt' }}"></i>
