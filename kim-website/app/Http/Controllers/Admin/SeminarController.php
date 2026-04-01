@@ -194,8 +194,8 @@ class SeminarController extends Controller
 
         if ($request->hasFile('thumbnail')) {
             // Hapus file lama
-            if ($product->thumbnail) {
-                $oldPath = public_path('products/thumbnails/' . $product->thumbnail);
+            if ($seminar->thumbnail) {
+                $oldPath = public_path('products/thumbnails/' . $seminar->thumbnail);
                 if (file_exists($oldPath)) {
                     unlink($oldPath);
                 }
@@ -254,8 +254,8 @@ class SeminarController extends Controller
             return back()->with('error', 'Tidak dapat menghapus seminar yang sudah memiliki peserta!');
         }
 
-        if ($product->thumbnail) {
-            $oldPath = public_path('products/thumbnails/' . $product->thumbnail);
+        if ($seminar->thumbnail) {
+            $oldPath = public_path('products/thumbnails/' . $seminar->thumbnail);
             if (file_exists($oldPath)) {
                 unlink($oldPath);
             }
