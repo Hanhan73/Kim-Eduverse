@@ -314,7 +314,7 @@
             <div class="cart-item">
                 <div class="item-image">
                     @if(isset($item['thumbnail']))
-                    <img src="{{ asset('storage/' . $item['thumbnail']) }}" alt="{{ $item['name'] }}"
+                    <img src="{{ asset('products/thumbnails/' . $item['thumbnail']) }}" alt="{{ $item['name'] }}"
                         style="width: 100%; height: 100%; object-fit: cover; border-radius: 15px;">
                     @else
                     <i class="fas {{ $item['type'] === 'questionnaire' ? 'fa-clipboard-list' : 'fa-file-alt' }}"></i>
