@@ -667,29 +667,25 @@ function saveMaterial(event) {
     const id = document.getElementById('material_id').value;
     const title = document.getElementById('material_title').value;
     const seminarId = {{$seminar -> id}};
-}
 
+    if (!title) {
+        alert('Nama materi harus diisi!');
+        return;
+    }
 
-if (!title) {
-    alert('Nama materi harus diisi!');
-    return;
-}
+    const url = id
+        ? `/admin/digital/seminars/${seminarId}/materials/${id}`
+        : `/admin/digital/seminars/${seminarId}/materials`;
 
-const url = id ?
-    `/admin/digital/seminars/${seminarId}/materials/${id}` :
-    `/admin/digital/seminars/${seminarId}/materials`;
+    const method = id ? 'PUT' : 'POST';
 
-const method = id ? 'PUT' : 'POST';
-
-fetch(url, {
+    fetch(url, {
         method: method,
         headers: {
             'Content-Type': 'application/json',
             'X-CSRF-TOKEN': '{{ csrf_token() }}'
         },
-        body: JSON.stringify({
-            title
-        })
+        body: JSON.stringify({ title })
     })
     .then(res => res.json())
     .then(data => {
