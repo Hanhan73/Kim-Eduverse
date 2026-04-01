@@ -1033,8 +1033,8 @@
                 <div class="product-card" onclick="window.location.href='{{ route('digital.show', $product->slug) }}'">
                     <div class="product-image">
                         @if($product->thumbnail)
-                        <img src="{{ asset('storage/' . $product->thumbnail) }}" alt="{{ $product->name }}"
-                            style="width: 100%; height: 100%; object-fit: cover;">
+                        <img src="{{ asset('storage/products/thumbnails/' . $product->thumbnail) }}"
+                            alt="{{ $product->name }}" style="width: 100%; height: 100%; object-fit: cover;">
                         @else
                         <i
                             class="fas {{ $product->type === 'questionnaire' ? 'fa-clipboard-list' : 'fa-file-alt' }}"></i>
