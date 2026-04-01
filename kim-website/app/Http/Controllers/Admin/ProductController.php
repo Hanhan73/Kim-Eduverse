@@ -88,7 +88,8 @@ class ProductController extends Controller
             $file = $request->file('thumbnail');
             $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
             
-            $destination = public_path('products/thumbnails');
+            $destination = '/home/u597258220/domains/kimeduverse.com/public_html/products/thumbnails';
+
             if (!file_exists($destination)) {
                 mkdir($destination, 0755, true); // buat folder kalau belum ada
             }
@@ -164,7 +165,8 @@ class ProductController extends Controller
             $file = $request->file('thumbnail');
             $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
             
-            $destination = public_path('products/thumbnails');
+            $destination = '/home/u597258220/domains/kimeduverse.com/public_html/products/thumbnails';
+
             if (!file_exists($destination)) {
                 mkdir($destination, 0755, true);
             }
