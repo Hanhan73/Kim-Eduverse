@@ -85,7 +85,16 @@ class ProductController extends Controller
         }
 
         if ($request->hasFile('thumbnail')) {
-            $validated['thumbnail'] = $request->file('thumbnail')->store('products/thumbnails', 'public');
+            $file = $request->file('thumbnail');
+            $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
+            
+            $destination = public_path('products/thumbnails');
+            if (!file_exists($destination)) {
+                mkdir($destination, 0755, true); // buat folder kalau belum ada
+            }
+            
+            $file->move($destination, $filename);
+            $validated['thumbnail'] = $filename; // simpan nama file SAJA
         }
 
         // Set default ebook access duration jika type ebook
@@ -144,10 +153,24 @@ class ProductController extends Controller
         $validated['is_featured'] = $request->input('is_featured') == '1' ? true : false;
     
         if ($request->hasFile('thumbnail')) {
+            // Hapus file lama
             if ($product->thumbnail) {
-                Storage::disk('public')->delete($product->thumbnail);
+                $oldPath = public_path('products/thumbnails/' . $product->thumbnail);
+                if (file_exists($oldPath)) {
+                    unlink($oldPath);
+                }
             }
-            $validated['thumbnail'] = $request->file('thumbnail')->store('products/thumbnails', 'public');
+            
+            $file = $request->file('thumbnail');
+            $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
+            
+            $destination = public_path('products/thumbnails');
+            if (!file_exists($destination)) {
+                mkdir($destination, 0755, true);
+            }
+            
+            $file->move($destination, $filename);
+            $validated['thumbnail'] = $filename;
         }
 
         $product->update($validated);
@@ -176,7 +199,10 @@ class ProductController extends Controller
         $product = DigitalProduct::findOrFail($id);
 
         if ($product->thumbnail) {
-            Storage::disk('public')->delete($product->thumbnail);
+            $oldPath = public_path('products/thumbnails/' . $product->thumbnail);
+            if (file_exists($oldPath)) {
+                unlink($oldPath);
+            }
         }
 
         // Delete seminar first (it has FK to product)
