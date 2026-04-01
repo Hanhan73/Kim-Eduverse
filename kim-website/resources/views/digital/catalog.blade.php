@@ -1051,7 +1051,7 @@
                         </p>
 
                         <div class="product-meta">
-                            @if($product->type === 'seminar')
+                            @if($product->type === 'seminar' || ($product->seminar && $product->seminar->total_jp))
                             <div class="meta-item">
                                 <i class="fas fa-clock"></i>
                                 <span>{{ $product->seminar->total_jp ?? '-' }} JP</span>
