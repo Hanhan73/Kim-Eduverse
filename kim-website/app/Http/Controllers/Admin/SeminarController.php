@@ -71,10 +71,19 @@ class SeminarController extends Controller
         try {
             DB::beginTransaction();
 
-            if ($request->hasFile('thumbnail')) {
-                $validated['thumbnail'] = $request->file('thumbnail')
-                    ->store('seminars/thumbnails', 'public');
+        if ($request->hasFile('thumbnail')) {
+            $file = $request->file('thumbnail');
+            $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
+            
+            $destination = '/home/u597258220/domains/kimeduverse.com/public_html/products/thumbnails';
+
+            if (!file_exists($destination)) {
+                mkdir($destination, 0755, true); // buat folder kalau belum ada
             }
+            
+            $file->move($destination, $filename);
+            $validated['thumbnail'] = $filename; // simpan nama file SAJA
+        }
 
             $validated['slug'] = Str::slug($validated['title']);
             $validated['created_by'] = auth()->id();
@@ -183,13 +192,27 @@ class SeminarController extends Controller
         try {
             DB::beginTransaction();
 
-            if ($request->hasFile('thumbnail')) {
-                if ($seminar->thumbnail) {
-                    Storage::disk('public')->delete($seminar->thumbnail);
+        if ($request->hasFile('thumbnail')) {
+            // Hapus file lama
+            if ($product->thumbnail) {
+                $oldPath = public_path('products/thumbnails/' . $product->thumbnail);
+                if (file_exists($oldPath)) {
+                    unlink($oldPath);
                 }
-                $validated['thumbnail'] = $request->file('thumbnail')
-                    ->store('seminars/thumbnails', 'public');
             }
+            
+            $file = $request->file('thumbnail');
+            $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
+            
+            $destination = '/home/u597258220/domains/kimeduverse.com/public_html/products/thumbnails';
+
+            if (!file_exists($destination)) {
+                mkdir($destination, 0755, true);
+            }
+            
+            $file->move($destination, $filename);
+            $validated['thumbnail'] = $filename;
+        }
 
             if ($validated['title'] !== $seminar->title) {
                 $validated['slug'] = Str::slug($validated['title']);
@@ -231,8 +254,11 @@ class SeminarController extends Controller
             return back()->with('error', 'Tidak dapat menghapus seminar yang sudah memiliki peserta!');
         }
 
-        if ($seminar->thumbnail) {
-            Storage::disk('public')->delete($seminar->thumbnail);
+        if ($product->thumbnail) {
+            $oldPath = public_path('products/thumbnails/' . $product->thumbnail);
+            if (file_exists($oldPath)) {
+                unlink($oldPath);
+            }
         }
 
         if ($seminar->digitalProduct) {
