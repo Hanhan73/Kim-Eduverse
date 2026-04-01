@@ -115,7 +115,8 @@
                         <td>
                             <div style="display: flex; gap: 15px; align-items: center;">
                                 @if($seminar->thumbnail)
-                                <img src="{{ Storage::url($seminar->thumbnail) }}" alt="{{ $seminar->title }}"
+                                <img src="{{ asset('products/thumbnails/' . $seminar->thumbnail) }}"
+                                    alt="{{ $seminar->title }}"
                                     style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;">
                                 @else
                                 <div

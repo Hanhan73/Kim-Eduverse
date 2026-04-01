@@ -85,7 +85,7 @@
 
                         @if(isset($seminar) && $seminar->thumbnail)
                         <div style="margin-top: 10px;">
-                            <img src="{{ Storage::url($seminar->thumbnail) }}" id="imagePreview"
+                            <img src="{{ asset('products/thumbnails/' . $seminar->thumbnail) }}" id="imagePreview"
                                 style="max-width: 200px; border-radius: 8px;" alt="Current thumbnail">
                         </div>
                         @else
@@ -666,47 +666,57 @@ function saveMaterial(event) {
 
     const id = document.getElementById('material_id').value;
     const title = document.getElementById('material_title').value;
-    const seminarId = {{$seminar->id}};}};
+    const seminarId = {
+        {
+            $seminar - > id
+        }
+    };
+}
+};
 
-    if (!title) {
-        alert('Nama materi harus diisi!');
-        return;
-    }
+if (!title) {
+    alert('Nama materi harus diisi!');
+    return;
+}
 
-    const url = id ?
-        `/admin/digital/seminars/${seminarId}/materials/${id}` :
-        `/admin/digital/seminars/${seminarId}/materials`;
+const url = id ?
+    `/admin/digital/seminars/${seminarId}/materials/${id}` :
+    `/admin/digital/seminars/${seminarId}/materials`;
 
-    const method = id ? 'PUT' : 'POST';
+const method = id ? 'PUT' : 'POST';
 
-    fetch(url, {
-            method: method,
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            body: JSON.stringify({
-                title
-            })
+fetch(url, {
+        method: method,
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        body: JSON.stringify({
+            title
         })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                location.reload();
-            } else {
-                alert('Gagal menyimpan: ' + data.message);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Terjadi kesalahan saat menyimpan materi');
-        });
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert('Gagal menyimpan: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Terjadi kesalahan saat menyimpan materi');
+    });
 }
 
 function deleteMaterial(id) {
     if (!confirm('Yakin ingin menghapus materi ini?')) return;
 
-    const seminarId = {{$seminar->id}};
+    const seminarId = {
+        {
+            $seminar - > id
+        }
+    };
 
     fetch(`/admin/digital/seminars/${seminarId}/materials/${id}`, {
             method: 'DELETE',
@@ -730,7 +740,11 @@ function reorderMaterials() {
         id: item.dataset.id,
         order: index + 1
     }));
-    const seminarId = {{$seminar->id}};
+    const seminarId = {
+        {
+            $seminar - > id
+        }
+    };
 
     fetch(`/admin/digital/seminars/${seminarId}/materials/reorder`, {
             method: 'POST',

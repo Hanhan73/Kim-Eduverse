@@ -99,7 +99,7 @@
             <div class="card-body">
                 @if($seminar->thumbnail)
                 <div style="margin-bottom: 20px;">
-                    <img src="{{ Storage::url($seminar->thumbnail) }}"
+                    <img src="{{ asset('products/thumbnails/' . $seminar->thumbnail) }}"
                         style="width: 100%; max-height: 300px; object-fit: cover; border-radius: 12px;"
                         alt="{{ $seminar->title }}">
                 </div>
