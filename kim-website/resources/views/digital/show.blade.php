@@ -518,7 +518,7 @@
             <a href="{{ route('digital.show', $related->slug) }}" class="related-card">
                 <div class="related-image">
                     @if($related->thumbnail)
-                    <img src="{{ asset('storage/' . $related->thumbnail) }}" alt="{{ $related->name }}"
+                    <img src="{{ asset('products/thumbnails/' . $related->thumbnail) }}" alt="{{ $related->name }}"
                         style="width: 100%; height: 100%; object-fit: cover;">
                     @else
                     <i class="fas {{ $related->type === 'questionnaire' ? 'fa-clipboard-list' : 'fa-file-alt' }}"></i>
