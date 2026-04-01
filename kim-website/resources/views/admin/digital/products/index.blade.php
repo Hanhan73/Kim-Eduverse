@@ -69,7 +69,7 @@
                     <td>
                         <div class="product-info">
                             @if($product->thumbnail)
-                            <img src="{{ asset('storage/' . $product->thumbnail) }}" alt="{{ $product->name }}">
+                            <img src="{{ asset('images/' . $product->thumbnail) }}" alt="{{ $product->name }}">
                             @else
                             <div class="no-image"><i class="fas fa-image"></i></div>
                             @endif

@@ -144,7 +144,7 @@
                         <label for="thumbnail">Thumbnail</label>
                         @if(isset($product) && $product->thumbnail)
                         <div class="current-image">
-                            <img src="{{ asset('storage/' . $product->thumbnail) }}" alt="Current thumbnail">
+                            <img src="{{ asset('products/thumbnails/' . $product->thumbnail) }}" alt="Current thumbnail">
                         </div>
                         @endif
                         <input type="file" id="thumbnail" name="thumbnail" accept="image/*">
