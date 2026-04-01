@@ -418,7 +418,7 @@
                 @if($product->type === 'seminar')
                 <div class="meta-item">
                     <i class="fas fa-clock"></i>
-                    <span>{{ $product->seminar->total_jp }} JP</span>
+                    <span>{{ $product->seminar->total_jp ?? '-'}} JP</span>
                 </div>
                 @elseif($product->type === 'ebook')
                 <div class="meta-item">
