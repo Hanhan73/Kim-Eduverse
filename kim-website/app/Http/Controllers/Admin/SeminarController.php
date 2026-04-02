@@ -111,7 +111,7 @@ class SeminarController extends Controller
                 'order' => $validated['order'] ?? 0,
             ]);
             
-            $seminar = Seminar::create($validated);
+            $seminar->update(['product_id' => $product->id]);
             $validated['product_id'] = $product->id;
 
             DB::commit();
