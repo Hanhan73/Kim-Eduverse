@@ -112,8 +112,6 @@ class SeminarController extends Controller
             ]);
             
             $seminar->update(['product_id' => $product->id]);
-            $validated['product_id'] = $product->id;
-
             DB::commit();
 
             return redirect()
