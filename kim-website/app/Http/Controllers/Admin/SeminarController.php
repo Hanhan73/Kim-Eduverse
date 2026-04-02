@@ -88,6 +88,8 @@ class SeminarController extends Controller
             $validated['slug'] = Str::slug($validated['title']);
             $validated['created_by'] = auth()->id();
 
+            $seminar = Seminar::create($validated);
+
             $category = DigitalProductCategory::firstOrCreate(
                 ['slug' => 'seminar'],
                 ['name' => 'Seminar', 'is_active' => true]
@@ -108,9 +110,9 @@ class SeminarController extends Controller
                 'is_featured' => $validated['is_featured'] ?? false,
                 'order' => $validated['order'] ?? 0,
             ]);
-
-            $validated['product_id'] = $product->id;
+            
             $seminar = Seminar::create($validated);
+            $validated['product_id'] = $product->id;
 
             DB::commit();
 
