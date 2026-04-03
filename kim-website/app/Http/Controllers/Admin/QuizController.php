@@ -362,4 +362,151 @@ public function store(Request $request)
 
         return back()->with('success', 'Status quiz berhasil diubah!');
     }
+
+    public function downloadTemplate()
+    {
+        $templatePath = public_path('templates/template_import_quiz.xlsx');
+    
+        if (!file_exists($templatePath)) {
+            return back()->with('error', 'Template tidak ditemukan. Hubungi administrator.');
+        }
+    
+        return response()->download($templatePath, 'template_import_quiz.xlsx', [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ]);
+    }
+
+    /**
+     * Import pertanyaan dari file Excel
+     */
+    public function importQuestions(Request $request, Quiz $quiz)
+    {
+        $request->validate([
+            'excel_file' => 'required|file|mimes:xlsx,xls|max:5120', // max 5MB
+        ], [
+            'excel_file.required' => 'File Excel wajib dipilih.',
+            'excel_file.mimes'    => 'File harus berformat .xlsx atau .xls.',
+            'excel_file.max'      => 'Ukuran file maksimal 5MB.',
+        ]);
+    
+        try {
+            $file = $request->file('excel_file');
+    
+            // Load spreadsheet menggunakan PhpSpreadsheet
+            $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($file->getPathname());
+            $worksheet   = $spreadsheet->getActiveSheet();
+            $rows        = $worksheet->toArray(null, true, true, true);
+    
+            // Data mulai dari baris ke-7 (1-4: header, 5-6: contoh)
+            $dataRows   = array_slice($rows, 6, null, true); // key dimulai dari index baris Excel
+    
+            $imported   = 0;
+            $skipped    = 0;
+            $errors     = [];
+            $maxOrder   = $quiz->questions()->max('order') ?? 0;
+    
+            foreach ($dataRows as $rowIndex => $row) {
+                $rowNum = $rowIndex; // index Excel (1-based)
+    
+                // Ambil nilai tiap kolom (A-K)
+                $questionText  = trim($row['B'] ?? '');
+                $optionA       = trim($row['C'] ?? '');
+                $optionB       = trim($row['D'] ?? '');
+                $optionC       = trim($row['E'] ?? '');
+                $optionD       = trim($row['F'] ?? '');
+                $optionE       = trim($row['G'] ?? '');
+                $correctAnswer = strtoupper(trim($row['H'] ?? ''));
+                $points        = (int) ($row['I'] ?? 10);
+                $explanation   = trim($row['J'] ?? '');
+    
+                // Skip baris kosong
+                if (empty($questionText) && empty($optionA) && empty($optionB)) {
+                    continue;
+                }
+    
+                // Validasi per baris
+                $rowErrors = [];
+    
+                if (empty($questionText)) {
+                    $rowErrors[] = 'Pertanyaan kosong';
+                }
+    
+                if (empty($optionA)) {
+                    $rowErrors[] = 'Opsi A kosong';
+                }
+    
+                if (empty($optionB)) {
+                    $rowErrors[] = 'Opsi B kosong';
+                }
+    
+                if (!in_array($correctAnswer, ['A', 'B', 'C', 'D', 'E'])) {
+                    $rowErrors[] = "Jawaban benar '{$correctAnswer}' tidak valid (harus A/B/C/D/E)";
+                }
+    
+                // Pastikan jawaban benar punya opsi yang terisi
+                $optionMap = [
+                    'A' => $optionA,
+                    'B' => $optionB,
+                    'C' => $optionC,
+                    'D' => $optionD,
+                    'E' => $optionE,
+                ];
+    
+                if (!empty($correctAnswer) && empty($optionMap[$correctAnswer] ?? '')) {
+                    $rowErrors[] = "Opsi '{$correctAnswer}' yang dipilih sebagai jawaban benar tidak terisi";
+                }
+    
+                if ($points < 1) {
+                    $points = 10; // fallback default
+                }
+    
+                if (!empty($rowErrors)) {
+                    $errors[] = "Baris {$rowNum}: " . implode(', ', $rowErrors);
+                    $skipped++;
+                    continue;
+                }
+    
+                // Simpan pertanyaan
+                $maxOrder++;
+                $quiz->questions()->create([
+                    'question'       => $questionText,
+                    'type'           => 'multiple_choice',
+                    'options'        => array_filter([
+                        'A' => $optionA,
+                        'B' => $optionB,
+                        'C' => $optionC ?: null,
+                        'D' => $optionD ?: null,
+                        'E' => $optionE ?: null,
+                    ]),
+                    'correct_answer' => $correctAnswer,
+                    'points'         => $points,
+                    'order'          => $maxOrder,
+                    'explanation'    => $explanation ?: null,
+                ]);
+    
+                $imported++;
+            }
+    
+            // Susun pesan hasil
+            $message = "Import selesai! {$imported} pertanyaan berhasil ditambahkan.";
+            if ($skipped > 0) {
+                $message .= " {$skipped} baris dilewati karena error.";
+            }
+    
+            $sessionKey = $skipped > 0 ? 'import_warning' : 'success';
+    
+            return redirect()
+                ->route('admin.digital.quizzes.edit', $quiz)
+                ->with($sessionKey, $message)
+                ->with('import_errors', $errors);
+    
+        } catch (\PhpOffice\PhpSpreadsheet\Exception $e) {
+            \Log::error('Quiz import spreadsheet error: ' . $e->getMessage());
+            return back()->with('error', 'File Excel tidak dapat dibaca. Pastikan format file benar (.xlsx).');
+    
+        } catch (\Exception $e) {
+            \Log::error('Quiz import error: ' . $e->getMessage());
+            return back()->with('error', 'Terjadi kesalahan saat import: ' . $e->getMessage());
+        }
+    }
 }

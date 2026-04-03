@@ -553,24 +553,26 @@ Route::prefix('admin/digital')->name('admin.digital.')->middleware(['check.digit
     Route::post('questionnaires/{id}/test-ai', [QuestionnaireController::class, 'testAI'])
         ->name('questionnaires.test-ai');
 
-    // Route untuk mengelola Quiz
-    Route::get('quizzes/{quiz}/edit', [QuizController::class, 'edit'])->name('quizzes.edit');
-    Route::put('quizzes/{quiz}', [QuizController::class, 'update'])->name('quizzes.update');
-    Route::delete('quizzes/{quiz}', [QuizController::class, 'destroy'])->name('quizzes.destroy');
-    Route::get('quizzes/index', [QuizController::class, 'index'])->name('quizzes.index');
-    Route::post('quizzes', [QuizController::class, 'store'])->name('quizzes.store');
-    Route::get('quizzes/create', [QuizController::class, 'create'])->name('quizzes.create');
-    Route::patch('quizzes/{quiz}/toggle-active', [QuizController::class, 'toggleActive'])->name('quizzes.toggle-active');
-
-    // Route untuk mengelola Pertanyaan
-    Route::post('quizzes/{quiz}/questions', [QuizController::class, 'storeQuestion'])->name('quizzes.store-question');
-    Route::get('quizzes/{quiz}/questions/{question}/edit', [QuizController::class, 'editQuestion'])->name('quizzes.edit-question');
-    Route::put('quizzes/{quiz}/questions/{question}', [QuizController::class, 'updateQuestion'])->name('quizzes.update-question');
-    Route::delete('quizzes/{quiz}/questions/{question}', [QuizController::class, 'destroyQuestion'])->name('quizzes.destroy-question');
-
-    // Route untuk mengatur ulang urutan pertanyaan
-    Route::post('quizzes/{quiz}/reorder-questions', [QuizController::class, 'reorderQuestions'])->name('quizzes.reorder-questions');
-    Route::post('quizzes/{quiz}/sync/{targetQuiz}', [QuizController::class, 'syncQuestions'])->name('quizzes.sync');
+    Route::prefix('/quizzes')->name('quizzes.')->group(function () {
+    
+        Route::get('/',                                     [QuizController::class, 'index'])->name('index');
+        Route::get('/create',                               [QuizController::class, 'create'])->name('create');
+        Route::post('/',                                    [QuizController::class, 'store'])->name('store');
+        Route::get('/{quiz}/edit',                          [QuizController::class, 'edit'])->name('edit');
+        Route::put('/{quiz}',                               [QuizController::class, 'update'])->name('update');
+        Route::delete('/{quiz}',                            [QuizController::class, 'destroy'])->name('destroy');
+        Route::patch('/{quiz}/toggle-active',               [QuizController::class, 'toggleActive'])->name('toggle-active');
+        Route::post('/{quiz}/questions',                    [QuizController::class, 'storeQuestion'])->name('store-question');
+        Route::get('/{quiz}/questions/{question}/edit',     [QuizController::class, 'editQuestion'])->name('edit-question');
+        Route::put('/{quiz}/questions/{question}',          [QuizController::class, 'updateQuestion'])->name('update-question');
+        Route::delete('/{quiz}/questions/{question}',       [QuizController::class, 'destroyQuestion'])->name('destroy-question');
+        Route::post('/{quiz}/reorder-questions',            [QuizController::class, 'reorderQuestions'])->name('reorder-questions');
+        Route::post('/{quiz}/sync/{targetQuizId}',          [QuizController::class, 'syncQuestions'])->name('sync');
+    
+        Route::get('/template/download',                    [QuizController::class, 'downloadTemplate'])->name('download-template');
+        Route::post('/{quiz}/import-questions',             [QuizController::class, 'importQuestions'])->name('import-questions');
+        
+    });
 
     Route::prefix('seminars')->name('seminars.')->group(function () {
         Route::get('/', [AdminSeminarController::class, 'index'])->name('index');

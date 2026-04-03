@@ -662,6 +662,209 @@ textarea.form-control {
     font-size: 0.85rem;
     color: #92400e;
 }
+
+/* ── Import Card ─────────────────────────────────────────────── */
+.import-card {
+    border: 2px dashed #c7d2fe;
+    transition: border-color 0.3s;
+}
+.import-card:hover {
+    border-color: #6366f1;
+}
+ 
+.btn-download-template {
+    background: linear-gradient(135deg, #16a34a, #22c55e);
+    color: white;
+    text-decoration: none;
+}
+.btn-download-template:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(22,163,74,0.35);
+}
+ 
+/* ── 3-step guide ─────────────────────────────────────────────── */
+.import-steps {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 22px;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.import-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    flex: 1;
+    min-width: 160px;
+}
+.step-number {
+    width: 30px;
+    height: 30px;
+    background: linear-gradient(135deg, #6366f1, #764ba2);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+}
+.step-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-size: 0.85rem;
+    color: #374151;
+}
+.step-content strong {
+    color: #1e1b4b;
+}
+.import-step-divider {
+    color: #a5b4fc;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+ 
+/* ── File drop zone ───────────────────────────────────────────── */
+.file-upload-area {
+    border: 2px dashed #a5b4fc;
+    border-radius: 12px;
+    padding: 30px 20px;
+    text-align: center;
+    cursor: pointer;
+    background: #f5f3ff;
+    transition: all 0.3s ease;
+    position: relative;
+    margin-bottom: 12px;
+}
+.file-upload-area:hover,
+.file-upload-area.drag-over {
+    border-color: #6366f1;
+    background: #ede9fe;
+}
+.file-input-hidden {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 2;
+}
+.file-upload-icon {
+    font-size: 2.5rem;
+    color: #818cf8;
+    margin-bottom: 10px;
+}
+.file-upload-text {
+    color: #4b5563;
+    margin: 0 0 4px 0;
+    font-size: 0.95rem;
+}
+.file-upload-hint {
+    color: #9ca3af;
+    font-size: 0.8rem;
+    margin: 0;
+}
+.selected-file-name {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #dcfce7;
+    border: 1px solid #86efac;
+    border-radius: 8px;
+    padding: 8px 14px;
+    margin-top: 12px;
+    font-size: 0.9rem;
+    color: #166534;
+    position: relative;
+    z-index: 3;
+}
+.clear-file-btn {
+    background: none;
+    border: none;
+    color: #dc2626;
+    font-size: 1.2rem;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0 4px;
+}
+.field-error {
+    color: #dc2626;
+    font-size: 0.85rem;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+ 
+/* ── Import info box ──────────────────────────────────────────── */
+.import-info-box {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 16px;
+    font-size: 0.88rem;
+    color: #1e40af;
+    line-height: 1.5;
+}
+.import-info-box i {
+    flex-shrink: 0;
+    margin-top: 2px;
+    font-size: 1rem;
+}
+ 
+/* ── Import button ────────────────────────────────────────────── */
+.btn-import {
+    background: linear-gradient(135deg, #6366f1, #764ba2);
+    color: white;
+    width: 100%;
+    justify-content: center;
+    padding: 13px;
+    font-size: 1rem;
+}
+.btn-import:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(99,102,241,0.4);
+}
+.btn-import:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+ 
+/* ── Alert import warning ─────────────────────────────────────── */
+.alert-import-warning {
+    background: #fffbeb;
+    border-left: 4px solid #f59e0b;
+    border-radius: 10px;
+    padding: 14px 18px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    margin-bottom: 18px;
+    color: #78350f;
+    font-size: 0.9rem;
+}
+.alert-import-warning i {
+    flex-shrink: 0;
+    margin-top: 2px;
+    color: #d97706;
+}
+.import-error-list {
+    margin: 8px 0 0 0;
+    padding-left: 18px;
+    font-size: 0.85rem;
+}
 </style>
 @endsection
 
@@ -723,7 +926,111 @@ textarea.form-control {
         </div>
     </div>
 </div>
-
+<div class="card import-card">
+    <div class="card-header">
+        <h3><i class="fas fa-file-import"></i> Import Pertanyaan dari Excel</h3>
+        <a href="{{ route('admin.digital.quizzes.download-template') }}"
+           class="btn btn-sm btn-download-template">
+            <i class="fas fa-download"></i> Download Template
+        </a>
+    </div>
+ 
+    <div class="card-body">
+ 
+        {{-- Alert: import warning (sebagian berhasil) --}}
+        @if(session('import_warning'))
+        <div class="alert alert-import-warning">
+            <i class="fas fa-exclamation-triangle"></i>
+            <div>
+                <strong>{{ session('import_warning') }}</strong>
+                @if(session('import_errors'))
+                <ul class="import-error-list">
+                    @foreach(session('import_errors') as $err)
+                    <li>{{ $err }}</li>
+                    @endforeach
+                </ul>
+                @endif
+            </div>
+        </div>
+        @endif
+ 
+        {{-- 3-step guide --}}
+        <div class="import-steps">
+            <div class="import-step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <strong>Download Template</strong>
+                    <span>Klik tombol "Download Template" di atas, isi pertanyaan sesuai petunjuk dalam file.</span>
+                </div>
+            </div>
+            <div class="import-step-divider"><i class="fas fa-chevron-right"></i></div>
+            <div class="import-step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <strong>Isi & Simpan</strong>
+                    <span>Isi mulai baris ke-7. Simpan tetap dalam format <code>.xlsx</code>.</span>
+                </div>
+            </div>
+            <div class="import-step-divider"><i class="fas fa-chevron-right"></i></div>
+            <div class="import-step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <strong>Upload & Import</strong>
+                    <span>Pilih file di bawah lalu klik "Import Pertanyaan".</span>
+                </div>
+            </div>
+        </div>
+ 
+        {{-- Upload form --}}
+        <form action="{{ route('admin.digital.quizzes.import-questions', $quiz) }}"
+              method="POST"
+              enctype="multipart/form-data"
+              id="importForm"
+              onsubmit="return confirmImport(event)">
+            @csrf
+ 
+            <div class="file-upload-area" id="fileDropZone">
+                <input type="file"
+                       name="excel_file"
+                       id="excelFile"
+                       accept=".xlsx,.xls"
+                       class="file-input-hidden"
+                       onchange="updateFileName(this)">
+ 
+                <div class="file-upload-icon">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                </div>
+                <p class="file-upload-text">
+                    <strong>Klik untuk memilih file</strong> atau drag & drop di sini
+                </p>
+                <p class="file-upload-hint">Format: .xlsx &nbsp;|&nbsp; Maks: 5 MB &nbsp;|&nbsp; Maks: 100 baris</p>
+                <div id="selectedFileName" class="selected-file-name" style="display: none;">
+                    <i class="fas fa-file-excel" style="color: #16a34a;"></i>
+                    <span id="fileNameText"></span>
+                    <button type="button" onclick="clearFile()" class="clear-file-btn">&times;</button>
+                </div>
+            </div>
+ 
+            @error('excel_file')
+            <div class="field-error"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
+            @enderror
+ 
+            <div class="import-info-box">
+                <i class="fas fa-info-circle"></i>
+                <div>
+                    <strong>Catatan:</strong>
+                    Import akan <em>menambahkan</em> pertanyaan baru ke quiz ini.
+                    Pertanyaan yang sudah ada tidak akan dihapus atau diubah.
+                    Maksimal <strong>100 pertanyaan</strong> per file.
+                </div>
+            </div>
+ 
+            <button type="submit" class="btn btn-import btn-block" id="importBtn" disabled>
+                <i class="fas fa-file-import"></i> Import Pertanyaan
+            </button>
+        </form>
+    </div>
+</div>
 <div class="main-grid">
     <!-- Questions Section -->
     <div>
@@ -1146,6 +1453,84 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('Functions available:', {
         openAddQuestionModal: typeof window.openAddQuestionModal,
         closeQuestionModal: typeof window.closeQuestionModal
+    });
+});
+
+function updateFileName(input) {
+    const nameEl  = document.getElementById('selectedFileName');
+    const textEl  = document.getElementById('fileNameText');
+    const importBtn = document.getElementById('importBtn');
+ 
+    if (input.files && input.files[0]) {
+        textEl.textContent = input.files[0].name;
+        nameEl.style.display = 'flex';
+        importBtn.disabled = false;
+    } else {
+        nameEl.style.display = 'none';
+        importBtn.disabled = true;
+    }
+}
+ 
+function clearFile() {
+    const input = document.getElementById('excelFile');
+    input.value = '';
+    document.getElementById('selectedFileName').style.display = 'none';
+    document.getElementById('importBtn').disabled = true;
+    // prevent propagation so the file dialog doesn't reopen
+    event.stopPropagation();
+}
+ 
+function confirmImport(e) {
+    const fileInput = document.getElementById('excelFile');
+    if (!fileInput.files || !fileInput.files[0]) {
+        e.preventDefault();
+        alert('Pilih file Excel terlebih dahulu!');
+        return false;
+    }
+ 
+    const currentCount = {{ $quiz->questions->count() }};
+    const msg = currentCount > 0
+        ? `Quiz ini sudah memiliki ${currentCount} pertanyaan. Import akan MENAMBAHKAN pertanyaan baru (tidak menghapus yang sudah ada). Lanjutkan?`
+        : 'Import pertanyaan dari file Excel? Pastikan format file sudah sesuai template.';
+ 
+    if (!confirm(msg)) {
+        e.preventDefault();
+        return false;
+    }
+ 
+    // Show loading state
+    const btn = document.getElementById('importBtn');
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
+    btn.disabled = true;
+    return true;
+}
+ 
+// ── Drag & Drop ───────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function () {
+    const dropZone = document.getElementById('fileDropZone');
+    if (!dropZone) return;
+ 
+    ['dragenter', 'dragover'].forEach(evt => {
+        dropZone.addEventListener(evt, e => {
+            e.preventDefault();
+            dropZone.classList.add('drag-over');
+        });
+    });
+ 
+    ['dragleave', 'drop'].forEach(evt => {
+        dropZone.addEventListener(evt, e => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+        });
+    });
+ 
+    dropZone.addEventListener('drop', function (e) {
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            const fileInput = document.getElementById('excelFile');
+            fileInput.files = files;
+            updateFileName(fileInput);
+        }
     });
 });
 </script>
