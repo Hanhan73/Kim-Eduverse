@@ -184,7 +184,6 @@ public function store(Request $request)
             'option_e' => 'nullable|string',
             'correct_answer' => 'required|in:A,B,C,D,E',
             'points' => 'required|integer|min:1',
-            'explanation' => 'nullable|string',
         ]);
 
         // Get max order
@@ -236,7 +235,6 @@ public function store(Request $request)
             'option_e' => 'nullable|string',
             'correct_answer' => 'required|in:A,B,C,D,E',
             'points' => 'required|integer|min:1',
-            'explanation' => 'nullable|string',
         ]);
 
         $question->update([
@@ -417,7 +415,6 @@ public function store(Request $request)
                 $optionE       = trim($row['G'] ?? '');
                 $correctAnswer = strtoupper(trim($row['H'] ?? ''));
                 $points        = (int) ($row['I'] ?? 10);
-                $explanation   = trim($row['J'] ?? '');
     
                 // Skip baris kosong
                 if (empty($questionText) && empty($optionA) && empty($optionB)) {
@@ -481,7 +478,6 @@ public function store(Request $request)
                     'correct_answer' => $correctAnswer,
                     'points'         => $points,
                     'order'          => $maxOrder,
-                    'explanation'    => $explanation ?: null,
                 ]);
     
                 $imported++;
