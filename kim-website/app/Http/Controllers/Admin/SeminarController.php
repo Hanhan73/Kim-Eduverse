@@ -8,6 +8,7 @@ use App\Models\Quiz;
 use App\Models\DigitalProduct;
 use App\Models\DigitalProductCategory;
 use App\Models\SeminarMaterial;
+use App\Models\SeminarType;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -28,6 +29,7 @@ class SeminarController extends Controller
 
     public function create()
     {
+        $seminarTypes = SeminarType::activeOrdered();
         $quizzes = Quiz::where(function ($query) {
             $query->whereNull('course_id')
                 ->whereNull('module_id');
@@ -42,14 +44,14 @@ class SeminarController extends Controller
             ->orderBy('name')
             ->get();
 
-        return view('admin.digital.seminars.create', compact('quizzes', 'collaborators'));
+        return view('admin.digital.seminars.create', compact('quizzes', 'collaborators', 'seminarTypes'));
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'type' => 'required|string|in:pendidikan,manajemen,kearsipan',
+            'type' => 'required|string|exists:seminar_types,slug',
             'description' => 'required|string',
             'thumbnail' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'collaborator_id' => 'required|exists:users,id',
@@ -151,6 +153,8 @@ class SeminarController extends Controller
 
     public function edit(Seminar $seminar)
     {
+        $seminarTypes = SeminarType::activeOrdered();
+        
         $quizzes = Quiz::where(function ($query) {
             $query->whereNull('course_id')
                 ->whereNull('module_id');
@@ -165,14 +169,14 @@ class SeminarController extends Controller
             ->orderBy('name')
             ->get();
 
-        return view('admin.digital.seminars.edit', compact('seminar', 'quizzes', 'collaborators'));
+        return view('admin.digital.seminars.edit', compact('seminar', 'quizzes', 'collaborators', 'seminarTypes'));
     }
 
     public function update(Request $request, Seminar $seminar)
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'type' => 'required|string|in:pendidikan,manajemen,kearsipan',
+            'type' => 'required|string|exists:seminar_types,slug',
             'description' => 'required|string',
             'thumbnail' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'collaborator_id' => 'required|exists:users,id',

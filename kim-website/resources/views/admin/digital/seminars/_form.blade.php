@@ -27,15 +27,12 @@
                         <label>Tipe Seminar <span style="color: red;">*</span></label>
                         <select name="type" class="form-control @error('type') is-invalid @enderror" required>
                             <option value="">-- Pilih Tipe Seminar --</option>
-                            <option value="pendidikan"
-                                {{ old('type', $seminar->type ?? '') == 'pendidikan' ? 'selected' : '' }}>Pendidikan
+                            @foreach($seminarTypes as $type)
+                            <option value="{{ $type->slug }}"
+                                {{ old('type', $seminar->type ?? '') == $type->slug ? 'selected' : '' }}>
+                                {{ $type->name }}
                             </option>
-                            <option value="manajemen"
-                                {{ old('type', $seminar->type ?? '') == 'manajemen' ? 'selected' : '' }}>Manajemen
-                            </option>
-                            <option value="kearsipan"
-                                {{ old('type', $seminar->type ?? '') == 'kearsipan' ? 'selected' : '' }}>Kearsipan
-                            </option>
+                            @endforeach
                         </select>
                         @error('type')
                         <div class="invalid-feedback">{{ $message }}</div>

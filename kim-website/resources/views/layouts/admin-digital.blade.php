@@ -758,7 +758,11 @@
                 class="menu-item {{ request()->routeIs('admin.digital.seminar.quizzes.*') ? 'active' : '' }}">
                 <i class="fas fa-question-circle"></i> Quiz Seminar
             </a>
-
+            <a href="{{ route ('admin.digital.seminar-types.index') }}"
+                class="menu-item {{ request()->routeIs('admin.digital.seminar-types.*') ? 'active' : '' }}">
+                <i class="fas fa-tags"></i> Tipe Seminar
+            </a>
+            
             <div class="menu-section">E-book</div>
             <a href="{{ route('admin.digital.ebook-access.index') }}"
                 class="menu-item {{ request()->routeIs('admin.digital.ebook-access.*') ? 'active' : '' }}">

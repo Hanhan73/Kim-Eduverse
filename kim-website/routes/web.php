@@ -383,7 +383,7 @@ use App\Http\Controllers\DigitalPaymentController;
 use App\Http\Controllers\QuestionnaireController;
 use App\Http\Controllers\SeminarController;
 use App\Http\Controllers\Admin\SeminarController as AdminSeminarController;
-
+use App\Http\Controllers\Admin\SeminarTypeController;
 // ========================================
 // KIM DIGITAL - PUBLIC ROUTES
 // ========================================
@@ -603,6 +603,14 @@ Route::prefix('admin/digital')->name('admin.digital.')->middleware(['check.digit
 
         Route::post('/{seminar}/materials/reorder', [AdminSeminarController::class, 'reorderMaterials'])
             ->name('materials.reorder');
+    });
+
+        Route::prefix('seminar-types')->name('seminar-types.')->group(function () {
+        Route::get('/',                          [SeminarTypeController::class, 'index'])->name('index');
+        Route::post('/',                         [SeminarTypeController::class, 'store'])->name('store');
+        Route::put('/{seminarType}',             [SeminarTypeController::class, 'update'])->name('update');
+        Route::delete('/{seminarType}',          [SeminarTypeController::class, 'destroy'])->name('destroy');
+        Route::post('/{seminarType}/toggle',     [SeminarTypeController::class, 'toggleActive'])->name('toggle');
     });
 
     // Landing Pages Management (di dalam group admin)
