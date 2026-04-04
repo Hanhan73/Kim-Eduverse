@@ -7,7 +7,7 @@
     <div class="card-body">
 
         {{-- Form Tambah --}}
-        <form action="{{ route('admin.seminar-types.store') }}" method="POST" class="d-flex gap-2 mb-4">
+        <form action="{{ route('admin.digital.seminar-types.store') }}" method="POST" class="d-flex gap-2 mb-4">
             @csrf
             <input type="text" name="name" class="form-control" placeholder="Nama tipe baru..." required>
             <input type="number" name="order" class="form-control" placeholder="Urutan" style="width:100px" min="0">
