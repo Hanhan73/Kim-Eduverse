@@ -30,7 +30,7 @@
                 @foreach($types as $type)
                 <tr>
                     <td>
-                        <form action="{{ route('admin.seminar-types.update', $type) }}" method="POST"
+                        <form action="{{ route('admin.digital.seminar-types.update', $type) }}" method="POST"
                             class="d-flex gap-2 align-items-center">
                             @csrf @method('PUT')
                             <input type="text" name="name" value="{{ $type->name }}"
@@ -43,7 +43,7 @@
                     <td><code>{{ $type->slug }}</code></td>
                     <td>{{ $type->order }}</td>
                     <td>
-                        <form action="{{ route('admin.seminar-types.toggle', $type) }}" method="POST">
+                        <form action="{{ route('admin.digital.seminar-types.toggle', $type) }}" method="POST">
                             @csrf
                             <button type="submit"
                                 class="btn btn-sm {{ $type->is_active ? 'btn-success' : 'btn-secondary' }}">
@@ -53,7 +53,7 @@
                     </td>
                     <td>{{ $type->seminars()->count() }}</td>
                     <td>
-                        <form action="{{ route('admin.seminar-types.destroy', $type) }}" method="POST"
+                        <form action="{{ route('admin.digital.seminar-types.destroy', $type) }}" method="POST"
                             onsubmit="return confirm('Hapus tipe ini?')">
                             @csrf @method('DELETE')
                             <button type="submit" class="btn btn-sm btn-danger">Hapus</button>
