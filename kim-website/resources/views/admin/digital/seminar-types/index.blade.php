@@ -3,6 +3,7 @@
 @section('title', 'Tipe Seminar')
 @section('page-title', 'Kelola Tipe Seminar')
 
+@section('content')
 <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">
         <h3>Kelola Tipe Seminar</h3>
@@ -68,3 +69,4 @@
         </table>
     </div>
 </div>
+@endsection
