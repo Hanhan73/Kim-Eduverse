@@ -14,7 +14,6 @@
         <form action="{{ route('admin.digital.seminar-types.store') }}" method="POST" class="d-flex gap-2 mb-4">
             @csrf
             <input type="text" name="name" class="form-control" placeholder="Nama tipe baru..." required>
-            <input type="number" name="order" class="form-control" placeholder="Urutan" style="width:100px" min="0">
             <button type="submit" class="btn btn-primary">Tambah</button>
         </form>
 

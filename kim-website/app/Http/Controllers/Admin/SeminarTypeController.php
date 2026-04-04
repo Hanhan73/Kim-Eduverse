@@ -19,15 +19,16 @@ class SeminarTypeController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name'  => 'required|string|max:100|unique:seminar_types,name',
-            'order' => 'nullable|integer|min:0',
+            'name' => 'required|string|max:100|unique:seminar_types,name',
         ]);
+
+        $nextOrder = SeminarType::max('order') + 1;
 
         SeminarType::create([
             'name'      => $request->name,
             'slug'      => Str::slug($request->name),
             'is_active' => true,
-            'order'     => $request->order ?? 0,
+            'order'     => $nextOrder,
         ]);
 
         return back()->with('success', "Tipe '{$request->name}' berhasil ditambahkan.");
