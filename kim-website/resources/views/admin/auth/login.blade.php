@@ -442,12 +442,6 @@
                 </button>
             </form>
 
-            <!-- Demo Info -->
-            <div class="demo-info">
-                <strong><i class="fas fa-info-circle"></i> Info Demo</strong>
-                <p>Email: <code>admin@kim.co.id</code></p>
-                <p>Password: <code>admin123</code></p>
-            </div>
 
             <!-- Footer -->
             <div class="login-footer">

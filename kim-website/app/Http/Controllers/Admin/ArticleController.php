@@ -58,7 +58,15 @@ class ArticleController extends Controller
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $imageName = time() . '_' . Str::slug($request->title) . '.' . $image->extension();
-            $image->move(public_path('uploads/articles'), $imageName);
+            
+            // Ganti ini
+            $destination = '/home/u597258220/domains/kimeduverse.com/public_html/uploads/articles';
+            
+            if (!file_exists($destination)) {
+                mkdir($destination, 0755, true);
+            }
+            
+            $image->move($destination, $imageName);
             $validated['image'] = 'uploads/articles/' . $imageName;
         }
 
@@ -103,14 +111,17 @@ class ArticleController extends Controller
 
         // Handle image upload
         if ($request->hasFile('image')) {
-            // Delete old image
-            if ($article->image && file_exists(public_path($article->image))) {
-                unlink(public_path($article->image));
-            }
-
             $image = $request->file('image');
             $imageName = time() . '_' . Str::slug($request->title) . '.' . $image->extension();
-            $image->move(public_path('uploads/articles'), $imageName);
+            
+            // Ganti ini
+            $destination = '/home/u597258220/domains/kimeduverse.com/public_html/uploads/articles';
+            
+            if (!file_exists($destination)) {
+                mkdir($destination, 0755, true);
+            }
+            
+            $image->move($destination, $imageName);
             $validated['image'] = 'uploads/articles/' . $imageName;
         }
 
