@@ -29,11 +29,11 @@ class ArticleController extends Controller
     public function create()
     {
         $categories = [
-            'Digital Transformation',
-            'Manajemen',
+            'Manajemen Kearsipan',
+            'Manajemen Perkantoran',
             'Teknologi',
             'Pendidikan',
-            'Bisnis',
+            'Manajemen Proses Bisnis',
             'Tutorial',
             'Berita'
         ];
@@ -84,11 +84,11 @@ class ArticleController extends Controller
     public function edit(Article $article)
     {
         $categories = [
-            'Digital Transformation',
-            'Manajemen',
+            'Manajemen Kearsipan',
+            'Manajemen Perkantoran',
             'Teknologi',
             'Pendidikan',
-            'Bisnis',
+            'Manajemen Proses Bisnis',
             'Tutorial',
             'Berita'
         ];
