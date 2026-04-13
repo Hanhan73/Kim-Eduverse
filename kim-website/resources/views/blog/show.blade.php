@@ -126,9 +126,6 @@
             <div class="meta-bar-divider"></div>
 
             <div class="meta-bar-cta">
-                <a href="{{ route('contact.index') }}" class="mb-cta-btn">
-                    <i class="fas fa-paper-plane"></i> Hubungi Kami
-                </a>
                 <a href="{{ route('blog.index') }}" class="mb-back-btn">
                     <i class="fas fa-arrow-left"></i> Blog
                 </a>
