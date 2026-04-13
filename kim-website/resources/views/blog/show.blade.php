@@ -292,6 +292,8 @@
     overflow: hidden;
     background: #f8f9fa;
     transition: all 0.3s;
+    display: flex;
+    flex-direction: column;
 }
 
 .related-card:hover {
@@ -304,6 +306,7 @@
     width: 100%;
     height: 150px;
     object-fit: cover;
+    flex-shrink: 0;
 }
 
 .related-placeholder {
@@ -313,20 +316,34 @@
     background: #e2e8f0;
     color: #cbd5e0;
     font-size: 3rem;
+    flex-shrink: 0;
 }
 
 .related-content {
     padding: 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .related-content h4 {
     font-size: 1.1rem;
     margin-bottom: 10px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.4;
+    min-height: 2.8em; /* 2 baris */
 }
 
 .related-content p {
     font-size: 0.9rem;
     color: #718096;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 /* Sidebar */
