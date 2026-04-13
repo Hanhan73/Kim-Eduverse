@@ -331,9 +331,8 @@
     display: grid;
     grid-template-columns: 1fr 320px;
     gap: 32px;
-    align-items: start;
+    align-items: start; /* ← harus start, bukan stretch */
 }
-
 /* ─── Article Column ────────────────────────────── */
 .article-col {
     min-width: 0;
@@ -628,6 +627,7 @@
     display: flex;
     flex-direction: column;
     gap: 16px;
+    align-self: start; /* ← ini yang kurang */
 }
 
 .sidebar-card {
