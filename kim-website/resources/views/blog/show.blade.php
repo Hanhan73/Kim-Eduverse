@@ -328,13 +328,13 @@
 }
 
 .page-grid {
-    display: grid;
-    grid-template-columns: 1fr 320px;
+    display: flex;
     gap: 32px;
-    align-items: start; /* ← harus start, bukan stretch */
+    align-items: flex-start;
 }
 /* ─── Article Column ────────────────────────────── */
 .article-col {
+    flex: 1;
     min-width: 0;
 }
 
@@ -622,12 +622,13 @@
 
 /* ─── Sidebar ───────────────────────────────────── */
 .sidebar-col {
+    width: 320px;
+    flex-shrink: 0;
     position: sticky;
     top: 100px;
     display: flex;
     flex-direction: column;
     gap: 16px;
-    align-self: start; /* ← ini yang kurang */
 }
 
 .sidebar-card {
@@ -811,8 +812,8 @@
 
 /* ─── Responsive ────────────────────────────────── */
 @media (max-width: 1024px) {
-    .page-grid {
-        grid-template-columns: 1fr 280px;
+    .sidebar-col {
+        width: 280px;
     }
 
     .article-body {
@@ -822,10 +823,11 @@
 
 @media (max-width: 768px) {
     .page-grid {
-        grid-template-columns: 1fr;
+        flex-direction: column;
     }
 
     .sidebar-col {
+        width: 100%;
         position: static;
     }
 
