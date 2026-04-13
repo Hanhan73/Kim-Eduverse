@@ -154,13 +154,6 @@
                             </div>
                         </li>
                         <li>
-                            <span class="info-icon"><i class="fas fa-clock"></i></span>
-                            <div>
-                                <span class="info-key">Waktu baca</span>
-                                <span class="info-val">{{ $article->reading_time }}</span>
-                            </div>
-                        </li>
-                        <li>
                             <span class="info-icon"><i class="fas fa-eye"></i></span>
                             <div>
                                 <span class="info-key">Dilihat</span>
