@@ -246,12 +246,15 @@
 }
 
 .cekma-subcategory {
-    padding: 8px 10px;
+    padding: 8px 12px;
     border-left: 2px solid #e2e8f0;
-    margin-bottom: 5px;
+    margin-bottom: 4px;
     cursor: pointer;
     border-radius: 0 8px 8px 0;
     transition: all 0.2s ease;
+    display: flex;          /* TAMBAH */
+    align-items: center;    /* TAMBAH */
+    gap: 8px;               /* TAMBAH */
 }
 
 .cekma-subcategory:hover {
@@ -264,12 +267,21 @@
     background: #f0f4ff;
 }
 
-.cekma-subcategory input {
-    margin-right: 8px;
+.cekma-subcategory input[type="radio"] {
+    width: 15px;
+    height: 15px;
+    accent-color: #667eea;
+    flex-shrink: 0;         /* TAMBAH */
+    margin: 0;              /* TAMBAH - hapus margin default */
+    cursor: pointer;
 }
 
 .cekma-subcategory label {
     font-size: 0.9rem;
+    color: #4a5568;
+    cursor: pointer;
+    margin: 0;              /* TAMBAH */
+    line-height: 1.3;
 }
 
 .products-main {
@@ -921,7 +933,7 @@
                             {{ request('cekma_type') === $type ? 'checked' : '' }}
                             onchange="window.location.href='{{ route('digital.catalog', array_merge(request()->except('category'), ['cekma_type' => $type])) }}'">
                         <label for="cekma-{{ $type }}">
-                            CEKMA {{ Str::title(str_replace('_', ' ', $type)) }}
+                            CEKMA {{ Str::title(str_replace(['-', '_'], ' ', $type)) }}
                         </label>
                     </div>
                     @endforeach
@@ -946,7 +958,7 @@
                             onchange="window.location.href='{{ route('digital.catalog', ['category'=>'on-demand-seminar','seminar_type'=>$type]) }}'">
 
                         <label>
-                            {{ Str::title(str_replace('_', ' ', $type)) }}
+                            {{ Str::title(str_replace(['-', '_'], ' ', $type)) }}
                         </label>
                     </div>
                     @endforeach
