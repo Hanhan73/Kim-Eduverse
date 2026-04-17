@@ -90,7 +90,11 @@ class ArticleController extends Controller
             'Pendidikan',
             'Manajemen Proses Bisnis',
             'Tutorial',
-            'Berita'
+            'Berita',
+            'Manajemen Sumber Daya Manusia',
+            'Sistem Manajeman Mutu',
+            'Manajemen Mutu',
+            'Manajemen Risiko',
         ];
 
         return view('admin.articles.edit', compact('article', 'categories'));
