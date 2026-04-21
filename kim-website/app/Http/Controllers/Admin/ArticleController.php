@@ -99,6 +99,7 @@ class ArticleController extends Controller
             'Sistem Manajeman Mutu',
             'Manajemen Mutu',
             'Manajemen Risiko',
+            'Pengembangan Diri Profesional',
         ];
 
         return view('admin.articles.edit', compact('article', 'categories'));
