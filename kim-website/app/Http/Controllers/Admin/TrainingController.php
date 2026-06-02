@@ -371,34 +371,42 @@ class TrainingController extends Controller
     // ========================================
     // PRIVATE: Generate 1 sertifikat
     // ========================================
-    private function generateOneCertificate(TrainingParticipant $participant, Training $training)
-    {
-        try {
-            $participant->generateCertificateNumber();
-            $participant->refresh();
-
-            $pdf = Pdf::loadView('pdf.training-certificate', [
-                'participant' => $participant,
-                'training' => $training,
-            ])->setPaper('a4', 'landscape');
-
-            $fileName = 'sertifikat_' . $participant->certificate_number . '.pdf';
-            $filePath = 'training_certificates/' . $fileName;
-
-            if (!\Storage::disk('public')->exists('training_certificates')) {
-                \Storage::disk('public')->makeDirectory('training_certificates');
-            }
-
-            \Storage::disk('public')->put($filePath, $pdf->output());
-
-            $participant->update([
-                'certificate_path' => $filePath,
-                'certificate_issued_at' => now(),
-            ]);
-        } catch (\Exception $e) {
-            Log::error("Certificate generation failed for participant {$participant->id}: " . $e->getMessage());
+private function generateOneCertificate(TrainingParticipant $participant, Training $training)
+{
+    try {
+        // Load relasi yang dibutuhkan template
+        $training->loadMissing(['seminar.materials']);
+        $participant->loadMissing('enrollment');
+ 
+        $participant->generateCertificateNumber();
+        $participant->refresh();
+ 
+        $pdf = Pdf::loadView('pdf.training-certificate', [
+            'participant' => $participant,
+            'training'    => $training,
+        ])->setPaper('a4', 'landscape');
+ 
+        // Nama file aman (tidak ada /)
+        $safeNumber = str_replace(['/', '\\', ' '], '-', $participant->certificate_number);
+        $fileName   = 'sertifikat_' . $safeNumber . '.pdf';
+        $filePath   = 'training_certificates/' . $fileName;
+ 
+        if (!\Storage::disk('public')->exists('training_certificates')) {
+            \Storage::disk('public')->makeDirectory('training_certificates');
         }
+ 
+        \Storage::disk('public')->put($filePath, $pdf->output());
+ 
+        $participant->update([
+            'certificate_path'        => $filePath,
+            'certificate_issued_at'   => now(),
+        ]);
+ 
+    } catch (\Exception $e) {
+        \Log::error("Certificate generation failed for participant {$participant->id}: " . $e->getMessage());
+        throw $e;
     }
+}
 
     public function downloadTemplate()
 {

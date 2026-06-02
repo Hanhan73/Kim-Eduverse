@@ -1,155 +1,306 @@
+@php
+$title = strtoupper($training->title);
+$words = explode(' ', $title);
+$totalWords = count($words);
+$half = ceil($totalWords / 2);
+$line1 = implode(' ', array_slice($words, 0, $half));
+$line2 = implode(' ', array_slice($words, $half));
+
+// Ambil materi dari seminar jika ada, fallback ke default
+$seminar = $training->seminar;
+$materials = $seminar ? $seminar->materials : collect([]);
+$totalJP = $materials->sum('jp');
+if ($totalJP == 0) {
+    $totalJP = $seminar ? ceil($seminar->duration_minutes / 60) : 8;
+}
+
+// Nilai post-test
+$enrollment = $participant->enrollment;
+$postScore  = $enrollment ? round($enrollment->post_test_score ?? 0) : null;
+@endphp
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <title>Sertifikat Pelatihan</title>
     <style>
-    @page { size: A4 landscape; margin: 0; }
-    body { margin: 0; padding: 0; font-family: 'Times New Roman', serif; }
-
-    .certificate {
-        background: #fff;
-        border: 10px double #667eea;
-        padding: 30px 50px;
-        box-sizing: border-box;
-        position: relative;
-        margin: 15mm auto;
-        width: 267mm;
+    @page {
+        size: A4 landscape;
+        margin: 0;
     }
 
-    .certificate-inner {
-        border: 2px solid #d4af37;
-        padding: 25px;
+    body {
+        margin: 0;
+        font-family: "Times New Roman", serif;
+        color: #222;
+    }
+
+    .page {
+        position: relative;
+        width: 297mm;
+        height: 210mm;
+        background: url('{{ public_path("images/paper-bg.jpg") }}') center / cover no-repeat;
+    }
+
+    .page:not(:last-child) {
+        page-break-after: always;
+    }
+
+    .sidebar {
+        position: absolute;
+        top: 25mm;
+        left: 20mm;
+        width: 28mm;
+        height: 160mm;
+        background: #0B4DBA;
+    }
+
+    .sidebar-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) rotate(-90deg);
+        width: 150mm;
         text-align: center;
-        position: relative;
+        color: #fff;
+        font-size: 16px;
+        font-weight: bold;
+        letter-spacing: 2px;
+        line-height: 1.3;
+        white-space: normal;
     }
 
-    .logo { font-size: 42px; color: #667eea; margin-bottom: 8px; }
-    .company-name {
-        font-size: 16px; font-weight: bold; color: #1e293b;
-        letter-spacing: 2px; text-transform: uppercase; margin-bottom: 5px;
+    .content {
+        position: absolute;
+        top: 30mm;
+        left: 65mm;
+        right: 20mm;
     }
 
-    .cert-type {
-        font-size: 13px; color: #6b7280; font-style: italic;
-        letter-spacing: 1px; margin-bottom: 10px;
+    .logo {
+        width: 90px;
+        margin-bottom: 20px;
     }
 
-    .title {
-        font-size: 36px; color: #1F2937; font-weight: bold;
-        text-transform: uppercase; letter-spacing: 3px; margin-bottom: 4px;
+    .title-small {
+        font-size: 14px;
+        margin-bottom: 12px;
     }
 
-    .subtitle {
-        font-size: 13px; color: #6B7280; margin-bottom: 18px; font-style: italic;
+    .participant-name {
+        font-size: 26px;
+        font-weight: bold;
+        color: #0B4DBA;
+        margin-bottom: 6px;
     }
 
-    .presented-text {
-        font-size: 12px; color: #64748b; text-transform: uppercase;
-        letter-spacing: 1px; margin-bottom: 8px;
+    .participant-nip {
+        font-size: 12px;
+        color: #555;
+        margin-bottom: 14px;
     }
 
-    .name {
-        font-size: 30px; color: #667eea; font-weight: bold;
-        border-bottom: 3px solid #667eea;
-        display: inline-block; padding: 5px 30px 8px; margin: 8px 0 16px;
+    .body-text {
+        font-size: 12px;
+        line-height: 1.7;
+        margin-bottom: 10px;
     }
 
-    .completion-text { font-size: 13px; color: #4B5563; margin-bottom: 6px; }
-
-    .course-name {
-        font-size: 16px; color: #1e293b; font-weight: bold;
-        font-style: italic; margin: 12px 40px; line-height: 1.5;
+    .details {
+        font-size: 11px;
+        line-height: 1.8;
+        margin-top: 10px;
     }
 
-    .details { display: inline-block; margin-bottom: 18px; text-align: left; }
-    .detail-row { font-size: 11px; color: #374151; margin-bottom: 4px; }
-    .detail-label { font-weight: bold; color: #6B7280; display: inline-block; width: 120px; }
-    .detail-value { display: inline-block; color: #1e293b; font-weight: 600; }
-
-    .signatures { margin-top: 24px; padding: 0 40px; }
-    .signature-table { width: 100%; border-collapse: collapse; }
-    .signature-table td { text-align: center; vertical-align: top; width: 50%; padding: 0 20px; }
-    .signature-line { border-top: 2px solid #1F2937; width: 180px; margin: 0 auto 6px; }
-    .signature-name { font-size: 13px; font-weight: bold; color: #1F2937; margin-bottom: 2px; }
-    .signature-title { font-size: 11px; color: #6B7280; }
-
-    .cert-number {
-        position: absolute; bottom: 12px; right: 20px;
-        font-size: 10px; color: #9ca3af;
+    .details b {
+        display: inline-block;
+        width: 130px;
     }
 
-    .watermark-left { position: absolute; left: -8px; top: 50%; transform: translateY(-50%) rotate(-90deg); font-size: 10px; color: #d4af37; letter-spacing: 3px; }
+    .signature {
+        margin-top: 30px;
+    }
+
+    .sign-name {
+        font-weight: bold;
+        font-size: 12px;
+        color: #0B4DBA;
+    }
+
+    /* Page 2 */
+    .page-2 .content {
+        top: 35mm;
+    }
+
+    .page-2 h2 {
+        text-align: center;
+        font-size: 18px;
+        margin-bottom: 8px;
+        color: #0B4DBA;
+    }
+
+    .page-2 .sub-title {
+        text-align: center;
+        font-size: 12px;
+        margin-bottom: 20px;
+        color: #444;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12px;
+    }
+
+    th, td {
+        border: 1px solid #000;
+        padding: 7px 10px;
+    }
+
+    th {
+        background: #0B4DBA;
+        color: #fff;
+    }
+
+    td:nth-child(1),
+    td:nth-child(3) {
+        text-align: center;
+        width: 50px;
+    }
     </style>
 </head>
 <body>
-<div class="certificate">
-    <div class="certificate-inner">
-        <div class="watermark-left">KIM EDUVERSE ★ KIM EDUVERSE</div>
 
-        <div class="logo">🎓</div>
-        <div class="company-name">PT KIM Eduverse</div>
-        <div class="cert-type">Menyatakan bahwa</div>
+{{-- ================= PAGE 1 ================= --}}
+<div class="page">
+    <div class="sidebar">
+        <div class="sidebar-text">
+            Pelatihan<br>
+            Sertifikat
+        </div>
+    </div>
 
-        <div class="title">Sertifikat</div>
-        <div class="subtitle">Pelatihan Pendidik dan Tenaga Kependidikan</div>
+    <div class="content">
+        <img src="{{ storage_path('app/private-assets/logo.png') }}" class="logo">
 
-        <div class="presented-text">Diberikan kepada</div>
+        <div class="title-small">Diberikan kepada</div>
 
-        <div class="name">{{ strtoupper($participant->name) }}</div>
+        <div class="participant-name">
+            {{ strtoupper($participant->name) }}
+        </div>
 
         @if($participant->nip)
-        <div style="font-size:12px; color:#6b7280; margin-bottom:10px;">NIP: {{ $participant->nip }}</div>
+        <div class="participant-nip">NIP: {{ $participant->nip }}</div>
         @endif
 
-        <div class="completion-text">Telah mengikuti dan menyelesaikan</div>
+        <div class="body-text">
+            telah mengikuti dan menyelesaikan pelatihan<br>
+            <i><b>{{ $training->title }}</b></i>
+        </div>
 
-        <div class="course-name">"{{ $training->title }}"</div>
+        <div class="body-text">
+            Sertifikat ini diberikan sebagai bukti keikutsertaan dan penyelesaian program pelatihan
+            yang diselenggarakan oleh {{ $training->organizer ?? 'PT KIM Eduverse' }}.
+        </div>
 
         <div class="details">
-            <div class="detail-row">
-                <span class="detail-label">Tanggal</span>
-                <span class="detail-value">: {{ $training->training_date->translatedFormat('d F Y') }}</span>
-            </div>
-            <div class="detail-row">
-                <span class="detail-label">Tempat</span>
-                <span class="detail-value">: {{ $training->location }}</span>
-            </div>
-            @if($training->organizer)
-            <div class="detail-row">
-                <span class="detail-label">Penyelenggara</span>
-                <span class="detail-value">: {{ $training->organizer }}</span>
-            </div>
+            <b>Tanggal Pelatihan :</b>
+            {{ $training->training_date->translatedFormat('d F Y') }}<br>
+
+            <b>Tempat :</b>
+            {{ $training->location }}<br>
+
+            @if($training->trainer_name)
+            <b>Narasumber :</b>
+            {{ $training->trainer_name }}<br>
             @endif
-            @if($participant->enrollment && $participant->enrollment->post_test_score)
-            <div class="detail-row">
-                <span class="detail-label">Nilai Post-Test</span>
-                <span class="detail-value">: {{ round($participant->enrollment->post_test_score) }}%</span>
-            </div>
+
+            @if($postScore)
+            <b>Nilai Post-Test :</b>
+            {{ $postScore }}%<br>
             @endif
+
+            <b>No. Sertifikat :</b>
+            {{ $participant->certificate_number }}
         </div>
 
-        <div class="signatures">
-            <table class="signature-table">
-                <tr>
-                    <td>
-                        <div style="height:50px;"></div>
-                        <div class="signature-line"></div>
-                        <div class="signature-name">{{ $training->trainer_name ?? 'Narasumber' }}</div>
-                        <div class="signature-title">Narasumber/Fasilitator</div>
-                    </td>
-                    <td>
-                        <div style="height:50px;"></div>
-                        <div class="signature-line"></div>
-                        <div class="signature-name">Direktur PT KIM Eduverse</div>
-                        <div class="signature-title">Penyelenggara</div>
-                    </td>
-                </tr>
-            </table>
+        <div class="signature">
+            <img src="{{ storage_path('app/private-assets/ttd.jpeg') }}" width="120"><br>
+            <div class="sign-name">
+                Yosep Hernawan, S.T., M.M., IPM., CBTS.
+            </div>
+            Direktur PT KIM Eduverse
         </div>
-
-        <div class="cert-number">No: {{ $participant->certificate_number }}</div>
     </div>
 </div>
+
+{{-- ================= PAGE 2 ================= --}}
+<div class="page page-2">
+    <div class="sidebar">
+        <div class="sidebar-text">
+            Pelatihan<br>
+            Sertifikat
+        </div>
+    </div>
+
+    <div class="content">
+        <h2>MATERI PELATIHAN</h2>
+        <div class="sub-title">{{ $training->title }}</div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Materi</th>
+                    <th>JP</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if($materials->count() > 0)
+                    @foreach($materials as $i => $material)
+                    <tr>
+                        <td>{{ $i + 1 }}</td>
+                        <td>{{ $material->title }}</td>
+                        @if($i === 0)
+                        <td rowspan="{{ $materials->count() }}" style="text-align:center; vertical-align:middle; font-weight:bold; font-size:14px;">
+                            {{ $totalJP }}
+                        </td>
+                        @endif
+                    </tr>
+                    @endforeach
+                @else
+                    {{-- Fallback: materi default --}}
+                    @php
+                    $defaultMaterials = [
+                        'Konsep Dasar dan Pengantar Materi',
+                        'Teori, Metodologi, dan Kerangka Kerja',
+                        'Teknik dan Implementasi Praktis',
+                        'Studi Kasus dan Analisis',
+                        'Evaluasi, Refleksi, dan Tindak Lanjut',
+                    ];
+                    @endphp
+                    @foreach($defaultMaterials as $i => $m)
+                    <tr>
+                        <td>{{ $i + 1 }}</td>
+                        <td>{{ $m }}</td>
+                        @if($i === 0)
+                        <td rowspan="{{ count($defaultMaterials) }}" style="text-align:center; vertical-align:middle; font-weight:bold; font-size:14px;">
+                            {{ $totalJP }}
+                        </td>
+                        @endif
+                    </tr>
+                    @endforeach
+                @endif
+            </tbody>
+        </table>
+
+        <div style="text-align:center; margin-top:35px;">
+            <img src="{{ storage_path('app/private-assets/ttd.jpeg') }}" width="120"><br>
+            <b>Yosep Hernawan, S.T., M.M., IPM., CBTS.</b><br>
+            <span style="font-size:11px;">Direktur PT KIM Eduverse</span>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>
