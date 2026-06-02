@@ -1006,4 +1006,8 @@ Route::prefix('pelatihan')->name('training.participant.')->group(function () {
     Route::post('/{token}/checkout', [TrainingParticipantController::class, 'checkOut'])->name('checkout');
     Route::post('/{token}/task', [TrainingParticipantController::class, 'submitTask'])->name('task.submit');
     Route::get('/{token}/certificate', [TrainingParticipantController::class, 'downloadCertificate'])->name('certificate');
+    Route::post('/{token}/quiz/{quizType}/start', [TrainingParticipantController::class, 'startQuiz'])->name('quiz.start');
+Route::post('/{token}/quiz/{quizType}/submit', [TrainingParticipantController::class, 'submitQuiz'])->name('quiz.submit');
+Route::post('/{token}/quiz/save-answer', [TrainingParticipantController::class, 'saveAnswer'])->name('quiz.save-answer');
+Route::post('/{token}/material/viewed', [TrainingParticipantController::class, 'markMaterialViewed'])->name('material.viewed');
 });
