@@ -216,7 +216,7 @@
     {{-- CHECK-IN --}}
     @if($currentView === 'checkin')
     <div class="card">
-        <h3 style="margin-bottom:8px;">📍 Check-in Kehadiran</h3>
+        <h3 style="margin-bottom:8px;">Check-in Kehadiran</h3>
         <p style="color:#6b7280; margin-bottom:20px; font-size:0.9rem;">Konfirmasi kehadiran Anda di pelatihan ini.</p>
         <form method="POST" action="{{ route('training.participant.checkin', $participant->access_token) }}">
             @csrf
@@ -230,7 +230,7 @@
     {{-- PRE-TEST --}}
     @if($currentView === 'pre_test')
     <div class="card">
-        <h3 style="margin-bottom:8px;">📝 Pre-Test</h3>
+        <h3 style="margin-bottom:8px;">Pre-Test</h3>
         <p style="color:#6b7280; margin-bottom:20px; font-size:0.9rem;">Kerjakan pre-test sebelum mengakses materi pelatihan.</p>
         <a href="{{ route('digital.seminar.learn', $enrollment->order->order_number) }}" class="btn btn-primary btn-block">
             <i class="fas fa-play"></i> Mulai Pre-Test
@@ -241,7 +241,7 @@
     {{-- MATERI --}}
     @if($currentView === 'material')
     <div class="card">
-        <h3 style="margin-bottom:8px;">📚 Materi Pelatihan</h3>
+        <h3 style="margin-bottom:8px;">Materi Pelatihan</h3>
         <p style="color:#6b7280; margin-bottom:20px; font-size:0.9rem;">Pelajari materi berikut selama sesi pelatihan berlangsung.</p>
         <a href="{{ route('digital.seminar.learn', $enrollment->order->order_number) }}" class="btn btn-primary btn-block">
             <i class="fas fa-book-open"></i> Buka Materi
@@ -252,7 +252,7 @@
     {{-- CHECK-OUT --}}
     @if($currentView === 'checkout')
     <div class="card">
-        <h3 style="margin-bottom:8px;">🚪 Check-out</h3>
+        <h3 style="margin-bottom:8px;">Check-out</h3>
         <p style="color:#6b7280; margin-bottom:20px; font-size:0.9rem;">Konfirmasi bahwa Anda telah mengikuti pelatihan hingga selesai.</p>
         <form method="POST" action="{{ route('training.participant.checkout', $participant->access_token) }}">
             @csrf
@@ -266,7 +266,7 @@
     {{-- POST-TEST --}}
     @if($currentView === 'post_test')
     <div class="card">
-        <h3 style="margin-bottom:8px;">✅ Post-Test</h3>
+        <h3 style="margin-bottom:8px;">Post-Test</h3>
         <p style="color:#6b7280; margin-bottom:20px; font-size:0.9rem;">Kerjakan post-test untuk mengukur pemahaman Anda setelah pelatihan.</p>
         <a href="{{ route('digital.seminar.learn', $enrollment->order->order_number) }}" class="btn btn-primary btn-block">
             <i class="fas fa-clipboard-check"></i> Mulai Post-Test
@@ -277,7 +277,7 @@
     {{-- TUGAS --}}
     @if($currentView === 'task')
     <div class="card">
-        <h3 style="margin-bottom:8px;">📤 Kumpulkan Tugas</h3>
+        <h3 style="margin-bottom:8px;">Kumpulkan Tugas</h3>
         <p style="color:#6b7280; margin-bottom:4px; font-size:0.9rem;">Upload tugas Anda ke Google Drive, lalu tempelkan linknya di sini.</p>
         <p style="font-size:0.8rem; color:#9ca3af; margin-bottom:20px;">Pastikan link Google Drive sudah diset ke "Anyone with the link can view".</p>
 
@@ -320,7 +320,7 @@
     @if($currentView === 'completed')
     <div class="card" style="text-align:center; background:linear-gradient(135deg,#667eea,#764ba2); color:white; padding:40px;">
         <i class="fas fa-certificate" style="font-size:3rem; margin-bottom:16px;"></i>
-        <h2>Selamat! 🎉</h2>
+        <h2>Selamat!</h2>
         <p style="opacity:0.9; margin:12px 0 24px;">Anda telah menyelesaikan pelatihan ini.</p>
         <div style="background:rgba(255,255,255,.15); border-radius:10px; padding:12px; margin-bottom:24px; font-size:0.85rem;">
             No. Sertifikat: <strong>{{ $participant->certificate_number }}</strong>
