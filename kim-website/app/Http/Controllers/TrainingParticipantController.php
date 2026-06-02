@@ -19,18 +19,27 @@ class TrainingParticipantController extends Controller
     // ========================================
     // AKSES VIA TOKEN (dari email)
     // ========================================
-    public function access($token)
-    {
-        $participant = TrainingParticipant::where('access_token', $token)->firstOrFail();
-        $training = $participant->training()->with('seminar.preTest.questions', 'seminar.postTest.questions')->first();
+public function access($token)
+{
+    $participant = TrainingParticipant::where('access_token', $token)->firstOrFail();
+    $training = $participant->training()
+        ->with('seminar.preTest.questions', 'seminar.postTest.questions')
+        ->first();
 
-        // Tentukan view saat ini
-        $currentView = $this->determineView($participant, $training);
-
-        $submission = $participant->submission;
-
-        return view('training.participant', compact('participant', 'training', 'currentView', 'submission'));
+    // Auto-create enrollment jika belum ada tapi seminar ada
+    if ($training->seminar && !$participant->seminar_enrollment_id) {
+        $this->getOrCreateEnrollment($participant, $training->seminar);
+        $participant->refresh();
     }
+
+    // Load enrollment setelah refresh
+    $participant->load('enrollment');
+
+    $currentView = $this->determineView($participant, $training);
+    $submission = $participant->submission;
+
+    return view('training.participant', compact('participant', 'training', 'currentView', 'submission'));
+}
 
     // ========================================
     // CHECK-IN (oleh peserta sendiri)
@@ -153,52 +162,60 @@ class TrainingParticipantController extends Controller
     // ========================================
     // PRIVATE: Tentukan view saat ini
     // ========================================
-    private function determineView(TrainingParticipant $participant, Training $training)
-    {
-        $seminar = $training->seminar;
+private function determineView(TrainingParticipant $participant, Training $training)
+{
+    $seminar = $training->seminar;
 
-        // 1. Belum check-in
-        if (!$participant->checked_in_at) {
-            return 'checkin';
-        }
-
-        // 2. Ada seminar → pre-test dulu
-        if ($seminar && $participant->enrollment) {
-            $enrollment = $participant->enrollment;
-
-            if (!$enrollment->pre_test_passed) {
-                return 'pre_test';
-            }
-        }
-
-        // 3. Materi
-        if ($seminar && $participant->enrollment && !$participant->enrollment->material_viewed) {
-            return 'material';
-        }
-
-        // 4. Belum check-out
-        if (!$participant->checked_out_at) {
-            return 'checkout';
-        }
-
-        // 5. Post-test
-        if ($seminar && $participant->enrollment && !$participant->enrollment->post_test_passed) {
-            return 'post_test';
-        }
-
-        // 6. Tugas
-        if (!$participant->submission || $participant->submission->status === 'revision') {
-            return 'task';
-        }
-
-        // 7. Sertifikat
-        if ($participant->certificate_path) {
-            return 'completed';
-        }
-
-        return 'waiting'; // Menunggu admin generate sertifikat
+    // 1. Belum check-in
+    if (!$participant->checked_in_at) {
+        return 'checkin';
     }
 
+    // 2. Ada seminar → wajib pre-test dulu sebelum apapun
+    if ($seminar) {
+        // Pastikan enrollment ada dulu
+        if (!$participant->seminar_enrollment_id) {
+            // Auto buat enrollment
+            $enrollment = $this->getOrCreateEnrollment($participant, $seminar);
+            $participant->refresh();
+        }
+
+        $enrollment = $participant->enrollment;
+
+        if (!$enrollment || !$enrollment->pre_test_passed) {
+            return 'pre_test';
+        }
+
+        if (!$enrollment->material_viewed) {
+            return 'material';
+        }
+    }
+
+    // 3. Check-out (hanya bisa setelah pre-test & materi selesai)
+    if (!$participant->checked_out_at) {
+        return 'checkout';
+    }
+
+    // 4. Post-test (hanya setelah check-out)
+    if ($seminar) {
+        $enrollment = $participant->enrollment;
+        if (!$enrollment || !$enrollment->post_test_passed) {
+            return 'post_test';
+        }
+    }
+
+    // 5. Tugas
+    if (!$participant->submission || $participant->submission->status === 'revision') {
+        return 'task';
+    }
+
+    // 6. Sertifikat
+    if ($participant->certificate_path) {
+        return 'completed';
+    }
+
+    return 'waiting';
+}
     // ========================================
     // PRIVATE: Get or create seminar enrollment
     // ========================================
