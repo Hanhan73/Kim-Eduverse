@@ -365,7 +365,7 @@ public function startQuiz($token, $quizType)
 
         $order = \App\Models\DigitalOrder::create([
             'order_number'   => 'TRN-' . strtoupper(Str::random(8)),
-            'custoemer_name'  => $participant->name,
+            'customer_name'  => $participant->name,
             'customer_email' => $participant->email,
             'subtotal'       => 0,
             'tax'            => 0,
