@@ -399,4 +399,27 @@ class TrainingController extends Controller
             Log::error("Certificate generation failed for participant {$participant->id}: " . $e->getMessage());
         }
     }
+
+    public function downloadTemplate()
+{
+    // Buat CSV sederhana sebagai template
+    $headers = [
+        'Content-Type' => 'text/csv',
+        'Content-Disposition' => 'attachment; filename="template_peserta_pelatihan.csv"',
+    ];
+
+    $columns = ['Nama', 'NIP/NIKKI', 'Email', 'No HP', 'Instansi'];
+
+    $callback = function () use ($columns) {
+        $file = fopen('php://output', 'w');
+        // Header
+        fputcsv($file, $columns);
+        // Contoh data
+        fputcsv($file, ['Neneng Yosi', '198805202015042002', 'neneng@sekolah.sch.id', '08123456789', 'TK Meruya Selatan']);
+        fputcsv($file, ['Fitri Wulandari', '199401302020122018', 'fitri@sekolah.sch.id', '08234567890', 'TK Meruya Selatan']);
+        fclose($file);
+    };
+
+    return response()->stream($callback, 200, $headers);
+}
 }

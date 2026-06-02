@@ -651,6 +651,7 @@ Route::prefix('admin/digital')->name('admin.digital.')->middleware(['check.digit
         ->name('users.toggle-status');
 
 
+        Route::get('/trainings/template/download', [TrainingController::class, 'downloadTemplate'])->name('trainings.template');
  Route::resource('trainings', TrainingController::class);
  
     // Peserta
@@ -672,6 +673,8 @@ Route::prefix('admin/digital')->name('admin.digital.')->middleware(['check.digit
     // Sertifikat
     Route::post('/trainings/{training}/generate-certificates', [TrainingController::class, 'generateCertificates'])->name('trainings.generate-certificates');
     Route::get('/training-participants/{participant}/certificate', [TrainingController::class, 'downloadCertificate'])->name('trainings.participants.certificate');
+
+
 
 });
 
