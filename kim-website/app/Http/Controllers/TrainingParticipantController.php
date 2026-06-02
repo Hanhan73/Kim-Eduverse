@@ -219,45 +219,35 @@ private function determineView(TrainingParticipant $participant, Training $train
     // ========================================
     // PRIVATE: Get or create seminar enrollment
     // ========================================
-    private function getOrCreateEnrollment(TrainingParticipant $participant, $seminar)
-    {
-        // Cek jika sudah ada enrollment
-        if ($participant->seminar_enrollment_id) {
-            return $participant->enrollment;
-        }
-
-        // Buat dummy order untuk seminar gratis
-        $order = \App\Models\DigitalOrder::create([
-            'order_number' => 'TRN-' . strtoupper(Str::random(8)),
-            'customer_name' => $participant->name,
-            'customer_email' => $participant->email,
-            'customer_phone' => $participant->phone ?? '-',
-            'total_amount' => 0,
-            'status' => 'paid',
-            'payment_method' => 'free',
-            'paid_at' => now(),
-        ]);
-
-        // Buat order item
-        $seminar->digitalProduct && \App\Models\DigitalOrderItem::create([
-            'order_id' => $order->id,
-            'product_id' => $seminar->digitalProduct->id,
-            'product_name' => $seminar->title,
-            'price' => 0,
-            'quantity' => 1,
-        ]);
-
-        // Buat enrollment
-        $enrollment = \App\Models\SeminarEnrollment::create([
-            'seminar_id' => $seminar->id,
-            'customer_email' => $participant->email,
-            'participant_name' => $participant->name,
-            'order_id' => $order->id,
-        ]);
-
-        // Simpan ke participant
-        $participant->update(['seminar_enrollment_id' => $enrollment->id]);
-
-        return $enrollment;
+private function getOrCreateEnrollment(TrainingParticipant $participant, $seminar)
+{
+    if ($participant->seminar_enrollment_id) {
+        return $participant->enrollment;
     }
+
+    // Buat dummy order sesuai schema digital_orders
+    $order = \App\Models\DigitalOrder::create([
+        'order_number'   => 'TRN-' . strtoupper(Str::random(8)),
+        'customer_email' => $participant->email,
+        'subtotal'       => 0,
+        'tax'            => 0,
+        'total'          => 0,
+        'payment_method' => 'free',
+        'payment_status' => 'paid',
+        'status'         => 'completed',
+        'paid_at'        => now(),
+    ]);
+
+    // Buat enrollment
+    $enrollment = \App\Models\SeminarEnrollment::create([
+        'seminar_id'       => $seminar->id,
+        'customer_email'   => $participant->email,
+        'participant_name' => $participant->name,
+        'order_id'         => $order->id,
+    ]);
+
+    $participant->update(['seminar_enrollment_id' => $enrollment->id]);
+
+    return $enrollment;
+}
 }
