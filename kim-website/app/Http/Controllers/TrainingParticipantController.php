@@ -144,11 +144,8 @@ public function startQuiz($token, $quizType)
         // Format: { question_id: ['c','a','e','b','d'] } = urutan opsi yang ditampilkan
         $shuffledOptions = [];
         foreach ($selected as $q) {
-            $opts = collect(['a','b','c','d','e'])
-                ->filter(fn($o) => !empty($q->{'option_'.$o}))
-                ->shuffle()
-                ->values()
-                ->toArray();
+            $optsRaw = is_string($q->options) ? json_decode($q->options, true) : $q->options;
+            $opts = collect(array_keys($optsRaw ?? []))->shuffle()->values()->toArray(); // ['C','A','B',...]
             $shuffledOptions[$q->id] = $opts;
         }
 
@@ -224,7 +221,9 @@ public function startQuiz($token, $quizType)
 
         $correct = 0;
         foreach ($questions as $q) {
-            if (($answers[$q->id] ?? null) == $q->correct_answer) {
+            $userAnswer    = strtoupper(trim($answers[$q->id] ?? $answers[(string)$q->id] ?? ''));
+            $correctAnswer = strtoupper(trim($q->correct_answer ?? ''));
+            if ($userAnswer !== '' && $userAnswer === $correctAnswer) {
                 $correct++;
             }
         }

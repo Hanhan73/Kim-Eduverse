@@ -25,9 +25,9 @@ class QuizQuestion extends Model
         'order',
     ];
 
-    protected $casts = [
-        'options' => 'array',
-    ];
+protected $casts = [
+    'options' => 'array',
+];
 
     // Relationships
     public function quiz()
