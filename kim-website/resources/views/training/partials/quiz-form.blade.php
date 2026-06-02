@@ -13,8 +13,8 @@
     if (!is_array($savedAnswers)) $savedAnswers = [];
     
     $totalSeconds = $quiz->duration_minutes * 60;
-    // Fix: cast ke integer, dan gunakan Carbon dengan timezone yang benar
-    $elapsed   = (int) now('Asia/Jakarta')->diffInSeconds($attempt->started_at);
+    // Pakai now() tanpa timezone - biarkan keduanya UTC
+    $elapsed   = (int) now()->diffInSeconds($attempt->started_at);
     $remaining = (int) max(0, $totalSeconds - $elapsed);
 @endphp
 
