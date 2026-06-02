@@ -13,6 +13,9 @@ use App\Http\Controllers\Admin\ArticleController as AdminArticleController;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 
 
+use App\Http\Controllers\Admin\TrainingController;
+use App\Http\Controllers\TrainingParticipantController;
+
 
 // Landing Page
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -646,6 +649,30 @@ Route::prefix('admin/digital')->name('admin.digital.')->middleware(['check.digit
     Route::resource('users', UserController::class);
     Route::post('users/{id}/toggle-status', [UserController::class, 'toggleStatus'])
         ->name('users.toggle-status');
+
+
+ Route::resource('trainings', TrainingController::class);
+ 
+    // Peserta
+    Route::post('/trainings/{training}/participants', [TrainingController::class, 'addParticipant'])->name('trainings.participants.add');
+    Route::post('/trainings/{training}/participants/import', [TrainingController::class, 'importParticipants'])->name('trainings.participants.import');
+    Route::delete('/trainings/{training}/participants/{participant}', [TrainingController::class, 'removeParticipant'])->name('trainings.participants.remove');
+ 
+    // Email
+    Route::post('/trainings/{training}/send-emails', [TrainingController::class, 'sendEmails'])->name('trainings.send-emails');
+    Route::post('/trainings/{training}/participants/{participant}/send-email', [TrainingController::class, 'sendEmailOne'])->name('trainings.participants.send-email');
+ 
+    // Absensi (by admin)
+    Route::post('/trainings/{training}/participants/{participant}/checkin', [TrainingController::class, 'checkIn'])->name('trainings.participants.checkin');
+    Route::post('/trainings/{training}/participants/{participant}/checkout', [TrainingController::class, 'checkOut'])->name('trainings.participants.checkout');
+ 
+    // Tugas
+    Route::post('/training-submissions/{submission}/review', [TrainingController::class, 'reviewSubmission'])->name('trainings.submissions.review');
+ 
+    // Sertifikat
+    Route::post('/trainings/{training}/generate-certificates', [TrainingController::class, 'generateCertificates'])->name('trainings.generate-certificates');
+    Route::get('/training-participants/{participant}/certificate', [TrainingController::class, 'downloadCertificate'])->name('trainings.participants.certificate');
+
 });
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
@@ -966,4 +993,14 @@ Route::prefix('ebook')->name('ebook.')->group(function () {
 
     // Get PDF content (proxy)
     Route::get('/content/{token}', [App\Http\Controllers\EbookController::class, 'getContent'])->name('content');
+});
+
+
+
+Route::prefix('pelatihan')->name('training.participant.')->group(function () {
+    Route::get('/{token}', [TrainingParticipantController::class, 'access'])->name('access');
+    Route::post('/{token}/checkin', [TrainingParticipantController::class, 'checkIn'])->name('checkin');
+    Route::post('/{token}/checkout', [TrainingParticipantController::class, 'checkOut'])->name('checkout');
+    Route::post('/{token}/task', [TrainingParticipantController::class, 'submitTask'])->name('task.submit');
+    Route::get('/{token}/certificate', [TrainingParticipantController::class, 'downloadCertificate'])->name('certificate');
 });

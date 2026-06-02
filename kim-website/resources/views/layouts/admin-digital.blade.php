@@ -769,6 +769,11 @@
                 <i class="fas fa-book"></i> E-book Access
             </a>
 
+            <div class="menu-section">Pelatihan</div>
+            <a href="{{ route('admin.digital.trainings.index') }}" class="menu-item">
+                <i class="fas fa-chalkboard-teacher"></i> Pelatihan
+            </a>
+
             <div class="menu-section">Transaksi</div>
 
             <a href="{{ route('admin.digital.orders.index') }}"
