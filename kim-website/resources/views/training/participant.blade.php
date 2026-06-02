@@ -302,6 +302,7 @@
         <p style="color:#ef4444; font-size:0.9rem;">Terjadi kesalahan. Silakan refresh halaman atau hubungi admin.</p>
     @endif
 </div>
+@endif
 
     {{-- TUGAS --}}
     @if($currentView === 'task')
