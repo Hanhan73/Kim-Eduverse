@@ -111,7 +111,7 @@
                 </div>
                 <div>
                     <div style="font-weight:600;">Check-in Kehadiran</div>
-                    @if($participant->checked_in_at)<small style="color:#10b981;">{{ $participant->checked_in_at->format('H:i') }} WIB</small>@endif
+                    @if($participant->checked_in_at)<small style="color:#10b981;">{{ $participant->checked_in_at->setTimezone('Asia/Jakarta')->format('H:i') }} WIB</small>@endif
                 </div>
             </div>
 
@@ -140,7 +140,7 @@
                 </div>
                 <div>
                     <div style="font-weight:600;">Check-out</div>
-                    @if($participant->checked_out_at)<small style="color:#3b82f6;">{{ $participant->checked_out_at->format('H:i') }} WIB</small>@endif
+                    @if($participant->checked_out_at)<small style="color:#3b82f6;">{{ $participant->checked_out_at->setTimezone('Asia/Jakarta')->format('H:i') }} WIB</small>@endif
                 </div>
             </div>
 
