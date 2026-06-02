@@ -73,10 +73,11 @@ class TrainingParticipant extends Model
         return !is_null($this->certificate_path);
     }
 
-    public function generateCertificateNumber()
-    {
-        $number = 'SRT/TRN/' . date('Y') . '/' . str_pad($this->id, 4, '0', STR_PAD_LEFT);
-        $this->update(['certificate_number' => $number]);
-        return $number;
-    }
+public function generateCertificateNumber()
+{
+    // Pakai - bukan / supaya bisa jadi nama file
+    $number = 'SRT-TRN-' . date('Y') . '-' . str_pad($this->id, 4, '0', STR_PAD_LEFT);
+    $this->update(['certificate_number' => $number]);
+    return $number;
+}
 }
