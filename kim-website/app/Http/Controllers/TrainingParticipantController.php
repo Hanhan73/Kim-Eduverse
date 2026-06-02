@@ -113,48 +113,61 @@ class TrainingParticipantController extends Controller
     // ========================================
     // START QUIZ
     // ========================================
-    public function startQuiz($token, $quizType)
-    {
-        $participant = TrainingParticipant::where('access_token', $token)
-            ->with('enrollment', 'training.seminar.preTest', 'training.seminar.postTest')
-            ->firstOrFail();
+public function startQuiz($token, $quizType)
+{
+    $participant = TrainingParticipant::where('access_token', $token)
+        ->with('enrollment', 'training.seminar.preTest.questions', 'training.seminar.postTest.questions')
+        ->firstOrFail();
 
-        $seminar = $participant->training->seminar;
-        $enrollment = $participant->enrollment;
+    $seminar = $participant->training->seminar;
+    $quiz    = $quizType === 'pre' ? $seminar->preTest : $seminar->postTest;
 
-        if (!$seminar || !$enrollment) {
-            return back()->with('error', 'Data tidak ditemukan.');
+    if (!$quiz) return back()->with('error', 'Quiz tidak tersedia.');
+
+    // Cek sudah ada attempt aktif
+    $existing = QuizAttempt::where('user_email', $participant->email)
+        ->where('quiz_id', $quiz->id)
+        ->where('is_submitted', false)
+        ->first();
+
+    if (!$existing) {
+        $allQuestions = $quiz->questions;
+
+        // Pre-test: ambil 5 random, Post-test: semua
+        if ($quizType === 'pre') {
+            $selected = $allQuestions->shuffle()->take(5);
+        } else {
+            $selected = $allQuestions->shuffle();
         }
 
-        $quiz = $quizType === 'pre' ? $seminar->preTest : $seminar->postTest;
-
-        if (!$quiz) {
-            return back()->with('error', 'Quiz tidak tersedia.');
+        // Buat shuffled_options per soal
+        // Format: { question_id: ['c','a','e','b','d'] } = urutan opsi yang ditampilkan
+        $shuffledOptions = [];
+        foreach ($selected as $q) {
+            $opts = collect(['a','b','c','d','e'])
+                ->filter(fn($o) => !empty($q->{'option_'.$o}))
+                ->shuffle()
+                ->values()
+                ->toArray();
+            $shuffledOptions[$q->id] = $opts;
         }
 
-        // Cek apakah sudah ada attempt aktif
-        $existing = QuizAttempt::where('user_email', $participant->email)
-            ->where('quiz_id', $quiz->id)
-            ->where('is_submitted', false)
-            ->first();
-
-        if (!$existing) {
-            $shuffled = $quiz->questions->shuffle();
-            QuizAttempt::create([
-                'quiz_id'        => $quiz->id,
-                'user_id'        => null,
-                'user_email'     => $participant->email,
-                'started_at'     => now(),
-                'answers'        => json_encode([]),
-                'question_order' => json_encode($shuffled->pluck('id')->toArray()),
-                'score'          => 0,
-                'is_passed'      => false,
-                'is_submitted'   => false,
-            ]);
-        }
-
-        return redirect()->route('training.participant.access', $token);
+        QuizAttempt::create([
+            'quiz_id'          => $quiz->id,
+            'user_id'          => null,
+            'user_email'       => $participant->email,
+            'started_at'       => now(),
+            'answers'          => json_encode([]),
+            'question_order'   => json_encode($selected->pluck('id')->toArray()),
+            'shuffled_options' => json_encode($shuffledOptions),
+            'score'            => 0,
+            'is_passed'        => false,
+            'is_submitted'     => false,
+        ]);
     }
+
+    return redirect()->route('training.participant.access', $token);
+}
 
     // ========================================
     // SAVE ANSWER (AJAX)
