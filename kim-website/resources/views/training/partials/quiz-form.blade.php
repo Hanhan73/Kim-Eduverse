@@ -7,11 +7,15 @@
         ->map(fn($id) => $quiz->questions->firstWhere('id', $id))
         ->filter();
     if ($questions->isEmpty()) $questions = $quiz->questions;
-    $savedAnswers = is_array($attempt->answers) ? $attempt->answers : json_decode($attempt->answers ?? '[]', true);
+    
+    $savedAnswers = $attempt->answers;
+    if (is_string($savedAnswers)) $savedAnswers = json_decode($savedAnswers, true);
     if (!is_array($savedAnswers)) $savedAnswers = [];
+    
     $totalSeconds = $quiz->duration_minutes * 60;
-    $elapsed = now()->diffInSeconds($attempt->started_at);
-    $remaining = max(0, $totalSeconds - $elapsed);
+    // Fix: cast ke integer, dan gunakan Carbon dengan timezone yang benar
+    $elapsed   = (int) now('Asia/Jakarta')->diffInSeconds($attempt->started_at);
+    $remaining = (int) max(0, $totalSeconds - $elapsed);
 @endphp
 
 <div id="quiz-timer">⏱ <span id="timer-display">{{ gmdate('i:s', $remaining) }}</span></div>
