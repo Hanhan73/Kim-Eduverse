@@ -228,26 +228,46 @@
     @endif
 
     {{-- PRE-TEST --}}
-    @if($currentView === 'pre_test')
-    <div class="card">
-        <h3 style="margin-bottom:8px;">Pre-Test</h3>
-        <p style="color:#6b7280; margin-bottom:20px; font-size:0.9rem;">Kerjakan pre-test sebelum mengakses materi pelatihan.</p>
-        <a href="{{ route('digital.seminar.learn', $enrollment->order->order_number) }}" class="btn btn-primary btn-block">
+@if($currentView === 'pre_test')
+<div class="card">
+    <h3 style="margin-bottom:8px;">📝 Pre-Test</h3>
+    <p style="color:#6b7280; margin-bottom:20px; font-size:0.9rem;">
+        Kerjakan pre-test sebelum mengakses materi pelatihan.
+    </p>
+    @if($participant->enrollment && $participant->enrollment->order)
+        <a href="{{ route('digital.seminar.learn', $participant->enrollment->order->order_number) }}" 
+           class="btn btn-primary btn-block" target="_blank">
             <i class="fas fa-play"></i> Mulai Pre-Test
         </a>
-    </div>
+        <p style="font-size:0.8rem; color:#9ca3af; margin-top:8px; text-align:center;">
+            Setelah selesai, kembali ke halaman ini untuk melanjutkan.
+        </p>
+    @else
+        <p style="color:#ef4444; font-size:0.9rem;">Terjadi kesalahan. Silakan refresh halaman atau hubungi admin.</p>
     @endif
+</div>
+@endif
 
     {{-- MATERI --}}
-    @if($currentView === 'material')
-    <div class="card">
-        <h3 style="margin-bottom:8px;">Materi Pelatihan</h3>
-        <p style="color:#6b7280; margin-bottom:20px; font-size:0.9rem;">Pelajari materi berikut selama sesi pelatihan berlangsung.</p>
-        <a href="{{ route('digital.seminar.learn', $enrollment->order->order_number) }}" class="btn btn-primary btn-block">
+@if($currentView === 'material')
+<div class="card">
+    <h3 style="margin-bottom:8px;">📚 Materi Pelatihan</h3>
+    <p style="color:#6b7280; margin-bottom:20px; font-size:0.9rem;">
+        Pelajari materi berikut selama sesi pelatihan berlangsung.
+    </p>
+    @if($participant->enrollment && $participant->enrollment->order)
+        <a href="{{ route('digital.seminar.learn', $participant->enrollment->order->order_number) }}" 
+           class="btn btn-primary btn-block" target="_blank">
             <i class="fas fa-book-open"></i> Buka Materi
         </a>
-    </div>
+        <p style="font-size:0.8rem; color:#9ca3af; margin-top:8px; text-align:center;">
+            Setelah selesai membaca, kembali ke halaman ini untuk melanjutkan.
+        </p>
+    @else
+        <p style="color:#ef4444; font-size:0.9rem;">Terjadi kesalahan. Silakan refresh halaman atau hubungi admin.</p>
     @endif
+</div>
+@endif
 
     {{-- CHECK-OUT --}}
     @if($currentView === 'checkout')
@@ -264,15 +284,24 @@
     @endif
 
     {{-- POST-TEST --}}
-    @if($currentView === 'post_test')
-    <div class="card">
-        <h3 style="margin-bottom:8px;">Post-Test</h3>
-        <p style="color:#6b7280; margin-bottom:20px; font-size:0.9rem;">Kerjakan post-test untuk mengukur pemahaman Anda setelah pelatihan.</p>
-        <a href="{{ route('digital.seminar.learn', $enrollment->order->order_number) }}" class="btn btn-primary btn-block">
+@if($currentView === 'post_test')
+<div class="card">
+    <h3 style="margin-bottom:8px;">✅ Post-Test</h3>
+    <p style="color:#6b7280; margin-bottom:20px; font-size:0.9rem;">
+        Kerjakan post-test untuk mengukur pemahaman Anda setelah pelatihan.
+    </p>
+    @if($participant->enrollment && $participant->enrollment->order)
+        <a href="{{ route('digital.seminar.learn', $participant->enrollment->order->order_number) }}" 
+           class="btn btn-primary btn-block" target="_blank">
             <i class="fas fa-clipboard-check"></i> Mulai Post-Test
         </a>
-    </div>
+        <p style="font-size:0.8rem; color:#9ca3af; margin-top:8px; text-align:center;">
+            Setelah selesai, kembali ke halaman ini untuk melanjutkan.
+        </p>
+    @else
+        <p style="color:#ef4444; font-size:0.9rem;">Terjadi kesalahan. Silakan refresh halaman atau hubungi admin.</p>
     @endif
+</div>
 
     {{-- TUGAS --}}
     @if($currentView === 'task')

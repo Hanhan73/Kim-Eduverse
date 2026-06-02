@@ -117,28 +117,25 @@ public function access($token)
     // ========================================
     // START QUIZ (pre/post test)
     // ========================================
-    public function startQuiz(Request $request, $token, $quizType)
-    {
-        $participant = TrainingParticipant::where('access_token', $token)->firstOrFail();
-        $training = $participant->training()->with('seminar')->first();
-        $seminar = $training->seminar;
+public function startQuiz(Request $request, $token, $quizType)
+{
+    $participant = TrainingParticipant::where('access_token', $token)
+        ->with('enrollment')
+        ->firstOrFail();
 
-        if (!$seminar) {
-            return back()->with('error', 'Tidak ada seminar yang terhubung.');
-        }
-
-        // Pastikan ada enrollment untuk seminar ini
-        $enrollment = $this->getOrCreateEnrollment($participant, $seminar);
-
-        // Redirect ke quiz via SeminarController (reuse existing)
-        // Kita pass order_number enrollment
-        $orderNumber = $enrollment->order ? $enrollment->order->order_number : null;
-        if (!$orderNumber) {
-            return back()->with('error', 'Terjadi kesalahan, hubungi admin.');
-        }
-
-        return redirect()->route('digital.seminar.quiz.start', [$orderNumber, $quizType]);
+    if (!$participant->seminar_enrollment_id || !$participant->enrollment) {
+        return back()->with('error', 'Enrollment tidak ditemukan. Hubungi admin.');
     }
+
+    $enrollment = $participant->enrollment;
+    $orderNumber = optional($enrollment->order)->order_number;
+
+    if (!$orderNumber) {
+        return back()->with('error', 'Order tidak ditemukan. Hubungi admin.');
+    }
+
+    return redirect()->route('digital.seminar.learn', $orderNumber);
+}
 
     // ========================================
     // DOWNLOAD SERTIFIKAT
