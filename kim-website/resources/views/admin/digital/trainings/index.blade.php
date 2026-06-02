@@ -46,9 +46,9 @@
                             @endif
                         </td>
                         <td style="padding:14px 16px;">
-                            <div>{{ $training->training_date->format('d M Y') }}</div>
+                            <div>{{ $training->training_date->setTimezone('Asia/Jakarta')->format('d M Y') }}</div>
                             @if($training->start_time)
-                            <small style="color:#6b7280;">{{ \Carbon\Carbon::parse($training->start_time)->format('H:i') }} - {{ \Carbon\Carbon::parse($training->end_time)->format('H:i') }}</small>
+                            <small style="color:#6b7280;">{{ \Carbon\Carbon::parse($training->start_time)->setTimezone('Asia/Jakarta')->format('H:i') }} - {{ \Carbon\Carbon::parse($training->end_time)->setTimezone('Asia/Jakarta')->format('H:i') }}</small>
                             @endif
                         </td>
                         <td style="padding:14px 16px; color:#374151;">{{ $training->location }}</td>
