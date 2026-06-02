@@ -228,6 +228,7 @@ private function getOrCreateEnrollment(TrainingParticipant $participant, $semina
     // Buat dummy order sesuai schema digital_orders
     $order = \App\Models\DigitalOrder::create([
         'order_number'   => 'TRN-' . strtoupper(Str::random(8)),
+        'customer_name'  => $participant->name,
         'customer_email' => $participant->email,
         'subtotal'       => 0,
         'tax'            => 0,
