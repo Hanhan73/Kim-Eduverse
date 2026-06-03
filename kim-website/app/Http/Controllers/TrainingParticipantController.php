@@ -271,4 +271,24 @@ class TrainingParticipantController extends Controller
 
         return 'waiting';
     }
+
+    public function viewMaterial($token)
+{
+    $participant = TrainingParticipant::where('access_token', $token)->firstOrFail();
+    $training    = $participant->training()->with('materials', 'questions')->first();
+
+    // Boleh akses materi kalau sudah check-in
+    if (!$participant->checked_in_at) {
+        return redirect()->route('training.participant.access', $token)
+            ->with('error', 'Silakan check-in terlebih dahulu.');
+    }
+
+    $currentView    = 'material';
+    $submission     = $participant->submission;
+    $ongoingAttempt = null;
+
+    return view('training.participant', compact(
+        'participant', 'training', 'currentView', 'submission', 'ongoingAttempt'
+    ));
+}
 }
