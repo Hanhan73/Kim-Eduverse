@@ -651,29 +651,40 @@ Route::prefix('admin/digital')->name('admin.digital.')->middleware(['check.digit
         ->name('users.toggle-status');
 
 
-        Route::get('/trainings/template/download', [TrainingController::class, 'downloadTemplate'])->name('trainings.template');
- Route::resource('trainings', TrainingController::class);
+        Route::resource('trainings', TrainingController::class);
  
-    // Peserta
-    Route::post('/trainings/{training}/participants', [TrainingController::class, 'addParticipant'])->name('trainings.participants.add');
-    Route::post('/trainings/{training}/participants/import', [TrainingController::class, 'importParticipants'])->name('trainings.participants.import');
-    Route::delete('/trainings/{training}/participants/{participant}', [TrainingController::class, 'removeParticipant'])->name('trainings.participants.remove');
+// Template download
+Route::get('/trainings/template/download', [TrainingController::class, 'downloadTemplate'])->name('trainings.template');
  
-    // Email
-    Route::post('/trainings/{training}/send-emails', [TrainingController::class, 'sendEmails'])->name('trainings.send-emails');
-    Route::post('/trainings/{training}/participants/{participant}/send-email', [TrainingController::class, 'sendEmailOne'])->name('trainings.participants.send-email');
+// Materi
+Route::post('/trainings/{training}/materials', [TrainingController::class, 'storeMaterial'])->name('trainings.materials.store');
+Route::put('/trainings/{training}/materials/{material}', [TrainingController::class, 'updateMaterial'])->name('trainings.materials.update');
+Route::delete('/trainings/{training}/materials/{material}', [TrainingController::class, 'destroyMaterial'])->name('trainings.materials.destroy');
  
-    // Absensi (by admin)
-    Route::post('/trainings/{training}/participants/{participant}/checkin', [TrainingController::class, 'checkIn'])->name('trainings.participants.checkin');
-    Route::post('/trainings/{training}/participants/{participant}/checkout', [TrainingController::class, 'checkOut'])->name('trainings.participants.checkout');
+// Soal
+Route::post('/trainings/{training}/questions', [TrainingController::class, 'storeQuestion'])->name('trainings.questions.store');
+Route::put('/trainings/{training}/questions/{question}', [TrainingController::class, 'updateQuestion'])->name('trainings.questions.update');
+Route::delete('/trainings/{training}/questions/{question}', [TrainingController::class, 'destroyQuestion'])->name('trainings.questions.destroy');
  
-    // Tugas
-    Route::post('/training-submissions/{submission}/review', [TrainingController::class, 'reviewSubmission'])->name('trainings.submissions.review');
+// Peserta
+Route::post('/trainings/{training}/participants', [TrainingController::class, 'addParticipant'])->name('trainings.participants.add');
+Route::post('/trainings/{training}/participants/import', [TrainingController::class, 'importParticipants'])->name('trainings.participants.import');
+Route::delete('/trainings/{training}/participants/{participant}', [TrainingController::class, 'removeParticipant'])->name('trainings.participants.remove');
  
-    // Sertifikat
-    Route::post('/trainings/{training}/generate-certificates', [TrainingController::class, 'generateCertificates'])->name('trainings.generate-certificates');
-    Route::get('/training-participants/{participant}/certificate', [TrainingController::class, 'downloadCertificate'])->name('trainings.participants.certificate');
-
+// Email
+Route::post('/trainings/{training}/send-emails', [TrainingController::class, 'sendEmails'])->name('trainings.send-emails');
+Route::post('/trainings/{training}/participants/{participant}/send-email', [TrainingController::class, 'sendEmailOne'])->name('trainings.participants.send-email');
+ 
+// Absensi
+Route::post('/trainings/{training}/participants/{participant}/checkin', [TrainingController::class, 'checkIn'])->name('trainings.participants.checkin');
+Route::post('/trainings/{training}/participants/{participant}/checkout', [TrainingController::class, 'checkOut'])->name('trainings.participants.checkout');
+ 
+// Review tugas
+Route::post('/training-submissions/{submission}/review', [TrainingController::class, 'reviewSubmission'])->name('trainings.submissions.review');
+ 
+// Sertifikat
+Route::post('/trainings/{training}/generate-certificates', [TrainingController::class, 'generateCertificates'])->name('trainings.generate-certificates');
+Route::get('/training-participants/{participant}/certificate', [TrainingController::class, 'downloadCertificate'])->name('trainings.participants.certificate');
 
 
 });
@@ -1001,13 +1012,13 @@ Route::prefix('ebook')->name('ebook.')->group(function () {
 
 
 Route::prefix('pelatihan')->name('training.participant.')->group(function () {
-    Route::get('/{token}', [TrainingParticipantController::class, 'access'])->name('access');
-    Route::post('/{token}/checkin', [TrainingParticipantController::class, 'checkIn'])->name('checkin');
-    Route::post('/{token}/checkout', [TrainingParticipantController::class, 'checkOut'])->name('checkout');
-    Route::post('/{token}/task', [TrainingParticipantController::class, 'submitTask'])->name('task.submit');
-    Route::get('/{token}/certificate', [TrainingParticipantController::class, 'downloadCertificate'])->name('certificate');
-    Route::post('/{token}/quiz/{quizType}/start', [TrainingParticipantController::class, 'startQuiz'])->name('quiz.start');
-Route::post('/{token}/quiz/{quizType}/submit', [TrainingParticipantController::class, 'submitQuiz'])->name('quiz.submit');
-Route::post('/{token}/quiz/save-answer', [TrainingParticipantController::class, 'saveAnswer'])->name('quiz.save-answer');
-Route::post('/{token}/material/viewed', [TrainingParticipantController::class, 'markMaterialViewed'])->name('material.viewed');
+    Route::get('/{token}',                              [TrainingParticipantController::class, 'access'])->name('access');
+    Route::post('/{token}/checkin',                     [TrainingParticipantController::class, 'checkIn'])->name('checkin');
+    Route::post('/{token}/checkout',                    [TrainingParticipantController::class, 'checkOut'])->name('checkout');
+    Route::post('/{token}/material/viewed',             [TrainingParticipantController::class, 'markMaterialViewed'])->name('material.viewed');
+    Route::post('/{token}/quiz/{quizType}/start',       [TrainingParticipantController::class, 'startQuiz'])->name('quiz.start');
+    Route::post('/{token}/quiz/{quizType}/submit',      [TrainingParticipantController::class, 'submitQuiz'])->name('quiz.submit');
+    Route::post('/{token}/quiz/save-answer',            [TrainingParticipantController::class, 'saveAnswer'])->name('quiz.save-answer');
+    Route::post('/{token}/task',                        [TrainingParticipantController::class, 'submitTask'])->name('task.submit');
+    Route::get('/{token}/certificate',                  [TrainingParticipantController::class, 'downloadCertificate'])->name('certificate');
 });

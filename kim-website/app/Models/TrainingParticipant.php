@@ -23,6 +23,11 @@ class TrainingParticipant extends Model
         'certificate_number',
         'certificate_path',
         'certificate_issued_at',
+        'pre_test_passed',
+        'pre_test_score',
+        'material_viewed',
+        'post_test_passed',
+        'post_test_score'
     ];
 
     protected $casts = [
@@ -31,7 +36,15 @@ class TrainingParticipant extends Model
         'checked_in_at' => 'datetime',
         'checked_out_at' => 'datetime',
         'certificate_issued_at' => 'datetime',
+        'pre_test_passed' => 'boolean',
+        'material_viewed' => 'boolean',
+        'post_test_passed' => 'boolean',
     ];
+
+    public function quizAttempts()
+    {
+        return $this->hasMany(TrainingQuizAttempt::class, 'participant_id');
+    }
 
     protected static function boot()
     {
@@ -73,11 +86,10 @@ class TrainingParticipant extends Model
         return !is_null($this->certificate_path);
     }
 
-public function generateCertificateNumber()
-{
-    // Pakai - bukan / supaya bisa jadi nama file
-    $number = 'SRT-TRN-' . date('Y') . '-' . str_pad($this->id, 4, '0', STR_PAD_LEFT);
-    $this->update(['certificate_number' => $number]);
-    return $number;
-}
+    public function generateCertificateNumber()
+    {
+        $number = 'SRT-TRN-' . date('Y') . '-' . str_pad($this->id, 4, '0', STR_PAD_LEFT);
+        $this->update(['certificate_number' => $number]);
+        return $number;
+    }
 }
