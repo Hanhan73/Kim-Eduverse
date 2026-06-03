@@ -87,6 +87,7 @@ class TrainingController extends Controller
         $training->update($request->only([
             'title','description','location','training_date',
             'start_time','end_time','trainer_name','organizer','is_active',
+            'total_jp', // meskipun ini dihitung otomatis, tetap bisa diupdate manual kalau mau
         ]));
 
         return redirect()->route('admin.digital.trainings.show', $training)

@@ -20,6 +20,7 @@ class Training extends Model
         'organizer',
         'thumbnail',
         'is_active',
+        'total_jp', // dihitung otomatis dari materi, tidak diisi manual
         // hapus seminar_id — tidak dipakai lagi
     ];
 

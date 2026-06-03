@@ -230,37 +230,42 @@
 
     {{-- MATERI --}}
     @if($currentView === 'material')
-    <div class="card">
-        <h3 style="margin-bottom:4px;"><i class="fas fa-book-open" style="color:#667eea;"></i> Materi Pelatihan</h3>
-        @if($seminar->material_description)
-        <p style="color:#6b7280; font-size:0.85rem; margin-bottom:16px;">{{ $seminar->material_description }}</p>
-        @endif
-
+<div class="card">
+    <h3 style="margin-bottom:4px;"><i class="fas fa-book-open" style="color:#667eea;"></i> Materi Pelatihan</h3>
+    <p style="color:#6b7280; font-size:0.85rem; margin-bottom:16px;">Pelajari semua materi berikut selama sesi pelatihan berlangsung.</p>
+ 
+    <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:20px;">
+        @forelse($training->materials as $m)
         @php
-            preg_match('/\/d\/(.*?)\//', $seminar->material_pdf_path ?? '', $matches);
-            $fileId = $matches[1] ?? null;
+            $icon  = match($m->type) { 'youtube'=>'fab fa-youtube', 'ppt'=>'fas fa-file-powerpoint', 'pdf'=>'fas fa-file-pdf', 'gdrive'=>'fab fa-google-drive', default=>'fas fa-link' };
+            $color = match($m->type) { 'youtube'=>'#ef4444', 'ppt'=>'#f59e0b', 'pdf'=>'#3b82f6', 'gdrive'=>'#10b981', default=>'#667eea' };
         @endphp
-
-        @if($fileId)
-        <iframe src="https://drive.google.com/file/d/{{ $fileId }}/preview" class="pdf-frame" style="margin-bottom:16px;"></iframe>
-        @endif
-
-        <div style="display:flex; gap:12px; flex-wrap:wrap;">
-            <form method="POST" action="{{ route('training.participant.material.viewed', $participant->access_token) }}">
-                @csrf
-                <button type="submit" class="btn btn-success">
-                    <i class="fas fa-check"></i> Tandai Sudah Dibaca
-                </button>
-            </form>
-            @if($seminar->material_pdf_path)
-            <a href="{{ $seminar->material_pdf_path }}" target="_blank" class="btn btn-primary">
-                <i class="fas fa-external-link-alt"></i> Buka di Google Drive
+        <div style="display:flex; align-items:center; gap:12px; padding:12px 16px; background:#f8f9fa; border-radius:10px;">
+            <div style="width:36px; height:36px; border-radius:8px; background:{{ $color }}20; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                <i class="{{ $icon }}" style="color:{{ $color }};"></i>
+            </div>
+            <div style="flex:1;">
+                <div style="font-weight:600; font-size:0.9rem; color:#1e293b;">{{ $m->title }}</div>
+                <div style="font-size:0.75rem; color:#9ca3af;">{{ strtoupper($m->type) }}</div>
+            </div>
+            <a href="{{ $m->url }}" target="_blank"
+                style="display:inline-flex; align-items:center; gap:6px; background:{{ $color }}; color:white; padding:6px 14px; border-radius:8px; font-size:0.8rem; font-weight:600; text-decoration:none;">
+                <i class="fas fa-external-link-alt"></i> Buka
             </a>
-            @endif
         </div>
+        @empty
+        <p style="color:#9ca3af; font-size:0.875rem; text-align:center; padding:20px;">Materi belum tersedia.</p>
+        @endforelse
     </div>
-    @endif
-
+ 
+    <form method="POST" action="{{ route('training.participant.material.viewed', $participant->access_token) }}">
+        @csrf
+        <button type="submit" class="btn btn-success btn-block">
+            <i class="fas fa-check"></i> Tandai Semua Sudah Dipelajari
+        </button>
+    </form>
+</div>
+@endif
     {{-- CHECK-OUT --}}
     @if($currentView === 'checkout')
     <div class="card">

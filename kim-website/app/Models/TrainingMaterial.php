@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class TrainingMaterial extends Model
 {
-    protected $fillable = ['training_id','title','type','url','jp','order'];
+    protected $fillable = ['training_id','title','type','url','order'];
  
     public function training() { return $this->belongsTo(Training::class); }
  

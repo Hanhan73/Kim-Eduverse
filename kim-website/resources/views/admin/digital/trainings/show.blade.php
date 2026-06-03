@@ -18,6 +18,7 @@
                     <span><i class="fas fa-map-marker-alt"></i> {{ $training->location }}</span>
                     @if($training->start_time)<span><i class="fas fa-clock"></i> {{ substr($training->start_time,0,5) }} - {{ substr($training->end_time,0,5) }}</span>@endif
                     @if($training->trainer_name)<span><i class="fas fa-user-tie"></i> {{ $training->trainer_name }}</span>@endif
+                    @if($training->total_jp)<span><i class="fas fa-book"></i> {{ $training->total_jp }} JP</span>@endif
                 </div>
             </div>
             <div style="display:flex; gap:8px; flex-wrap:wrap;">
@@ -59,14 +60,16 @@
         style="padding:10px 20px; border:none; background:none; font-size:0.9rem; font-weight:600; cursor:pointer; border-bottom:3px solid transparent; margin-bottom:-2px; color:#6b7280; transition:all .2s;"
         class="tab-btn">
         <i class="fas fa-{{ $tab[2] }}"></i> {{ $tab[1] }}
-        @if($tab[0]==='peserta') <span style="background:#667eea; color:white; border-radius:10px; padding:1px 8px; font-size:0.75rem;">{{ $stats['total'] }}</span>@endif
-        @if($tab[0]==='materi') <span style="background:#10b981; color:white; border-radius:10px; padding:1px 8px; font-size:0.75rem;">{{ $training->materials->count() }}</span>@endif
-        @if($tab[0]==='soal') <span style="background:#f59e0b; color:white; border-radius:10px; padding:1px 8px; font-size:0.75rem;">{{ $training->questions->count() }}</span>@endif
+        @if($tab[0]==='peserta')<span style="background:#667eea; color:white; border-radius:10px; padding:1px 8px; font-size:0.75rem; margin-left:4px;">{{ $stats['total'] }}</span>@endif
+        @if($tab[0]==='materi')<span style="background:#10b981; color:white; border-radius:10px; padding:1px 8px; font-size:0.75rem; margin-left:4px;">{{ $training->materials->count() }}</span>@endif
+        @if($tab[0]==='soal')<span style="background:#f59e0b; color:white; border-radius:10px; padding:1px 8px; font-size:0.75rem; margin-left:4px;">{{ $training->questions->count() }}</span>@endif
     </button>
     @endforeach
 </div>
 
+{{-- ================================================================ --}}
 {{-- TAB: PESERTA --}}
+{{-- ================================================================ --}}
 <div id="tab-peserta" class="tab-content">
     <div class="card">
         <div class="card-header" style="display:flex; justify-content:space-between; align-items:center;">
@@ -116,27 +119,37 @@
                                 <form method="POST" action="{{ route('admin.digital.trainings.participants.checkout', [$training, $p]) }}">@csrf
                                     <button style="background:#dbeafe; color:#1e40af; border:none; padding:4px 8px; border-radius:6px; cursor:pointer; font-size:0.75rem;"><i class="fas fa-sign-out-alt"></i> Out</button>
                                 </form>
-                            @else <span style="color:#d1d5db;">—</span>@endif
+                            @else
+                                <span style="color:#d1d5db;">—</span>
+                            @endif
                         </td>
                         <td style="padding:12px 14px; text-align:center;">
                             @if($p->pre_test_passed)
                                 <span style="color:#10b981; font-size:0.8rem;"><i class="fas fa-check"></i> {{ $p->pre_test_score }}%</span>
-                            @else <span style="color:#d1d5db; font-size:0.75rem;">Belum</span>@endif
+                            @else
+                                <span style="color:#d1d5db; font-size:0.75rem;">Belum</span>
+                            @endif
                         </td>
                         <td style="padding:12px 14px; text-align:center;">
                             @if($p->post_test_passed)
                                 <span style="color:#10b981; font-size:0.8rem;"><i class="fas fa-check"></i> {{ $p->post_test_score }}%</span>
-                            @else <span style="color:#d1d5db; font-size:0.75rem;">Belum</span>@endif
+                            @else
+                                <span style="color:#d1d5db; font-size:0.75rem;">Belum</span>
+                            @endif
                         </td>
                         <td style="padding:12px 14px; text-align:center;">
                             @if($p->submission)
                                 <a href="{{ $p->submission->drive_link }}" target="_blank" style="font-size:0.8rem; color:#667eea;"><i class="fas fa-external-link-alt"></i> {{ ucfirst($p->submission->status) }}</a>
-                            @else <span style="color:#d1d5db; font-size:0.75rem;">Belum</span>@endif
+                            @else
+                                <span style="color:#d1d5db; font-size:0.75rem;">Belum</span>
+                            @endif
                         </td>
                         <td style="padding:12px 14px; text-align:center;">
                             @if($p->certificate_path)
                                 <a href="{{ route('admin.digital.trainings.participants.certificate', $p) }}" style="color:#8b5cf6; font-size:0.8rem;"><i class="fas fa-download"></i></a>
-                            @else <span style="color:#d1d5db;">—</span>@endif
+                            @else
+                                <span style="color:#d1d5db;">—</span>
+                            @endif
                         </td>
                         <td style="padding:12px 14px; text-align:center;">
                             <div style="display:flex; gap:4px; justify-content:center;">
@@ -158,34 +171,58 @@
                 </table>
             </div>
             @else
-            <div style="padding:40px; text-align:center; color:#6b7280;"><i class="fas fa-users" style="font-size:2rem; color:#d1d5db; margin-bottom:12px; display:block;"></i>Belum ada peserta.</div>
+            <div style="padding:40px; text-align:center; color:#6b7280;">
+                <i class="fas fa-users" style="font-size:2rem; color:#d1d5db; margin-bottom:12px; display:block;"></i>
+                Belum ada peserta.
+            </div>
             @endif
         </div>
     </div>
 </div>
 
+{{-- ================================================================ --}}
 {{-- TAB: MATERI --}}
+{{-- ================================================================ --}}
 <div id="tab-materi" class="tab-content" style="display:none;">
     <div class="card">
         <div class="card-header" style="display:flex; justify-content:space-between; align-items:center;">
-            <h3>Materi Pelatihan <small style="color:#6b7280; font-weight:400;">Total JP: {{ $training->materials->sum('jp') }}</small></h3>
-            <button onclick="document.getElementById('addMateriModal').style.display='flex'" class="btn btn-sm btn-primary"><i class="fas fa-plus"></i> Tambah Materi</button>
+            <h3>
+                Materi Pelatihan
+                <small style="color:#6b7280; font-weight:400; font-size:0.82rem;">
+                    Total JP Keseluruhan: <strong>{{ $training->total_jp }} JP</strong>
+                </small>
+            </h3>
+            <button onclick="document.getElementById('addMateriModal').style.display='flex'" class="btn btn-sm btn-primary">
+                <i class="fas fa-plus"></i> Tambah Materi
+            </button>
         </div>
         <div class="card-body" style="padding:0;">
             @forelse($training->materials as $m)
+            @php
+                $icon  = match($m->type) { 'youtube'=>'fab fa-youtube', 'ppt'=>'fas fa-file-powerpoint', 'pdf'=>'fas fa-file-pdf', 'gdrive'=>'fab fa-google-drive', default=>'fas fa-link' };
+                $color = match($m->type) { 'youtube'=>'#ef4444', 'ppt'=>'#f59e0b', 'pdf'=>'#3b82f6', 'gdrive'=>'#10b981', default=>'#667eea' };
+            @endphp
             <div style="display:flex; align-items:center; gap:14px; padding:14px 20px; border-bottom:1px solid #f0f0f0;">
-                <div style="width:40px; height:40px; border-radius:10px; background:{{ $m->color }}20; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-                    <i class="{{ $m->icon }}" style="color:{{ $m->color }};"></i>
+                <div style="width:40px; height:40px; border-radius:10px; background:{{ $color }}20; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                    <i class="{{ $icon }}" style="color:{{ $color }};"></i>
                 </div>
                 <div style="flex:1;">
                     <div style="font-weight:600; color:#1e293b;">{{ $m->title }}</div>
-                    <div style="font-size:0.8rem; color:#6b7280;">{{ strtoupper($m->type) }} &nbsp;·&nbsp; {{ $m->jp }} JP &nbsp;·&nbsp; <a href="{{ $m->url }}" target="_blank" style="color:#667eea;">{{ Str::limit($m->url, 50) }}</a></div>
+                    <div style="font-size:0.8rem; color:#6b7280;">
+                        {{ strtoupper($m->type) }} &nbsp;·&nbsp;
+                        <a href="{{ $m->url }}" target="_blank" style="color:#667eea;">{{ Str::limit($m->url, 60) }}</a>
+                    </div>
                 </div>
                 <div style="display:flex; gap:6px;">
-                    <button onclick="openEditMateri({{ $m->id }}, '{{ addslashes($m->title) }}', '{{ $m->type }}', '{{ addslashes($m->url) }}', {{ $m->jp }})"
-                        style="background:#fef3c7; color:#92400e; border:none; padding:6px 10px; border-radius:8px; cursor:pointer;"><i class="fas fa-edit"></i></button>
-                    <form method="POST" action="{{ route('admin.digital.trainings.materials.destroy', [$training, $m]) }}" onsubmit="return confirm('Hapus materi ini?')">@csrf @method('DELETE')
-                        <button style="background:#fee2e2; color:#dc2626; border:none; padding:6px 10px; border-radius:8px; cursor:pointer;"><i class="fas fa-trash"></i></button>
+                    <button onclick="openEditMateri({{ $m->id }}, '{{ addslashes($m->title) }}', '{{ $m->type }}', '{{ addslashes($m->url) }}')"
+                        style="background:#fef3c7; color:#92400e; border:none; padding:6px 10px; border-radius:8px; cursor:pointer;">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <form method="POST" action="{{ route('admin.digital.trainings.materials.destroy', [$training, $m]) }}" onsubmit="return confirm('Hapus materi ini?')">
+                        @csrf @method('DELETE')
+                        <button style="background:#fee2e2; color:#dc2626; border:none; padding:6px 10px; border-radius:8px; cursor:pointer;">
+                            <i class="fas fa-trash"></i>
+                        </button>
                     </form>
                 </div>
             </div>
@@ -196,29 +233,38 @@
     </div>
 </div>
 
+{{-- ================================================================ --}}
 {{-- TAB: SOAL --}}
+{{-- ================================================================ --}}
 <div id="tab-soal" class="tab-content" style="display:none;">
     <div class="card">
         <div class="card-header" style="display:flex; justify-content:space-between; align-items:center;">
-            <h3>Bank Soal <small style="color:#6b7280; font-weight:400;">Pre-test: 5 soal random · Post-test: semua {{ $training->questions->count() }} soal</small></h3>
-            <button onclick="document.getElementById('addSoalModal').style.display='flex'" class="btn btn-sm btn-primary"><i class="fas fa-plus"></i> Tambah Soal</button>
+            <h3>
+                Bank Soal
+                <small style="color:#6b7280; font-weight:400; font-size:0.82rem;">
+                    Pre-test: 5 soal random &nbsp;·&nbsp; Post-test: semua {{ $training->questions->count() }} soal
+                </small>
+            </h3>
+            <button onclick="document.getElementById('addSoalModal').style.display='flex'" class="btn btn-sm btn-primary">
+                <i class="fas fa-plus"></i> Tambah Soal
+            </button>
         </div>
         <div class="card-body" style="padding:0;">
             @forelse($training->questions as $i => $q)
             <div style="padding:16px 20px; border-bottom:1px solid #f0f0f0;">
                 <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px;">
                     <div style="flex:1;">
-                        <div style="display:flex; gap:10px; margin-bottom:10px;">
-                            <span style="background:#667eea; color:white; border-radius:50%; width:24px; height:24px; display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:700; flex-shrink:0;">{{ $i+1 }}</span>
+                        <div style="display:flex; gap:10px; margin-bottom:10px; align-items:flex-start;">
+                            <span style="background:#667eea; color:white; border-radius:50%; min-width:24px; height:24px; display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:700; flex-shrink:0; margin-top:2px;">{{ $i+1 }}</span>
                             <div style="font-size:0.9rem; font-weight:600; color:#1e293b; line-height:1.5;">{{ $q->question }}</div>
                         </div>
                         <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; padding-left:34px;">
                             @foreach(['A'=>$q->option_a,'B'=>$q->option_b,'C'=>$q->option_c,'D'=>$q->option_d,'E'=>$q->option_e] as $lbl=>$txt)
                             @if($txt)
                             <div style="display:flex; gap:6px; align-items:center; font-size:0.82rem; padding:6px 8px; border-radius:6px; background:{{ $q->correct_answer === $lbl ? '#d1fae5' : '#f8f9fa' }}; border:1px solid {{ $q->correct_answer === $lbl ? '#10b981' : '#e5e7eb' }};">
-                                <span style="font-weight:700; color:{{ $q->correct_answer === $lbl ? '#065f46' : '#6b7280' }};">{{ $lbl }}.</span>
+                                <span style="font-weight:700; color:{{ $q->correct_answer === $lbl ? '#065f46' : '#6b7280' }}; flex-shrink:0;">{{ $lbl }}.</span>
                                 <span style="color:{{ $q->correct_answer === $lbl ? '#065f46' : '#374151' }};">{{ $txt }}</span>
-                                @if($q->correct_answer === $lbl)<i class="fas fa-check" style="color:#10b981; margin-left:auto;"></i>@endif
+                                @if($q->correct_answer === $lbl)<i class="fas fa-check" style="color:#10b981; margin-left:auto; flex-shrink:0;"></i>@endif
                             </div>
                             @endif
                             @endforeach
@@ -240,7 +286,9 @@
     </div>
 </div>
 
+{{-- ================================================================ --}}
 {{-- MODAL: Tambah Peserta --}}
+{{-- ================================================================ --}}
 <div id="addModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:1000; align-items:center; justify-content:center;">
     <div style="background:white; border-radius:16px; padding:28px; width:100%; max-width:500px; margin:20px; max-height:90vh; overflow-y:auto;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
@@ -264,7 +312,9 @@
     </div>
 </div>
 
+{{-- ================================================================ --}}
 {{-- MODAL: Import Excel --}}
+{{-- ================================================================ --}}
 <div id="importModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:1000; align-items:center; justify-content:center;">
     <div style="background:white; border-radius:16px; padding:28px; width:100%; max-width:460px; margin:20px;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
@@ -283,9 +333,11 @@
     </div>
 </div>
 
-{{-- MODAL: Tambah Materi --}}
+{{-- ================================================================ --}}
+{{-- MODAL: Tambah / Edit Materi --}}
+{{-- ================================================================ --}}
 <div id="addMateriModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:1000; align-items:center; justify-content:center;">
-    <div style="background:white; border-radius:16px; padding:28px; width:100%; max-width:520px; margin:20px;">
+    <div style="background:white; border-radius:16px; padding:28px; width:100%; max-width:500px; margin:20px;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
             <h3 style="margin:0;" id="materiModalTitle">Tambah Materi</h3>
             <button onclick="closeMateriModal()" style="background:none; border:none; font-size:1.5rem; cursor:pointer;">&times;</button>
@@ -293,26 +345,35 @@
         <form method="POST" id="materiForm" action="{{ route('admin.digital.trainings.materials.store', $training) }}">
             @csrf
             <div id="materiMethod"></div>
-            <div class="form-group"><label>Judul Materi *</label><input type="text" name="title" id="materiTitle" class="form-control" required></div>
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-                <div class="form-group">
-                    <label>Tipe *</label>
-                    <select name="type" id="materiType" class="form-control" required>
-                        <option value="pdf">PDF</option>
-                        <option value="ppt">PowerPoint</option>
-                        <option value="youtube">YouTube</option>
-                        <option value="gdrive">Google Drive</option>
-                    </select>
-                </div>
-                <div class="form-group"><label>JP (Jam Pelajaran) *</label><input type="number" name="jp" id="materiJp" class="form-control" min="1" value="1" required></div>
+            <div class="form-group">
+                <label>Judul Materi *</label>
+                <input type="text" name="title" id="materiTitle" class="form-control" required placeholder="Pengantar Kecerdasan Buatan...">
             </div>
-            <div class="form-group"><label>URL / Link *</label><input type="url" name="url" id="materiUrl" class="form-control" required placeholder="https://..."></div>
+            <div class="form-group">
+                <label>Tipe *</label>
+                <select name="type" id="materiType" class="form-control" required>
+                    <option value="pdf">PDF</option>
+                    <option value="ppt">PowerPoint</option>
+                    <option value="youtube">YouTube</option>
+                    <option value="gdrive">Google Drive</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>URL / Link *</label>
+                <input type="url" name="url" id="materiUrl" class="form-control" required placeholder="https://...">
+            </div>
+            <div style="background:#eff6ff; border-radius:8px; padding:10px 14px; font-size:0.82rem; color:#1e40af; margin-bottom:16px;">
+                <i class="fas fa-info-circle"></i>
+                Total JP pelatihan diatur di halaman <strong>Edit Pelatihan</strong>, bukan per materi.
+            </div>
             <button type="submit" class="btn btn-primary btn-block">Simpan Materi</button>
         </form>
     </div>
 </div>
 
-{{-- MODAL: Tambah/Edit Soal --}}
+{{-- ================================================================ --}}
+{{-- MODAL: Tambah / Edit Soal --}}
+{{-- ================================================================ --}}
 <div id="addSoalModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:1000; align-items:center; justify-content:center;">
     <div style="background:white; border-radius:16px; padding:28px; width:100%; max-width:620px; margin:20px; max-height:90vh; overflow-y:auto;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
@@ -322,19 +383,28 @@
         <form method="POST" id="soalForm" action="{{ route('admin.digital.trainings.questions.store', $training) }}">
             @csrf
             <div id="soalMethod"></div>
-            <div class="form-group"><label>Pertanyaan *</label><textarea name="question" id="soalQuestion" class="form-control" rows="3" required></textarea></div>
+            <div class="form-group">
+                <label>Pertanyaan *</label>
+                <textarea name="question" id="soalQuestion" class="form-control" rows="3" required></textarea>
+            </div>
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
                 <div class="form-group"><label>Opsi A *</label><input type="text" name="option_a" id="soalA" class="form-control" required></div>
                 <div class="form-group"><label>Opsi B *</label><input type="text" name="option_b" id="soalB" class="form-control" required></div>
                 <div class="form-group"><label>Opsi C *</label><input type="text" name="option_c" id="soalC" class="form-control" required></div>
                 <div class="form-group"><label>Opsi D *</label><input type="text" name="option_d" id="soalD" class="form-control" required></div>
-                <div class="form-group" style="grid-column:1/-1;"><label>Opsi E (opsional)</label><input type="text" name="option_e" id="soalE" class="form-control"></div>
+                <div class="form-group" style="grid-column:1/-1;">
+                    <label>Opsi E <span style="color:#9ca3af; font-weight:400;">(opsional)</span></label>
+                    <input type="text" name="option_e" id="soalE" class="form-control">
+                </div>
             </div>
             <div class="form-group">
                 <label>Jawaban Benar *</label>
                 <select name="correct_answer" id="soalCorrect" class="form-control" required>
-                    <option value="A">A</option><option value="B">B</option><option value="C">C</option>
-                    <option value="D">D</option><option value="E">E</option>
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="D">D</option>
+                    <option value="E">E</option>
                 </select>
             </div>
             <button type="submit" class="btn btn-primary btn-block">Simpan Soal</button>
@@ -342,7 +412,9 @@
     </div>
 </div>
 
+{{-- ================================================================ --}}
 {{-- MODAL: Review Tugas --}}
+{{-- ================================================================ --}}
 <div id="reviewModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:1000; align-items:center; justify-content:center;">
     <div style="background:white; border-radius:16px; padding:28px; width:100%; max-width:460px; margin:20px;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
@@ -359,38 +431,42 @@
                     <option value="revision">Perlu Revisi ⚠️</option>
                 </select>
             </div>
-            <div class="form-group"><label>Feedback</label><textarea name="feedback" id="reviewFeedback" class="form-control" rows="3"></textarea></div>
-            <button type="submit" class="btn btn-primary btn-block">Simpan</button>
+            <div class="form-group">
+                <label>Feedback / Catatan</label>
+                <textarea name="feedback" id="reviewFeedback" class="form-control" rows="3" placeholder="Catatan untuk peserta..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Simpan Review</button>
         </form>
     </div>
 </div>
 
 <script>
-// Tabs
+// ─── Tabs ─────────────────────────────────────────────────────────────────────
 function showTab(name) {
     document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
-    document.querySelectorAll('.tab-btn').forEach(btn => { btn.style.color = '#6b7280'; btn.style.borderBottomColor = 'transparent'; });
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.style.color = '#6b7280';
+        btn.style.borderBottomColor = 'transparent';
+    });
     document.getElementById('tab-' + name).style.display = 'block';
     const btn = document.getElementById('tab-btn-' + name);
-    btn.style.color = '#667eea'; btn.style.borderBottomColor = '#667eea';
+    btn.style.color = '#667eea';
+    btn.style.borderBottomColor = '#667eea';
 }
 showTab('peserta');
 
-// Materi modal
-let editMateriId = null;
-function openEditMateri(id, title, type, url, jp) {
-    editMateriId = id;
+// ─── Materi Modal ─────────────────────────────────────────────────────────────
+function openEditMateri(id, title, type, url) {
     document.getElementById('materiModalTitle').textContent = 'Edit Materi';
     document.getElementById('materiTitle').value = title;
     document.getElementById('materiType').value  = type;
     document.getElementById('materiUrl').value   = url;
-    document.getElementById('materiJp').value    = jp;
     document.getElementById('materiMethod').innerHTML = '<input type="hidden" name="_method" value="PUT">';
     document.getElementById('materiForm').action = '/admin/digital/trainings/{{ $training->id }}/materials/' + id;
     document.getElementById('addMateriModal').style.display = 'flex';
 }
+
 function closeMateriModal() {
-    editMateriId = null;
     document.getElementById('materiModalTitle').textContent = 'Tambah Materi';
     document.getElementById('materiMethod').innerHTML = '';
     document.getElementById('materiForm').action = '{{ route("admin.digital.trainings.materials.store", $training) }}';
@@ -398,24 +474,22 @@ function closeMateriModal() {
     document.getElementById('addMateriModal').style.display = 'none';
 }
 
-// Soal modal
-let editSoalId = null;
+// ─── Soal Modal ───────────────────────────────────────────────────────────────
 function openEditSoal(id, q, a, b, c, d, e, correct) {
-    editSoalId = id;
     document.getElementById('soalModalTitle').textContent = 'Edit Soal';
     document.getElementById('soalQuestion').value = q;
     document.getElementById('soalA').value = a;
     document.getElementById('soalB').value = b;
     document.getElementById('soalC').value = c;
     document.getElementById('soalD').value = d;
-    document.getElementById('soalE').value = e;
+    document.getElementById('soalE').value = e || '';
     document.getElementById('soalCorrect').value = correct;
     document.getElementById('soalMethod').innerHTML = '<input type="hidden" name="_method" value="PUT">';
     document.getElementById('soalForm').action = '/admin/digital/trainings/{{ $training->id }}/questions/' + id;
     document.getElementById('addSoalModal').style.display = 'flex';
 }
+
 function closeSoalModal() {
-    editSoalId = null;
     document.getElementById('soalModalTitle').textContent = 'Tambah Soal';
     document.getElementById('soalMethod').innerHTML = '';
     document.getElementById('soalForm').action = '{{ route("admin.digital.trainings.questions.store", $training) }}';
@@ -423,10 +497,10 @@ function closeSoalModal() {
     document.getElementById('addSoalModal').style.display = 'none';
 }
 
-// Review modal
+// ─── Review Modal ─────────────────────────────────────────────────────────────
 function openReview(id, status, feedback) {
     document.getElementById('reviewForm').action = '/admin/digital/training-submissions/' + id + '/review';
-    document.getElementById('reviewStatus').value = status;
+    document.getElementById('reviewStatus').value   = status;
     document.getElementById('reviewFeedback').value = feedback;
     document.getElementById('reviewModal').style.display = 'flex';
 }
