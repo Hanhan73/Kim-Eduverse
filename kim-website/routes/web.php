@@ -1024,4 +1024,6 @@ Route::prefix('pelatihan')->name('training.participant.')->group(function () {
     Route::post('/{token}/quiz/save-answer',            [TrainingParticipantController::class, 'saveAnswer'])->name('quiz.save-answer');
     Route::post('/{token}/task',                        [TrainingParticipantController::class, 'submitTask'])->name('task.submit');
     Route::get('/{token}/certificate',                  [TrainingParticipantController::class, 'downloadCertificate'])->name('certificate');
+    Route::get('/{token}/material', [TrainingParticipantController::class, 'viewMaterial'])->name('material');
+
 });
