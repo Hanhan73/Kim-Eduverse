@@ -486,52 +486,16 @@ class TrainingController extends Controller
 
     public function downloadQuestionTemplate()
     {
-        $headers = [
-            'Content-Type'        => 'text/csv; charset=UTF-8',
-            'Content-Disposition' => 'attachment; filename="template_soal_pelatihan.csv"',
-        ];
+        // Taruh file template di storage/app/private-assets/
+        // atau di public/templates/
+        $path = storage_path('app/private-assets/template_soal_pelatihan.xlsx');
 
-        $callback = function () {
-            $file = fopen('php://output', 'w');
-            fprintf($file, chr(0xEF) . chr(0xBB) . chr(0xBF)); // BOM UTF-8
-
-            // Header row — SAMA dengan template quiz seminar on demand
-            fputcsv($file, [
-                'Pertanyaan',
-                'Opsi A',
-                'Opsi B',
-                'Opsi C',
-                'Opsi D',
-                'Opsi E',
-                'Jawaban Benar (A/B/C/D/E)',
-            ]);
-
-            // Contoh baris
-            fputcsv($file, [
-                'Apa kepanjangan dari AI?',
-                'Artificial Intelligence',
-                'Automatic Information',
-                'Advanced Integration',
-                'Applied Innovation',
-                '',
-                'A',
-            ]);
-            fputcsv($file, [
-                'Manakah yang merupakan contoh AI generatif?',
-                'Google Maps',
-                'ChatGPT',
-                'Microsoft Excel',
-                'Adobe Photoshop',
-                '',
-                'B',
-            ]);
-
-            fclose($file);
-        };
-
-        return response()->stream($callback, 200, $headers);
+        // Kalau mau generate dinamis, gunakan PhpSpreadsheet
+        // Tapi paling simpel: upload file ini ke server, lalu:
+        return response()->download($path, 'template_soal_pelatihan.xlsx', [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ]);
     }
-
     // ─── Import Soal dari Excel/CSV ───────────────────────────────
     public function importQuestions(Request $request, Training $training)
     {
@@ -545,56 +509,58 @@ class TrainingController extends Controller
 
         if ($extension === 'csv') {
             $handle = fopen($file->getPathname(), 'r');
-            // Hapus BOM kalau ada
             $bom = fread($handle, 3);
-            if ($bom !== chr(0xEF) . chr(0xBB) . chr(0xBF)) {
-                rewind($handle);
-            }
+            if ($bom !== chr(0xEF) . chr(0xBB) . chr(0xBF)) rewind($handle);
             fgetcsv($handle); // skip header
-            while (($row = fgetcsv($handle)) !== false) {
-                $rows[] = $row;
-            }
+            while (($row = fgetcsv($handle)) !== false) $rows[] = $row;
             fclose($handle);
         } else {
             $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($file->getPathname());
             $data        = $spreadsheet->getActiveSheet()->toArray(null, true, true, false);
-            array_shift($data); // skip header
+
+            // Skip baris 1-3 (judul, subtitle, spacer) dan baris 4 (header kolom)
+            $data = array_slice($data, 4);
             $rows = $data;
         }
 
         $added   = 0;
         $skipped = 0;
         $errors  = [];
-
-        $validAnswers = ['A', 'B', 'C', 'D', 'E'];
-        $maxOrder     = $training->questions()->max('order') ?? 0;
+        $maxOrder = $training->questions()->max('order') ?? 0;
 
         foreach ($rows as $i => $row) {
-            $question = trim($row[0] ?? '');
-            $optA     = trim($row[1] ?? '');
-            $optB     = trim($row[2] ?? '');
-            $optC     = trim($row[3] ?? '');
-            $optD     = trim($row[4] ?? '');
-            $optE     = trim($row[5] ?? '');
-            $correct  = strtoupper(trim($row[6] ?? ''));
+            // Kolom: 0=No, 1=Pertanyaan, 2=A, 3=B, 4=C, 5=D, 6=E, 7=Jawaban, 8=Poin, 9=Penjelasan, 10=Status
+            $no       = trim($row[0] ?? '');
+            $question = trim($row[1] ?? '');
+            $optA     = trim($row[2] ?? '');
+            $optB     = trim($row[3] ?? '');
+            $optC     = trim($row[4] ?? '');
+            $optD     = trim($row[5] ?? '');
+            $optE     = trim($row[6] ?? '');
+            $correct  = strtoupper(trim($row[7] ?? ''));
 
-            // Validasi wajib
+            // Skip baris kosong atau baris contoh (ditandai "✓ Contoh" di kolom Status)
+            $status = trim($row[10] ?? '');
             if (empty($question) || empty($optA) || empty($optB)) {
-                $errors[] = "Baris " . ($i + 2) . ": Pertanyaan, Opsi A, dan Opsi B wajib diisi.";
+                $skipped++;
+                continue;
+            }
+            if (str_contains($status, 'Contoh')) {
                 $skipped++;
                 continue;
             }
 
-            if (!in_array($correct, $validAnswers)) {
-                $errors[] = "Baris " . ($i + 2) . ": Jawaban benar '$correct' tidak valid (harus A/B/C/D/E).";
+            // Validasi jawaban
+            if (!in_array($correct, ['A', 'B', 'C', 'D', 'E'])) {
+                $errors[] = "Baris " . ($i + 5) . ": Jawaban '$correct' tidak valid.";
                 $skipped++;
                 continue;
             }
 
-            // Validasi: jawaban yang dipilih harus punya opsi
+            // Validasi opsi jawaban tersedia
             $optMap = ['A' => $optA, 'B' => $optB, 'C' => $optC, 'D' => $optD, 'E' => $optE];
             if (empty($optMap[$correct])) {
-                $errors[] = "Baris " . ($i + 2) . ": Opsi '$correct' kosong tapi dijadikan jawaban benar.";
+                $errors[] = "Baris " . ($i + 5) . ": Opsi '$correct' kosong tapi dijadikan jawaban benar.";
                 $skipped++;
                 continue;
             }
@@ -610,17 +576,15 @@ class TrainingController extends Controller
                 'correct_answer' => $correct,
                 'order'          => $maxOrder,
             ]);
-
             $added++;
         }
 
         $message = "Import selesai: {$added} soal ditambahkan";
         if ($skipped > 0) $message .= ", {$skipped} dilewati";
         if (!empty($errors)) {
-            $message .= ". <br>Error: " . implode('<br>', array_slice($errors, 0, 5));
-            if (count($errors) > 5) $message .= " (dan " . (count($errors) - 5) . " lainnya)";
+            $message .= ".<br>Error: " . implode('<br>', array_slice($errors, 0, 5));
         }
 
-        return back()->with($skipped > 0 && $added === 0 ? 'error' : 'success', $message);
+        return back()->with($added === 0 && $skipped > 0 ? 'error' : 'success', $message);
     }
 }
