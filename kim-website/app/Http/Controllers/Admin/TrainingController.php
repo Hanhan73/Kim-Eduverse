@@ -488,7 +488,7 @@ class TrainingController extends Controller
     {
         // Taruh file template di storage/app/private-assets/
         // atau di public/templates/
-        $path = storage_path('public/templates/template_soal_pelatihan.xlsx');
+        $path = public_path('templates/template_soal_pelatihan.xlsx');
 
         // Kalau mau generate dinamis, gunakan PhpSpreadsheet
         // Tapi paling simpel: upload file ini ke server, lalu:
