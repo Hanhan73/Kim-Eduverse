@@ -40,23 +40,10 @@
         .quiz-info-bar { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 20px; padding: 14px 16px; background: #f8f9fa; border-radius: 10px; font-size: 0.875rem; color: #374151; }
         .quiz-info-bar span { display: flex; align-items: center; gap: 6px; }
         .quiz-info-bar i { color: #667eea; }
-        .question-nav { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
-        .q-btn { width: 36px; height: 36px; border-radius: 50%; border: 2px solid #e5e7eb; background: white; font-size: 0.8rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .2s; }
-        .q-btn.answered { background: #10b981; border-color: #10b981; color: white; }
-        .q-btn.current { background: #667eea; border-color: #667eea; color: white; }
-        .question-card { background: #f8f9fa; border-radius: 12px; padding: 20px; margin-bottom: 16px; }
-        .question-text { font-size: 1rem; color: #1e293b; margin-bottom: 16px; line-height: 1.6; font-weight: 500; }
-        .answer-option { display: block; width: 100%; padding: 12px 16px; margin-bottom: 10px; border: 2px solid #e5e7eb; border-radius: 10px; background: white; cursor: pointer; text-align: left; font-size: 0.9rem; transition: all .2s; }
-        .answer-option:hover { border-color: #667eea; background: #eff6ff; }
-        .answer-option.selected { border-color: #667eea; background: linear-gradient(135deg, #667eea, #764ba2); color: white; }
-        .quiz-nav-btns { display: flex; justify-content: space-between; margin-top: 20px; }
         .score-card { text-align: center; padding: 30px; }
         .score-circle { width: 100px; height: 100px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: 700; margin: 0 auto 16px; }
         .score-pass { background: #d1fae5; color: #065f46; border: 4px solid #10b981; }
         .score-fail { background: #fee2e2; color: #991b1b; border: 4px solid #ef4444; }
-        .pdf-frame { width: 100%; height: 65vh; border: none; border-radius: 10px; }
-        #quiz-timer { font-size: 1.1rem; font-weight: 700; color: #667eea; background: #eff6ff; padding: 6px 14px; border-radius: 8px; display: inline-block; margin-bottom: 12px; }
-        #quiz-timer.danger { color: #dc2626; background: #fee2e2; }
     </style>
 </head>
 <body>
@@ -97,14 +84,16 @@
     </div>
 
     {{-- Progress Steps --}}
+    @php
+        $hasQuestions = $training->questions->count() > 0;
+        $hasMaterials = $training->materials->count() > 0;
+        $submission   = $participant->submission;
+    @endphp
     <div class="card">
         <h3 style="margin-bottom:14px; color:#1e293b; font-size:1rem;">Tahapan Pelatihan</h3>
-        @php
-            $seminar = $training->seminar;
-            $enrollment = $participant->enrollment;
-            $submission = $participant->submission;
-        @endphp
         <div class="step-list">
+
+            {{-- CHECK-IN --}}
             <div class="step-item {{ $participant->checked_in_at ? 'done' : ($currentView === 'checkin' ? 'active' : 'locked') }}">
                 <div class="step-icon {{ $participant->checked_in_at ? 'done' : ($currentView === 'checkin' ? 'active' : 'locked') }}">
                     <i class="fas fa-{{ $participant->checked_in_at ? 'check' : 'sign-in-alt' }}"></i>
@@ -115,25 +104,30 @@
                 </div>
             </div>
 
-            @if($seminar)
-            <div class="step-item {{ $enrollment && $enrollment->pre_test_passed ? 'done' : ($currentView === 'pre_test' ? 'active' : 'locked') }}">
-                <div class="step-icon {{ $enrollment && $enrollment->pre_test_passed ? 'done' : ($currentView === 'pre_test' ? 'active' : 'locked') }}">
-                    <i class="fas fa-{{ $enrollment && $enrollment->pre_test_passed ? 'check' : 'clipboard-list' }}"></i>
+            {{-- PRE-TEST --}}
+            @if($hasQuestions)
+            <div class="step-item {{ $participant->pre_test_passed ? 'done' : ($currentView === 'pre_test' ? 'active' : 'locked') }}">
+                <div class="step-icon {{ $participant->pre_test_passed ? 'done' : ($currentView === 'pre_test' ? 'active' : 'locked') }}">
+                    <i class="fas fa-{{ $participant->pre_test_passed ? 'check' : 'clipboard-list' }}"></i>
                 </div>
                 <div>
                     <div style="font-weight:600;">Pre-Test</div>
-                    @if($enrollment && $enrollment->pre_test_passed)<small style="color:#10b981;">Lulus — {{ $enrollment->pre_test_score }}%</small>@endif
+                    @if($participant->pre_test_passed)<small style="color:#10b981;">Selesai — {{ $participant->pre_test_score }}%</small>@endif
                 </div>
             </div>
+            @endif
 
-            <div class="step-item {{ $enrollment && $enrollment->material_viewed ? 'done' : ($currentView === 'material' ? 'active' : 'locked') }}">
-                <div class="step-icon {{ $enrollment && $enrollment->material_viewed ? 'done' : ($currentView === 'material' ? 'active' : 'locked') }}">
-                    <i class="fas fa-{{ $enrollment && $enrollment->material_viewed ? 'check' : 'book-open' }}"></i>
+            {{-- MATERI --}}
+            @if($hasMaterials)
+            <div class="step-item {{ $participant->material_viewed ? 'done' : ($currentView === 'material' ? 'active' : 'locked') }}">
+                <div class="step-icon {{ $participant->material_viewed ? 'done' : ($currentView === 'material' ? 'active' : 'locked') }}">
+                    <i class="fas fa-{{ $participant->material_viewed ? 'check' : 'book-open' }}"></i>
                 </div>
                 <div><div style="font-weight:600;">Materi Pelatihan</div></div>
             </div>
             @endif
 
+            {{-- CHECK-OUT --}}
             <div class="step-item {{ $participant->checked_out_at ? 'done' : ($currentView === 'checkout' ? 'active' : 'locked') }}">
                 <div class="step-icon {{ $participant->checked_out_at ? 'done' : ($currentView === 'checkout' ? 'active' : 'locked') }}">
                     <i class="fas fa-{{ $participant->checked_out_at ? 'check' : 'sign-out-alt' }}"></i>
@@ -144,18 +138,20 @@
                 </div>
             </div>
 
-            @if($seminar)
-            <div class="step-item {{ $enrollment && $enrollment->post_test_passed ? 'done' : ($currentView === 'post_test' ? 'active' : 'locked') }}">
-                <div class="step-icon {{ $enrollment && $enrollment->post_test_passed ? 'done' : ($currentView === 'post_test' ? 'active' : 'locked') }}">
-                    <i class="fas fa-{{ $enrollment && $enrollment->post_test_passed ? 'check' : 'clipboard-check' }}"></i>
+            {{-- POST-TEST --}}
+            @if($hasQuestions)
+            <div class="step-item {{ $participant->post_test_passed ? 'done' : ($currentView === 'post_test' ? 'active' : 'locked') }}">
+                <div class="step-icon {{ $participant->post_test_passed ? 'done' : ($currentView === 'post_test' ? 'active' : 'locked') }}">
+                    <i class="fas fa-{{ $participant->post_test_passed ? 'check' : 'clipboard-check' }}"></i>
                 </div>
                 <div>
                     <div style="font-weight:600;">Post-Test</div>
-                    @if($enrollment && $enrollment->post_test_passed)<small style="color:#10b981;">Lulus — {{ $enrollment->post_test_score }}%</small>@endif
+                    @if($participant->post_test_passed)<small style="color:#10b981;">Lulus — {{ $participant->post_test_score }}%</small>@endif
                 </div>
             </div>
             @endif
 
+            {{-- TUGAS --}}
             <div class="step-item {{ $submission ? ($submission->status === 'approved' ? 'done' : 'active') : ($currentView === 'task' ? 'active' : 'locked') }}">
                 <div class="step-icon {{ $submission ? 'done' : ($currentView === 'task' ? 'active' : 'locked') }}">
                     <i class="fas fa-{{ $submission ? 'check' : 'file-upload' }}"></i>
@@ -166,14 +162,20 @@
                 </div>
             </div>
 
+            {{-- SERTIFIKAT --}}
             <div class="step-item {{ $participant->certificate_path ? 'done' : 'locked' }}">
                 <div class="step-icon {{ $participant->certificate_path ? 'done' : 'locked' }}">
                     <i class="fas fa-{{ $participant->certificate_path ? 'check' : 'certificate' }}"></i>
                 </div>
                 <div><div style="font-weight:600;">Sertifikat</div></div>
             </div>
+
         </div>
     </div>
+
+    {{-- ============================================================ --}}
+    {{-- KONTEN AKTIF --}}
+    {{-- ============================================================ --}}
 
     {{-- CHECK-IN --}}
     @if($currentView === 'checkin')
@@ -191,33 +193,24 @@
 
     {{-- PRE-TEST --}}
     @if($currentView === 'pre_test')
-    @php $quiz = $seminar->preTest; @endphp
+    @php $preTestCount = min(5, $training->questions->count()); @endphp
     <div class="card">
         <h3 style="margin-bottom:4px;"><i class="fas fa-clipboard-list" style="color:#667eea;"></i> Pre-Test</h3>
         <p style="color:#6b7280; font-size:0.85rem; margin-bottom:16px;">Kerjakan sebelum mengakses materi.</p>
 
-        @if(isset($quizResult) && $quizResult && $quizResult['type'] === 'pre')
-        <div class="score-card">
-            <div class="score-circle {{ $quizResult['passed'] ? 'score-pass' : 'score-fail' }}">
-                {{ round($quizResult['score']) }}%
-            </div>
-            <h3 style="margin-bottom:8px;">{{ $quizResult['passed'] ? '🎉 Lulus!' : '😔 Belum Lulus' }}</h3>
-            <p style="color:#6b7280; font-size:0.9rem; margin-bottom:16px;">
-                {{ $quizResult['passed'] ? 'Silakan lanjut ke materi.' : 'Nilai minimum ' . $quiz->passing_score . '%. Silakan coba lagi.' }}
-            </p>
-            <a href="{{ route('training.participant.access', $participant->access_token) }}" class="btn btn-primary">
-                <i class="fas fa-arrow-right"></i> Lanjutkan
-            </a>
-        </div>
-        @elseif(isset($ongoingAttempt) && $ongoingAttempt)
-        @include('training.partials.quiz-form', ['quiz' => $quiz, 'attempt' => $ongoingAttempt, 'quizType' => 'pre', 'token' => $participant->access_token])
+        @if(isset($ongoingAttempt) && $ongoingAttempt)
+            @include('training.partials.quiz-form', [
+                'attempt'   => $ongoingAttempt,
+                'quizType'  => 'pre',
+                'token'     => $participant->access_token,
+                'training'  => $training,
+            ])
         @else
         <div class="quiz-info-bar">
-            <span><i class="fas fa-question-circle"></i> {{ $quiz->questions->count() }} soal</span>
-            <span><i class="fas fa-clock"></i> {{ $quiz->duration_minutes }} menit</span>
-            <span><i class="fas fa-check-double"></i> Min. lulus: {{ $quiz->passing_score }}%</span>
+            <span><i class="fas fa-question-circle"></i> {{ $preTestCount }} soal (random)</span>
+            <span><i class="fas fa-clock"></i> 30 menit</span>
+            <span><i class="fas fa-info-circle"></i> Semua peserta lanjut setelah pre-test</span>
         </div>
-        @if($quiz->description)<p style="color:#374151; font-size:0.9rem; margin-bottom:20px;">{{ $quiz->description }}</p>@endif
         <form method="POST" action="{{ route('training.participant.quiz.start', [$participant->access_token, 'pre']) }}">
             @csrf
             <button type="submit" class="btn btn-primary btn-block">
@@ -230,42 +223,43 @@
 
     {{-- MATERI --}}
     @if($currentView === 'material')
-<div class="card">
-    <h3 style="margin-bottom:4px;"><i class="fas fa-book-open" style="color:#667eea;"></i> Materi Pelatihan</h3>
-    <p style="color:#6b7280; font-size:0.85rem; margin-bottom:16px;">Pelajari semua materi berikut selama sesi pelatihan berlangsung.</p>
- 
-    <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:20px;">
-        @forelse($training->materials as $m)
-        @php
-            $icon  = match($m->type) { 'youtube'=>'fab fa-youtube', 'ppt'=>'fas fa-file-powerpoint', 'pdf'=>'fas fa-file-pdf', 'gdrive'=>'fab fa-google-drive', default=>'fas fa-link' };
-            $color = match($m->type) { 'youtube'=>'#ef4444', 'ppt'=>'#f59e0b', 'pdf'=>'#3b82f6', 'gdrive'=>'#10b981', default=>'#667eea' };
-        @endphp
-        <div style="display:flex; align-items:center; gap:12px; padding:12px 16px; background:#f8f9fa; border-radius:10px;">
-            <div style="width:36px; height:36px; border-radius:8px; background:{{ $color }}20; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-                <i class="{{ $icon }}" style="color:{{ $color }};"></i>
+    <div class="card">
+        <h3 style="margin-bottom:4px;"><i class="fas fa-book-open" style="color:#667eea;"></i> Materi Pelatihan</h3>
+        <p style="color:#6b7280; font-size:0.85rem; margin-bottom:16px;">Pelajari semua materi berikut selama sesi pelatihan berlangsung.</p>
+
+        <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:20px;">
+            @forelse($training->materials as $m)
+            @php
+                $icon  = match($m->type) { 'youtube'=>'fab fa-youtube', 'ppt'=>'fas fa-file-powerpoint', 'pdf'=>'fas fa-file-pdf', 'gdrive'=>'fab fa-google-drive', default=>'fas fa-link' };
+                $color = match($m->type) { 'youtube'=>'#ef4444', 'ppt'=>'#f59e0b', 'pdf'=>'#3b82f6', 'gdrive'=>'#10b981', default=>'#667eea' };
+            @endphp
+            <div style="display:flex; align-items:center; gap:12px; padding:12px 16px; background:#f8f9fa; border-radius:10px;">
+                <div style="width:36px; height:36px; border-radius:8px; background:{{ $color }}20; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                    <i class="{{ $icon }}" style="color:{{ $color }};"></i>
+                </div>
+                <div style="flex:1;">
+                    <div style="font-weight:600; font-size:0.9rem; color:#1e293b;">{{ $m->title }}</div>
+                    <div style="font-size:0.75rem; color:#9ca3af;">{{ strtoupper($m->type) }}</div>
+                </div>
+                <a href="{{ $m->url }}" target="_blank"
+                    style="display:inline-flex; align-items:center; gap:6px; background:{{ $color }}; color:white; padding:6px 14px; border-radius:8px; font-size:0.8rem; font-weight:600; text-decoration:none;">
+                    <i class="fas fa-external-link-alt"></i> Buka
+                </a>
             </div>
-            <div style="flex:1;">
-                <div style="font-weight:600; font-size:0.9rem; color:#1e293b;">{{ $m->title }}</div>
-                <div style="font-size:0.75rem; color:#9ca3af;">{{ strtoupper($m->type) }}</div>
-            </div>
-            <a href="{{ $m->url }}" target="_blank"
-                style="display:inline-flex; align-items:center; gap:6px; background:{{ $color }}; color:white; padding:6px 14px; border-radius:8px; font-size:0.8rem; font-weight:600; text-decoration:none;">
-                <i class="fas fa-external-link-alt"></i> Buka
-            </a>
+            @empty
+            <p style="color:#9ca3af; font-size:0.875rem; text-align:center; padding:20px;">Materi belum tersedia.</p>
+            @endforelse
         </div>
-        @empty
-        <p style="color:#9ca3af; font-size:0.875rem; text-align:center; padding:20px;">Materi belum tersedia.</p>
-        @endforelse
+
+        <form method="POST" action="{{ route('training.participant.material.viewed', $participant->access_token) }}">
+            @csrf
+            <button type="submit" class="btn btn-success btn-block">
+                <i class="fas fa-check"></i> Tandai Semua Sudah Dipelajari
+            </button>
+        </form>
     </div>
- 
-    <form method="POST" action="{{ route('training.participant.material.viewed', $participant->access_token) }}">
-        @csrf
-        <button type="submit" class="btn btn-success btn-block">
-            <i class="fas fa-check"></i> Tandai Semua Sudah Dipelajari
-        </button>
-    </form>
-</div>
-@endif
+    @endif
+
     {{-- CHECK-OUT --}}
     @if($currentView === 'checkout')
     <div class="card">
@@ -282,31 +276,23 @@
 
     {{-- POST-TEST --}}
     @if($currentView === 'post_test')
-    @php $quiz = $seminar->postTest; @endphp
+    @php $postTestCount = $training->questions->count(); @endphp
     <div class="card">
         <h3 style="margin-bottom:4px;"><i class="fas fa-clipboard-check" style="color:#667eea;"></i> Post-Test</h3>
         <p style="color:#6b7280; font-size:0.85rem; margin-bottom:16px;">Kerjakan setelah mengikuti pelatihan.</p>
 
-        @if(isset($quizResult) && $quizResult && $quizResult['type'] === 'post')
-        <div class="score-card">
-            <div class="score-circle {{ $quizResult['passed'] ? 'score-pass' : 'score-fail' }}">
-                {{ round($quizResult['score']) }}%
-            </div>
-            <h3 style="margin-bottom:8px;">{{ $quizResult['passed'] ? '🎉 Lulus!' : '😔 Belum Lulus' }}</h3>
-            <p style="color:#6b7280; font-size:0.9rem; margin-bottom:16px;">
-                {{ $quizResult['passed'] ? 'Silakan kumpulkan tugas.' : 'Nilai minimum ' . $quiz->passing_score . '%. Silakan coba lagi.' }}
-            </p>
-            <a href="{{ route('training.participant.access', $participant->access_token) }}" class="btn btn-primary">
-                <i class="fas fa-arrow-right"></i> Lanjutkan
-            </a>
-        </div>
-        @elseif(isset($ongoingAttempt) && $ongoingAttempt)
-        @include('training.partials.quiz-form', ['quiz' => $quiz, 'attempt' => $ongoingAttempt, 'quizType' => 'post', 'token' => $participant->access_token])
+        @if(isset($ongoingAttempt) && $ongoingAttempt)
+            @include('training.partials.quiz-form', [
+                'attempt'   => $ongoingAttempt,
+                'quizType'  => 'post',
+                'token'     => $participant->access_token,
+                'training'  => $training,
+            ])
         @else
         <div class="quiz-info-bar">
-            <span><i class="fas fa-question-circle"></i> {{ $quiz->questions->count() }} soal</span>
-            <span><i class="fas fa-clock"></i> {{ $quiz->duration_minutes }} menit</span>
-            <span><i class="fas fa-check-double"></i> Min. lulus: {{ $quiz->passing_score }}%</span>
+            <span><i class="fas fa-question-circle"></i> {{ $postTestCount }} soal</span>
+            <span><i class="fas fa-clock"></i> 60 menit</span>
+            <span><i class="fas fa-check-double"></i> Min. lulus: 60%</span>
         </div>
         <form method="POST" action="{{ route('training.participant.quiz.start', [$participant->access_token, 'post']) }}">
             @csrf
