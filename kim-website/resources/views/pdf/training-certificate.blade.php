@@ -212,7 +212,7 @@ $totalJP = $training->total_jp ?? 0;
                     <tr>
                         <th>No</th>
                         <th>Materi</th>
-                        <th>Keterangan</th>
+                        <th style="width:70px;">Total JP</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -220,18 +220,19 @@ $totalJP = $training->total_jp ?? 0;
                     <tr>
                         <td>{{ $i + 1 }}</td>
                         <td style="text-align:left;">{{ $m->title }}</td>
-                        <td>Teori & Praktik</td>
+                        @if($i === 0)
+                        {{-- JP hanya di baris pertama, span ke semua baris materi --}}
+                        <td rowspan="{{ $materials->count() }}"
+                            style="text-align:center; vertical-align:middle; font-weight:bold; font-size:14px; color:#0B4DBA;">
+                            {{ $totalJP }} JP
+                        </td>
+                        @endif
                     </tr>
                     @empty
                     <tr>
                         <td colspan="3" style="text-align:center; color:#6b7280;">-</td>
                     </tr>
                     @endforelse
-                    <tr class="jp-total-row">
-                        <td colspan="2" style="text-align:right; font-weight:bold; padding-right:16px;">Total Jam
-                            Pelajaran (JP)</td>
-                        <td><b>{{ $totalJP }} JP</b></td>
-                    </tr>
                 </tbody>
             </table>
             <div style="text-align:center; margin-top:30px;">
