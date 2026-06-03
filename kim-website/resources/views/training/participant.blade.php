@@ -119,12 +119,29 @@
 
             {{-- MATERI --}}
             @if($hasMaterials)
-            <div class="step-item {{ $participant->material_viewed ? 'done' : ($currentView === 'material' ? 'active' : 'locked') }}">
-                <div class="step-icon {{ $participant->material_viewed ? 'done' : ($currentView === 'material' ? 'active' : 'locked') }}">
-                    <i class="fas fa-{{ $participant->material_viewed ? 'check' : 'book-open' }}"></i>
+            @if($participant->material_viewed)
+            {{-- Sudah selesai → bisa diklik untuk balik ke materi --}}
+            <a href="{{ route('training.participant.material', $participant->access_token) }}"
+                style="text-decoration:none; display:block;"
+                title="Klik untuk kembali ke materi">
+                <div class="step-item done" style="cursor:pointer; transition:transform .15s;" onmouseover="this.style.transform='scale(1.01)'" onmouseout="this.style.transform='scale(1)'">
+                    <div class="step-icon done">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+                        <div style="font-weight:600;">Materi Pelatihan</div>
+                        <small style="color:#10b981; font-size:0.75rem;"><i class="fas fa-external-link-alt"></i> Lihat Materi</small>
+                    </div>
+                </div>
+            </a>
+            @else
+            <div class="step-item {{ $currentView === 'material' ? 'active' : 'locked' }}">
+                <div class="step-icon {{ $currentView === 'material' ? 'active' : 'locked' }}">
+                    <i class="fas fa-book-open"></i>
                 </div>
                 <div><div style="font-weight:600;">Materi Pelatihan</div></div>
             </div>
+            @endif
             @endif
 
             {{-- CHECK-OUT --}}
