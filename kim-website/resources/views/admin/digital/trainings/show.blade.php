@@ -4,8 +4,8 @@
 
 @section('content')
 
-@if(session('success'))<div class="alert alert-success"><i class="fas fa-check-circle"></i> {{ session('success') }}</div>@endif
-@if(session('error'))<div class="alert alert-danger"><i class="fas fa-exclamation-circle"></i> {{ session('error') }}</div>@endif
+@if(session('success'))<div class="alert alert-success"><i class="fas fa-check-circle"></i> {!! session('success') !!}</div>@endif
+@if(session('error'))<div class="alert alert-danger"><i class="fas fa-exclamation-circle"></i> {!! session('error') !!}</div>@endif
 
 {{-- HEADER --}}
 <div class="card" style="margin-bottom:20px;">
@@ -72,9 +72,9 @@
 {{-- ================================================================ --}}
 <div id="tab-peserta" class="tab-content">
     <div class="card">
-        <div class="card-header" style="display:flex; justify-content:space-between; align-items:center;">
+        <div class="card-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
             <h3>Daftar Peserta</h3>
-            <div style="display:flex; gap:8px;">
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
                 <a href="{{ route('admin.digital.trainings.template') }}" class="btn btn-sm btn-success"><i class="fas fa-download"></i> Template Excel</a>
                 <button onclick="document.getElementById('importModal').style.display='flex'" class="btn btn-sm btn-secondary"><i class="fas fa-file-excel"></i> Import</button>
                 <button onclick="document.getElementById('addModal').style.display='flex'" class="btn btn-sm btn-primary"><i class="fas fa-plus"></i> Tambah</button>
@@ -184,7 +184,7 @@
 {{-- TAB: MATERI --}}
 {{-- ================================================================ --}}
 <div id="tab-materi" class="tab-content" style="display:none;">
- 
+
     {{-- SUB-SECTION 1: Materi Akses Peserta --}}
     <div class="card" style="margin-bottom:20px;">
         <div class="card-header" style="display:flex; justify-content:space-between; align-items:center;">
@@ -210,7 +210,7 @@
                     <div style="font-weight:600; color:#1e293b; font-size:0.9rem;">{{ $m->title }}</div>
                     <div style="font-size:0.78rem; color:#6b7280; display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
                         <span style="background:{{ $color }}15; color:{{ $color }}; padding:2px 8px; border-radius:10px; font-weight:600; font-size:0.72rem;">{{ strtoupper($m->type) }}</span>
-                        <a href="{{ $m->url }}" target="_blank" style="color:#667eea; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:300px; display:inline-block;">{{ Str::limit($m->url, 60) }}</a>
+                        <a href="{{ $m->url }}" target="_blank" style="color:#667eea;">{{ Str::limit($m->url, 60) }}</a>
                     </div>
                 </div>
                 <div style="display:flex; gap:6px; flex-shrink:0;">
@@ -230,13 +230,15 @@
             @endforelse
         </div>
     </div>
- 
+
     {{-- SUB-SECTION 2: Materi Sertifikat --}}
     <div class="card">
         <div class="card-header" style="display:flex; justify-content:space-between; align-items:center;">
             <div>
                 <h3 style="margin:0;">Materi untuk Sertifikat</h3>
-                <small style="color:#6b7280; font-size:0.8rem;">Nama materi yang tercantum di halaman 2 sertifikat &nbsp;·&nbsp; Total JP: <strong>{{ $training->total_jp }} JP</strong></small>
+                <small style="color:#6b7280; font-size:0.8rem;">
+                    Nama materi yang tercantum di halaman 2 sertifikat &nbsp;·&nbsp; Total JP: <strong>{{ $training->total_jp }} JP</strong>
+                </small>
             </div>
             <button onclick="document.getElementById('addCertMateriModal').style.display='flex'" class="btn btn-sm btn-primary">
                 <i class="fas fa-plus"></i> Tambah
@@ -267,21 +269,30 @@
         </div>
     </div>
 </div>
+
 {{-- ================================================================ --}}
 {{-- TAB: SOAL --}}
 {{-- ================================================================ --}}
 <div id="tab-soal" class="tab-content" style="display:none;">
     <div class="card">
-        <div class="card-header" style="display:flex; justify-content:space-between; align-items:center;">
-            <h3>
-                Bank Soal
-                <small style="color:#6b7280; font-weight:400; font-size:0.82rem;">
+        <div class="card-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+            <div>
+                <h3 style="margin:0;">Bank Soal</h3>
+                <small style="color:#6b7280; font-size:0.8rem;">
                     Pre-test: 5 soal random &nbsp;·&nbsp; Post-test: semua {{ $training->questions->count() }} soal
                 </small>
-            </h3>
-            <button onclick="document.getElementById('addSoalModal').style.display='flex'" class="btn btn-sm btn-primary">
-                <i class="fas fa-plus"></i> Tambah Soal
-            </button>
+            </div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <a href="{{ route('admin.digital.trainings.questions.template') }}" class="btn btn-sm btn-success">
+                    <i class="fas fa-download"></i> Template Excel
+                </a>
+                <button onclick="document.getElementById('importSoalModal').style.display='flex'" class="btn btn-sm btn-secondary">
+                    <i class="fas fa-file-excel"></i> Import Excel
+                </button>
+                <button onclick="document.getElementById('addSoalModal').style.display='flex'" class="btn btn-sm btn-primary">
+                    <i class="fas fa-plus"></i> Tambah Manual
+                </button>
+            </div>
         </div>
         <div class="card-body" style="padding:0;">
             @forelse($training->questions as $i => $q)
@@ -347,12 +358,12 @@
 </div>
 
 {{-- ================================================================ --}}
-{{-- MODAL: Import Excel --}}
+{{-- MODAL: Import Peserta Excel --}}
 {{-- ================================================================ --}}
 <div id="importModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:1000; align-items:center; justify-content:center;">
     <div style="background:white; border-radius:16px; padding:28px; width:100%; max-width:460px; margin:20px;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-            <h3 style="margin:0;">Import via Excel</h3>
+            <h3 style="margin:0;">Import Peserta via Excel</h3>
             <button onclick="document.getElementById('importModal').style.display='none'" style="background:none; border:none; font-size:1.5rem; cursor:pointer;">&times;</button>
         </div>
         <form method="POST" action="{{ route('admin.digital.trainings.participants.import', $training) }}" enctype="multipart/form-data">
@@ -368,7 +379,7 @@
 </div>
 
 {{-- ================================================================ --}}
-{{-- MODAL: Tambah / Edit Materi --}}
+{{-- MODAL: Tambah / Edit Materi Akses --}}
 {{-- ================================================================ --}}
 <div id="addMateriModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:1000; align-items:center; justify-content:center;">
     <div style="background:white; border-radius:16px; padding:28px; width:100%; max-width:500px; margin:20px;">
@@ -400,9 +411,9 @@
         </form>
     </div>
 </div>
- 
+
 {{-- ================================================================ --}}
-{{-- MODAL: Tambah/Edit Materi Sertifikat --}}
+{{-- MODAL: Tambah / Edit Materi Sertifikat --}}
 {{-- ================================================================ --}}
 <div id="addCertMateriModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:1000; align-items:center; justify-content:center;">
     <div style="background:white; border-radius:16px; padding:28px; width:100%; max-width:460px; margin:20px;">
@@ -425,7 +436,7 @@
 </div>
 
 {{-- ================================================================ --}}
-{{-- MODAL: Tambah / Edit Soal --}}
+{{-- MODAL: Tambah / Edit Soal Manual --}}
 {{-- ================================================================ --}}
 <div id="addSoalModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:1000; align-items:center; justify-content:center;">
     <div style="background:white; border-radius:16px; padding:28px; width:100%; max-width:620px; margin:20px; max-height:90vh; overflow-y:auto;">
@@ -461,6 +472,38 @@
                 </select>
             </div>
             <button type="submit" class="btn btn-primary btn-block">Simpan Soal</button>
+        </form>
+    </div>
+</div>
+
+{{-- ================================================================ --}}
+{{-- MODAL: Import Soal Excel --}}
+{{-- ================================================================ --}}
+<div id="importSoalModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:1000; align-items:center; justify-content:center;">
+    <div style="background:white; border-radius:16px; padding:28px; width:100%; max-width:480px; margin:20px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h3 style="margin:0;">Import Soal dari Excel</h3>
+            <button onclick="document.getElementById('importSoalModal').style.display='none'" style="background:none; border:none; font-size:1.5rem; cursor:pointer;">&times;</button>
+        </div>
+        <div style="background:#eff6ff; border-radius:10px; padding:14px; margin-bottom:16px; font-size:0.85rem; color:#1e40af; line-height:1.6;">
+            <i class="fas fa-info-circle"></i> <strong>Format kolom:</strong><br>
+            Pertanyaan | Opsi A | Opsi B | Opsi C | Opsi D | Opsi E | Jawaban Benar (A/B/C/D/E)
+        </div>
+        <form method="POST" action="{{ route('admin.digital.trainings.questions.import', $training) }}" enctype="multipart/form-data">
+            @csrf
+            <div style="border:2px dashed #d1d5db; border-radius:10px; padding:24px; text-align:center; margin-bottom:16px;">
+                <i class="fas fa-file-excel" style="font-size:2.5rem; color:#10b981; margin-bottom:8px; display:block;"></i>
+                <p style="color:#6b7280; font-size:0.85rem; margin-bottom:12px;">Upload file .xlsx, .xls, atau .csv</p>
+                <input type="file" name="file" accept=".xlsx,.xls,.csv" required>
+            </div>
+            <div style="display:flex; gap:10px;">
+                <a href="{{ route('admin.digital.trainings.questions.template') }}" class="btn btn-success" style="flex:1; justify-content:center; display:inline-flex; align-items:center; gap:6px;">
+                    <i class="fas fa-download"></i> Template
+                </a>
+                <button type="submit" class="btn btn-primary" style="flex:1; justify-content:center; display:inline-flex; align-items:center; gap:6px;">
+                    <i class="fas fa-upload"></i> Import
+                </button>
+            </div>
         </form>
     </div>
 </div>
@@ -508,57 +551,7 @@ function showTab(name) {
 }
 showTab('peserta');
 
-// ─── Materi Modal ─────────────────────────────────────────────────────────────
-function openEditMateri(id, title, type, url) {
-    document.getElementById('materiModalTitle').textContent = 'Edit Materi';
-    document.getElementById('materiTitle').value = title;
-    document.getElementById('materiType').value  = type;
-    document.getElementById('materiUrl').value   = url;
-    document.getElementById('materiMethod').innerHTML = '<input type="hidden" name="_method" value="PUT">';
-    document.getElementById('materiForm').action = '/admin/digital/trainings/{{ $training->id }}/materials/' + id;
-    document.getElementById('addMateriModal').style.display = 'flex';
-}
-
-function closeMateriModal() {
-    document.getElementById('materiModalTitle').textContent = 'Tambah Materi';
-    document.getElementById('materiMethod').innerHTML = '';
-    document.getElementById('materiForm').action = '{{ route("admin.digital.trainings.materials.store", $training) }}';
-    document.getElementById('materiForm').reset();
-    document.getElementById('addMateriModal').style.display = 'none';
-}
-
-// ─── Soal Modal ───────────────────────────────────────────────────────────────
-function openEditSoal(id, q, a, b, c, d, e, correct) {
-    document.getElementById('soalModalTitle').textContent = 'Edit Soal';
-    document.getElementById('soalQuestion').value = q;
-    document.getElementById('soalA').value = a;
-    document.getElementById('soalB').value = b;
-    document.getElementById('soalC').value = c;
-    document.getElementById('soalD').value = d;
-    document.getElementById('soalE').value = e || '';
-    document.getElementById('soalCorrect').value = correct;
-    document.getElementById('soalMethod').innerHTML = '<input type="hidden" name="_method" value="PUT">';
-    document.getElementById('soalForm').action = '/admin/digital/trainings/{{ $training->id }}/questions/' + id;
-    document.getElementById('addSoalModal').style.display = 'flex';
-}
-
-function closeSoalModal() {
-    document.getElementById('soalModalTitle').textContent = 'Tambah Soal';
-    document.getElementById('soalMethod').innerHTML = '';
-    document.getElementById('soalForm').action = '{{ route("admin.digital.trainings.questions.store", $training) }}';
-    document.getElementById('soalForm').reset();
-    document.getElementById('addSoalModal').style.display = 'none';
-}
-
-// ─── Review Modal ─────────────────────────────────────────────────────────────
-function openReview(id, status, feedback) {
-    document.getElementById('reviewForm').action = '/admin/digital/training-submissions/' + id + '/review';
-    document.getElementById('reviewStatus').value   = status;
-    document.getElementById('reviewFeedback').value = feedback;
-    document.getElementById('reviewModal').style.display = 'flex';
-}
-
-// Materi akses
+// ─── Materi Akses ─────────────────────────────────────────────────────────────
 function openEditMateri(id, title, type, url) {
     document.getElementById('materiModalTitle').textContent = 'Edit Materi Akses';
     document.getElementById('materiTitle').value = title;
@@ -575,8 +568,8 @@ function closeMateriModal() {
     document.getElementById('materiForm').reset();
     document.getElementById('addMateriModal').style.display = 'none';
 }
- 
-// Materi sertifikat
+
+// ─── Materi Sertifikat ────────────────────────────────────────────────────────
 function openEditCertMateri(id, title) {
     document.getElementById('certMateriModalTitle').textContent = 'Edit Materi Sertifikat';
     document.getElementById('certMateriTitle').value = title;
@@ -590,6 +583,36 @@ function closeCertMateriModal() {
     document.getElementById('certMateriForm').action = '{{ route("admin.digital.trainings.certificate-materials.store", $training) }}';
     document.getElementById('certMateriForm').reset();
     document.getElementById('addCertMateriModal').style.display = 'none';
+}
+
+// ─── Soal ─────────────────────────────────────────────────────────────────────
+function openEditSoal(id, q, a, b, c, d, e, correct) {
+    document.getElementById('soalModalTitle').textContent = 'Edit Soal';
+    document.getElementById('soalQuestion').value = q;
+    document.getElementById('soalA').value = a;
+    document.getElementById('soalB').value = b;
+    document.getElementById('soalC').value = c;
+    document.getElementById('soalD').value = d;
+    document.getElementById('soalE').value = e || '';
+    document.getElementById('soalCorrect').value = correct;
+    document.getElementById('soalMethod').innerHTML = '<input type="hidden" name="_method" value="PUT">';
+    document.getElementById('soalForm').action = '/admin/digital/trainings/{{ $training->id }}/questions/' + id;
+    document.getElementById('addSoalModal').style.display = 'flex';
+}
+function closeSoalModal() {
+    document.getElementById('soalModalTitle').textContent = 'Tambah Soal';
+    document.getElementById('soalMethod').innerHTML = '';
+    document.getElementById('soalForm').action = '{{ route("admin.digital.trainings.questions.store", $training) }}';
+    document.getElementById('soalForm').reset();
+    document.getElementById('addSoalModal').style.display = 'none';
+}
+
+// ─── Review ───────────────────────────────────────────────────────────────────
+function openReview(id, status, feedback) {
+    document.getElementById('reviewForm').action = '/admin/digital/training-submissions/' + id + '/review';
+    document.getElementById('reviewStatus').value   = status;
+    document.getElementById('reviewFeedback').value = feedback;
+    document.getElementById('reviewModal').style.display = 'flex';
 }
 </script>
 @endsection

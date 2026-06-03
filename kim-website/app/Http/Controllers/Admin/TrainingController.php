@@ -482,4 +482,145 @@ class TrainingController extends Controller
             Log::error("Certificate failed for participant {$participant->id}: " . $e->getMessage());
         }
     }
+
+
+    public function downloadQuestionTemplate()
+    {
+        $headers = [
+            'Content-Type'        => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="template_soal_pelatihan.csv"',
+        ];
+
+        $callback = function () {
+            $file = fopen('php://output', 'w');
+            fprintf($file, chr(0xEF) . chr(0xBB) . chr(0xBF)); // BOM UTF-8
+
+            // Header row — SAMA dengan template quiz seminar on demand
+            fputcsv($file, [
+                'Pertanyaan',
+                'Opsi A',
+                'Opsi B',
+                'Opsi C',
+                'Opsi D',
+                'Opsi E',
+                'Jawaban Benar (A/B/C/D/E)',
+            ]);
+
+            // Contoh baris
+            fputcsv($file, [
+                'Apa kepanjangan dari AI?',
+                'Artificial Intelligence',
+                'Automatic Information',
+                'Advanced Integration',
+                'Applied Innovation',
+                '',
+                'A',
+            ]);
+            fputcsv($file, [
+                'Manakah yang merupakan contoh AI generatif?',
+                'Google Maps',
+                'ChatGPT',
+                'Microsoft Excel',
+                'Adobe Photoshop',
+                '',
+                'B',
+            ]);
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    // ─── Import Soal dari Excel/CSV ───────────────────────────────
+    public function importQuestions(Request $request, Training $training)
+    {
+        $request->validate([
+            'file' => 'required|file|mimes:xlsx,xls,csv|max:5120',
+        ]);
+
+        $file      = $request->file('file');
+        $extension = $file->getClientOriginalExtension();
+        $rows      = [];
+
+        if ($extension === 'csv') {
+            $handle = fopen($file->getPathname(), 'r');
+            // Hapus BOM kalau ada
+            $bom = fread($handle, 3);
+            if ($bom !== chr(0xEF) . chr(0xBB) . chr(0xBF)) {
+                rewind($handle);
+            }
+            fgetcsv($handle); // skip header
+            while (($row = fgetcsv($handle)) !== false) {
+                $rows[] = $row;
+            }
+            fclose($handle);
+        } else {
+            $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($file->getPathname());
+            $data        = $spreadsheet->getActiveSheet()->toArray(null, true, true, false);
+            array_shift($data); // skip header
+            $rows = $data;
+        }
+
+        $added   = 0;
+        $skipped = 0;
+        $errors  = [];
+
+        $validAnswers = ['A', 'B', 'C', 'D', 'E'];
+        $maxOrder     = $training->questions()->max('order') ?? 0;
+
+        foreach ($rows as $i => $row) {
+            $question = trim($row[0] ?? '');
+            $optA     = trim($row[1] ?? '');
+            $optB     = trim($row[2] ?? '');
+            $optC     = trim($row[3] ?? '');
+            $optD     = trim($row[4] ?? '');
+            $optE     = trim($row[5] ?? '');
+            $correct  = strtoupper(trim($row[6] ?? ''));
+
+            // Validasi wajib
+            if (empty($question) || empty($optA) || empty($optB)) {
+                $errors[] = "Baris " . ($i + 2) . ": Pertanyaan, Opsi A, dan Opsi B wajib diisi.";
+                $skipped++;
+                continue;
+            }
+
+            if (!in_array($correct, $validAnswers)) {
+                $errors[] = "Baris " . ($i + 2) . ": Jawaban benar '$correct' tidak valid (harus A/B/C/D/E).";
+                $skipped++;
+                continue;
+            }
+
+            // Validasi: jawaban yang dipilih harus punya opsi
+            $optMap = ['A' => $optA, 'B' => $optB, 'C' => $optC, 'D' => $optD, 'E' => $optE];
+            if (empty($optMap[$correct])) {
+                $errors[] = "Baris " . ($i + 2) . ": Opsi '$correct' kosong tapi dijadikan jawaban benar.";
+                $skipped++;
+                continue;
+            }
+
+            $maxOrder++;
+            $training->questions()->create([
+                'question'       => $question,
+                'option_a'       => $optA,
+                'option_b'       => $optB,
+                'option_c'       => $optC ?: null,
+                'option_d'       => $optD ?: null,
+                'option_e'       => $optE ?: null,
+                'correct_answer' => $correct,
+                'order'          => $maxOrder,
+            ]);
+
+            $added++;
+        }
+
+        $message = "Import selesai: {$added} soal ditambahkan";
+        if ($skipped > 0) $message .= ", {$skipped} dilewati";
+        if (!empty($errors)) {
+            $message .= ". <br>Error: " . implode('<br>', array_slice($errors, 0, 5));
+            if (count($errors) > 5) $message .= " (dan " . (count($errors) - 5) . " lainnya)";
+        }
+
+        return back()->with($skipped > 0 && $added === 0 ? 'error' : 'success', $message);
+    }
 }

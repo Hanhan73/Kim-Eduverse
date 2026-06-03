@@ -688,6 +688,8 @@ Route::prefix('admin/digital')->name('admin.digital.')->middleware(['check.digit
     Route::post('/trainings/{training}/certificate-materials', [TrainingController::class, 'storeCertificateMaterial'])->name('trainings.certificate-materials.store');
     Route::put('/trainings/{training}/certificate-materials/{certMaterial}', [TrainingController::class, 'updateCertificateMaterial'])->name('trainings.certificate-materials.update');
     Route::delete('/trainings/{training}/certificate-materials/{certMaterial}', [TrainingController::class, 'destroyCertificateMaterial'])->name('trainings.certificate-materials.destroy');
+    Route::get('/trainings/questions/template', [TrainingController::class, 'downloadQuestionTemplate'])->name('trainings.questions.template');
+    Route::post('/trainings/{training}/questions/import', [TrainingController::class, 'importQuestions'])->name('trainings.questions.import');
 });
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
