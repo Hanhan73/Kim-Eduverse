@@ -14,7 +14,7 @@
         .info-row:last-child { border-bottom: none; }
         .info-label { color: #6b7280; width: 120px; flex-shrink: 0; }
         .info-value { color: #1e293b; font-weight: 600; }
-        .btn { display: block; background: linear-gradient(135deg, #667eea, #764ba2); color: white; text-align: center; padding: 14px 24px; border-radius: 10px; text-decoration: none; font-weight: 700; font-size: 1rem; margin: 24px 0; }
+        .btn { display: block; background: linear-gradient(135deg, #667eea, #764ba2); color: #e5e7eb; text-align: center; padding: 14px 24px; border-radius: 10px; text-decoration: none; font-weight: 700; font-size: 1rem; margin: 24px 0;}
         .steps { counter-reset: step; }
         .step { display: flex; gap: 12px; margin-bottom: 12px; font-size: 0.875rem; color: #374151; }
         .step-num { width: 24px; height: 24px; background: #667eea; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.75rem; flex-shrink: 0; }
@@ -66,8 +66,8 @@
             @endif
         </div>
 
-        <a href="{{ $accessUrl }}" class="btn">
-            🔗 Akses Halaman Pelatihan Saya
+        <a href="{{ $accessUrl }}" class="btn" style="color: #f8f9fa;">
+            Akses Halaman Pelatihan Saya
         </a>
 
         <p style="font-size:0.85rem; color:#6b7280; margin-bottom:16px;">Yang bisa Anda lakukan di halaman tersebut:</p>

@@ -428,25 +428,25 @@ class TrainingController extends Controller
     // SERTIFIKAT
     // ================================================================
 
-    public function generateCertificates(Training $training)
-    {
-        $training->load('materials', 'participants.submission');
-        $generated = 0;
+public function generateCertificates(Training $training)
+{
+    $training->load('certificateMaterials', 'participants.submission');
+    $generated = 0;
 
-        foreach ($training->participants as $participant) {
-            if (
-                $participant->checked_in_at
-                && $participant->checked_out_at
-                && $participant->post_test_passed
-                && !$participant->certificate_path
-            ) {
-                $this->generateOneCertificate($participant, $training);
-                $generated++;
-            }
+    foreach ($training->participants as $participant) {
+        if (
+            $participant->checked_in_at
+            && $participant->checked_out_at
+            && $participant->post_test_passed
+            && !$participant->certificate_path
+        ) {
+            $this->generateOneCertificate($participant, $training);
+            $generated++;
         }
-
-        return back()->with('success', "{$generated} sertifikat berhasil dibuat.");
     }
+
+    return back()->with('success', "{$generated} sertifikat berhasil dibuat.");
+}
 
     public function downloadCertificate(TrainingParticipant $participant)
     {
@@ -483,32 +483,34 @@ class TrainingController extends Controller
     }
 
     private function generateOneCertificate(TrainingParticipant $participant, Training $training)
-    {
-        try {
-            $participant->generateCertificateNumber();
-            $participant->refresh();
+{
+    try {
+        $training->loadMissing('certificateMaterials'); // ← tambah ini
 
-            $pdf = Pdf::loadView('pdf.training-certificate', compact('participant', 'training'))
-                ->setPaper('a4', 'landscape');
+        $participant->generateCertificateNumber();
+        $participant->refresh();
 
-            $safeNumber = str_replace(['/', '\\', ' '], '-', $participant->certificate_number);
-            $fileName   = 'sertifikat_' . $safeNumber . '.pdf';
-            $filePath   = 'training_certificates/' . $fileName;
+        $pdf = Pdf::loadView('pdf.training-certificate', compact('participant', 'training'))
+            ->setPaper('a4', 'landscape');
 
-            if (!Storage::disk('public')->exists('training_certificates')) {
-                Storage::disk('public')->makeDirectory('training_certificates');
-            }
+        $safeNumber = str_replace(['/', '\\', ' '], '-', $participant->certificate_number);
+        $fileName   = 'sertifikat_' . $safeNumber . '.pdf';
+        $filePath   = 'training_certificates/' . $fileName;
 
-            Storage::disk('public')->put($filePath, $pdf->output());
-
-            $participant->update([
-                'certificate_path'      => $filePath,
-                'certificate_issued_at' => now(),
-            ]);
-        } catch (\Exception $e) {
-            Log::error("Certificate failed for participant {$participant->id}: " . $e->getMessage());
+        if (!Storage::disk('public')->exists('training_certificates')) {
+            Storage::disk('public')->makeDirectory('training_certificates');
         }
+
+        Storage::disk('public')->put($filePath, $pdf->output());
+
+        $participant->update([
+            'certificate_path'      => $filePath,
+            'certificate_issued_at' => now(),
+        ]);
+    } catch (\Exception $e) {
+        Log::error("Certificate failed for participant {$participant->id}: " . $e->getMessage());
     }
+}
 
 
     public function downloadQuestionTemplate()
