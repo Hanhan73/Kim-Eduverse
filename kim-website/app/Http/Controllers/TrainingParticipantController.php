@@ -291,4 +291,32 @@ class TrainingParticipantController extends Controller
         'participant', 'training', 'currentView', 'submission', 'ongoingAttempt'
     ));
 }
+
+public function goto($token, $step)
+{
+    $participant = TrainingParticipant::where('access_token', $token)->firstOrFail();
+    $training    = $participant->training()->with('materials', 'questions')->first();
+ 
+    // Validasi: step hanya bisa dikunjungi kalau sudah selesai
+    $allowed = match($step) {
+        'pre_test'  => $participant->pre_test_passed,
+        'material'  => $participant->material_viewed,
+        'post_test' => $participant->post_test_passed,
+        'task'      => $participant->submission !== null,
+        default     => false,
+    };
+ 
+    if (!$allowed) {
+        return redirect()->route('training.participant.access', $token)
+            ->with('error', 'Tahapan ini belum bisa diakses.');
+    }
+ 
+    $currentView    = $step;
+    $submission     = $participant->submission;
+    $ongoingAttempt = null;
+ 
+    return view('training.participant', compact(
+        'participant', 'training', 'currentView', 'submission', 'ongoingAttempt'
+    ));
+}
 }
