@@ -293,26 +293,52 @@ class TrainingController extends Controller
 
         if ($file->getClientOriginalExtension() === 'csv') {
             $handle = fopen($file->getPathname(), 'r');
+            // Hapus BOM kalau ada
+            $bom = fread($handle, 3);
+            if ($bom !== chr(0xEF) . chr(0xBB) . chr(0xBF)) rewind($handle);
             fgetcsv($handle); // skip header
             while (($row = fgetcsv($handle)) !== false) $rows[] = $row;
             fclose($handle);
         } else {
             $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($file->getPathname());
-            $data = $spreadsheet->getActiveSheet()->toArray();
-            array_shift($data);
+            $data = $spreadsheet->getActiveSheet()->toArray(null, true, true, false);
+            // Template xlsx: 3 baris header (judul, subtitle, spacer) + 1 baris kolom = skip 4
+            $data = array_slice($data, 4);
             $rows = $data;
         }
 
         $added = 0;
         $skipped = 0;
-        foreach ($rows as $row) {
-            $name  = trim($row[0] ?? '');
-            $nip   = trim($row[1] ?? '');
-            $email = trim($row[2] ?? '');
-            if (empty($name) || empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errors = [];
+
+        foreach ($rows as $i => $row) {
+            // Kolom: 0=No, 1=Nama, 2=NIP, 3=Email, 4=No HP, 5=Instansi
+            $name        = trim($row[1] ?? '');
+            $nip         = trim($row[2] ?? '');
+            $email       = trim($row[3] ?? '');
+            $phone       = trim($row[4] ?? '');
+            $institution = trim($row[5] ?? '');
+
+            // Skip baris kosong
+            if (empty($name) || empty($email)) {
                 $skipped++;
                 continue;
             }
+
+            // Skip baris contoh
+            if (str_contains(strtolower($name), 'contoh') || str_contains(strtolower($email), 'contoh')) {
+                $skipped++;
+                continue;
+            }
+
+            // Validasi email
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $errors[] = "Baris " . ($i + 5) . ": Email '$email' tidak valid.";
+                $skipped++;
+                continue;
+            }
+
+            // Skip duplikat
             if ($training->participants()->where('email', $email)->exists()) {
                 $skipped++;
                 continue;
@@ -320,16 +346,20 @@ class TrainingController extends Controller
 
             $training->participants()->create([
                 'name'         => $name,
-                'nip'          => $nip,
+                'nip'          => $nip ?: null,
                 'email'        => $email,
-                'phone'        => trim($row[3] ?? ''),
-                'institution'  => trim($row[4] ?? ''),
-                'access_token' => Str::random(40),
+                'phone'        => $phone ?: null,
+                'institution'  => $institution ?: null,
+                'access_token' => \Illuminate\Support\Str::random(40),
             ]);
             $added++;
         }
 
-        return back()->with('success', "Import selesai: {$added} ditambahkan, {$skipped} dilewati.");
+        $message = "Import selesai: {$added} peserta ditambahkan";
+        if ($skipped > 0) $message .= ", {$skipped} dilewati";
+        if (!empty($errors)) $message .= ".<br>Error: " . implode('<br>', array_slice($errors, 0, 5));
+
+        return back()->with($added === 0 && $skipped > 0 ? 'error' : 'success', $message);
     }
 
     public function removeParticipant(Training $training, TrainingParticipant $participant)
@@ -431,14 +461,11 @@ class TrainingController extends Controller
 
     public function downloadTemplate()
     {
-        $headers  = ['Content-Type' => 'text/csv', 'Content-Disposition' => 'attachment; filename="template_peserta.csv"'];
-        $callback = function () {
-            $file = fopen('php://output', 'w');
-            fputcsv($file, ['Nama', 'NIP/NIKKI', 'Email', 'No HP', 'Instansi']);
-            fputcsv($file, ['Neneng Yosi', '198805202015042002', 'neneng@sekolah.sch.id', '08123456789', 'TK Meruya Selatan']);
-            fclose($file);
-        };
-        return response()->stream($callback, 200, $headers);
+        $path = public_path('templates/template_peserta_pelatihan.xlsx');
+
+        return response()->download($path, 'template_peserta_pelatihan.xlsx', [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ]);
     }
 
     // ================================================================
