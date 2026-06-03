@@ -184,16 +184,16 @@
 {{-- TAB: MATERI --}}
 {{-- ================================================================ --}}
 <div id="tab-materi" class="tab-content" style="display:none;">
-    <div class="card">
+ 
+    {{-- SUB-SECTION 1: Materi Akses Peserta --}}
+    <div class="card" style="margin-bottom:20px;">
         <div class="card-header" style="display:flex; justify-content:space-between; align-items:center;">
-            <h3>
-                Materi Pelatihan
-                <small style="color:#6b7280; font-weight:400; font-size:0.82rem;">
-                    Total JP Keseluruhan: <strong>{{ $training->total_jp }} JP</strong>
-                </small>
-            </h3>
+            <div>
+                <h3 style="margin:0;">Materi untuk Peserta</h3>
+                <small style="color:#6b7280; font-size:0.8rem;">Link yang dibuka peserta saat pelatihan (PDF, PPT, YouTube, GDrive)</small>
+            </div>
             <button onclick="document.getElementById('addMateriModal').style.display='flex'" class="btn btn-sm btn-primary">
-                <i class="fas fa-plus"></i> Tambah Materi
+                <i class="fas fa-plus"></i> Tambah
             </button>
         </div>
         <div class="card-body" style="padding:0;">
@@ -202,37 +202,71 @@
                 $icon  = match($m->type) { 'youtube'=>'fab fa-youtube', 'ppt'=>'fas fa-file-powerpoint', 'pdf'=>'fas fa-file-pdf', 'gdrive'=>'fab fa-google-drive', default=>'fas fa-link' };
                 $color = match($m->type) { 'youtube'=>'#ef4444', 'ppt'=>'#f59e0b', 'pdf'=>'#3b82f6', 'gdrive'=>'#10b981', default=>'#667eea' };
             @endphp
-            <div style="display:flex; align-items:center; gap:14px; padding:14px 20px; border-bottom:1px solid #f0f0f0;">
-                <div style="width:40px; height:40px; border-radius:10px; background:{{ $color }}20; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+            <div style="display:flex; align-items:center; gap:14px; padding:12px 20px; border-bottom:1px solid #f0f0f0;">
+                <div style="width:38px; height:38px; border-radius:9px; background:{{ $color }}20; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
                     <i class="{{ $icon }}" style="color:{{ $color }};"></i>
                 </div>
-                <div style="flex:1;">
-                    <div style="font-weight:600; color:#1e293b;">{{ $m->title }}</div>
-                    <div style="font-size:0.8rem; color:#6b7280;">
-                        {{ strtoupper($m->type) }} &nbsp;·&nbsp;
-                        <a href="{{ $m->url }}" target="_blank" style="color:#667eea;">{{ Str::limit($m->url, 60) }}</a>
+                <div style="flex:1; min-width:0;">
+                    <div style="font-weight:600; color:#1e293b; font-size:0.9rem;">{{ $m->title }}</div>
+                    <div style="font-size:0.78rem; color:#6b7280; display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+                        <span style="background:{{ $color }}15; color:{{ $color }}; padding:2px 8px; border-radius:10px; font-weight:600; font-size:0.72rem;">{{ strtoupper($m->type) }}</span>
+                        <a href="{{ $m->url }}" target="_blank" style="color:#667eea; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:300px; display:inline-block;">{{ Str::limit($m->url, 60) }}</a>
                     </div>
                 </div>
-                <div style="display:flex; gap:6px;">
+                <div style="display:flex; gap:6px; flex-shrink:0;">
                     <button onclick="openEditMateri({{ $m->id }}, '{{ addslashes($m->title) }}', '{{ $m->type }}', '{{ addslashes($m->url) }}')"
-                        style="background:#fef3c7; color:#92400e; border:none; padding:6px 10px; border-radius:8px; cursor:pointer;">
-                        <i class="fas fa-edit"></i>
-                    </button>
+                        style="background:#fef3c7; color:#92400e; border:none; padding:6px 10px; border-radius:8px; cursor:pointer;"><i class="fas fa-edit"></i></button>
                     <form method="POST" action="{{ route('admin.digital.trainings.materials.destroy', [$training, $m]) }}" onsubmit="return confirm('Hapus materi ini?')">
                         @csrf @method('DELETE')
-                        <button style="background:#fee2e2; color:#dc2626; border:none; padding:6px 10px; border-radius:8px; cursor:pointer;">
-                            <i class="fas fa-trash"></i>
-                        </button>
+                        <button style="background:#fee2e2; color:#dc2626; border:none; padding:6px 10px; border-radius:8px; cursor:pointer;"><i class="fas fa-trash"></i></button>
                     </form>
                 </div>
             </div>
             @empty
-            <div style="padding:40px; text-align:center; color:#6b7280;">Belum ada materi.</div>
+            <div style="padding:30px; text-align:center; color:#9ca3af; font-size:0.875rem;">
+                <i class="fas fa-link" style="font-size:1.5rem; margin-bottom:8px; display:block;"></i>
+                Belum ada materi akses.
+            </div>
+            @endforelse
+        </div>
+    </div>
+ 
+    {{-- SUB-SECTION 2: Materi Sertifikat --}}
+    <div class="card">
+        <div class="card-header" style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+                <h3 style="margin:0;">Materi untuk Sertifikat</h3>
+                <small style="color:#6b7280; font-size:0.8rem;">Nama materi yang tercantum di halaman 2 sertifikat &nbsp;·&nbsp; Total JP: <strong>{{ $training->total_jp }} JP</strong></small>
+            </div>
+            <button onclick="document.getElementById('addCertMateriModal').style.display='flex'" class="btn btn-sm btn-primary">
+                <i class="fas fa-plus"></i> Tambah
+            </button>
+        </div>
+        <div class="card-body" style="padding:0;">
+            @forelse($training->certificateMaterials as $i => $cm)
+            <div style="display:flex; align-items:center; gap:14px; padding:12px 20px; border-bottom:1px solid #f0f0f0;">
+                <div style="width:28px; height:28px; border-radius:50%; background:#ede9fe; color:#7c3aed; display:flex; align-items:center; justify-content:center; font-size:0.78rem; font-weight:700; flex-shrink:0;">
+                    {{ $i + 1 }}
+                </div>
+                <div style="flex:1; font-size:0.9rem; color:#1e293b; font-weight:500;">{{ $cm->title }}</div>
+                <div style="display:flex; gap:6px; flex-shrink:0;">
+                    <button onclick="openEditCertMateri({{ $cm->id }}, '{{ addslashes($cm->title) }}')"
+                        style="background:#fef3c7; color:#92400e; border:none; padding:6px 10px; border-radius:8px; cursor:pointer;"><i class="fas fa-edit"></i></button>
+                    <form method="POST" action="{{ route('admin.digital.trainings.certificate-materials.destroy', [$training, $cm]) }}" onsubmit="return confirm('Hapus materi sertifikat ini?')">
+                        @csrf @method('DELETE')
+                        <button style="background:#fee2e2; color:#dc2626; border:none; padding:6px 10px; border-radius:8px; cursor:pointer;"><i class="fas fa-trash"></i></button>
+                    </form>
+                </div>
+            </div>
+            @empty
+            <div style="padding:30px; text-align:center; color:#9ca3af; font-size:0.875rem;">
+                <i class="fas fa-certificate" style="font-size:1.5rem; margin-bottom:8px; display:block;"></i>
+                Belum ada materi sertifikat.
+            </div>
             @endforelse
         </div>
     </div>
 </div>
-
 {{-- ================================================================ --}}
 {{-- TAB: SOAL --}}
 {{-- ================================================================ --}}
@@ -339,7 +373,7 @@
 <div id="addMateriModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:1000; align-items:center; justify-content:center;">
     <div style="background:white; border-radius:16px; padding:28px; width:100%; max-width:500px; margin:20px;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-            <h3 style="margin:0;" id="materiModalTitle">Tambah Materi</h3>
+            <h3 style="margin:0;" id="materiModalTitle">Tambah Materi Akses</h3>
             <button onclick="closeMateriModal()" style="background:none; border:none; font-size:1.5rem; cursor:pointer;">&times;</button>
         </div>
         <form method="POST" id="materiForm" action="{{ route('admin.digital.trainings.materials.store', $training) }}">
@@ -362,11 +396,30 @@
                 <label>URL / Link *</label>
                 <input type="url" name="url" id="materiUrl" class="form-control" required placeholder="https://...">
             </div>
-            <div style="background:#eff6ff; border-radius:8px; padding:10px 14px; font-size:0.82rem; color:#1e40af; margin-bottom:16px;">
-                <i class="fas fa-info-circle"></i>
-                Total JP pelatihan diatur di halaman <strong>Edit Pelatihan</strong>, bukan per materi.
-            </div>
             <button type="submit" class="btn btn-primary btn-block">Simpan Materi</button>
+        </form>
+    </div>
+</div>
+ 
+{{-- ================================================================ --}}
+{{-- MODAL: Tambah/Edit Materi Sertifikat --}}
+{{-- ================================================================ --}}
+<div id="addCertMateriModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:1000; align-items:center; justify-content:center;">
+    <div style="background:white; border-radius:16px; padding:28px; width:100%; max-width:460px; margin:20px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h3 style="margin:0;" id="certMateriModalTitle">Tambah Materi Sertifikat</h3>
+            <button onclick="closeCertMateriModal()" style="background:none; border:none; font-size:1.5rem; cursor:pointer;">&times;</button>
+        </div>
+        <form method="POST" id="certMateriForm" action="{{ route('admin.digital.trainings.certificate-materials.store', $training) }}">
+            @csrf
+            <div id="certMateriMethod"></div>
+            <div class="form-group">
+                <label>Nama Materi *</label>
+                <input type="text" name="title" id="certMateriTitle" class="form-control" required
+                    placeholder="Pengenalan AI dalam Pendidikan...">
+                <small style="color:#6b7280;">Nama ini yang akan tercantum di sertifikat peserta.</small>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Simpan</button>
         </form>
     </div>
 </div>
@@ -503,6 +556,40 @@ function openReview(id, status, feedback) {
     document.getElementById('reviewStatus').value   = status;
     document.getElementById('reviewFeedback').value = feedback;
     document.getElementById('reviewModal').style.display = 'flex';
+}
+
+// Materi akses
+function openEditMateri(id, title, type, url) {
+    document.getElementById('materiModalTitle').textContent = 'Edit Materi Akses';
+    document.getElementById('materiTitle').value = title;
+    document.getElementById('materiType').value  = type;
+    document.getElementById('materiUrl').value   = url;
+    document.getElementById('materiMethod').innerHTML = '<input type="hidden" name="_method" value="PUT">';
+    document.getElementById('materiForm').action = '/admin/digital/trainings/{{ $training->id }}/materials/' + id;
+    document.getElementById('addMateriModal').style.display = 'flex';
+}
+function closeMateriModal() {
+    document.getElementById('materiModalTitle').textContent = 'Tambah Materi Akses';
+    document.getElementById('materiMethod').innerHTML = '';
+    document.getElementById('materiForm').action = '{{ route("admin.digital.trainings.materials.store", $training) }}';
+    document.getElementById('materiForm').reset();
+    document.getElementById('addMateriModal').style.display = 'none';
+}
+ 
+// Materi sertifikat
+function openEditCertMateri(id, title) {
+    document.getElementById('certMateriModalTitle').textContent = 'Edit Materi Sertifikat';
+    document.getElementById('certMateriTitle').value = title;
+    document.getElementById('certMateriMethod').innerHTML = '<input type="hidden" name="_method" value="PUT">';
+    document.getElementById('certMateriForm').action = '/admin/digital/trainings/{{ $training->id }}/certificate-materials/' + id;
+    document.getElementById('addCertMateriModal').style.display = 'flex';
+}
+function closeCertMateriModal() {
+    document.getElementById('certMateriModalTitle').textContent = 'Tambah Materi Sertifikat';
+    document.getElementById('certMateriMethod').innerHTML = '';
+    document.getElementById('certMateriForm').action = '{{ route("admin.digital.trainings.certificate-materials.store", $training) }}';
+    document.getElementById('certMateriForm').reset();
+    document.getElementById('addCertMateriModal').style.display = 'none';
 }
 </script>
 @endsection

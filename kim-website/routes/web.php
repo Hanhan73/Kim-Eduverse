@@ -557,7 +557,7 @@ Route::prefix('admin/digital')->name('admin.digital.')->middleware(['check.digit
         ->name('questionnaires.test-ai');
 
     Route::prefix('/quizzes')->name('quizzes.')->group(function () {
-    
+
         Route::get('/',                                     [QuizController::class, 'index'])->name('index');
         Route::get('/create',                               [QuizController::class, 'create'])->name('create');
         Route::post('/',                                    [QuizController::class, 'store'])->name('store');
@@ -571,10 +571,9 @@ Route::prefix('admin/digital')->name('admin.digital.')->middleware(['check.digit
         Route::delete('/{quiz}/questions/{question}',       [QuizController::class, 'destroyQuestion'])->name('destroy-question');
         Route::post('/{quiz}/reorder-questions',            [QuizController::class, 'reorderQuestions'])->name('reorder-questions');
         Route::post('/{quiz}/sync/{targetQuizId}',          [QuizController::class, 'syncQuestions'])->name('sync');
-    
+
         Route::get('/template/download',                    [QuizController::class, 'downloadTemplate'])->name('download-template');
         Route::post('/{quiz}/import-questions',             [QuizController::class, 'importQuestions'])->name('import-questions');
-        
     });
 
     Route::prefix('seminars')->name('seminars.')->group(function () {
@@ -608,7 +607,7 @@ Route::prefix('admin/digital')->name('admin.digital.')->middleware(['check.digit
             ->name('materials.reorder');
     });
 
-        Route::prefix('seminar-types')->name('seminar-types.')->group(function () {
+    Route::prefix('seminar-types')->name('seminar-types.')->group(function () {
         Route::get('/',                          [SeminarTypeController::class, 'index'])->name('index');
         Route::post('/',                         [SeminarTypeController::class, 'store'])->name('store');
         Route::put('/{seminarType}',             [SeminarTypeController::class, 'update'])->name('update');
@@ -651,42 +650,44 @@ Route::prefix('admin/digital')->name('admin.digital.')->middleware(['check.digit
         ->name('users.toggle-status');
 
 
-        Route::resource('trainings', TrainingController::class);
- 
-// Template download
-Route::get('/trainings/template/download', [TrainingController::class, 'downloadTemplate'])->name('trainings.template');
- 
-// Materi
-Route::post('/trainings/{training}/materials', [TrainingController::class, 'storeMaterial'])->name('trainings.materials.store');
-Route::put('/trainings/{training}/materials/{material}', [TrainingController::class, 'updateMaterial'])->name('trainings.materials.update');
-Route::delete('/trainings/{training}/materials/{material}', [TrainingController::class, 'destroyMaterial'])->name('trainings.materials.destroy');
- 
-// Soal
-Route::post('/trainings/{training}/questions', [TrainingController::class, 'storeQuestion'])->name('trainings.questions.store');
-Route::put('/trainings/{training}/questions/{question}', [TrainingController::class, 'updateQuestion'])->name('trainings.questions.update');
-Route::delete('/trainings/{training}/questions/{question}', [TrainingController::class, 'destroyQuestion'])->name('trainings.questions.destroy');
- 
-// Peserta
-Route::post('/trainings/{training}/participants', [TrainingController::class, 'addParticipant'])->name('trainings.participants.add');
-Route::post('/trainings/{training}/participants/import', [TrainingController::class, 'importParticipants'])->name('trainings.participants.import');
-Route::delete('/trainings/{training}/participants/{participant}', [TrainingController::class, 'removeParticipant'])->name('trainings.participants.remove');
- 
-// Email
-Route::post('/trainings/{training}/send-emails', [TrainingController::class, 'sendEmails'])->name('trainings.send-emails');
-Route::post('/trainings/{training}/participants/{participant}/send-email', [TrainingController::class, 'sendEmailOne'])->name('trainings.participants.send-email');
- 
-// Absensi
-Route::post('/trainings/{training}/participants/{participant}/checkin', [TrainingController::class, 'checkIn'])->name('trainings.participants.checkin');
-Route::post('/trainings/{training}/participants/{participant}/checkout', [TrainingController::class, 'checkOut'])->name('trainings.participants.checkout');
- 
-// Review tugas
-Route::post('/training-submissions/{submission}/review', [TrainingController::class, 'reviewSubmission'])->name('trainings.submissions.review');
- 
-// Sertifikat
-Route::post('/trainings/{training}/generate-certificates', [TrainingController::class, 'generateCertificates'])->name('trainings.generate-certificates');
-Route::get('/training-participants/{participant}/certificate', [TrainingController::class, 'downloadCertificate'])->name('trainings.participants.certificate');
+    Route::resource('trainings', TrainingController::class);
 
+    // Template download
+    Route::get('/trainings/template/download', [TrainingController::class, 'downloadTemplate'])->name('trainings.template');
 
+    // Materi
+    Route::post('/trainings/{training}/materials', [TrainingController::class, 'storeMaterial'])->name('trainings.materials.store');
+    Route::put('/trainings/{training}/materials/{material}', [TrainingController::class, 'updateMaterial'])->name('trainings.materials.update');
+    Route::delete('/trainings/{training}/materials/{material}', [TrainingController::class, 'destroyMaterial'])->name('trainings.materials.destroy');
+
+    // Soal
+    Route::post('/trainings/{training}/questions', [TrainingController::class, 'storeQuestion'])->name('trainings.questions.store');
+    Route::put('/trainings/{training}/questions/{question}', [TrainingController::class, 'updateQuestion'])->name('trainings.questions.update');
+    Route::delete('/trainings/{training}/questions/{question}', [TrainingController::class, 'destroyQuestion'])->name('trainings.questions.destroy');
+
+    // Peserta
+    Route::post('/trainings/{training}/participants', [TrainingController::class, 'addParticipant'])->name('trainings.participants.add');
+    Route::post('/trainings/{training}/participants/import', [TrainingController::class, 'importParticipants'])->name('trainings.participants.import');
+    Route::delete('/trainings/{training}/participants/{participant}', [TrainingController::class, 'removeParticipant'])->name('trainings.participants.remove');
+
+    // Email
+    Route::post('/trainings/{training}/send-emails', [TrainingController::class, 'sendEmails'])->name('trainings.send-emails');
+    Route::post('/trainings/{training}/participants/{participant}/send-email', [TrainingController::class, 'sendEmailOne'])->name('trainings.participants.send-email');
+
+    // Absensi
+    Route::post('/trainings/{training}/participants/{participant}/checkin', [TrainingController::class, 'checkIn'])->name('trainings.participants.checkin');
+    Route::post('/trainings/{training}/participants/{participant}/checkout', [TrainingController::class, 'checkOut'])->name('trainings.participants.checkout');
+
+    // Review tugas
+    Route::post('/training-submissions/{submission}/review', [TrainingController::class, 'reviewSubmission'])->name('trainings.submissions.review');
+
+    // Sertifikat
+    Route::post('/trainings/{training}/generate-certificates', [TrainingController::class, 'generateCertificates'])->name('trainings.generate-certificates');
+    Route::get('/training-participants/{participant}/certificate', [TrainingController::class, 'downloadCertificate'])->name('trainings.participants.certificate');
+
+    Route::post('/trainings/{training}/certificate-materials', [TrainingController::class, 'storeCertificateMaterial'])->name('trainings.certificate-materials.store');
+    Route::put('/trainings/{training}/certificate-materials/{certMaterial}', [TrainingController::class, 'updateCertificateMaterial'])->name('trainings.certificate-materials.update');
+    Route::delete('/trainings/{training}/certificate-materials/{certMaterial}', [TrainingController::class, 'destroyCertificateMaterial'])->name('trainings.certificate-materials.destroy');
 });
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');

@@ -47,8 +47,15 @@ class TrainingController extends Controller
         ]);
 
         Training::create($request->only([
-            'title','description','location','training_date',
-            'start_time','end_time','trainer_name','organizer','is_active',
+            'title',
+            'description',
+            'location',
+            'training_date',
+            'start_time',
+            'end_time',
+            'trainer_name',
+            'organizer',
+            'is_active',
         ]));
 
         return redirect()->route('admin.digital.trainings.index')
@@ -57,7 +64,7 @@ class TrainingController extends Controller
 
     public function show(Training $training)
     {
-        $training->load(['materials','questions','participants.submission','participants.quizAttempts']);
+        $training->load(['materials', 'questions', 'participants.submission', 'participants.quizAttempts']);
 
         $stats = [
             'total'       => $training->participants->count(),
@@ -72,7 +79,7 @@ class TrainingController extends Controller
 
     public function edit(Training $training)
     {
-        $training->load(['materials','questions']);
+        $training->load(['materials', 'questions']);
         return view('admin.digital.trainings.edit', compact('training'));
     }
 
@@ -85,8 +92,15 @@ class TrainingController extends Controller
         ]);
 
         $training->update($request->only([
-            'title','description','location','training_date',
-            'start_time','end_time','trainer_name','organizer','is_active',
+            'title',
+            'description',
+            'location',
+            'training_date',
+            'start_time',
+            'end_time',
+            'trainer_name',
+            'organizer',
+            'is_active',
             'total_jp', // meskipun ini dihitung otomatis, tetap bisa diupdate manual kalau mau
         ]));
 
@@ -111,7 +125,6 @@ class TrainingController extends Controller
             'title' => 'required|string|max:255',
             'type'  => 'required|in:pdf,ppt,youtube,gdrive',
             'url'   => 'required|url',
-            'jp'    => 'required|integer|min:1',
         ]);
 
         $order = $training->materials()->max('order') + 1;
@@ -120,7 +133,6 @@ class TrainingController extends Controller
             'title' => $request->title,
             'type'  => $request->type,
             'url'   => $request->url,
-            'jp'    => $request->jp,
             'order' => $order,
         ]);
 
@@ -133,11 +145,40 @@ class TrainingController extends Controller
             'title' => 'required|string|max:255',
             'type'  => 'required|in:pdf,ppt,youtube,gdrive',
             'url'   => 'required|url',
-            'jp'    => 'required|integer|min:1',
         ]);
 
-        $material->update($request->only('title','type','url','jp'));
+        $material->update($request->only('title', 'type', 'url'));
         return back()->with('success', 'Materi berhasil diupdate.');
+    }
+
+    public function storeCertificateMaterial(Request $request, Training $training)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+        ]);
+
+        $order = \App\Models\TrainingCertificateMaterial::where('training_id', $training->id)->max('order') + 1;
+
+        \App\Models\TrainingCertificateMaterial::create([
+            'training_id' => $training->id,
+            'title'       => $request->title,
+            'order'       => $order,
+        ]);
+
+        return back()->with('success', 'Materi sertifikat berhasil ditambahkan.');
+    }
+
+    public function updateCertificateMaterial(Request $request, Training $training, \App\Models\TrainingCertificateMaterial $certMaterial)
+    {
+        $request->validate(['title' => 'required|string|max:255']);
+        $certMaterial->update(['title' => $request->title]);
+        return back()->with('success', 'Materi sertifikat berhasil diupdate.');
+    }
+
+    public function destroyCertificateMaterial(Training $training, \App\Models\TrainingCertificateMaterial $certMaterial)
+    {
+        $certMaterial->delete();
+        return back()->with('success', 'Materi sertifikat berhasil dihapus.');
     }
 
     public function destroyMaterial(Training $training, TrainingMaterial $material)
@@ -191,7 +232,13 @@ class TrainingController extends Controller
         ]);
 
         $question->update($request->only(
-            'question','option_a','option_b','option_c','option_d','option_e','correct_answer'
+            'question',
+            'option_a',
+            'option_b',
+            'option_c',
+            'option_d',
+            'option_e',
+            'correct_answer'
         ));
 
         return back()->with('success', 'Soal berhasil diupdate.');
@@ -256,13 +303,20 @@ class TrainingController extends Controller
             $rows = $data;
         }
 
-        $added = 0; $skipped = 0;
+        $added = 0;
+        $skipped = 0;
         foreach ($rows as $row) {
             $name  = trim($row[0] ?? '');
             $nip   = trim($row[1] ?? '');
             $email = trim($row[2] ?? '');
-            if (empty($name) || empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) { $skipped++; continue; }
-            if ($training->participants()->where('email', $email)->exists()) { $skipped++; continue; }
+            if (empty($name) || empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $skipped++;
+                continue;
+            }
+            if ($training->participants()->where('email', $email)->exists()) {
+                $skipped++;
+                continue;
+            }
 
             $training->participants()->create([
                 'name'         => $name,
@@ -293,7 +347,12 @@ class TrainingController extends Controller
         $participants = $training->participants()->where('token_sent', false)->get();
         $sent = 0;
         foreach ($participants as $p) {
-            try { $this->sendAccessEmail($p, $training); $sent++; } catch (\Exception $e) { Log::error($e->getMessage()); }
+            try {
+                $this->sendAccessEmail($p, $training);
+                $sent++;
+            } catch (\Exception $e) {
+                Log::error($e->getMessage());
+            }
         }
         return back()->with('success', "Email berhasil dikirim ke {$sent} peserta.");
     }
@@ -341,14 +400,16 @@ class TrainingController extends Controller
 
     public function generateCertificates(Training $training)
     {
-        $training->load('materials','participants.submission');
+        $training->load('materials', 'participants.submission');
         $generated = 0;
 
         foreach ($training->participants as $participant) {
-            if ($participant->checked_in_at
+            if (
+                $participant->checked_in_at
                 && $participant->checked_out_at
                 && $participant->post_test_passed
-                && !$participant->certificate_path) {
+                && !$participant->certificate_path
+            ) {
                 $this->generateOneCertificate($participant, $training);
                 $generated++;
             }
@@ -389,7 +450,7 @@ class TrainingController extends Controller
         $accessUrl = route('training.participant.access', $participant->access_token);
         Mail::send('emails.training-access', compact('participant', 'training', 'accessUrl'), function ($m) use ($participant, $training) {
             $m->to($participant->email, $participant->name)
-              ->subject('Link Akses Pelatihan - ' . $training->title);
+                ->subject('Link Akses Pelatihan - ' . $training->title);
         });
         $participant->update(['token_sent' => true, 'token_sent_at' => now()]);
     }

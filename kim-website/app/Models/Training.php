@@ -20,14 +20,18 @@ class Training extends Model
         'organizer',
         'thumbnail',
         'is_active',
-        'total_jp', // dihitung otomatis dari materi, tidak diisi manual
-        // hapus seminar_id — tidak dipakai lagi
+        'total_jp', // ← ini kolom biasa di tabel trainings, boleh di fillable
     ];
 
     protected $casts = [
         'training_date' => 'date',
         'is_active'     => 'boolean',
     ];
+
+    public function certificateMaterials()
+    {
+        return $this->hasMany(TrainingCertificateMaterial::class)->orderBy('order');
+    }
 
     public function participants()
     {
@@ -50,8 +54,4 @@ class Training extends Model
         return $this->hasMany(TrainingQuizAttempt::class);
     }
 
-    public function getTotalJpAttribute()
-    {
-        return $this->materials->sum('jp');
-    }
 }

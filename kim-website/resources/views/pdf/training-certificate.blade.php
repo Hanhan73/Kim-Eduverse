@@ -1,5 +1,5 @@
 @php
-$materials = $training->materials;
+$materials = $training->certificateMaterials;
 $totalJP = $training->total_jp ?? 0;
 @endphp
 <!DOCTYPE html>
@@ -212,7 +212,7 @@ $totalJP = $training->total_jp ?? 0;
                     <tr>
                         <th>No</th>
                         <th>Materi</th>
-                        <th>Tipe</th>
+                        <th>Keterangan</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -220,7 +220,7 @@ $totalJP = $training->total_jp ?? 0;
                     <tr>
                         <td>{{ $i + 1 }}</td>
                         <td style="text-align:left;">{{ $m->title }}</td>
-                        <td>{{ strtoupper($m->type) }}</td>
+                        <td>Teori & Praktik</td>
                     </tr>
                     @empty
                     <tr>
