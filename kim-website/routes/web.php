@@ -1088,3 +1088,41 @@ Route::get('/test/ebook-access', function () {
         <p><a href='{$verifyUrl}' target='_blank'>Buka Halaman Verifikasi &rarr;</a></p>
     ";
 })->name('test.ebook.access');
+
+// ==========================================
+// TAMBAHKAN SEMENTARA DI web.php (DIAGNOSTIC ONLY)
+// HAPUS SETELAH SELESAI DEBUG
+// ==========================================
+
+Route::get('/test/inspect-orders-table', function () {
+    $columns = \Illuminate\Support\Facades\DB::select("
+        SELECT COLUMN_NAME, IS_NULLABLE, COLUMN_DEFAULT, DATA_TYPE, COLUMN_TYPE
+        FROM INFORMATION_SCHEMA.COLUMNS
+        WHERE TABLE_SCHEMA = DATABASE()
+        AND TABLE_NAME = 'digital_orders'
+        ORDER BY ORDINAL_POSITION
+    ");
+
+    $html = "<h2>Struktur Tabel: digital_orders</h2>";
+    $html .= "<table border='1' cellpadding='8' style='border-collapse:collapse'>";
+    $html .= "<tr><th>Kolom</th><th>Nullable</th><th>Default</th><th>Tipe</th></tr>";
+
+    foreach ($columns as $col) {
+        $wajib = $col->IS_NULLABLE === 'NO' && is_null($col->COLUMN_DEFAULT) ? '<strong style="color:red">WAJIB DIISI</strong>' : 'opsional';
+        $html .= "<tr>
+            <td>{$col->COLUMN_NAME}</td>
+            <td>{$col->IS_NULLABLE} ({$wajib})</td>
+            <td>" . ($col->COLUMN_DEFAULT ?? '-') . "</td>
+            <td>{$col->COLUMN_TYPE}</td>
+        </tr>";
+    }
+
+    $html .= "</table>";
+
+    // Sekalian cek fillable di model
+    $model = new \App\Models\DigitalOrder();
+    $html .= "<h3>Fillable di Model DigitalOrder:</h3>";
+    $html .= "<pre>" . implode(", ", $model->getFillable()) . "</pre>";
+
+    return $html;
+})->name('test.inspect.orders');
