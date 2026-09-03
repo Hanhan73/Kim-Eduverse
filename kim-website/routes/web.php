@@ -1046,24 +1046,24 @@ Route::get('/test/ebook-access', function () {
     }
 
     $testEmail = 'test@kimeduverse.com';
+    $price = $product->price ?? 0;
 
     try {
-        // Buat order dummy BARU khusus testing, supaya emailnya
-        // pasti konsisten dengan yang akan kita pakai untuk verifikasi
         $order = \App\Models\DigitalOrder::create([
             'order_number'    => 'TEST-' . now()->format('YmdHis'),
             'customer_email'  => $testEmail,
             'customer_name'   => 'Test User',
-            'total_amount'    => $product->price ?? 0,
-            'status'          => 'paid',
+            'subtotal'        => $price,
+            'tax'             => 0,
+            'total'           => $price,
             'payment_status'  => 'settlement',
+            'status'          => 'paid',
+            'paid_at'         => now(),
         ]);
     } catch (\Exception $e) {
         return "
             <h3>Gagal membuat order dummy</h3>
-            <p>Kemungkinan ada field wajib di tabel <code>digital_orders</code> yang belum diisi.</p>
             <p><strong>Error:</strong> {$e->getMessage()}</p>
-            <p>Kirim error ini biar saya sesuaikan field-nya.</p>
         ";
     }
 
