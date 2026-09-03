@@ -227,8 +227,8 @@
 
     <!-- Watermark -->
     <div class="watermark">
-        {{ $access->user->name ?? 'KIM DIGITAL' }}<br>
-        ONLY FOR {{ strtoupper($access->order->customer_email) }}
+        {{ $access->order->customer_email ?? $access->customer_email ?? 'KIM DIGITAL' }}<br>
+        ONLY FOR {{ strtoupper($access->order->customer_email ?? $access->customer_email ?? '-') }}
     </div>
 
     <!-- Protection Overlay -->

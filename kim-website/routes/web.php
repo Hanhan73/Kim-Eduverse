@@ -1010,8 +1010,11 @@ Route::prefix('ebook')->name('ebook.')->group(function () {
 
     // Get PDF content (proxy)
     Route::get('/content/{token}', [App\Http\Controllers\EbookController::class, 'getContent'])->name('content');
-});
 
+    // Verifikasi email — TAMBAHKAN INI
+    Route::get('/verify/{token}', [App\Http\Controllers\EbookController::class, 'verify'])->name('verify');
+    Route::post('/verify/{token}', [App\Http\Controllers\EbookController::class, 'processVerify'])->name('verify.submit');
+});
 
 
 Route::prefix('pelatihan')->name('training.participant.')->group(function () {
