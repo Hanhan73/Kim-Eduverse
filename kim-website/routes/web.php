@@ -1031,3 +1031,40 @@ Route::prefix('pelatihan')->name('training.participant.')->group(function () {
 Route::get('/{token}/goto/{step}', [TrainingParticipantController::class, 'goto'])->name('goto');
 
 });
+
+// ==========================================
+// TAMBAHKAN SEMENTARA DI web.php (TESTING ONLY)
+// HAPUS SEBELUM GO-LIVE PRODUKSI
+// ==========================================
+
+Route::get('/test/ebook-access', function () {
+    $product = \App\Models\DigitalProduct::where('type', 'ebook')->first();
+
+    if (!$product) {
+        return "Belum ada produk ebook. Buat dulu produk dengan type 'ebook'.";
+    }
+
+    // Pakai order yang sudah ada, atau buat dummy kalau tidak ada
+    $order = \App\Models\DigitalOrder::first();
+
+    if (!$order) {
+        return "Belum ada data order. Buat dummy order dulu, atau sesuaikan field di sini.";
+    }
+
+    $access = \App\Models\EbookAccess::create([
+        'product_id'     => $product->id,
+        'order_id'       => $order->id,
+        'customer_email' => 'test@kimeduverse.com',
+        'is_active'      => true,
+    ]);
+
+    $verifyUrl = route('ebook.verify', $access->access_token);
+
+    return "
+        <h2>Ebook Access Dummy Dibuat</h2>
+        <p><strong>Produk:</strong> {$product->name}</p>
+        <p><strong>Email untuk verifikasi:</strong> test@kimeduverse.com</p>
+        <p><strong>Token:</strong> {$access->access_token}</p>
+        <p><a href='{$verifyUrl}' target='_blank'>Buka Halaman Verifikasi &rarr;</a></p>
+    ";
+})->name('test.ebook.access');
