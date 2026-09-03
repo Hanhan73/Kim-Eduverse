@@ -1034,6 +1034,7 @@ Route::get('/{token}/goto/{step}', [TrainingParticipantController::class, 'goto'
 
 // ==========================================
 // TAMBAHKAN SEMENTARA DI web.php (TESTING ONLY)
+// GANTI route test.ebook.access yang lama dengan ini
 // HAPUS SEBELUM GO-LIVE PRODUKSI
 // ==========================================
 
@@ -1044,17 +1045,35 @@ Route::get('/test/ebook-access', function () {
         return "Belum ada produk ebook. Buat dulu produk dengan type 'ebook'.";
     }
 
-    // Pakai order yang sudah ada, atau buat dummy kalau tidak ada
-    $order = \App\Models\DigitalOrder::first();
+    $testEmail = 'test@kimeduverse.com';
 
-    if (!$order) {
-        return "Belum ada data order. Buat dummy order dulu, atau sesuaikan field di sini.";
+    try {
+        // Buat order dummy BARU khusus testing, supaya emailnya
+        // pasti konsisten dengan yang akan kita pakai untuk verifikasi
+        $order = \App\Models\DigitalOrder::create([
+            'order_number'    => 'TEST-' . now()->format('YmdHis'),
+            'customer_email'  => $testEmail,
+            'customer_name'   => 'Test User',
+            'total_amount'    => $product->price ?? 0,
+            'status'          => 'paid',
+            'payment_status'  => 'settlement',
+        ]);
+    } catch (\Exception $e) {
+        return "
+            <h3>Gagal membuat order dummy</h3>
+            <p>Kemungkinan ada field wajib di tabel <code>digital_orders</code> yang belum diisi.</p>
+            <p><strong>Error:</strong> {$e->getMessage()}</p>
+            <p>Kirim error ini biar saya sesuaikan field-nya.</p>
+        ";
     }
+
+    // Hapus dulu access lama dengan email test ini biar tidak numpuk
+    \App\Models\EbookAccess::where('customer_email', $testEmail)->delete();
 
     $access = \App\Models\EbookAccess::create([
         'product_id'     => $product->id,
         'order_id'       => $order->id,
-        'customer_email' => 'test@kimeduverse.com',
+        'customer_email' => $testEmail,
         'is_active'      => true,
     ]);
 
@@ -1063,7 +1082,8 @@ Route::get('/test/ebook-access', function () {
     return "
         <h2>Ebook Access Dummy Dibuat</h2>
         <p><strong>Produk:</strong> {$product->name}</p>
-        <p><strong>Email untuk verifikasi:</strong> test@kimeduverse.com</p>
+        <p><strong>Order Number:</strong> {$order->order_number}</p>
+        <p><strong>Email untuk verifikasi:</strong> {$testEmail}</p>
         <p><strong>Token:</strong> {$access->access_token}</p>
         <p><a href='{$verifyUrl}' target='_blank'>Buka Halaman Verifikasi &rarr;</a></p>
     ";
