@@ -22,7 +22,7 @@ class EbookAccess extends Model
         'is_active',
     ];
 
-    protected $casts = [
+    protected $casts = [ 
         'expires_at' => 'datetime',
         'last_accessed_at' => 'datetime',
         'is_active' => 'boolean',

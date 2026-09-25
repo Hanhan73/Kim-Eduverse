@@ -111,7 +111,6 @@
 </head>
 <body>
     <div class="verify-card">
-        <div class="verify-icon">🔐</div>
         <h1>Verifikasi Akses</h1>
         <p>
             Masukkan email yang Anda gunakan saat membeli
